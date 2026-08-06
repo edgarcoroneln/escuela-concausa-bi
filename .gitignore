@@ -58,3 +58,4 @@ graphify-out/.cache/
 graphify-out/*.tmp
 setup_proyecto.sh
 graphify-out/cache/
+.obsidian/
