@@ -23,7 +23,7 @@ tags: [moc, ai, ownership]
 | 5 | Manuel Alejandro Serranía Reinada | C2 | Alto | [[09_AI_Governance/Agent_Contexts/manuel-serrania-agent-context]] |
 | 6 | Marina García del Buey | C2 | Medio | [[09_AI_Governance/Agent_Contexts/marina-garcia-agent-context]] |
 | 7 | Monserrat Xcaret Miranda Olivas | C2 | Medio | [[09_AI_Governance/Agent_Contexts/monserrat-miranda-agent-context]] |
-| 8 | Eloisa González Rubio | C2 | Bajo | [[09_AI_Governance/Agent_Contexts/eloisa-gonzalez-agent-context]] |
+| 8 | Oscar Antonio Quiroz Lázaro | C2 | Bajo | [[09_AI_Governance/Agent_Contexts/oscar-quiroz-agent-context]] |
 | 9 | Andrés González Habib | C3 | Alto | [[09_AI_Governance/Agent_Contexts/andres-gonzalez-agent-context]] |
 | 10 | Héctor Rafael Morales Marbán | C3 | Medio | [[09_AI_Governance/Agent_Contexts/hector-morales-agent-context]] |
 | 11 | Estefany Lucero Hernández Loredo | C3 | Bajo | [[09_AI_Governance/Agent_Contexts/estefany-hernandez-agent-context]] |
@@ -31,7 +31,7 @@ tags: [moc, ai, ownership]
 | 13 | Karla Alejandra Monter Benitez | C4 | Alto | [[09_AI_Governance/Agent_Contexts/karla-monter-agent-context]] |
 | 14 | Christian Imanol Ruiz Hurtado | C4 | Medio | [[09_AI_Governance/Agent_Contexts/christian-ruiz-agent-context]] |
 | 15 | Juan Carlos Macías Mayen | C4 | Medio | [[09_AI_Governance/Agent_Contexts/juan-macias-agent-context]] |
-| 16 | Oscar Antonio Quiroz Lázaro | C4 | Bajo | [[09_AI_Governance/Agent_Contexts/oscar-quiroz-agent-context]] |
+| 16 | Eloisa González Rubio | C4 | Bajo | [[09_AI_Governance/Agent_Contexts/eloisa-gonzalez-agent-context]] |
 | 17 | Luis Téllez Domínguez | C5 | Medio | [[09_AI_Governance/Agent_Contexts/luis-tellez-agent-context]] |
 | 18 | Edgar Ulises Jiménez López | C5 | Bajo | [[09_AI_Governance/Agent_Contexts/edgar-jimenez-agent-context]] |
 | 19 | Alejandro Velázquez Mendoza | C5 | Bajo | [[09_AI_Governance/Agent_Contexts/alejandro-velazquez-agent-context]] |

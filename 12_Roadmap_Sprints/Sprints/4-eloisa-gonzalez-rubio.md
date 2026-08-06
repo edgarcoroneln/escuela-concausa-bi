@@ -5,18 +5,18 @@ owner: "Eloisa González Rubio"
 status: approved
 version: "1.0"
 traces_up: ["01_Product/PRD", "02_Requirements/User_Stories"]
-traces_down: ["US-221", "US-222", "US-223", "US-224"]
+traces_down: ["US-421", "US-422", "US-423"]
 last_reviewed: "2026-07-31"
-tags: [sprint, plan, celula-2, nivel-bajo]
+tags: [sprint, plan, celula-4, nivel-bajo]
 ---
 
 # FARO · Plan de trabajo individual
 ## Eloisa González Rubio
 
 > **Proyecto:** FARO — Escuela como Sensor Social
-> **Célula:** Celula 2 — Analytics & Business Intelligence · **Peso en rúbrica:** 2.5 pts
-> **Rol:** Analista BI jr · Graficos, mapas y KPIs · **Nivel asignado:** Bajo
-> **Tech Lead de tu célula:** Manuel Alejandro Serranía Reinada
+> **Célula:** Celula 4 — Backend, API & Seguridad · **Peso en rúbrica:** 1.5 pts
+> **Rol:** Desarrolladora jr · Pruebas de API · **Nivel asignado:** Bajo
+> **Tech Lead de tu célula:** Karla Alejandra Monter Benitez
 > **Demo en vivo:** miércoles 9 de septiembre de 2026
 
 ---
@@ -31,9 +31,9 @@ Tienes historias **acotadas y bien definidas**, pensadas para que aprendas hacie
 
 | | |
 |---|---|
-| **Recibes de (inputs)** | Capa **Gold** y cubos de la **Célula 1** · Endpoints de la **Célula 4** · Predicciones de la **Célula 3** |
-| **Entregas a (outputs)** | Dashboard final para el pitch · Manual de usuario |
-| **Quién revisa tu código** | Manuel Alejandro Serranía Reinada (Tech Lead, compuerta técnica) → Edgar Coronel (PM, compuerta de proceso) |
+| **Recibes de (inputs)** | Capa **Gold** de la **Célula 1** · Modelos en MLflow de la **Célula 3** · Infra de la **Célula 5** |
+| **Entregas a (outputs)** | **Célula 2** (consume la API en el dashboard) · Agente de la **Célula 3** |
+| **Quién revisa tu código** | Karla Alejandra Monter Benitez (Tech Lead, compuerta técnica) → Edgar Coronel (PM, compuerta de proceso) |
 | **Formato de entrega** | Rama `feat/eloisa-rubio-...` → PR con plantilla completa → 2 aprobaciones → merge a `main` |
 
 > **Regla de desbloqueo:** si un input tuyo no llega a tiempo, **no te quedes esperando**. Trabaja contra
@@ -44,39 +44,30 @@ Tienes historias **acotadas y bien definidas**, pensadas para que aprendas hacie
 
 ## 3. Tus historias de usuario
 
-### `US-221` · Construir los graficos base de KPIs
+### `US-421` · Implementar el esqueleto de FastAPI y healthcheck
 
 | | |
 |---|---|
 | **Sprint** | S3 — Lun 17 - Dom 23 ago |
-| **Objetivo** | Series de matricula, distribucion por nivel educativo y tarjetas de KPI reutilizables. |
+| **Objetivo** | Estructura del proyecto, `/health`, configuracion por variables de entorno y documentacion automatica. |
 | **Entregable** | Código en su carpeta + documento en el vault con frontmatter + fila en la matriz |
 | **Cómo se entrega** | Rama `feat/eloisa-rubio-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
 
-### `US-222` · Construir DB-07 Calidad y cobertura de datos
+### `US-422` · Escribir pruebas unitarias y de integracion de la API
 
 | | |
 |---|---|
 | **Sprint** | S4 — Lun 24 - Dom 30 ago |
-| **Objetivo** | Tablero de completitud por driver y mapa de vacios. Convierte una limitacion en un hallazgo de valor. |
+| **Objetivo** | pytest + httpx sobre los endpoints; cobertura minima segun Definition_of_Done. |
 | **Entregable** | Código en su carpeta + documento en el vault con frontmatter + fila en la matriz |
 | **Cómo se entrega** | Rama `feat/eloisa-rubio-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
 
-### `US-223` · Construir DB-10 Monitor del pipeline
+### `US-423` · Pruebas de seguridad de la autenticacion
 
 | | |
 |---|---|
 | **Sprint** | S5 — Lun 31 ago - Dom 6 sep |
-| **Objetivo** | Estado de DAGs, frescura por fuente y ultima ingesta exitosa. |
-| **Entregable** | Código en su carpeta + documento en el vault con frontmatter + fila en la matriz |
-| **Cómo se entrega** | Rama `feat/eloisa-rubio-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
-
-### `US-224` · Documentar el manual de usuario de los dashboards
-
-| | |
-|---|---|
-| **Sprint** | S5 — Lun 31 ago - Dom 6 sep |
-| **Objetivo** | Guia con capturas para el pitch y el README. |
+| **Objetivo** | Expiracion de token, acceso denegado por rol, rutas protegidas. Hallazgos como SEC-###. |
 | **Entregable** | Código en su carpeta + documento en el vault con frontmatter + fila en la matriz |
 | **Cómo se entrega** | Rama `feat/eloisa-rubio-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
 
@@ -115,7 +106,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # 6. Dependencias específicas de tu célula
-pip install apache-superset pandas sqlalchemy psycopg2-binary
+pip install fastapi uvicorn[standard] sqlalchemy psycopg2-binary python-jose[cryptography] passlib pydantic-settings pytest httpx
 
 # 7. Congela lo que instalaste (si agregaste algo nuevo)
 pip freeze > requirements-celula.txt
@@ -169,19 +160,19 @@ La llave que une todo es el CCT (centro de trabajo) y la clave INEGI de municipi
 Responde en espanol, con codigo comentado y explicando tus decisiones.
 ```
 
-**Dashboard Superset**
+**Endpoint FastAPI**
 ```
-Actúa como analista de BI. Diseña la especificación de un dashboard en Apache Superset para <TEMA>. Dame: los KPIs con su fórmula exacta en SQL, los gráficos recomendados con su tipo, los filtros cruzados y la jerarquía de drill-down. Considera que la fuente es un esquema estrella en Postgres.
-```
-
-**SQL de cubo**
-```
-Escribe el SQL para una vista materializada que agregue <MÉTRICA> por <DIMENSIONES>. Debe estar optimizada para consultas de dashboard (índices sugeridos incluidos) y manejar correctamente los nulos. Explica el plan de ejecución esperado.
+Actúa como desarrollador backend senior. Escribe un endpoint FastAPI `GET <RUTA>` que: consulte <TABLA> con filtros opcionales <FILTROS>, use paginación, valide entradas con Pydantic, maneje errores sin filtrar detalles internos, y esté documentado en OpenAPI. Incluye el modelo de respuesta tipado.
 ```
 
-**Mapa coroplético**
+**OAuth2 + JWT**
 ```
-Necesito configurar un mapa coroplético en Superset a nivel municipio de México. Explícame paso a paso: qué formato de GeoJSON necesito, cómo debe estar la llave de municipio para que empate, y cómo configurar la escala de color por <MÉTRICA>.
+Implementa autenticación OAuth2 con JWT en FastAPI: login con Google, emisión de access token (corta vida) y refresh token, y una dependencia `get_current_user`. Explica dónde se almacena cada token y por qué. Señala cualquier riesgo de seguridad en tu propia propuesta.
+```
+
+**RBAC**
+```
+Implementa control de acceso por roles en FastAPI con dos roles: `ciudadano` y `analista`. Necesito una dependencia reutilizable `require_role(...)` que se aplique por endpoint y devuelva 403 correctamente. Incluye pruebas con pytest que verifiquen que un ciudadano NO puede acceder a rutas de analista.
 ```
 
 **Si te atoras (úsalo sin pena, es parte del método)**
@@ -291,10 +282,9 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 
 | ID | Historia | Estado | % | Bloqueado por | Fecha compromiso |
 |---|---|---|---|---|---|
-| `US-221` | Construir los graficos base de KPIs | ⬜ Por iniciar | 0% | — | Dom 23 ago |
-| `US-222` | Construir DB-07 Calidad y cobertura de dat | ⬜ Por iniciar | 0% | — | Dom 30 ago |
-| `US-223` | Construir DB-10 Monitor del pipeline | ⬜ Por iniciar | 0% | — | Dom 6 sep |
-| `US-224` | Documentar el manual de usuario de los das | ⬜ Por iniciar | 0% | — | Dom 6 sep |
+| `US-421` | Implementar el esqueleto de FastAPI y heal | ⬜ Por iniciar | 0% | — | Dom 23 ago |
+| `US-422` | Escribir pruebas unitarias y de integracio | ⬜ Por iniciar | 0% | — | Dom 30 ago |
+| `US-423` | Pruebas de seguridad de la autenticacion | ⬜ Por iniciar | 0% | — | Dom 6 sep |
 
 **Estados válidos:** ⬜ Por iniciar · 🟡 En curso · 🔵 En revisión (PR abierto) · ✅ Terminado · 🔴 Bloqueado
 

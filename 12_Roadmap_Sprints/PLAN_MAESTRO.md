@@ -3,7 +3,7 @@ id: PLAN-MAESTRO
 title: "Plan Maestro del Proyecto FARO"
 owner: "Edgar Edmundo Coronel Navarrete"
 status: approved
-version: "1.2"
+version: "1.3"
 source_of_truth: true
 traces_up: ["01_Product/PRD"]
 last_reviewed: "2026-08-03"
@@ -200,7 +200,7 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | Manuel Alejandro Serranía Reinada | **Alto** | Célula 2 | Tech Lead · Analytics & BI | [`2-manuel-alejandro-serrania-reinada.md`](Sprints/2-manuel-alejandro-serrania-reinada.md) |
 | Marina García del Buey | **Medio** | Célula 2 | Analista BI · Dashboards ejecutivos | [`2-marina-garcia-del-buey.md`](Sprints/2-marina-garcia-del-buey.md) |
 | Monserrat Xcaret Miranda Olivas | **Medio** | Célula 2 | Analista BI · Modelado semántico y cubos | [`2-monserrat-xcaret-miranda-olivas.md`](Sprints/2-monserrat-xcaret-miranda-olivas.md) |
-| Eloisa González Rubio | **Bajo** | Célula 2 | Analista BI jr · Gráficos, mapas y KPIs | [`2-eloisa-gonzalez-rubio.md`](Sprints/2-eloisa-gonzalez-rubio.md) |
+| Oscar Antonio Quiroz Lázaro | **Bajo** | Célula 2 | Analista BI jr · Gráficos, mapas y KPIs | [`2-oscar-antonio-quiroz-lazaro.md`](Sprints/2-oscar-antonio-quiroz-lazaro.md) |
 | Andrés González Habib | **Alto** | Célula 3 | Tech Lead · Machine Learning & Agente IA | [`3-andres-gonzalez-habib.md`](Sprints/3-andres-gonzalez-habib.md) |
 | Héctor Rafael Morales Marbán | **Medio** | Célula 3 | Científico de datos · Modelos supervisados | [`3-hector-rafael-morales-marban.md`](Sprints/3-hector-rafael-morales-marban.md) |
 | Estefany Lucero Hernández Loredo | **Bajo** | Célula 3 | Analista ML jr · Clustering y features | [`3-estefany-lucero-hernandez-loredo.md`](Sprints/3-estefany-lucero-hernandez-loredo.md) |
@@ -208,7 +208,7 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | Karla Alejandra Monter Benitez | **Alto** | Célula 4 | Tech Lead · Backend, API & Seguridad | [`4-karla-alejandra-monter-benitez.md`](Sprints/4-karla-alejandra-monter-benitez.md) |
 | Christian Imanol Ruiz Hurtado | **Medio** | Célula 4 | Desarrollador backend · Endpoints y RBAC | [`4-christian-imanol-ruiz-hurtado.md`](Sprints/4-christian-imanol-ruiz-hurtado.md) |
 | Juan Carlos Macías Mayen | **Medio** | Célula 4 | Desarrollador backend · Inferencia ML y contratos de API | [`4-juan-carlos-macias-mayen.md`](Sprints/4-juan-carlos-macias-mayen.md) |
-| Oscar Antonio Quiroz Lázaro | **Bajo** | Célula 4 | Desarrollador jr · Pruebas de API | [`4-oscar-antonio-quiroz-lazaro.md`](Sprints/4-oscar-antonio-quiroz-lazaro.md) |
+| Eloisa González Rubio | **Bajo** | Célula 4 | Desarrolladora jr · Pruebas de API | [`4-eloisa-gonzalez-rubio.md`](Sprints/4-eloisa-gonzalez-rubio.md) |
 | Luis Téllez Domínguez | **Medio** | Célula 5 | Tech Lead · Cloud & DevOps | [`5-luis-tellez-dominguez.md`](Sprints/5-luis-tellez-dominguez.md) |
 | Edgar Ulises Jiménez López | **Bajo** | Célula 5 | DevOps jr · Contenedores | [`5-edgar-ulises-jimenez-lopez.md`](Sprints/5-edgar-ulises-jimenez-lopez.md) |
 | Alejandro Velázquez Mendoza | **Bajo** | Célula 5 | DevOps jr · Ambientes y despliegue | [`5-alejandro-velazquez-mendoza.md`](Sprints/5-alejandro-velazquez-mendoza.md) |
@@ -266,10 +266,10 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-202` | Célula 2 | Configurar Superset: conexion, datasets y capa semantica | Manuel Alejandro Serranía Reinada |
 | `US-211a` | Célula 2 | Modelar métricas y jerarquías para DB-03 y DB-04 | Marina García del Buey |
 | `US-211b` | Célula 2 | Modelar métricas y jerarquías para DB-05 y DB-08 | Monserrat Xcaret Miranda Olivas |
-| `US-221` | Célula 2 | Construir los graficos base de KPIs | Eloisa González Rubio |
+| `US-221` | Célula 2 | Construir los graficos base de KPIs | Oscar Antonio Quiroz Lázaro |
 | `US-301` | Célula 3 | Disenar la estrategia de modelado y el protocolo de validación | Andrés González Habib |
 | `US-411` | Célula 4 | Implementar los endpoints de datos sobre Gold | Christian Imanol Ruiz Hurtado |
-| `US-421` | Célula 4 | Implementar el esqueleto de FastAPI y healthcheck | Oscar Antonio Quiroz Lázaro |
+| `US-421` | Célula 4 | Implementar el esqueleto de FastAPI y healthcheck | Eloisa González Rubio |
 | `US-522a` | Célula 5 | Contenerizar la API y Postgres | Alejandro Velázquez Mendoza |
 | `US-522b` | Célula 5 | Contenerizar Airflow y los jobs de ML | Edgar Ulises Jiménez López |
 | `US-522c` | Célula 5 | Contenerizar Superset y el agente | Edward Ulysses Ruiz Bustillos |
@@ -289,7 +289,7 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-204` | Célula 2 | Construir DB-06 Predicciones y DB-09 Recomendaciones prescriptivas | Manuel Alejandro Serranía Reinada |
 | `US-212` | Célula 2 | Construir DB-03 Ficha de escuela y DB-04 Comparador de municipios | Marina García del Buey |
 | `US-213` | Célula 2 | Construir DB-05 Análisis por driver y DB-08 Explorador del cubo | Monserrat Xcaret Miranda Olivas |
-| `US-222` | Célula 2 | Construir DB-07 Calidad y cobertura de datos | Eloisa González Rubio |
+| `US-222` | Célula 2 | Construir DB-07 Calidad y cobertura de datos | Oscar Antonio Quiroz Lázaro |
 | `US-302` | Célula 3 | Entrenar el Modelo 2 - Clasificacion de driver dominante | Andrés González Habib |
 | `US-303` | Célula 3 | Registrar los 3 modelos en MLflow y exponerlos via API | Andrés González Habib |
 | `US-311` | Célula 3 | Entrenar el Modelo 1 - Regresion de matrícula | Héctor Rafael Morales Marbán |
@@ -300,11 +300,11 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-403` | Célula 4 | Implementar RBAC con los 2 roles del PRD | Karla Alejandra Monter Benitez |
 | `US-412` | Célula 4 | Implementar los endpoints de inferencia ML | Juan Carlos Macías Mayen |
 | `US-415` | Célula 4 | Implementar el contrato de datos entre API y modelos | Juan Carlos Macías Mayen |
-| `US-422` | Célula 4 | Escribir pruebas unitarias y de integracion de la API | Oscar Antonio Quiroz Lázaro |
+| `US-422` | Célula 4 | Escribir pruebas unitarias y de integración de la API | Eloisa González Rubio |
 | `US-504` | Célula 5 | Aprovisionar Cloud SQL, Artifact Registry y secretos | Luis Téllez Domínguez |
 
 ### S5 · Lun 31 ago - Dom 6 sep
-**Foco: Agente RAG, integracion y CODE FREEZE**
+**Foco: Agente RAG, integración y CODE FREEZE**
 
 | ID | Célula | Historia | Responsable |
 |---|---|---|---|
@@ -315,8 +315,8 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-214b` | Célula 2 | Filtros dinámicos y drill-down en DB-05 y DB-08 | Monserrat Xcaret Miranda Olivas |
 | `US-215a` | Célula 2 | Pruebas de usabilidad de DB-03 y DB-04 | Marina García del Buey |
 | `US-215b` | Célula 2 | Pruebas de usabilidad de DB-05 y DB-08 | Monserrat Xcaret Miranda Olivas |
-| `US-223` | Célula 2 | Construir DB-10 Monitor del pipeline | Eloisa González Rubio |
-| `US-224` | Célula 2 | Documentar el manual de usuario de los dashboards | Eloisa González Rubio |
+| `US-223` | Célula 2 | Construir DB-10 Monitor del pipeline | Oscar Antonio Quiroz Lázaro |
+| `US-224` | Célula 2 | Documentar el manual de usuario de los dashboards | Oscar Antonio Quiroz Lázaro |
 | `US-304a` | Célula 3 | Disenar el agente conversacional: prompt y guardarraíles | Andrés González Habib |
 | `US-304b` | Célula 3 | Construir la capa de recuperación del agente | Carlos Guillermo Mayorga Tapia |
 | `US-312` | Célula 3 | Evaluar modelos y documentar métricas | Héctor Rafael Morales Marbán |
@@ -327,7 +327,7 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-413` | Célula 4 | Endpoints administrativos protegidos | Christian Imanol Ruiz Hurtado |
 | `US-414` | Célula 4 | Documentar la API en OpenAPI y publicar la coleccion | Christian Imanol Ruiz Hurtado |
 | `US-416` | Célula 4 | Implementar cache y manejo de errores de inferencia | Juan Carlos Macías Mayen |
-| `US-423` | Célula 4 | Pruebas de seguridad de la autenticacion | Oscar Antonio Quiroz Lázaro |
+| `US-423` | Célula 4 | Pruebas de seguridad de la autenticación | Eloisa González Rubio |
 | `US-524a` | Célula 5 | Monitoreo y logs de API y Postgres | Alejandro Velázquez Mendoza |
 | `US-524b` | Célula 5 | Monitoreo de DAGs y jobs de entrenamiento | Edgar Ulises Jiménez López |
 | `US-524c` | Célula 5 | Monitoreo de Superset y del agente | Edward Ulysses Ruiz Bustillos |

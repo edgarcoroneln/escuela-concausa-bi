@@ -82,10 +82,10 @@ alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 | US-213 | Construir DB-05 Análisis por driver y DB-08 Explorador del cubo | Monserrat Xcaret Miranda Olivas | Medio | S4 | REQ-002 |
 | US-214b | Filtros dinámicos y drill-down en DB-05 y DB-08 | Monserrat Xcaret Miranda Olivas | Medio | S5 | REQ-002 |
 | US-215b | Pruebas de usabilidad y accesibilidad de DB-05 y DB-08 | Monserrat Xcaret Miranda Olivas | Medio | S5 | REQ-002 |
-| US-221 | Construir los gráficos base de KPIs | Eloisa González Rubio | Bajo | S3 | REQ-002 |
-| US-222 | Construir DB-07 Calidad y cobertura de datos | Eloisa González Rubio | Bajo | S4 | REQ-002 |
-| US-223 | Construir DB-10 Monitor del pipeline | Eloisa González Rubio | Bajo | S5 | REQ-002 |
-| US-224 | Documentar el manual de usuario de los dashboards | Eloisa González Rubio | Bajo | S5 | REQ-002 |
+| US-221 | Construir los gráficos base de KPIs | Oscar Antonio Quiroz Lázaro | Bajo | S3 | REQ-002 |
+| US-222 | Construir DB-07 Calidad y cobertura de datos | Oscar Antonio Quiroz Lázaro | Bajo | S4 | REQ-002 |
+| US-223 | Construir DB-10 Monitor del pipeline | Oscar Antonio Quiroz Lázaro | Bajo | S5 | REQ-002 |
+| US-224 | Documentar el manual de usuario de los dashboards | Oscar Antonio Quiroz Lázaro | Bajo | S5 | REQ-002 |
 
 ---
 
@@ -126,9 +126,9 @@ alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 | US-414 | Documentar la API en OpenAPI y publicar la colección | Christian Imanol Ruiz Hurtado | Medio | S5 | REQ-004 |
 | US-415 | Implementar el contrato de datos entre API y modelos | Juan Carlos Macías Mayen | Medio | S4 | REQ-004 ᵃ |
 | US-416 | Implementar cache y manejo de errores de inferencia | Juan Carlos Macías Mayen | Medio | S5 | REQ-004 ᵃ |
-| US-421 | Implementar el esqueleto de FastAPI y healthcheck | Oscar Antonio Quiroz Lázaro | Bajo | S3 | REQ-004 |
-| US-422 | Escribir pruebas unitarias y de integración de la API | Oscar Antonio Quiroz Lázaro | Bajo | S4 | REQ-004 |
-| US-423 | Pruebas de seguridad de la autenticación | Oscar Antonio Quiroz Lázaro | Bajo | S5 | REQ-004 |
+| US-421 | Implementar el esqueleto de FastAPI y healthcheck | Eloisa González Rubio | Bajo | S3 | REQ-004 |
+| US-422 | Escribir pruebas unitarias y de integración de la API | Eloisa González Rubio | Bajo | S4 | REQ-004 |
+| US-423 | Pruebas de seguridad de la autenticación | Eloisa González Rubio | Bajo | S5 | REQ-004 |
 
 ᵃ El endpoint ML (US-412, US-415, US-416) vive en la Célula 4 (REQ-004) pero **también sostiene** el
 requisito de "3 modelos integrados vía API" (REQ-003).
@@ -214,7 +214,7 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Manuel Alejandro Serranía Reinada | C2 | Alto | 5 | US-201…US-205 |
 | Marina García del Buey | C2 | Medio | 4 | US-211a, US-212, US-214a, US-215a |
 | Monserrat Xcaret Miranda Olivas | C2 | Medio | 4 | US-211b, US-213, US-214b, US-215b |
-| Eloisa González Rubio | C2 | Bajo | 4 | US-221, US-222, US-223, US-224 |
+| Oscar Antonio Quiroz Lázaro | C2 | Bajo | 4 | US-221, US-222, US-223, US-224 |
 | Andrés González Habib | C3 | Alto | 4 | US-301, US-302, US-303, US-304a |
 | Héctor Rafael Morales Marbán | C3 | Medio | 3 | US-311, US-312, US-313 |
 | Estefany Lucero Hernández Loredo | C3 | Bajo | 3 | US-321, US-322, US-325 |
@@ -222,7 +222,7 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Karla Alejandra Monter Benitez | C4 | Alto | 4 | US-401, US-402, US-403, US-404 |
 | Christian Imanol Ruiz Hurtado | C4 | Medio | 3 | US-411, US-413, US-414 |
 | Juan Carlos Macías Mayen | C4 | Medio | 3 | US-412, US-415, US-416 |
-| Oscar Antonio Quiroz Lázaro | C4 | Bajo | 3 | US-421, US-422, US-423 |
+| Eloisa González Rubio | C4 | Bajo | 3 | US-421, US-422, US-423 |
 | Luis Téllez Domínguez | C5 | Medio | 5 | US-501…US-505 |
 | Alejandro Velázquez Mendoza | C5 | Bajo | 5 | US-521a, US-522a, US-523a, US-524a, US-525a |
 | Edgar Ulises Jiménez López | C5 | Bajo | 5 | US-521b, US-522b, US-523b, US-524b, US-525b |

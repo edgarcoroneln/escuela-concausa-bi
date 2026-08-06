@@ -3,15 +3,15 @@ id: AGENTCTX-ELOISA-GONZALEZ
 title: "Agent Context — Eloisa González Rubio"
 owner: "Eloisa González Rubio"
 status: approved
-traces_up: ["12_Roadmap_Sprints/Sprints/2-eloisa-gonzalez-rubio"]
-tags: [ai, agent-context, ownership, celula-2]
+traces_up: ["12_Roadmap_Sprints/Sprints/4-eloisa-gonzalez-rubio"]
+tags: [ai, agent-context, ownership, celula-4]
 ---
 
 # Agent Context — Eloisa González Rubio
 
 > El agente IA de esta persona **debe leer este archivo al inicio de cada sesión**.
 > Define qué puede tocar. Si va a modificar un archivo 🔴, **debe detenerse y avisar**.
-> → [[09_AI_Governance/AI_Agent_Governance]] · Plan: [[12_Roadmap_Sprints/Sprints/2-eloisa-gonzalez-rubio]]
+> → [[09_AI_Governance/AI_Agent_Governance]] · Plan: [[12_Roadmap_Sprints/Sprints/4-eloisa-gonzalez-rubio]]
 
 ---
 
@@ -20,19 +20,19 @@ tags: [ai, agent-context, ownership, celula-2]
 | | |
 |---|---|
 | **Nombre** | Eloisa González Rubio |
-| **Célula** | Celula 2 — Analytics & Business Intelligence |
+| **Célula** | Celula 4 — Backend, API & Seguridad |
 | **Nivel** | Bajo |
-| **Rol** | Analista BI jr · Graficos, mapas y KPIs |
-| **Tech Lead de la célula** | Manuel Alejandro Serranía Reinada |
-| **Quién revisa su código** | Manuel Alejandro Serranía Reinada (Tech Lead, compuerta técnica) → Edgar Coronel (PM, compuerta de proceso) |
-| **Requisito(s) que cubre** | REQ-002 (Frontend BI interactivo) |
+| **Rol** | Desarrolladora jr · Pruebas de API |
+| **Tech Lead de la célula** | Karla Alejandra Monter Benitez |
+| **Quién revisa su código** | Karla Alejandra Monter Benitez (Tech Lead, compuerta técnica) → Edgar Coronel (PM, compuerta de proceso) |
+| **Requisito(s) que cubre** | REQ-004 (Backend, API y autenticación avanzada) |
 
 ---
 
 ## 2. 🟢 Alcance permitido (crear y modificar con IA libremente)
 
-- `superset/**` (dashboards y capa semántica)
-- documentación/manual de los 10 dashboards
+- `src/api/**`
+- `03_Architecture/API_Specification.md`
 - Su propio plan de sprint y su DevLog en `_DevLog/`.
 
 ---
@@ -41,9 +41,9 @@ tags: [ai, agent-context, ownership, celula-2]
 
 | Archivo / artefacto | Dueño | Protocolo |
 |---|---|---|
-| Cubos de Gold | Diana Alvarez (C1) | consumir el contrato; pedir cambios de grano |
-| Tabla de predicciones | Andrés González Habib (C3) | acordar formato de salida |
-| Contrato de datos de la API | Karla Monter (C4) | alinear campos que consumen los dashboards |
+| Endpoints de datos sobre Gold | Diana Alvarez (C1) | depende del esquema de Gold |
+| Endpoints de inferencia ML | Andrés González Habib (C3) | depende del contrato de modelos |
+| Módulo de auth del frontend | Manuel Serranía (C2) | exponer login/roles para vistas protegidas |
 | `02_Requirements/Traceability_Matrix.md` | PM — Edgar Coronel | actualiza su fila; el PM consolida |
 | `_index.md` de las carpetas que toca | PM / dueño de carpeta | registrar cada artefacto nuevo |
 
@@ -54,11 +54,11 @@ tags: [ai, agent-context, ownership, celula-2]
 | Ruta / área | Dueño | A quién pedir |
 |---|---|---|
 | `src/ingesta/**`, `dbt/**`, `dags/**` | C1 — Diana Alvarez | pedir a Data Eng |
-| `src/api/**` | C4 — Karla Monter | pedir a Backend |
 | `src/modelos/**` | C3 — Andrés González Habib | pedir a ML |
+| `superset/**` | C2 — Manuel Serranía | pedir a BI |
+| `04_UX_Design/**` | C2 / UX — Manuel Serranía | pedir a BI |
 | `.github/**` | C5 — Luis Téllez | pedir a DevOps |
 | `_Meta/**` | PM — Edgar Coronel | pedir al PO |
-| `07_Security/**` | C4 — Karla Monter | pedir a Seguridad |
 
 > **Regla 7 del vault:** todo cambio de **esquema, seguridad o CI/CD** requiere **revisión
 > humana explícita** antes de mergear.
@@ -69,10 +69,9 @@ tags: [ai, agent-context, ownership, celula-2]
 
 | ID | Sprint | Objetivo |
 |---|---|---|
-| US-221 | S3 | Series de matricula, distribucion por nivel educativo y tarjetas de KPI reutilizables. |
-| US-222 | S4 | Tablero de completitud por driver y mapa de vacios. Convierte una limitacion en un hallazgo de valor. |
-| US-223 | S5 | Estado de DAGs, frescura por fuente y ultima ingesta exitosa. |
-| US-224 | S5 | Guia con capturas para el pitch y el README. |
+| US-421 | S3 | Estructura del proyecto, `/health`, configuracion por variables de entorno y documentacion automatica. |
+| US-422 | S4 | pytest + httpx sobre los endpoints; cobertura minima segun Definition_of_Done. |
+| US-423 | S5 | Expiracion de token, acceso denegado por rol, rutas protegidas. Hallazgos como SEC-###. |
 
 ---
 
@@ -89,10 +88,10 @@ tags: [ai, agent-context, ownership, celula-2]
 
 ## 7. Contexto técnico específico
 
-- **10 dashboards** DB-01…DB-10 en **Apache Superset** (NO Power BI), sobre Gold acotado a 4 entidades.
-- Filtros por **ciclo, entidad y nivel educativo** que apliquen al conjunto de tableros.
-- DB-07 mapea `indice_completitud_drivers` y los territorios `SIN_DATO`.
-- Llaves de cruce: **CCT** y **clave INEGI de 5 dígitos**. Nunca mostrar cero donde hay `SIN_DATO`.
+- **FastAPI** con validación de entradas por **Pydantic**; no filtrar detalles internos en los errores.
+- **OAuth2 + JWT** (access + refresh tokens). **RBAC de 2 roles**: ciudadano/estándar vs analista/admin.
+- Contrato **OpenAPI** publicado en Semana 1 para desacoplar a C2 y C3 (trabajan contra mocks).
+- Consume Gold (C1) y modelos (C3); no reimplementa lógica de datos ni de ML.
 
 ---
 
@@ -103,20 +102,20 @@ tags: [ai, agent-context, ownership, celula-2]
 
 **Contexto para pegar al inicio de la sesión:**
 ```
-Soy de Analytics & BI en FARO. Construyo dashboards en Apache Superset (NO Power BI) sobre la capa Gold. Filtros por ciclo, entidad y nivel. Responde en espanol y explica tus decisiones de visualizacion.
+Soy de Backend, API & Seguridad en FASTAPI para FARO. OAuth2/JWT con refresh/access tokens, RBAC de 2 roles, validacion Pydantic, contrato OpenAPI. Responde en espanol con codigo comentado.
 ```
 
-**Dashboard Superset:**
+**FastAPI:**
 ```
-Diseña el dashboard <DB-xx> en Superset: KPIs, graficos e interactividad. Filtros por ciclo, entidad y nivel. Explica el mapeo a los cubos de Gold.
-```
-
-**Mapa:**
-```
-Propon como visualizar el mapa de riesgo territorial (coropletico municipal + puntos de escuela) evitando mostrar cero donde hay SIN_DATO.
+Implementa el endpoint <ruta> en FastAPI con validacion Pydantic y manejo de errores que no filtre trazas internas. Documenta en OpenAPI.
 ```
 
-**KPIs:**
+**OAuth2/JWT:**
 ```
-Define el catalogo de KPIs de matricula y riesgo, con su formula y el grano del cubo que los alimenta.
+Implementa OAuth2 con JWT (access + refresh) y renovacion de token. Explica el flujo y el manejo seguro de los tokens.
+```
+
+**RBAC:**
+```
+Implementa RBAC con 2 roles (ciudadano y analista/admin) y protege un endpoint segun rol. Escribe pruebas de 401/403/200.
 ```
