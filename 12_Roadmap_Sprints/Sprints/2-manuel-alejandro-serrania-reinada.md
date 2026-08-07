@@ -44,6 +44,15 @@ Tienes asignadas las historias de **mayor complejidad técnica y de diseño**. A
 
 ## 3. Tus historias de usuario
 
+### `US-206` · Construir FARO Web: shell, navegación y embebido de los 10 dashboards
+
+| | |
+|---|---|
+| **Sprint** | S4 — Lun 24 - Dom 30 ago |
+| **Objetivo** | Shell de la app Streamlit (`src/frontend/`) con navegación y los 10 dashboards de Superset embebidos por guest token con row-level security por rol. |
+| **Entregable** | Código en `src/frontend/` + documento en el vault con frontmatter + fila en la matriz |
+| **Cómo se entrega** | Rama `feat/manuel-serrania-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
+
 ### `US-201` · Disenar el portafolio de 10 dashboards y el catalogo de KPIs
 
 | | |

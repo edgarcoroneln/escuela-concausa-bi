@@ -44,6 +44,15 @@ Tienes asignadas las historias de **mayor complejidad técnica y de diseño**. A
 
 ## 3. Tus historias de usuario
 
+### `US-405` · Construir FARO Web: login/logout y vistas protegidas por rol
+
+| | |
+|---|---|
+| **Sprint** | S4 — Lun 24 - Dom 30 ago |
+| **Objetivo** | Login/logout con Google (OAuth2/JWT de US-402/US-403) en el frontend y vistas protegidas por rol ciudadano/analista. |
+| **Entregable** | Código en `src/frontend/` + documento en el vault con frontmatter + fila en la matriz |
+| **Cómo se entrega** | Rama `feat/christian-ruiz-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
+
 ### `US-401` · Definir y publicar el contrato de la API (OpenAPI)
 
 | | |

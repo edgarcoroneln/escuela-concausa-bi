@@ -14,3 +14,4 @@ tags: [moc, adr, architecture]
 | ADR | Título | Estado | Fecha |
 |---|---|---|---|
 | [[03_Architecture/ADRs/ADR-001-example]] | Ejemplo de decisión | accepted | 2026-08-01 |
+| [[03_Architecture/ADRs/ADR-002-frontend-streamlit]] | Frontend integrado en Streamlit sobre Superset + API | accepted | 2026-08-07 |

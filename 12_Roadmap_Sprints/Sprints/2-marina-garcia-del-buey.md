@@ -44,6 +44,15 @@ Tienes historias de **complejidad intermedia con autonomía**. Implementas pieza
 
 ## 3. Tus historias de usuario
 
+### `US-207` · Construir FARO Web: panel de ML interactivo
+
+| | |
+|---|---|
+| **Sprint** | S5 — Lun 31 ago - Dom 6 sep |
+| **Objetivo** | Formulario de parámetros que llama a la API de inferencia (US-412/US-415) y muestra la salida de los 3 modelos (ML-01/02/03) en FARO Web. |
+| **Entregable** | Código en `src/frontend/` + documento en el vault con frontmatter + fila en la matriz |
+| **Cómo se entrega** | Rama `feat/marina-buey-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
+
 ### `US-211a` · Modelar metricas y jerarquias de los cubos de DB-03 y DB-04
 
 | | |

@@ -16,7 +16,7 @@ tags: [requirements, user-stories, catalogo]
 > Cada `US-###` mapea al `REQ-###` que satisface (ver [[02_Requirements/Requirements_Detailed]]).
 > → [[02_Requirements/_index]]
 
-**87 historias únicas · 87 asignaciones** (1 responsable por historia). Las historias que antes
+**91 historias únicas · 91 asignaciones** (1 responsable por historia). Las historias que antes
 compartían ID entre varias personas se **partieron con sufijo de letra** (a/b/c), dando a cada quien un
 alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 
@@ -86,6 +86,8 @@ alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 | US-222 | Construir DB-07 Calidad y cobertura de datos | Oscar Antonio Quiroz Lázaro | Bajo | S4 | REQ-002 |
 | US-223 | Construir DB-10 Monitor del pipeline | Oscar Antonio Quiroz Lázaro | Bajo | S5 | REQ-002 |
 | US-224 | Documentar el manual de usuario de los dashboards | Oscar Antonio Quiroz Lázaro | Bajo | S5 | REQ-002 |
+| US-206 | Construir FARO Web: shell, navegación y embebido de los 10 dashboards | Manuel Alejandro Serranía Reinada | Alto | S4 | REQ-002 |
+| US-207 | Construir FARO Web: panel de ML interactivo (parámetros → inferencia de los 3 modelos) | Marina García del Buey | Medio | S5 | REQ-002 |
 
 ---
 
@@ -109,6 +111,7 @@ alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 | US-304b | Construir la capa de recuperación del agente (RAG: ChromaDB + embeddings) | Carlos Guillermo Mayorga Tapia | Bajo | S5 | REQ-006 |
 | US-323 | Construir el set de evaluación del agente | Carlos Guillermo Mayorga Tapia | Bajo | S5 | REQ-006 |
 | US-324 | Documentar las fichas de modelo (model cards) de ML-01, ML-02 y ML-03 | Carlos Guillermo Mayorga Tapia | Bajo | S5 | REQ-003 |
+| US-305 | Integrar FARO Web: widget de chat del agente (RAG) | Andrés González Habib | Alto | S5 | REQ-006 |
 
 ---
 
@@ -129,6 +132,7 @@ alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 | US-421 | Implementar el esqueleto de FastAPI y healthcheck | Eloisa González Rubio | Bajo | S3 | REQ-004 |
 | US-422 | Escribir pruebas unitarias y de integración de la API | Eloisa González Rubio | Bajo | S4 | REQ-004 |
 | US-423 | Pruebas de seguridad de la autenticación | Eloisa González Rubio | Bajo | S5 | REQ-004 |
+| US-405 | Construir FARO Web: login/logout y vistas protegidas por rol | Christian Imanol Ruiz Hurtado | Alto | S4 | REQ-004 |
 
 ᵃ El endpoint ML (US-412, US-415, US-416) vive en la Célula 4 (REQ-004) pero **también sostiene** el
 requisito de "3 modelos integrados vía API" (REQ-003).
@@ -175,10 +179,10 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | S1 | Lun 3 – Dom 9 ago | 12 |
 | S2 | Lun 10 – Dom 16 ago | 7 |
 | S3 | Lun 17 – Dom 23 ago | 20 |
-| S4 | Lun 24 – Dom 30 ago | 20 |
-| S5 | Lun 31 ago – Dom 6 sep | 23 |
+| S4 | Lun 24 – Dom 30 ago | 22 |
+| S5 | Lun 31 ago – Dom 6 sep | 25 |
 | S6 | Lun 7 – Mar 8 sep | 5 |
-| **Total** | | **87** |
+| **Total** | | **91** |
 
 ---
 
@@ -187,13 +191,13 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | REQ | Módulo de rúbrica | Puntos | # historias | Cubierto |
 |---|---|---|---|---|
 | REQ-001 | Data Engineering y pipelines multi-fuente | 2.5 | 18 | ✅ |
-| REQ-002 | Frontend BI interactivo | 2.5 | 17 | ✅ |
+| REQ-002 | Frontend BI interactivo | 2.5 | 19 | ✅ |
 | REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 10 (+3 de apoyo ᵃ) | ✅ |
-| REQ-004 | Backend, API y autenticación avanzada | 1.5 | 13 | ✅ |
+| REQ-004 | Backend, API y autenticación avanzada | 1.5 | 14 | ✅ |
 | REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 13 | ✅ |
-| REQ-006 | Agente conversacional | 0.5 | 3 | ✅ |
+| REQ-006 | Agente conversacional | 0.5 | 4 | ✅ |
 | REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 13 | ✅ |
-| **Total** | | **10.0** | **87** | **7/7** |
+| **Total** | | **10.0** | **91** | **7/7** |
 
 **Ningún REQ quedó sin historias.** Los 7 módulos de la rúbrica tienen cobertura.
 
@@ -211,23 +215,23 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Deni Garrido Fragoso | C1 | Medio | 4 | US-111, US-112, US-113, US-114 |
 | Emilio Galnares Ruiz | C1 | Bajo | 4 | US-121a, US-122a, US-123a, US-124a |
 | Luis Enrique García Vázquez | C1 | Bajo | 4 | US-121b, US-122b, US-123b, US-124b |
-| Manuel Alejandro Serranía Reinada | C2 | Alto | 5 | US-201…US-205 |
-| Marina García del Buey | C2 | Medio | 4 | US-211a, US-212, US-214a, US-215a |
+| Manuel Alejandro Serranía Reinada | C2 | Alto | 6 | US-201…US-205, US-206 |
+| Marina García del Buey | C2 | Medio | 5 | US-211a, US-212, US-214a, US-215a, US-207 |
 | Monserrat Xcaret Miranda Olivas | C2 | Medio | 4 | US-211b, US-213, US-214b, US-215b |
 | Eloisa González Rubio | C4 | Bajo | 3 | US-421, US-422, US-423 |
-| Andrés González Habib | C3 | Alto | 4 | US-301, US-302, US-303, US-304a |
+| Andrés González Habib | C3 | Alto | 5 | US-301, US-302, US-303, US-304a, US-305 |
 | Héctor Rafael Morales Marbán | C3 | Medio | 3 | US-311, US-312, US-313 |
 | Estefany Lucero Hernández Loredo | C3 | Bajo | 3 | US-321, US-322, US-325 |
 | Carlos Guillermo Mayorga Tapia | C3 | Bajo | 3 | US-304b, US-323, US-324 |
 | Karla Alejandra Monter Benitez | C4 | Medio | 3 | US-411, US-413, US-414 |
-| Christian Imanol Ruiz Hurtado | C4 | Alto | 4 | US-401, US-402, US-403, US-404 |
+| Christian Imanol Ruiz Hurtado | C4 | Alto | 5 | US-401, US-402, US-403, US-404, US-405 |
 | Juan Carlos Macías Mayen | C4 | Medio | 3 | US-412, US-415, US-416 |
 | Oscar Antonio Quiroz Lázaro | C2 | Bajo | 4 | US-221, US-222, US-223, US-224 |
 | Luis Téllez Domínguez | C5 | Medio | 5 | US-501…US-505 |
 | Alejandro Velázquez Mendoza | C5 | Bajo | 5 | US-521a, US-522a, US-523a, US-524a, US-525a |
 | Edgar Ulises Jiménez López | C5 | Bajo | 5 | US-521b, US-522b, US-523b, US-524b, US-525b |
 | Edward Ulysses Ruiz Bustillos | C5 | Bajo | 5 | US-521c, US-522c, US-523c, US-524c, US-525c |
-| **Total** | | | **87** | |
+| **Total** | | | **91** | |
 
 > **Célula 3 rebalanceada:** al partir US-304 (diseño → Andrés / recuperación → Carlos) y añadir
 > US-325 (Estefany) y US-324 (Carlos), Estefany y Carlos quedan con **3 historias cada uno**, en línea

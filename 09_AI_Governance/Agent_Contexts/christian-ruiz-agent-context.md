@@ -31,6 +31,7 @@ tags: [ai, agent-context, ownership, celula-4]
 
 ## 2. 🟢 Alcance permitido (crear y modificar con IA libremente)
 
+- `src/frontend/**` (FARO Web: capa web integrada — shell, panel ML, chat, auth)
 - `src/api/**`
 - `03_Architecture/API_Specification.md`
 - `07_Security/**` (secretos y políticas)

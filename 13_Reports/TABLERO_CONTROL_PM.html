@@ -102,25 +102,25 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-08-07T19:16:42+00:00",
+    "generated_at": "2026-08-07T20:06:51+00:00",
     "generated_date": "2026-08-07",
-    "commit": "e9b6eb8",
-    "branch": "fix/edgar-remediacion-sprint1",
+    "commit": "8087dc8",
+    "branch": "feat/edgar-faro-web-andamiaje",
     "working_tree": "modified",
-    "source_fingerprint": "3f08a7736286",
+    "source_fingerprint": "4b94c71d56fc",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.2"
   },
   "summary": {
-    "total": 87,
+    "total": 91,
     "done": 0,
-    "planned": 81,
+    "planned": 85,
     "in_progress": 0,
     "in_review": 6,
     "blocked": 0,
     "wip": 6,
-    "progress": 4.5,
+    "progress": 4.3,
     "days_to_demo": 33
   },
   "delivery": {
@@ -828,6 +828,40 @@
       "age_days": 0
     },
     {
+      "id": "US-206",
+      "title": "Construir FARO Web: shell, navegación y embebido de los 10 dashboards",
+      "owner": "Manuel Alejandro Serranía Reinada",
+      "level": "Alto",
+      "sprint": "S4",
+      "req": "REQ-002",
+      "cell": "Célula 2 · Analytics & Business Intelligence",
+      "status": "planned",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "—",
+      "updated": "—",
+      "objective": "Shell de la app Streamlit (src/frontend/) con navegación y los 10 dashboards de Superset embebidos por guest token con row-level security por rol.",
+      "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    },
+    {
+      "id": "US-207",
+      "title": "Construir FARO Web: panel de ML interactivo (parámetros → inferencia de los 3 modelos)",
+      "owner": "Marina García del Buey",
+      "level": "Medio",
+      "sprint": "S5",
+      "req": "REQ-002",
+      "cell": "Célula 2 · Analytics & Business Intelligence",
+      "status": "planned",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "—",
+      "updated": "—",
+      "objective": "Formulario de parámetros que llama a la API de inferencia (US-412/US-415) y muestra la salida de los 3 modelos (ML-01/02/03) en FARO Web.",
+      "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    },
+    {
       "id": "US-301",
       "title": "Diseñar la estrategia de modelado y el protocolo de validación",
       "owner": "Andrés González Habib",
@@ -1049,6 +1083,23 @@
       "age_days": 0
     },
     {
+      "id": "US-305",
+      "title": "Integrar FARO Web: widget de chat del agente (RAG)",
+      "owner": "Andrés González Habib",
+      "level": "Alto",
+      "sprint": "S5",
+      "req": "REQ-006",
+      "cell": "Célula 3 · Machine Learning & Agente IA",
+      "status": "planned",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "—",
+      "updated": "—",
+      "objective": "Widget de chat conectado a la API del agente RAG (US-304/US-323), integrado en FARO Web.",
+      "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    },
+    {
       "id": "US-401",
       "title": "Definir y publicar el contrato de la API (OpenAPI)",
       "owner": "Christian Imanol Ruiz Hurtado",
@@ -1267,6 +1318,23 @@
       "updated": "—",
       "objective": "Expiracion de token, acceso denegado por rol, rutas protegidas. Hallazgos como SEC-###.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    },
+    {
+      "id": "US-405",
+      "title": "Construir FARO Web: login/logout y vistas protegidas por rol",
+      "owner": "Christian Imanol Ruiz Hurtado",
+      "level": "Alto",
+      "sprint": "S4",
+      "req": "REQ-004",
+      "cell": "Célula 4 · Backend, API & Seguridad",
+      "status": "planned",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "—",
+      "updated": "—",
+      "objective": "Login/logout con Google (OAuth2/JWT de US-402/US-403) en el frontend y vistas protegidas por rol ciudadano/analista.",
+      "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 0
     },
     {
@@ -1661,12 +1729,13 @@
         "US-301",
         "US-302",
         "US-303",
-        "US-304a"
+        "US-304a",
+        "US-305"
       ],
       "pr_count": null,
       "pr_open": 0,
       "pr_merged": 0,
-      "stories": 4,
+      "stories": 5,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -1720,16 +1789,17 @@
         "US-401",
         "US-402",
         "US-403",
-        "US-404"
+        "US-404",
+        "US-405"
       ],
       "pr_count": null,
       "pr_open": 0,
       "pr_merged": 0,
-      "stories": 4,
+      "stories": 5,
       "done": 0,
       "wip": 1,
       "blocked": 0,
-      "progress": 16.2
+      "progress": 13.0
     },
     {
       "name": "Deni Garrido Fragoso",
@@ -2143,12 +2213,13 @@
         "US-202",
         "US-203",
         "US-204",
-        "US-205"
+        "US-205",
+        "US-206"
       ],
       "pr_count": null,
       "pr_open": 0,
       "pr_merged": 0,
-      "stories": 5,
+      "stories": 6,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2170,6 +2241,7 @@
       "github_status": "Confirmado",
       "github_profile": "https://github.com/marina-gdb",
       "assigned_story_ids": [
+        "US-207",
         "US-211a",
         "US-212",
         "US-214a",
@@ -2178,7 +2250,7 @@
       "pr_count": null,
       "pr_open": 0,
       "pr_merged": 0,
-      "stories": 4,
+      "stories": 5,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2279,7 +2351,7 @@
         "Monserrat Xcaret Miranda Olivas",
         "Oscar Antonio Quiroz Lázaro"
       ],
-      "stories": 17,
+      "stories": 19,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2293,7 +2365,7 @@
         "Estefany Lucero Hernández Loredo",
         "Héctor Rafael Morales Marbán"
       ],
-      "stories": 13,
+      "stories": 14,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2307,11 +2379,11 @@
         "Juan Carlos Macías Mayen",
         "Karla Alejandra Monter Benitez"
       ],
-      "stories": 13,
+      "stories": 14,
       "done": 0,
       "wip": 1,
       "blocked": 0,
-      "progress": 5.0
+      "progress": 4.6
     },
     {
       "name": "Célula 5 · Cloud Infrastructure & DevOps",
@@ -2342,7 +2414,7 @@
       "req": "REQ-002",
       "name": "Analytics & BI",
       "points": 2.5,
-      "stories": 17,
+      "stories": 19,
       "done": 0,
       "progress": 0.0,
       "secured_points": 0.0
@@ -2360,10 +2432,10 @@
       "req": "REQ-004",
       "name": "Backend/API/Auth",
       "points": 1.5,
-      "stories": 13,
+      "stories": 14,
       "done": 0,
-      "progress": 5.0,
-      "secured_points": 0.08
+      "progress": 4.6,
+      "secured_points": 0.07
     },
     {
       "req": "REQ-005",
@@ -2378,7 +2450,7 @@
       "req": "REQ-006",
       "name": "Agente",
       "points": 0.5,
-      "stories": 3,
+      "stories": 4,
       "done": 0,
       "progress": 0.0,
       "secured_points": 0.0
@@ -2734,9 +2806,9 @@
     },
     {
       "date": "2026-08-07",
-      "remaining": 87,
+      "remaining": 91,
       "done": 0,
-      "scope": 87,
+      "scope": 91,
       "wip": 6,
       "blocked": 0
     }

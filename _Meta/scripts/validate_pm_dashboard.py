@@ -36,8 +36,8 @@ def main(root_value: str = ".") -> int:
         fail("La entrega no traza al Plan Maestro", failures)
     stories = data.get("stories", [])
     ids = [story.get("id") for story in stories]
-    if len(ids) != 87:
-        fail(f"Se esperaban 87 US y hay {len(ids)}", failures)
+    if len(ids) != 91:
+        fail(f"Se esperaban 91 US y hay {len(ids)}", failures)
     if len(ids) != len(set(ids)):
         fail("Hay US duplicadas en el snapshot", failures)
     for story in stories:

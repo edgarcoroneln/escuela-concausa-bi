@@ -44,6 +44,15 @@ Tienes asignadas las historias de **mayor complejidad técnica y de diseño**. A
 
 ## 3. Tus historias de usuario
 
+### `US-305` · Integrar FARO Web: widget de chat del agente (RAG)
+
+| | |
+|---|---|
+| **Sprint** | S5 — Lun 31 ago - Dom 6 sep |
+| **Objetivo** | Widget de chat conectado a la API del agente RAG (US-304/US-323), integrado en FARO Web. |
+| **Entregable** | Código en `src/frontend/` + documento en el vault con frontmatter + fila en la matriz |
+| **Cómo se entrega** | Rama `feat/andres-gonzalez-...` → PR con plantilla → revisión del Tech Lead → merge a `main` |
+
 ### `US-301` · Disenar la estrategia de modelado y el protocolo de validacion
 
 | | |

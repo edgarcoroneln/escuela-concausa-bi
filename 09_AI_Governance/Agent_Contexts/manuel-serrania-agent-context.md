@@ -31,6 +31,7 @@ tags: [ai, agent-context, ownership, celula-2]
 
 ## 2. 🟢 Alcance permitido (crear y modificar con IA libremente)
 
+- `src/frontend/**` (FARO Web: capa web integrada — shell, panel ML, chat, auth)
 - `superset/**` (dashboards y capa semántica)
 - documentación/manual de los 10 dashboards
 - Su propio plan de sprint y su DevLog en `_DevLog/`.

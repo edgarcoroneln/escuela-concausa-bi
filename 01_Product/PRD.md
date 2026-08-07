@@ -210,6 +210,10 @@ el ciclo siguiente, para evitar fuga de información temporal. Registro y versio
 > y las fichas de sprint de la Célula 2 (reporte de Sprint 1), que era la versión vigente en ejecución.
 > **Pendiente de ratificación final de Manuel (TL C2)**; si ajusta algún nombre, se corrige en este mismo PR.
 
+### 12.1 Capa web integrada (FARO Web)
+
+Los 10 dashboards se integran en **FARO Web**, una app **Streamlit** (`src/frontend/`) que además hospeda el **panel de ML interactivo**, el **widget de chat del agente** y el **login/logout con vistas protegidas por rol**. Los dashboards se embeben por **guest token con row-level security**. Cubre el §3.5 del PRD de la materia. Historias: US-206, US-207 (C2), US-405 (C4), US-305 (C3). Ver [[03_Architecture/Frontend_Architecture]] y [[03_Architecture/ADRs/ADR-002-frontend-streamlit]].
+
 ---
 
 ## 13. Criterios de éxito (medibles)

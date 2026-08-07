@@ -140,8 +140,8 @@ def parse_stories(root: Path) -> list[dict[str, Any]]:
                     "cell": cell,
                 }
             )
-    if len(stories) != 87:
-        raise ValueError(f"Se esperaban 87 historias y se encontraron {len(stories)}")
+    if len(stories) != 91:
+        raise ValueError(f"Se esperaban 91 historias y se encontraron {len(stories)}")
     return stories
 
 

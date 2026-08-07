@@ -305,6 +305,8 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-415` | Célula 4 | Implementar el contrato de datos entre API y modelos | Juan Carlos Macías Mayen |
 | `US-422` | Célula 4 | Escribir pruebas unitarias y de integracion de la API | Eloisa González Rubio |
 | `US-504` | Célula 5 | Aprovisionar Cloud SQL, Artifact Registry y secretos | Luis Téllez Domínguez |
+| `US-206` | Célula 2 | FARO Web: shell y embebido de los 10 dashboards | Manuel Alejandro Serranía Reinada |
+| `US-405` | Célula 4 | FARO Web: login/logout y vistas por rol | Christian Imanol Ruiz Hurtado |
 
 ### S5 · Lun 31 ago - Dom 6 sep
 **Foco: Agente RAG, integracion y CODE FREEZE**
@@ -334,6 +336,8 @@ perfil Bajo. Quien no tenía nivel especificado se consideró Bajo.
 | `US-524a` | Célula 5 | Monitoreo y logs de API y Postgres | Alejandro Velázquez Mendoza |
 | `US-524b` | Célula 5 | Monitoreo de DAGs y jobs de entrenamiento | Edgar Ulises Jiménez López |
 | `US-524c` | Célula 5 | Monitoreo de Superset y del agente | Edward Ulysses Ruiz Bustillos |
+| `US-207` | Célula 2 | FARO Web: panel de ML interactivo | Marina García del Buey |
+| `US-305` | Célula 3 | FARO Web: widget de chat del agente | Andrés González Habib |
 
 ### S6 · Lun 7 - Mar 8 sep
 **Foco: Pruebas finales, seguridad, GCP y ensayo**
