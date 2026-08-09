@@ -29,6 +29,7 @@ Toda sesión con IA **debe** generar una entrada de DevLog **antes del push** (p
 | [[_DevLog/2026-08-06-edgar-swap-celulas-liderazgo-c4\|2026-08-06]] | Re-aplicado swap Eloisa/Oscar, liderazgo C4 (Christian↔Karla) y pestañas Plan general + Foco por sprint | Edgar Edmundo Coronel Navarrete | Claude Code / opus-4-8 | US-003, US-004, US-CATALOG, PLAN-MAESTRO, DOC-ONBOARD, REQ-007, RPT-PM-SPEC, TEST-002 |
 | [[_DevLog/2026-08-07-edgar-remediacion-sprint1\|2026-08-07]] | Paquete único de correcciones: issue #4 (lint .venv, URL, requirements, correo), catálogo DB, GitHub de Oscar y pestaña Calendario | Edgar Edmundo Coronel Navarrete | Claude Code / opus-4-8 | US-003, US-004, REQ-007, DOC-ONBOARD, DOC-ENVSETUP, PRD, US-CATALOG, RPT-PM-SPEC, TEST-002 |
 | [[_DevLog/2026-08-07-edgar-andamiaje-faro-web\|2026-08-07]] | Andamiaje de FARO Web (Streamlit): 4 US nuevas (91 US), ADR-002, Frontend_Architecture, esqueleto y trazabilidad | Edgar Edmundo Coronel Navarrete | Claude Code / opus-4-8 | US-206, US-207, US-305, US-405, REQ-002, REQ-004, REQ-006, ADR-002, DOC-FRONTEND-ARCH |
+| [[_DevLog/2026-08-09-andres-gonzalez-vault-lint-windows\|2026-08-09]] | Fix vault_lint.py compatible con Windows: `_norm()` + `EXCLUDED_DIRS` + `.github`; repo actualizado con 9 commits del remoto | Andrés González Habib | GitHub Copilot / claude-sonnet-4-6 | META-RULES |
 
 ## Campos del frontmatter
 | Campo | Obligatorio |
