@@ -26,16 +26,23 @@ FM_EXEMPT = {"README.md", "PULL_REQUEST_TEMPLATE.md"}
 # Directorios que NO son artefactos del vault: salida generada (graphify-out/) o ambientes y
 # cachés locales (ya en .gitignore). Se excluyen del linter para no reportar, p. ej., cada
 # LICENSE.md dentro de .venv/site-packages/ como problema del vault.
+# .github/ contiene configuración de GitHub, no artefactos del vault.
 EXCLUDED_DIRS = (
-    "/.git", "/.obsidian", "/graphify-out",
+    "/.git", "/.obsidian", "/graphify-out", "/.github",
     "/.venv", "/venv", "/node_modules",
     "/.pytest_cache", "/.ruff_cache", "/__pycache__",
 )
 
 
+def _norm(path):
+    """Normaliza separadores a / para comparaciones multiplataforma (Windows/Unix)."""
+    return path.replace(os.sep, "/")
+
+
 def find_md(root):
     for dirpath, _, files in os.walk(root):
-        if any(d in dirpath for d in EXCLUDED_DIRS):
+        # _norm() garantiza que las comparaciones con EXCLUDED_DIRS funcionen en Windows
+        if any(d in _norm(dirpath) for d in EXCLUDED_DIRS):
             continue
         for f in files:
             if f.endswith(".md"):
@@ -65,7 +72,7 @@ def main(root="."):
         if not text.lstrip().startswith("---") and os.path.basename(p) not in FM_EXEMPT:
             no_fm.append(p)
         # IDs: se ignoran las plantillas (_Templates/) porque son ejemplares con IDs placeholder
-        if "/_Templates/" not in p:
+        if "/_Templates/" not in _norm(p):
             for m in ID_RE.finditer(text.split("---")[1] if "---" in text else ""):
                 ids.setdefault(m.group(1), []).append(p)
         for m in WIKILINK.finditer(strip_code(text)):
