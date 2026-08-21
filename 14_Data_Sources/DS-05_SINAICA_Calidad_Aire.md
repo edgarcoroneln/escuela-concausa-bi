@@ -100,6 +100,11 @@ tags: [data-source, bronze, driver-d6, ingesta-continua, cobertura-parcial]
   lon `-102.295825`, `fechaIniDatos: 2016-01-01`
 
 ## 10. Riesgos conocidos
+- **Nuevo (2026-08-21, confirmado con Great Expectations — ver `TEST-010`):** ~6.3% de las
+  estaciones del catálogo (24/384) traen `latitud`/`longitud` inutilizables: 3 con nulo genuino y
+  21 con el placeholder literal `"0.0"` en vez de un `SIN_DATO` explícito. **Relevante para la
+  interpolación IDW de `US-105`:** si no se filtran antes de interpolar, arrastran coordenadas
+  `(0,0)` (frente a la costa de África) hacia el cálculo de escuelas cercanas.
 - **Nuevo (2026-08-14):** los endpoints no son una API REST/JSON documentada — son los mismos que
   usa el sitio web internamente (confirmados vía ingeniería inversa del paquete `rsinaica`, no vía
   documentación oficial de INECC). Pueden cambiar sin aviso; el extractor de `US-122b` debe

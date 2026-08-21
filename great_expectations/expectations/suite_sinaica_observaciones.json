@@ -1,0 +1,236 @@
+{
+  "expectations": [
+    {
+      "id": "38e0ed3e-121b-4eb4-9b97-891549bd109b",
+      "kwargs": {
+        "column": "id_estacion"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "ce99f195-ae4f-418d-b6e7-ef2417e10aaa",
+      "kwargs": {
+        "column": "parametro"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "9b1e2501-317e-4c26-a6d6-289546fa77a2",
+      "kwargs": {
+        "column": "fecha"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "a2314e84-9e97-4a5c-bf5c-08a9da9e2553",
+      "kwargs": {
+        "column": "hora"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "3f9b77bb-e2a3-4606-9ff6-e51124e80922",
+      "kwargs": {
+        "column": "valor"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "9ee8f103-17e0-4042-a461-a8fd44d3698b",
+      "kwargs": {
+        "column": "hora",
+        "type_": "int64"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    },
+    {
+      "id": "013a6bec-2f75-4de3-9fb8-760738a33129",
+      "kwargs": {
+        "column": "valor",
+        "type_": "float64"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_of_type"
+    },
+    {
+      "id": "aae7a378-fa0b-43d5-b49c-8ac5e7be3f4d",
+      "kwargs": {
+        "column": "hora",
+        "max_value": 23.0,
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "543ce0f6-a516-47cf-9c36-0b2a58e747bc",
+      "kwargs": {
+        "column": "valor",
+        "min_value": 0.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "8de72b5d-466b-498e-b37d-177db739039f",
+      "kwargs": {
+        "column": "val",
+        "value_set": [
+          0,
+          1
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "bd04bc7b-7825-4cf2-9a9a-3f1e455b4196",
+      "kwargs": {
+        "column": "parametro",
+        "value_set": [
+          "O3",
+          "CO",
+          "NO2",
+          "SO2",
+          "PM2.5",
+          "PM10"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "606c3e5d-37fc-4d06-9309-4198aff41831",
+      "kwargs": {
+        "column_list": [
+          "id_estacion",
+          "parametro",
+          "fecha",
+          "hora"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_compound_columns_to_be_unique"
+    },
+    {
+      "id": "f31d3d95-42e7-4686-b454-0ce26b602132",
+      "kwargs": {
+        "column": "valor",
+        "condition_parser": "pandas",
+        "max_value": 0.5,
+        "min_value": 0.0,
+        "row_condition": {
+          "pass_through_filter": "parametro == \"O3\"",
+          "type": "pass_through"
+        }
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "7e3a589d-0dff-4cb8-b7ec-f05b723ac470",
+      "kwargs": {
+        "column": "valor",
+        "condition_parser": "pandas",
+        "max_value": 50.0,
+        "min_value": 0.0,
+        "row_condition": {
+          "pass_through_filter": "parametro == \"CO\"",
+          "type": "pass_through"
+        }
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "e42a8b4b-d5c6-4685-8a18-977818ecc361",
+      "kwargs": {
+        "column": "valor",
+        "condition_parser": "pandas",
+        "max_value": 1.0,
+        "min_value": 0.0,
+        "row_condition": {
+          "pass_through_filter": "parametro == \"NO2\"",
+          "type": "pass_through"
+        }
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "a4384918-965d-4df2-901b-0f91c9b5ad28",
+      "kwargs": {
+        "column": "valor",
+        "condition_parser": "pandas",
+        "max_value": 1.0,
+        "min_value": 0.0,
+        "row_condition": {
+          "pass_through_filter": "parametro == \"SO2\"",
+          "type": "pass_through"
+        }
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "7963e762-a4dd-4718-9c73-f8d370e2693c",
+      "kwargs": {
+        "column": "valor",
+        "condition_parser": "pandas",
+        "max_value": 1000.0,
+        "min_value": 0.0,
+        "row_condition": {
+          "pass_through_filter": "parametro == \"PM2.5\"",
+          "type": "pass_through"
+        }
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    },
+    {
+      "id": "7b1c5485-e63d-48e0-b8ae-bfd60e36af5f",
+      "kwargs": {
+        "column": "valor",
+        "condition_parser": "pandas",
+        "max_value": 1200.0,
+        "min_value": 0.0,
+        "row_condition": {
+          "pass_through_filter": "parametro == \"PM10\"",
+          "type": "pass_through"
+        }
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_between"
+    }
+  ],
+  "id": "af3e45ce-7cd6-4a13-92a7-78be196c0b6c",
+  "meta": {
+    "great_expectations_version": "1.21.0"
+  },
+  "name": "suite_sinaica_observaciones",
+  "notes": null
+}

@@ -30,6 +30,7 @@ tags: [moc, qa, automation]
 | [[06_Quality_Testing/Automated/Evaluacion_Modelos\|TEST-007]] | US-312 · REQ-003 · AC-003.2 | unit | implemented |
 | TEST-008 | US-104 · US-311 · REQ-001/003 | contrato | implemented |
 | [[15_ML_Models/Target_Hibrido\|TEST-009]] | US-311 · US-313 · DEC-007 · RISK-007 | unit | implemented |
+| [[06_Quality_Testing/Automated/Great_Expectations_DS05_Sinaica\|TEST-010]] | US-123b · REQ-001 | data quality | implemented |
 
 `TEST-002` ejecuta `python3 _Meta/scripts/validate_pm_dashboard.py .` y verifica 87 US únicas,
 21 personas, usuarios GitHub no duplicados, cobertura exacta de US por integrante, conteos de PR
@@ -63,6 +64,12 @@ el CI no instala.
 DEC-007. La prueba central es `test_no_cuenta_la_ausencia_como_cero`: al promediar los drivers de un
 municipio, una escuela sin dato queda fuera del cálculo en vez de arrastrar el promedio hacia cero.
 Un `fillna(0)` antes del promedio hace fallar la prueba.
+
+`TEST-010` (`src/ingesta/validacion_sinaica.py`) es la primera suite de Great Expectations real del
+proyecto (GE 1.21, API declarativa). Valida Bronze de DS-05 SINAICA y ya encontró un hallazgo real:
+~6.3% de las estaciones traen coordenadas inutilizables (nulo genuino o el placeholder `"0.0"` de
+SINAICA), relevante para la interpolación IDW de `US-105`. Ver
+[[06_Quality_Testing/Automated/Great_Expectations_DS05_Sinaica]] para el detalle y cómo reproducir.
 
 ## Convenciones
 - Nombrar tests por comportamiento, no por implementación.
