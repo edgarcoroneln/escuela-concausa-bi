@@ -201,8 +201,10 @@ def construir_recomendaciones(
 ) -> pd.DataFrame:
     """Genera las filas de `gold.recomendaciones` a partir del driver dominante.
 
-    El driver **se recibe, no se calcula**: es salida de ML-02 (US-302, Andrés), que aún no existe.
-    Cuando aterrice, se conecta su predicción aquí y el resto no cambia.
+    El driver **se recibe, no se calcula**: es salida de ML-02 (US-302, Andrés). Desde el PR #58
+    `construir_recomendaciones_ml02()` conecta esa salida aquí; esta función se mantiene genérica
+    para poder publicar recomendaciones desde cualquier origen de driver, incluido un diagnóstico
+    manual.
 
     Args:
         predicciones: salida de `construir_predicciones` (aporta `cct`, `id_ciclo`, riesgo).
