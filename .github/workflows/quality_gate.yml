@@ -1,0 +1,34 @@
+name: PR Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Descargar código
+        uses: actions/checkout@v3
+
+      - name: 📝 Verificar que la plantilla de PR esté completa
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -q "\[ \]"; then
+            echo "❌ Error: Tienes casillas sin marcar '[ ]' en la plantilla del Pull Request."
+            echo "Por favor, revisa tu PR y marca todas las casillas con [x] (o bórralas si no aplican)."
+            exit 1
+          else
+            echo "✅ Plantilla completada correctamente."
+          fi
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 🔍 Ejecutar vault_lint.py
+        run: python _Meta/scripts/vault_lint.py .
