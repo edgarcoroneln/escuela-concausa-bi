@@ -12,6 +12,13 @@ sources:
       - name: cct
         identifier: "{{ var('bronze_cct_identifier') }}"
         description: "DS-02 · SEP Catálogo CCT. Identidad y georreferencia nacional de cada escuela."
+      
+      - name: formato911_historico
+        identifier: "{{ var('bronze_formato911_historico_identifier', 'formato911_historico') }}"
+        description: >
+          DS-01 · SEP Formato 911, distribución HISTÓRICA multi-ciclo (2019-2020..2024-2025).
+          Aislada de `formato911` (ciclo único 2024-2025) — mitigación de RISK-007/DEC-007, ver
+          src/ingesta/extractor_formato911_historico.py. Grano: cct × ciclo × turno.
 
       - name: cemabe
         identifier: "{{ var('bronze_cemabe_identifier', 'cemabe_2013') }}"

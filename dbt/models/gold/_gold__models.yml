@@ -245,3 +245,35 @@ models:
           - accepted_values:
               arguments:
                 values: ['OK', 'SIN_DATO']
+  
+
+  
+  - name: matricula_municipio_nivel
+    description: >
+      gold.matricula_municipio_nivel -- agregado municipio x nivel x ciclo de
+      silver.matricula_historica (RISK-007/DEC-007), construido para alimentar
+      unir_target() en src/modelos/target_hibrido.py (PR #56, Hector Morales).
+      Acotado a SCOPE_ENTIDADES (CDMX, Edomex, Nuevo León, Jalisco).
+    columns:
+      - name: cve_mun
+        description: "Clave INEGI de municipio (5 dígitos)."
+        data_tests:
+          - not_null
+
+      - name: nivel
+        description: "Nivel educativo, normalizado a MAYÚSCULAS (match con gold.dim_escuela.nivel)."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['PREESCOLAR', 'PRIMARIA', 'SECUNDARIA']
+
+      - name: id_ciclo
+        description: "Ciclo escolar, formato AAAA-AAAA."
+        data_tests:
+          - not_null
+
+      - name: matricula_total
+        description: "Matrícula total del municipio x nivel en el ciclo (suma de todos los cct)."
+        data_tests:
+          - not_null

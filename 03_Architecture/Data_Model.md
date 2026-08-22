@@ -177,7 +177,7 @@ class Cobertura(str, Enum):
 
 class SilverMatricula(BaseModel):
     cct: StrictStr = Field(min_length=10, max_length=10)
-    id_ciclo: StrictStr                       # p. ej. "2023-2024"
+    ciclo: StrictStr                          # p. ej. "2023-2024"
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     matricula_total: StrictInt = Field(ge=0)
     _source: StrictStr

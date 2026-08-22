@@ -13,7 +13,23 @@ sources:
             description: "Ciclo escolar, formato AAAA-AAAA (ej. 2023-2024)"
           - name: cve_ent
             description: Clave INEGI de entidad (2 dígitos); usada para el filtro SCOPE_ENTIDADES
-
+      - name: matricula_historica
+        description: >
+          Matrícula histórica multi-ciclo por cct x ciclo, aislada de `matricula` (DS-01,
+          RISK-007/DEC-007), conformada en Silver.
+        columns:
+          - name: cct
+            description: Llave de escuela (10 caracteres)
+          - name: ciclo
+            description: "Ciclo escolar, formato AAAA-AAAA (ej. 2023-2024)"
+          - name: cve_ent
+            description: Clave INEGI de entidad (2 dígitos); usada para el filtro SCOPE_ENTIDADES
+          - name: cve_mun
+            description: Clave INEGI de municipio (5 dígitos)
+          - name: nivel
+            description: "Nivel educativo, normalizado a MAYÚSCULAS (match con dim_escuela.nivel)"
+          - name: matricula_total
+            description: "Matrícula total de la escuela en el ciclo (suma de turnos)"
       - name: cemabe
         description: >
           Infraestructura escolar a nivel CCT, conformada en Silver (DS-03). Alimenta D3

@@ -219,6 +219,33 @@ COLUMNAS_SINAICA_OBSERVACIONES = [
     "_ingested_at", "_source", "_source_url",
 ]
 
+# DS-01 Formato 911 -- distribucion HISTORICA multi-ciclo, AISLADA de bronze.formato911 (ver
+# src/ingesta/extractor_formato911_historico.py -- mitigacion de RISK-007/DEC-007). Grano:
+# cct x ciclo x turno -- un mismo cct puede reportar mas de un turno en el mismo ciclo, por
+# eso turno entra a la llave UNIQUE (a diferencia de bronze.formato911, que no lo necesita).
+DDL_BRONZE_FORMATO911_HISTORICO = """
+CREATE SCHEMA IF NOT EXISTS bronze;
+
+CREATE TABLE IF NOT EXISTS bronze.{tabla} (
+    cct             TEXT,
+    ciclo           TEXT,
+    turno           TEXT,
+    entidad         TEXT,
+    municipio       TEXT,
+    nivel           TEXT,
+    matricula_total INTEGER,
+    _ingested_at    TIMESTAMPTZ,
+    _source         TEXT,
+    _source_url     TEXT,
+    UNIQUE (_source, _ingested_at, cct, ciclo, turno)
+);
+"""
+
+COLUMNAS_FORMATO911_HISTORICO = [
+    "cct", "ciclo", "turno", "entidad", "municipio", "nivel", "matricula_total",
+    "_ingested_at", "_source", "_source_url",
+]
+
 def _dsn() -> str:
     return (
         f"host={os.environ.get('POSTGRES_HOST', 'localhost')} "
@@ -243,6 +270,10 @@ ESQUEMAS = {
     "sinaica_observaciones": (
         DDL_BRONZE_SINAICA_OBSERVACIONES, COLUMNAS_SINAICA_OBSERVACIONES,
         ["_source", "_ingested_at", "id_estacion", "parametro", "fecha", "hora"],
+    ),
+    "formato911_historico": (
+        DDL_BRONZE_FORMATO911_HISTORICO, COLUMNAS_FORMATO911_HISTORICO,
+        ["_source", "_ingested_at", "cct", "ciclo", "turno"],
     ),
 }
 

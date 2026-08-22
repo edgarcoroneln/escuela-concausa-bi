@@ -34,6 +34,45 @@ models:
       - name: grupos_total
         description: "Total de grupos reportados por escuela y ciclo."
 
+  - name: matricula_historica
+    description: >
+      Silver nacional de DS-01 Formato 911, distribución HISTÓRICA multi-ciclo (2019-2020..
+      2024-2025), tipada, homologada y sumada por turno a nivel CCT×ciclo. Aislada de
+      `matricula` (ciclo único 2024-2025) — mitigación de RISK-007/DEC-007.
+
+    columns:
+      - name: cct
+        description: "Clave de Centro de Trabajo homologada a 10 caracteres."
+        data_tests:
+          - not_null
+
+      - name: ciclo
+        description: "Ciclo escolar."
+        data_tests:
+          - not_null
+
+      - name: cve_ent
+        description: "Clave INEGI de entidad a 2 dígitos."
+        data_tests:
+          - not_null
+
+      - name: cve_mun
+        description: "Clave INEGI municipal homologada a 5 dígitos."
+        data_tests:
+          - not_null
+
+      - name: nivel
+        description: "Nivel educativo, normalizado a MAYÚSCULAS para hacer match con gold.dim_escuela.nivel (DS-02)."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['PREESCOLAR', 'PRIMARIA', 'SECUNDARIA']
+
+      - name: matricula_total
+        description: "Matrícula total de la escuela en el ciclo (suma de todos los turnos reportados)."
+        data_tests:
+          - not_null
+
   - name: escuela
     description: "Silver nacional de DS-02 Catálogo CCT, tipada, homologada y deduplicada a una fila por escuela."
 
