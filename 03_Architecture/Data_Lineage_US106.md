@@ -3,11 +3,11 @@ id: DOC-LINEAGE
 title: "Linaje de datos completo — fuente → dashboard (US-106)"
 owner: "Diana Aracely Alvarez Varela"
 status: draft
-version: "0.1"
+version: "0.2"
 source_of_truth: true
 traces_up: ["US-106", "03_Architecture/Data_Model", "REQ-001"]
 traces_down: ["02_Requirements/Traceability_Matrix"]
-last_reviewed: "2026-08-23"
+last_reviewed: "2026-08-26"
 tags: [architecture, lineage, freeze, us-106]
 ---
 
@@ -25,10 +25,11 @@ tags: [architecture, lineage, freeze, us-106]
 
 **`status: draft`** — no es un freeze todavía. US-106 vence en el **Sprint S5 (31 ago – 6 sep
 2026)**; el freeze real se declara el **6 de septiembre**, una vez cerrados los pendientes de la
-§4. Este documento se prepara ahora (23-ago) porque el esquema Gold ya está mayormente estable y
-no tiene sentido esperar al último día para documentar el linaje — pero **declarar el freeze hoy
-sería prematuro** mientras sigan abiertos BUG-009, la materialización de los 4 cubos de DEC-009 y
-el PR de Monserrat.
+§4. Este documento se preparó el 23-ago porque el esquema Gold ya estaba mayormente estable y
+no tenía sentido esperar al último día para documentar el linaje. Actualizado el 26-ago: BUG-009
+(DEC-011, PR #82) y el PR de Monserrat (#73) ya cerraron — pero **declarar el freeze hoy seguiría
+siendo prematuro** mientras sigan abiertos los 4 cubos de DEC-009 (bloqueados además por un
+conflicto real con DEC-010, ver §3) y la confirmación de `coneval_periodo_medicion` (RISK-008).
 
 ## 2. Cómo leer el diagrama
 
@@ -219,16 +220,17 @@ flowchart TD
 
 ---
 
-## 3. Qué está materializado hoy (23-ago-2026) vs. qué falta
+## 3. Qué está materializado hoy (26-ago-2026) vs. qué falta
 
 | Capa | Materializado | Pendiente |
 |---|---|---|
-| Bronze | 10/10 tablas reciben datos (aunque 7 sin `identifier` por default, BUG-009) | `conagua` sin ninguna tabla real ingerida |
+| Bronze | 10/10 tablas con `identifier` por default (**DEC-011**, PR #82, 24-ago) | `conagua` sigue sin ninguna tabla real ingerida — default deliberadamente falso (`conagua_no_ingerido`) |
 | Silver | 8/9 modelos dbt construidos y probados | `agua_region` sin datos reales (depende de bronze conagua) |
 | Gold — estrella | `dim_escuela`, `dim_municipio`, `dim_tiempo`, `fact_escuela_ciclo`, `features_escuela`, `matricula_municipio_nivel` — construidos, testeados (dbt tests nativos) | `dim_driver` es catálogo estático (ADR-005), no depende de pipeline |
-| Gold — cubos | `cubo_escuela_360` y `cubo_comparador_municipio` tienen SQL semántico mergeado (Manuel, PR #71) | `cubo_matricula`, `cubo_riesgo_territorial` (SQL ref. mergeado, falta el cubo real — US-113, Deni); `cubo_driver` (SQL ref. en rama sin PR — US-211b, Monserrat); `cubo_completitud`, `cubo_pivot`, `cubo_recomendaciones`, `cubo_pipeline` sin construir |
-| ML | Contratos y estrategia documentados (ADR-003, `15_ML_Models/`) | Verificar en Célula 3 si `gold.predicciones`/`gold.recomendaciones` ya tienen corridas reales o siguen en fixture (`generar_fixture*.py`) |
-| Gobernanza de esquema | DEC-008 (14-ago) y DEC-009 (23-ago) registradas y en `Data_Model.md` §4.3 | Confirmar que ambas están mergeadas a `main` antes del freeze |
+| Gold — ML runtime | `gold.predicciones` con **grano dual** (**DEC-010**, PR #83, mergeado 24-ago) y `gold.recomendaciones` — publicados por el job idempotente `publicar_gold.py` (US-313); verificado contra Postgres real (80 filas grano escuela + 46 grano municipio_nivel, Héctor) | — |
+| Gold — cubos | `cubo_escuela_360` y `cubo_comparador_municipio` (SQL semántico, Manuel, PR #71); `cubo_driver` (SQL semántico, Monserrat, **PR #73, ya mergeado**) | Los 8 cubos reales en `dbt/models/gold/` siguen sin mergear — viven en el **PR #81** (Deni, draft); bloqueado además porque 5 de ellos no filtran `grano = 'escuela'` en su JOIN contra `gold.predicciones` (colisión con DEC-010, señalada por Edgar) |
+| API / consumo | — | **BUG-010** (nuevo, 26-ago): `/api/v1/predicciones/*` sigue leyendo `mock_data.py`, no `gold.predicciones` real — bloquea la verificación #4 del ensayo E2E del 28-29 |
+| Gobernanza de esquema | DEC-008, DEC-009, **DEC-010**, **DEC-011** registradas en `Decision_Log.md` y `Data_Model.md` §4.3/§4.5 | — |
 
 ## 4. Checklist para el freeze del 6 de septiembre
 
@@ -239,6 +241,9 @@ No declarar el freeze hasta que:
 - [ ] Los 4 cubos de DEC-009 (`cubo_matricula`, `cubo_riesgo_territorial`, `cubo_driver`,
       `cubo_completitud`) estén materializados con el grano nuevo (US-113, Deni) o, si no alcanza
       el tiempo, quede documentado explícitamente como deuda técnica aceptada por Edgar
+      — **bloqueado además**: PR #81 (draft) no filtra `grano = 'escuela'` en sus JOIN contra
+      `gold.predicciones` (colisión con DEC-010, señalada por Edgar el 23-ago) — silenciosamente
+      descartaría las filas de grano `municipio_nivel` sin marcar error hasta que se corrija
 - [x] BUG-009 tenga default permanente en `sources.yml` (o, alternativa, se documenten los valores
       reales como configuración estándar del ambiente) — Edgar decide el reparto
       — cerrado por **DEC-011**: las 11 vars (no 7) con default permanente, identifiers inline en
