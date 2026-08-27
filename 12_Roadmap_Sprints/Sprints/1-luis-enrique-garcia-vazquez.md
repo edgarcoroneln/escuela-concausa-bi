@@ -298,6 +298,12 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 | `US-123b` | Great Expectations de DS-04 y DS-05 | ✅ Terminado | 100% | — | Dom 23 ago (vencida) |
 | `US-124b` | Fixtures de DS-04 y DS-05 | ✅ Terminado | 100% | — | Dom 30 ago |
 
+**PR #85** (`feat/luis-vazquez-us122b-us123b-sesnsp-fuente-alterna`, cierra `US-122b`/`US-123b`/`US-124b`):
+✅ **Fusionado** el 2026-08-26 — aprobado por Edgar Coronel (PM) y Diana Alvarez (Tech Lead). Nota de
+Edgar (no bloqueante, no es solo mía): los 8 extractores del repo escriben `_{timestamp}.parquet` en
+cada corrida, lo cual no es estrictamente idempotente según `CLAUDE.md` — convención heredada, a
+tratar como historia aparte de Célula 1.
+
 **Estados válidos:** ⬜ Por iniciar · 🟡 En curso · 🔵 En revisión (PR abierto) · ✅ Terminado · 🔴 Bloqueado
 
 ### Si tu historia queda a medias
