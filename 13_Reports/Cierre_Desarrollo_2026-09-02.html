@@ -154,12 +154,12 @@
 
 <header>
   <p class="eyebrow">FARO · Escuela como Sensor Social · 30 de agosto · Post-junta de liderazgo</p>
-  <h1>Los bloqueos cayeron. Quedan tres días</h1>
+  <h1>Nadie puede cerrar solo</h1>
   <p class="standfirst">
-    La junta ratificó <strong>ADR-007</strong>, <strong>BUG-020 quedó resuelto y verificado en
-    vivo</strong>, y el choque de DB-05 se cerró. De nueve bugs abiertos quedan cuatro y ninguno es
-    crítico. El miércoles 2 de septiembre se congela el desarrollo: lo que no esté en
-    <code>done</code> con evidencia ese día entra a la demo como deuda declarada.
+    BUG-020 está resuelto y verificado en vivo, ADR-007 ratificado y el choque de DB-05 cerrado.
+    Lo que queda <strong>no es más desarrollo: son dependencias entre personas.</strong> Cinco
+    frentes, y en cuatro de ellos alguien está esperando a alguien. El miércoles 2 de septiembre se
+    congela: lo que no esté en <code>done</code> con evidencia entra a la demo como deuda declarada.
   </p>
 </header>
 
@@ -232,7 +232,7 @@
       <div class="item"><div class="top"><span class="us">US-405</span><span class="chip c-prog">en curso</span></div>
         <div class="what">Sin arrancar.</div></div>
       <div class="item"><div class="top"><span class="us">BUG-025</span><span class="chip c-ok">cerrado</span></div>
-        <div class="what">PR #142: <code>/agente/consulta</code> deja de ser el stub y conecta con el RAG real. Los guardarraíles por fin se invocan desde la API desplegada.</div></div>
+        <div class="what">PR #142 dio el seam y los guardarraíles. <strong>Falta tu parte:</strong> <code>ejecutar_sql()</code> read-only sobre Gold con rol de solo SELECT y timeout.</div></div>
     </div>
 
     <div class="card">
@@ -263,7 +263,7 @@
       <div class="item"><div class="top"><span class="us">US-303</span><span class="chip c-rev">en revisión</span></div>
         <div class="what">Al 90 %. Falta el E2E contra el MLflow de Célula 5.</div></div>
       <div class="item"><div class="top"><span class="us">US-304a</span><span class="chip c-rev">en revisión</span></div>
-        <div class="what"><strong>BUG-025 cerrado</strong> por Christian en el PR #142. Falta aprobar el documento del prompt.</div></div>
+        <div class="what"><strong>BUG-025 sigue <code>parcial</code>.</strong> El PR #142 dio el seam; te toca <code>generar_sql()</code> y <code>redactar_respuesta()</code>. <strong>Bloqueado por BLOCK-003</strong>: falta decidir el LLM.</div></div>
       <div class="item"><div class="top"><span class="us">US-305</span><span class="chip c-rev">en revisión</span></div>
         <div class="what"><strong>Desbloqueada:</strong> BUG-020 y BUG-025 cerrados. El E2E widget → API → RAG con login real ya se puede ejecutar.</div></div>
     </div>
@@ -286,11 +286,13 @@
         <div class="what">Sin arrancar.</div></div>
     </div>
 
-    <div class="card">
+    <div class="card hot">
       <div class="who">Manuel Serranía</div>
       <div class="cell">Célula 2 · Tech Lead</div>
       <div class="item"><div class="top"><span class="us">US-204</span><span class="chip c-rev">en revisión</span></div>
-        <div class="what">Repetir 15/15 charts con salidas reales. Depende del reentrenamiento de ML-01 y de la implementación de BUG-019, <strong>cuyo dueño se asigna en el standup de hoy</strong>.</div></div>
+        <div class="what">Repetir 15/15 charts con salidas reales, tras el reentrenamiento de ML-01.</div></div>
+      <div class="item"><div class="top"><span class="us">BUG-031</span><span class="chip c-prog">critical</span></div>
+        <div class="what"><strong>Lo más urgente de C2.</strong> Cuatro tableros siguen mal y <em>tus dos aserciones impiden corregirlo</em>: exigen el componente defectuoso como si fuera requisito.</div></div>
     </div>
 
     <div class="card">
@@ -454,6 +456,113 @@
 </section>
 
 <section>
+  <h2>Los cinco frentes que quedan</h2>
+  <p class="lede">
+    Ninguno necesita más código del que ya está escrito. Todos necesitan que alguien decida, firme o
+    entregue para que otro pueda avanzar.
+  </p>
+
+  <h3>C-1 · Decidir el LLM del agente <span class="chip c-prog">bloquea 3 células</span></h3>
+  <p class="lede">
+    <strong>Andrés, Christian y Luis están detenidos en el mismo punto.</strong> Nadie puede avanzar
+    sin cinco definiciones: proveedor, modelo, variables de entorno, dependencia Python y límites de
+    tokens y timeout. El agente vale 0.5 pts y es el único de los siete módulos que hoy no se
+    demuestra de punta a punta.
+  </p>
+  <div class="note alarm">
+    <strong>Ollama con Qwen tiene un problema que hay que nombrar antes de elegirlo.</strong>
+    Ollama es un <em>runtime local</em>: servirlo desde Cloud Run significa cargar el modelo dentro
+    del contenedor, lo que en CPU y con <code>min-instances=0</code> da arranques en frío de decenas
+    de segundos y una imagen de varios GB. Para una demo sobre URL pública, eso es frágil justo en el
+    momento en que no puede fallar.
+    <br><br>
+    Un cliente HTTP alojado es una llamada de red y una dependencia pequeña: sin peso en la imagen,
+    sin arranque en frío, y el secreto ya tiene dónde vivir — Secret Manager, con el patrón que Luis
+    dejó funcionando en la Fase 2.
+    <br><br>
+    <strong>El costo no es el criterio.</strong> A este volumen —decenas de consultas, prompts de
+    esquema pequeños— cualquier proveedor alojado cuesta centavos. Lo que decide es el
+    <strong>riesgo de despliegue contra el reloj</strong>. Confirmen precios en la fuente del
+    proveedor antes de firmar.
+  </div>
+
+  <h3>C-2 · Cerrar BUG-025 · tres células en cadena</h3>
+  <p class="lede">
+    <strong>BUG-025 está <code>parcial</code>, no cerrado.</strong> El PR #142 entregó el <em>seam</em>
+    y los guardarraíles reales —el SQL destructivo ya se rechaza—, pero la generación real falta.
+  </p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>#</th><th>Tarea</th><th>Dueño</th></tr></thead>
+      <tbody>
+        <tr><td class="id">1</td><td><code>generar_sql()</code> y <code>redactar_respuesta()</code> con LLM</td><td class="who">C3 · Andrés</td></tr>
+        <tr><td class="id">2</td><td><code>ejecutar_sql()</code> read-only: rol con sólo <code>SELECT</code>, <code>SET TRANSACTION READ ONLY</code>, <code>statement_timeout</code></td><td class="who">C4 · Christian</td></tr>
+        <tr><td class="id">3</td><td>Deps del agente en la imagen de la API</td><td class="who">C5 · Luis</td></tr>
+        <tr><td class="id">4</td><td>ChromaDB operativo en el despliegue</td><td class="who">C5 · Luis</td></tr>
+        <tr><td class="id">5</td><td>Índice del esquema Gold cargado</td><td class="who">C5 · Luis o C1</td></tr>
+        <tr><td class="id">6</td><td>E2E completo sobre la URL pública</td><td class="who">C3 + C4 + C5</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <strong>Las tres correcciones de Andrés al plan son correctas y las verifiqué una por una.</strong>
+    <br>1 · <strong>ChromaDB ya existe</strong> en <code>docker-compose.yml</code> línea 275, con
+    volumen <code>faro-chroma-data</code>. Hay que validar el servicio actual, no duplicarlo.
+    <br>2 · <strong><code>app.dependency_overrides</code> es para pruebas.</strong> En producción los
+    <em>providers</em> de C4 deben devolver las implementaciones reales; usar el override como
+    cableado hace que el comportamiento dependa del orden de importación.
+    <br>3 · <strong>Las deps se fijan en <code>requirements/celula-3.txt</code></strong>, donde ya
+    están con versión exacta, no sueltas en el Dockerfile con rangos abiertos. Una imagen que
+    resuelve versiones en build no es reproducible.
+    <br><br>
+    Y un dato antes de decidir el punto 3: <code>sentence-transformers</code> arrastra el modelo de
+    embeddings, cientos de MB. Sumarlo engorda la imagen <em>para todas las rutas</em>, no sólo para
+    el agente. Vale preguntarse si el agente debe compartir imagen con la API.
+  </div>
+
+  <h3>C-3 · BUG-031 <span class="chip c-prog">critical · a medias</span></h3>
+  <p class="lede">
+    Marina corrigió DB-03 y retiró la tarjeta de DB-04. <strong>DB-01, DB-02, DB-06 y DB-09 siguen
+    pintando −54.5 % donde el valor real es −0.19 %.</strong> Factor 287.
+  </p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Qué falta</th><th>Dueño</th></tr></thead>
+      <tbody>
+        <tr><td>Corregir 3 expresiones: <code>metrics_db01_db02.yaml</code> líneas 74 y 177, <code>metrics_db06_db09.yaml</code> línea 73</td><td class="who">Manuel Serranía</td></tr>
+        <tr><td><strong>Cambiar las 2 aserciones que exigen el componente defectuoso</strong> — <code>test_semantic_db01_db02.py:251</code> y <code>test_semantic_db06_db09.py:268</code>. Mientras existan, corregirlo reprueba CI</td><td class="who">Manuel Serranía</td></tr>
+        <tr><td>Las 4 líneas de dbt que exponen <code>matricula_ciclo_anterior</code>, <strong>en el mismo PR de la normalización de ADR-007</strong></td><td class="who">Diana · Deni</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <strong>Por qué las 4 líneas van en el mismo PR del ADR y no aparte.</strong> C1 va a tocar
+    <code>fact_escuela_ciclo.sql</code> de todos modos para normalizar la unidad, y
+    <strong>cada <code>dbt run --full-refresh</code> es un momento de riesgo para los diez
+    tableros</strong>, no sólo para los de Marina. Mejor uno que dos.
+    <br><br>
+    Y no dependen del resultado de la mesa: la métrica corregida es
+    <code>SUM(matricula_total)/SUM(matricula_ciclo_anterior)−1</code>, sólo matrículas. Se ratifique
+    fracción o absoluto, no cambia — de hecho es más robusta, porque deja de depender de la unidad de
+    cualquier columna de variación. El dato <em>ya existe en el CTE</em>: sólo se está tirando al
+    seleccionar.
+  </div>
+
+  <h3>C-4 · Reentrenar ML-01 <span class="chip c-blk">camino crítico</span></h3>
+  <p class="lede">
+    R-4 de ADR-007 lo exige <strong>con fecha, no con firma</strong>. De él cuelgan US-311, US-313,
+    US-212 de Marina y US-204 de Manuel. Marina verifica DB-03 contra predicciones nuevas publicadas,
+    no contra el ADR firmado. <strong>Dueño: Héctor Morales.</strong>
+  </p>
+
+  <h3>C-5 · DS-07 · tres vías en paralelo</h3>
+  <p class="lede">
+    Deni intenta la descarga con fecha compromiso; Diana implementa la cobertura parcial de D1 como
+    red de seguridad, no como plan B tardío; el bloqueo ya está registrado como <code>BLOCK-002</code>.
+  </p>
+</section>
+
+<section>
   <h2>Plan de control de calidad</h2>
   <p class="lede">
     Arranca el jueves 3, cuando el desarrollo esté cerrado. Probar sobre código que aún se mueve
@@ -553,7 +662,7 @@
 
 <footer>
   FARO · Escuela como Sensor Social — MTIIA Anáhuac · Inteligencia de Negocios<br>
-  Corte del 30 de agosto de 2026 · Fuente canónica: <code>12_Roadmap_Sprints/Execution_Status.md</code><br>
+  Corte del 30 de agosto de 2026 · post-junta · Fuente canónica: <code>12_Roadmap_Sprints/Execution_Status.md</code><br>
   Plan de QA: <code>06_Quality_Testing/Plan_Control_Calidad_S6.md</code> · Decisiones: <code>DEC-012</code> <code>DEC-013</code> <code>DEC-014</code> · Bloqueo: <code>BLOCK-002</code>
 </footer>
 

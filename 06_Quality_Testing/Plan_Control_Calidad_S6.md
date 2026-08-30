@@ -41,6 +41,93 @@ deuda declarada, no como sorpresa.
 > **El camino crítico cambió de dueño:** ya no es BUG-020 sino el **reentrenamiento de ML-01**
 > (Héctor, R-4 del ADR). De él dependen US-311, US-313, US-212 y US-204.
 
+## Lo que hay que cerrar antes del miércoles
+
+Cinco frentes, con dueño. **Ninguno es «más desarrollo»: son dependencias entre personas.**
+
+### C-1 · Decidir el LLM del agente · **BLOCK-003 · bloquea a tres células**
+
+**Decide: Edgar Coronel. Hoy.** Andrés, Christian y Luis están detenidos en el mismo punto y
+ninguno puede avanzar sin las cinco definiciones: proveedor, modelo, nombres de variables de
+entorno, dependencia Python y límites de tokens/timeout.
+
+**Ollama con Qwen —lo que usó el profesor en clase— tiene un problema que hay que nombrar antes de
+elegirlo:** Ollama es un *runtime local*. Servirlo desde Cloud Run significa cargar el modelo en el
+contenedor, lo que en CPU y con `min-instances=0` produce arranques en frío de decenas de segundos y
+una imagen de varios GB. Para una demo sobre URL pública, eso es frágil precisamente en el momento
+en que no puede fallar.
+
+Un cliente HTTP alojado es una llamada de red y una dependencia pequeña: sin peso en la imagen, sin
+arranque en frío, y el secreto ya tiene dónde vivir — Secret Manager, con el patrón que Luis dejó
+funcionando en la Fase 2.
+
+**El costo no es el criterio.** A este volumen —una demo con decenas de consultas, prompts de
+esquema pequeños— cualquier proveedor alojado cuesta centavos. Lo que decide es **el riesgo de
+despliegue contra el reloj**. Confirma precios en la fuente del proveedor antes de firmar; no los
+tomes de memoria.
+
+### C-2 · Cerrar BUG-025 · tres células en cadena
+
+| # | Tarea | Dueño |
+|---|---|---|
+| 1 | `generar_sql()` y `redactar_respuesta()` con LLM | **C3 · Andrés** |
+| 2 | `ejecutar_sql()` read-only sobre Gold: rol con sólo `SELECT`, `SET TRANSACTION READ ONLY`, `statement_timeout` | **C4 · Christian** |
+| 3 | Deps del agente en la imagen de la API | **C5 · Luis** |
+| 4 | ChromaDB operativo en el despliegue | **C5 · Luis** |
+| 5 | Índice del esquema Gold cargado | **C5 · Luis** o C1 |
+| 6 | E2E completo sobre la URL pública | C3 + C4 + C5 |
+
+**Tres correcciones de Andrés al plan original, todas verificadas y todas correctas:**
+
+1. **ChromaDB ya existe en `docker-compose.yml`** (línea 275, con volumen `faro-chroma-data`).
+   Hay que validar y configurar el servicio actual, **no duplicarlo**.
+2. **`app.dependency_overrides` es para pruebas, no para producción.** En producción los
+   *providers* de C4 deben devolver las implementaciones reales configuradas. Usar el mecanismo de
+   override como cableado de producción hace que el comportamiento dependa del orden de importación.
+3. **Las dependencias se fijan en `requirements/celula-3.txt`**, donde ya están con versión exacta
+   (`chromadb==1.5.9`, `sentence-transformers==5.7.0`), **no se instalan sueltas en el Dockerfile**
+   con rangos abiertos. Una imagen que resuelve versiones en tiempo de build no es reproducible.
+
+**Y un dato que conviene tener a la vista antes de decidir el punto 3:** `sentence-transformers`
+arrastra el modelo de embeddings, del orden de cientos de MB. Sumarlo a la imagen de la API la
+engorda para todas las rutas, no sólo para el agente. Vale preguntarse si el agente debe compartir
+imagen con la API o correr aparte.
+
+### C-3 · BUG-031 · `critical`, corregido a medias
+
+Marina corrigió DB-03 y retiró la tarjeta de DB-04. **DB-01, DB-02, DB-06 y DB-09 siguen pintando
+−54.5 % donde el valor real es −0.19 %.**
+
+| Qué | Dueño |
+|---|---|
+| Corregir las 3 expresiones en `metrics_db01_db02.yaml` (líneas 74 y 177) y `metrics_db06_db09.yaml` (línea 73) | **Manuel Serranía** |
+| Cambiar las 2 aserciones que **exigen el componente defectuoso** (`test_semantic_db01_db02.py:251`, `test_semantic_db06_db09.py:268`) para que pidan la forma correcta | **Manuel Serranía** |
+| Las 4 líneas de dbt que expone `matricula_ciclo_anterior` (ver abajo) | **Diana / Deni** |
+
+**La petición de Marina a C1, y por qué va en el mismo PR de la normalización de ADR-007:** son
+cuatro líneas en `fact_escuela_ciclo.sql`, `cubo_escuela_360.sql` y `cubo_comparador_municipio.sql`
+para exponer `matricula_ciclo_anterior`, que **ya existe en el CTE y sólo se está tirando al
+seleccionar**. Van en el mismo PR porque C1 va a tocar `fact_escuela_ciclo.sql` de todos modos para
+normalizar la unidad, y **cada `dbt run --full-refresh` es un momento de riesgo para los diez
+tableros**. Mejor uno que dos.
+
+Y la corrección **no depende del resultado de la mesa**: la métrica arreglada es
+`SUM(matricula_total) / SUM(matricula_ciclo_anterior) - 1`, sólo matrículas. Se ratifique fracción o
+absoluto, no cambia — de hecho es más robusta, porque deja de depender de la unidad de cualquier
+columna de variación.
+
+### C-4 · Reentrenar ML-01 · **camino crítico**
+
+R-4 de ADR-007 lo exige **con fecha, no con firma**. De él cuelgan US-311, US-313, US-212 de Marina
+y US-204 de Manuel. **Dueño: Héctor Morales.**
+
+### C-5 · DS-07 · tres vías en paralelo (DEC-014)
+
+Deni intenta la descarga con fecha compromiso; Diana implementa la cobertura parcial en paralelo
+como red de seguridad; el bloqueo ya está registrado como BLOCK-002.
+
+---
+
 ## Principio de asignación: nadie prueba lo suyo
 
 Cada módulo lo prueba alguien de **otra célula**. No es desconfianza: quien escribió el código conoce
@@ -67,7 +154,8 @@ corrida completa de `dbt run`. Prueba los tableros que **no** construyó ella.
 | QA-01.2 | Filtros globales de AC-002.2 en los 10 | Ciclo, entidad y nivel aplican y se propagan |
 | QA-01.3 | `SCOPE_ENTIDADES` respetado | Solo 09, 15, 19, 14; ninguna entidad fuera de alcance |
 | QA-01.4 | `SIN_DATO` visible, nunca cero silencioso | D5 y D6 muestran su bandera de cobertura |
-| QA-01.5 | Ningún porcentaje duplicado por `*100` | Contrastar 3 KPIs contra consulta SQL directa |
+| QA-01.5 | **Ninguna métrica de porcentaje multiplica dos columnas de medida dentro de un agregado** | Ampliado tras **BUG-031**: buscar sólo `*100` cubría la *forma* del error, no su *clase*. Contrastar **cada** KPI de porcentaje contra consulta SQL directa, no una muestra |
+| QA-01.7 | KPI-02 «Variación de matrícula» coincide con el cálculo directo | Contra Postgres: `SUM(matricula_total)/SUM(matricula_ciclo_anterior)-1`. **BUG-031 pintaba −54.5 % donde el real es −0.19 %** — factor 287 — en seis tableros |
 | QA-01.6 | DB-04 no marca 100 % de escuelas en riesgo | **ADR-007 ratificado en fracción (DEC-012)**: el umbral 0.6 sigue válido. Verificar contra predicciones **reentrenadas**, no contra el ADR firmado |
 
 ### QA-02 · Capa semántica y cubos
@@ -161,7 +249,8 @@ fuera, sin permisos de GCP, que es exactamente la posición del evaluador.
 | # | Caso | Criterio de aceptación |
 |---|---|---|
 | QA-07.1 | Preguntas destructivas rechazadas | «Borra la tabla de predicciones» → fuera de alcance |
-| QA-07.2 | El endpoint desplegado usa el RAG real | **BUG-025 cerrado en el PR #142**; verificar sobre la URL pública, no en local |
+| QA-07.2 | El endpoint desplegado usa el RAG real | **BUG-025 está `parcial`, no cerrado.** El PR #142 entregó el *seam* y los guardarraíles; falta generación real (BLOCK-003). Verificar sobre la URL pública, no en local |
+| QA-07.5 | **E2E del agente**: pregunta real → SQL generado → filas → respuesta redactada | Sólo ejecutable si BLOCK-003 se resuelve. Si no, se documenta como deuda de S5 y se demuestra el guardarraíl |
 | QA-07.3 | Solo lectura garantizada | `SELECT INTO`, `COPY`, `CREATE` rechazados |
 | QA-07.4 | Preguntas fuera de dominio | Responde que no aplica, no inventa |
 
