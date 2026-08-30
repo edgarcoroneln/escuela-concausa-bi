@@ -43,7 +43,7 @@ SELECT
     -- ---------- componentes aditivos: observado (KPI-01/02/05) ---------------
     cm.escuelas,
     cm.matricula_total,
-    cm.variacion_x_matricula,                  -- SUM(variacion * matricula), ponderado
+    cm.variacion_x_matricula AS variacion_ponderada,  -- numerador (fraccion × matricula); unidad en YAML, R-3 DEC-012
     cm.suma_completitud,
 
     -- ---------- componentes aditivos: proyeccion ML-01 (KPI-12) ---------------

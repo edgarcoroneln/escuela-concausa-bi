@@ -161,17 +161,28 @@ GROUP BY f.cve_mun, dt.ciclo;
 
 ### KPI-02 · Variación de matrícula (%Δ ponderado)
 
-Variación por escuela ponderada por su matrícula. **Cubo:** `gold.cubo_matricula`.
+Variación por escuela ponderada por su matrícula. **Unidad:** fracción
+`matricula_total / matricula_ciclo_anterior − 1` (R-3, DEC-012); el formato `%` la multiplica
+por 100 solo al mostrar. **Cubo:** `gold.cubo_matricula`.
+
+**Contrato R-3:** numerador y denominador viven como columnas separadas del cubo —
+`variacion_ponderada` y `matricula_total` — y la razón se calcula en la capa semántica
+(`SUM(numerador)/SUM(denominador)`). Nunca se expone un producto ponderado como columna ni un
+`* 100`. Regresión de BUG-031/US-212: el contrato anterior calculaba la media ponderada de un
+delta absoluto en alumnos (no una fracción) y el tablero pintó −54.5% donde el real era −0.19%.
 
 ```sql
 SELECT dt.ciclo,
-       SUM(f.matricula_total) AS matricula_total,
-       SUM(f.variacion_matricula * f.matricula_total)
-         / NULLIF(SUM(f.matricula_total), 0) AS variacion_ponderada_pct
-FROM gold.fact_escuela_ciclo f
-JOIN gold.dim_tiempo dt ON f.id_ciclo = dt.id_ciclo
+       SUM(cm.variacion_ponderada)
+         / NULLIF(SUM(cm.matricula_total), 0) AS variacion_ponderada_pct
+FROM gold.cubo_matricula cm
+JOIN gold.dim_tiempo dt ON cm.id_ciclo = dt.id_ciclo
 GROUP BY dt.ciclo;
 ```
+
+(Nombre canónico del numerador: `variacion_ponderada`. Hoy C1 lo entrega como
+`variacion_x_matricula` = `SUM(delta × matricula)`; tras ratificar ADR-007 re-materializa con
+fracción y el nombre canónico aplica en toda la cadena.)
 
 ### KPI-03 · Índice de riesgo promedio
 

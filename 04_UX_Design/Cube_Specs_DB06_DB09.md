@@ -93,8 +93,10 @@ al grano `cct × id_ciclo`, con paridad validada contra `gold.recomendaciones`.
 `id_ciclo`, `ciclo`, `anio_inicio`.
 
 **Componentes observados (aditivos):** `escuelas` (`COUNT(DISTINCT cct)`), `matricula_total`,
-`variacion_x_matricula` (`variacion_matricula * matricula_total` — numerador de KPI-02),
-`suma_completitud` (`SUM(indice_completitud_drivers)` — numerador de KPI-05).
+`variacion_ponderada` (numerador de KPI-02; el cubo lo conserva como `variacion_x_matricula` =
+`variacion_matricula * matricula_total`, re-exportado con el nombre canónico `variacion_ponderada`
+en la frontera semántica — unidad fracción, R-3 DEC-012), `suma_completitud`
+(`SUM(indice_completitud_drivers)` — numerador de KPI-05).
 
 **Componentes ML-01 (por `LEFT JOIN`, grano escuela):**
 
@@ -124,7 +126,9 @@ al grano `cct × id_ciclo`, con paridad validada contra `gold.recomendaciones`.
 **Identidad y contexto:** `cct`, `nombre_escuela`, `nivel`, `sostenimiento`, `cve_ent`,
 `nombre_entidad`, `cve_mun`, `nombre_municipio`, `id_ciclo`, `ciclo`, `anio_inicio`.
 
-**Observadas:** `matricula_total`, `variacion_matricula`, `indice_completitud_drivers`.
+**Observadas:** `matricula_total`, `variacion_matricula`, `variacion_ponderada`
+(numerador de KPI-02 = `variacion_matricula * matricula_total`, unidad fracción — R-3 DEC-012),
+`indice_completitud_drivers`.
 
 **ML-01 (por `LEFT JOIN`, grano escuela):** `indice_riesgo`, `variacion_proyectada` (`p.valor`),
 `probabilidad`, `en_riesgo` (bool | `NULL` — `NULL` si no hay predicción, **nunca `false`**),

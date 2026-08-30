@@ -244,12 +244,37 @@ def test_los_componentes_son_aditivos_no_promedios(db01_cubo: str, db02_cubo: st
         )
 
 
-def test_variacion_es_ponderada_por_matricula(db01_cubo: str, db02_cubo: str) -> None:
-    """KPI-02 pondera por matrícula: el cubo C1 ya guarda variacion_x_matricula
-    (producto variacion × matricula), nunca un AVG(variacion)."""
+def _metrica_db(dataset: str, nombre: str, metricas: dict) -> dict:
+    """Busca una métrica por nombre dentro de un dataset del YAML."""
+    ds = next(d for d in metricas["datasets"] if d["nombre"] == dataset)
+    return next(m for m in ds["metricas"] if m["nombre"] == nombre)
+
+
+def test_variacion_exige_numerador_y_denominador_separados(
+    db01_cubo: str, db02_cubo: str, metricas: dict
+) -> None:
+    """KPI-02 (R-3 DEC-012): numerador `variacion_ponderada` y denominador
+    `matricula_total` por separado; la razon vive en el YAML con unidad declarada,
+    nunca el producto ponderado como columna de salida. Regresion de la clase de
+    bug de US-212 (pintaba -54.5% donde el real era -0.19%)."""
     for nombre, sql in (("db01_cubo", db01_cubo), ("db02_cubo", db02_cubo)):
-        assert re.search(r"\bvariacion_x_matricula\b", sql), (
-            f"{nombre}: falta el componente ponderado variacion_x_matricula."
+        assert re.search(r"\bvariacion_ponderada\b", sql), (
+            f"{nombre}: falta el numerador variacion_ponderada."
+        )
+        assert re.search(r"\bmatricula_total\b", sql), (
+            f"{nombre}: falta el denominador matricula_total."
+        )
+        assert not re.search(r"\bvariacion_x_matricula\b(?!\s+as\b)", sql, re.IGNORECASE), (
+            f"{nombre}: expone el producto ponderado como columna; "
+            "separar numerador/denominador (R-3 DEC-012)."
+        )
+    for dataset in ("db01_cubo_matricula", "db02_cubo_riesgo_territorial"):
+        metrica = _metrica_db(dataset, "variacion_ponderada_pct", metricas)
+        assert metrica["expresion"] == (
+            "SUM(variacion_ponderada) / NULLIF(SUM(matricula_total), 0)"
+        ), f"{dataset}: la razon debe ser SUM(numerador)/SUM(denominador) (R-3 DEC-012)."
+        assert "fraccion" in metrica.get("unidad", ""), (
+            f"{dataset}: falta declarar la unidad fraccion del numerador (R-3 DEC-012)."
         )
 
 

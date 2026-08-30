@@ -42,6 +42,7 @@ SELECT
     -- ---------- hechos observados ----------------------------------------------
     s.matricula_total,
     s.variacion_matricula,
+    s.variacion_matricula * s.matricula_total AS variacion_ponderada,  -- numerador por fila (fraccion × matricula); unidad en YAML, R-3 DEC-012
     s.indice_completitud_drivers,
 
     -- ---------- salida ML-01 (del cubo C1) ---------------------------------------

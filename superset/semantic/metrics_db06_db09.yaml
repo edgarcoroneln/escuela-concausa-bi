@@ -9,6 +9,8 @@
 #
 # Regla transversal: toda razon se expresa como SUM(numerador)/SUM(denominador)
 # para que se pueda reagregar con cualquier combinacion de filtros globales.
+# El numerador nunca es un promedio ni un producto precalculado: su unidad se
+# declara en `unidad` (R-3 DEC-012); las variaciones ponderadas usan fraccion.
 # Ninguna metrica usa COALESCE(<driver>, 0): SIN_DATO nunca se dibuja como cero.
 #
 # Grano dual de predicciones (DEC-010): los tres datasets leen SOLO el grano
@@ -70,7 +72,8 @@ datasets:
         kpi: KPI-01
       - nombre: variacion_ponderada_pct
         etiqueta: "Variación de matrícula (observada)"
-        expresion: "SUM(variacion_x_matricula) / NULLIF(SUM(matricula_total), 0)"
+        expresion: "SUM(variacion_ponderada) / NULLIF(SUM(matricula_total), 0)"
+        unidad: "fraccion (matricula_total / matricula_ciclo_anterior - 1)"
         formato: porcentaje_1
         kpi: KPI-02
       - nombre: completitud_promedio
@@ -139,7 +142,8 @@ datasets:
         kpi: KPI-01
       - nombre: variacion_ponderada_pct
         etiqueta: "Variación de matrícula (observada)"
-        expresion: "SUM(variacion_matricula * matricula_total) / NULLIF(SUM(matricula_total), 0)"
+        expresion: "SUM(variacion_ponderada) / NULLIF(SUM(matricula_total), 0)"
+        unidad: "fraccion (matricula_total / matricula_ciclo_anterior - 1)"
         formato: porcentaje_1
         kpi: KPI-02
       - nombre: indice_riesgo

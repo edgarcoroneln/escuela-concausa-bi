@@ -39,7 +39,7 @@ SELECT
     -- ---------- componentes aditivos (pre-agregados por el cubo C1) ----------
     cm.escuelas,
     cm.matricula_total,
-    cm.variacion_x_matricula,                  -- SUM(variacion * matricula), ponderado
+    cm.variacion_x_matricula AS variacion_ponderada,  -- numerador (fraccion × matricula); unidad en YAML, R-3 DEC-012
     cm.suma_completitud
 
 FROM gold.cubo_matricula cm

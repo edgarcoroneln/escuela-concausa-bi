@@ -263,11 +263,35 @@ def test_los_componentes_son_aditivos_no_promedios(db06_cubo: str) -> None:
     )
 
 
-def test_variacion_es_ponderada_por_matricula(db06_cubo: str) -> None:
-    """KPI-02 pondera por matrícula: el cubo C1 ya guarda variacion_x_matricula."""
-    assert re.search(r"\bvariacion_x_matricula\b", db06_cubo), (
-        "db06_cubo: falta el componente ponderado variacion_x_matricula (DEC-008/009)."
+def _metrica_db(dataset: str, nombre: str, metricas: dict) -> dict:
+    """Busca una métrica por nombre dentro de un dataset del YAML."""
+    ds = next(d for d in metricas["datasets"] if d["nombre"] == dataset)
+    return next(m for m in ds["metricas"] if m["nombre"] == nombre)
+
+
+def test_variacion_exige_numerador_y_denominador_separados(
+    db06_cubo: str, metricas: dict
+) -> None:
+    """KPI-02 (R-3 DEC-012): numerador `variacion_ponderada` y denominador
+    `matricula_total` por separado, en el cubo y en el detalle por escuela."""
+    assert re.search(r"\bvariacion_ponderada\b", db06_cubo), (
+        "db06_cubo: falta el numerador variacion_ponderada."
     )
+    assert re.search(r"\bmatricula_total\b", db06_cubo), (
+        "db06_cubo: falta el denominador matricula_total."
+    )
+    assert not re.search(r"\bvariacion_x_matricula\b(?!\s+as\b)", db06_cubo, re.IGNORECASE), (
+        "db06_cubo: expone el producto ponderado como columna; "
+        "separar numerador/denominador (R-3 DEC-012)."
+    )
+    for dataset in ("db06_cubo_predicciones", "db06_predicciones_escuela"):
+        metrica = _metrica_db(dataset, "variacion_ponderada_pct", metricas)
+        assert metrica["expresion"] == (
+            "SUM(variacion_ponderada) / NULLIF(SUM(matricula_total), 0)"
+        ), f"{dataset}: la razon debe ser SUM(numerador)/SUM(denominador) (R-3 DEC-012)."
+        assert "fraccion" in metrica.get("unidad", ""), (
+            f"{dataset}: falta declarar la unidad fraccion del numerador (R-3 DEC-012)."
+        )
 
 
 def test_completitud_se_reagrega_como_razon(db06_cubo: str) -> None:
