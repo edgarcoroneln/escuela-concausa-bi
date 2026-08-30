@@ -195,11 +195,11 @@
   },
   {
     "date": "2026-08-29",
-    "remaining": 60,
-    "weighted_remaining": 40.2,
-    "done": 31,
+    "remaining": 52,
+    "weighted_remaining": 36.2,
+    "done": 39,
     "scope": 91,
-    "wip": 36,
+    "wip": 28,
     "blocked": 0
   },
   {

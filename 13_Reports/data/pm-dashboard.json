@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-08-30T05:14:55+00:00",
-    "generated_date": "2026-08-30",
-    "commit": "4b84394",
-    "branch": "main",
-    "working_tree": "clean",
-    "source_fingerprint": "cc7b476508f5",
+    "generated_at": "2026-08-30T05:57:14+00:00",
+    "generated_date": "2026-08-29",
+    "commit": "965a8fd",
+    "branch": "docs/edgar-navarrete-reconciliacion-post-adr007",
+    "working_tree": "modified",
+    "source_fingerprint": "75fe348c99a0",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -19,7 +19,7 @@
     "blocked": 0,
     "wip": 28,
     "progress": 60.2,
-    "days_to_demo": 10
+    "days_to_demo": 11
   },
   "delivery": {
     "date": "2026-09-09",
@@ -44,7 +44,7 @@
       "updated": "2026-08-10",
       "objective": "Repo escuela-concausa-bi desde cero. Reemplazar los 93 placeholders, crear Secrets_Policy.md (4 links rotos) y dejar vault_lint.py en verde.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 29
+      "age_days": 28
     },
     {
       "id": "US-002",
@@ -62,7 +62,7 @@
       "updated": "2026-08-10",
       "objective": "Traducir los 7 modulos de la rubrica a REQ-### con criterios AC-### verificables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 29
+      "age_days": 28
     },
     {
       "id": "US-003",
@@ -80,7 +80,7 @@
       "updated": "2026-08-10",
       "objective": "Nombre canonico por persona + un 09_AI_Governance/Agent_Contexts/{nombre}.md para gobernar el uso de IA.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 28
+      "age_days": 27
     },
     {
       "id": "US-004",
@@ -94,11 +94,11 @@
       "status": "in_review",
       "started": "2026-08-03",
       "blocked_since": "—",
-      "evidence": "02_Requirements/Traceability_Matrix · 13_Reports/PM_Dashboard_Spec · PR #112 · 13_Reports/US_Validation_Followup_2026-08-28. Reconciliación del 29-ago: 14 PRs mergeados en el día, 11 historias actualizadas, BUG-026 cerrado, BUG-027 superseded, BUG-028 registrado y [[13_Reports/Vault_Correcciones_2026-08-29",
-      "updated": "plan de corrección del vault]] abierto con 5 hallazgos. Historia continua hasta el cierre del proyecto",
+      "evidence": "02_Requirements/Traceability_Matrix · 13_Reports/PM_Dashboard_Spec · PR #112 · 13_Reports/US_Validation_Followup_2026-08-28. Reconciliación del 29-ago: 14 PRs mergeados en el día, 11 historias actualizadas, BUG-026 cerrado, BUG-027 superseded, BUG-028 registrado y [[13_Reports/Vault_Correcciones_2026-08-29\\",
+      "updated": "plan de corrección del vault]] abierto con 5 hallazgos. Reconciliación del 30-ago: BUG-020 fixed (verificado en vivo: las rutas de datos pasan de 500 a 200), BUG-025 fixed (PR #142) y BUG-033 registrado —el agente responde pero ChromaDB no está desplegado—; DEC-012 (criterio de cierre por superficie desplegada) y DEC-013 (reserva de IDs) asentadas; US-304a/b, US-305, US-313, US-411, US-412 y US-524a actualizadas. Historia continua hasta el cierre del proyecto",
       "objective": "Una fila por REQ, actualizada en cada standup. Es el tablero de control del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 27
+      "age_days": 26
     },
     {
       "id": "US-005",
@@ -152,7 +152,7 @@
       "updated": "2026-08-17",
       "objective": "Contrato de las 3 capas: Bronze (raw + metadatos), Silver (tipado, CCT homologado) y Gold (esquema estrella). Incluye el parametro SCOPE_ENTIDADES y la politica de cobertura parcial. Documentar en 03_Architecture/Data_Model.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 28
+      "age_days": 27
     },
     {
       "id": "US-102",
@@ -170,7 +170,7 @@
       "updated": "2026-08-17",
       "objective": "DAG con dependencias, reintentos, alertas y particionado por fecha. Debe manejar 8 fuentes con periodicidad distinta: horaria, diaria, mensual, anual y censal.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 19
+      "age_days": 18
     },
     {
       "id": "US-103",
@@ -188,7 +188,7 @@
       "updated": "2026-08-19",
       "objective": "fact_escuela_ciclo + dim_escuela, dim_municipio, dim_tiempo, dim_driver. Es la pieza de mayor peso en la rubrica: debe quedar impecable.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-104",
@@ -202,11 +202,11 @@
       "status": "done",
       "started": "2026-08-15",
       "blocked_since": "—",
-      "evidence": "_DevLog/2026-08-19-diana-alvarez-us104-features-escuela · PR #48 (gold.features_escuela con drivers D1-D4 reales); target definido por DEC-007 (híbrido: variación municipio × nivel con serie SNIEE + features escuela con 911) — resuelve RISK-007",
-      "updated": "2026-08-19",
+      "evidence": "_DevLog/2026-08-19-diana-alvarez-us104-features-escuela · PR #48 (gold.features_escuela con drivers D1-D4 reales); target definido por DEC-007 (híbrido: variación municipio × nivel con serie SNIEE + features escuela con 911) — resuelve RISK-007 · ADR-007 (paso 1, BLOCK-002) modifica este artefacto: target_variacion_matricula debe pasar a fracción y Gold reprocesarse. La historia sigue done —entregó lo que se le pidió— pero el trabajo nuevo no tiene dueño asignado",
+      "updated": "2026-08-30",
       "objective": "gold.features_escuela: los 6 drivers normalizados + banderas de cobertura. Contrato cerrado y versionado con la Celula 3.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-105",
@@ -224,7 +224,7 @@
       "updated": "2026-08-19",
       "objective": "Interpolacion IDW para SINAICA dentro de radio valido; fuera de radio, marcar SIN_DATO explicito (nunca cero ni nulo silencioso). Calcular indice_completitud_drivers por escuela.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 12
+      "age_days": 11
     },
     {
       "id": "US-106",
@@ -242,7 +242,7 @@
       "updated": "2026-08-26",
       "objective": "Diagrama fuente->bronze->silver->gold->feature->modelo->dashboard. Freeze el 6 de septiembre.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 6
     },
     {
       "id": "US-111",
@@ -260,7 +260,7 @@
       "updated": "2026-08-25",
       "objective": "Limpieza, tipado, deduplicacion y homologacion de catalogos (CCT y clave de municipio INEGI a 5 digitos).",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 17
     },
     {
       "id": "US-112",
@@ -278,7 +278,7 @@
       "updated": "2026-08-25",
       "objective": "Materializar hechos y dimensiones. Incluye tests nativos de dbt: unique, not_null, relationships, accepted_values.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 16
+      "age_days": 15
     },
     {
       "id": "US-113",
@@ -296,7 +296,7 @@
       "updated": "2026-08-28",
       "objective": "Vistas materializadas optimizadas para los 10 dashboards. Cada cubo debe exponer la bandera de cobertura para que el slice muestre 'sin dato disponible'.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-114",
@@ -332,7 +332,7 @@
       "updated": "2026-08-29",
       "objective": "SOLO tus fuentes DS-06 y DS-08: descargar fisicamente, abrir, contar registros, verificar esquema y llave (clave INEGI 5 digitos) y llenar la prueba en 14_Data_Sources/DS-06_CONAGUA_SINA.md y DS-08_CONAPO_Proyecciones.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-122a",
@@ -350,7 +350,7 @@
       "updated": "2026-08-29",
       "objective": "Un extractor idempotente por fuente (DS-06 diaria, DS-08 anual) que deposite en Bronze como Parquet con _ingested_at, _source, _source_url.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-123a",
@@ -368,7 +368,7 @@
       "updated": "2026-08-29",
       "objective": "Suite GE para las tablas de DS-06 y DS-08: nulos, duplicados, rangos fisicos, tipos y llave. Data Docs publicables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-124a",
@@ -386,7 +386,7 @@
       "updated": "2026-08-29",
       "objective": "Muestra <=500 filas de DS-06 y DS-08 para que CI corra sin descargar datos reales.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-121b",
@@ -404,7 +404,7 @@
       "updated": "2026-08-17",
       "objective": "SOLO tus fuentes DS-04 y DS-05: descargar/llamar la API, abrir, contar registros, verificar esquema y llave y llenar la prueba en 14_Data_Sources/DS-04_SESNSP_Incidencia_Delictiva.md y DS-05_SINAICA_Calidad_Aire.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 17
+      "age_days": 16
     },
     {
       "id": "US-122b",
@@ -422,7 +422,7 @@
       "updated": "2026-08-26",
       "objective": "Un extractor idempotente por fuente (DS-04 mensual, DS-05 API horaria) que deposite en Bronze como Parquet con _ingested_at, _source, _source_url.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 16
+      "age_days": 15
     },
     {
       "id": "US-123b",
@@ -440,7 +440,7 @@
       "updated": "2026-08-26",
       "objective": "Suite GE para las tablas de DS-04 y DS-05: nulos, duplicados, rangos fisicos, tipos y llave. Data Docs publicables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 12
+      "age_days": 11
     },
     {
       "id": "US-124b",
@@ -458,7 +458,7 @@
       "updated": "2026-08-26",
       "objective": "Muestra <=500 filas de DS-04 y DS-05 para que CI corra sin descargar datos reales.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 6
+      "age_days": 5
     },
     {
       "id": "US-201",
@@ -476,7 +476,7 @@
       "updated": "2026-08-25",
       "objective": "Arquitectura de informacion de los 10 tableros, arbol de navegacion y definicion formal de cada KPI con su formula SQL. Documentar en 04_UX_Design/Screen_Specs.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 23
+      "age_days": 22
     },
     {
       "id": "US-202",
@@ -494,7 +494,7 @@
       "updated": "2026-08-17",
       "objective": "Conectar a Gold, datasets virtuales, metricas y dimensiones reutilizables por todos los tableros.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-203",
@@ -512,7 +512,7 @@
       "updated": "2026-08-26",
       "objective": "Los dos tableros insignia del pitch. DB-02 es coropletico municipal con puntos de escuela.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 9
+      "age_days": 8
     },
     {
       "id": "US-204",
@@ -530,7 +530,7 @@
       "updated": "2026-08-28",
       "objective": "Panel interactivo de simulacion sobre los 3 modelos y el tablero que dice que intervencion toca a cada escuela. DB-09 es el diferenciador del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 3
+      "age_days": 2
     },
     {
       "id": "US-205",
@@ -566,7 +566,7 @@
       "updated": "2026-08-21",
       "objective": "Cubos y capa semantica que alimentan DB-03 (ficha de escuela) y DB-04 (comparador de municipios): metricas, jerarquias y granos.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-212",
@@ -584,7 +584,7 @@
       "updated": "2026-08-29",
       "objective": "Drill-down individual por CCT y benchmark lado a lado entre municipios.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 6
+      "age_days": 5
     },
     {
       "id": "US-214a",
@@ -638,7 +638,7 @@
       "updated": "2026-08-25",
       "objective": "Cubos y capa semantica que alimentan DB-05 (analisis por driver) y DB-08 (explorador del cubo/pivot): metricas, jerarquias y granos.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 7
     },
     {
       "id": "US-213",
@@ -656,7 +656,7 @@
       "updated": "2026-08-29",
       "objective": "Un tab por driver D1-D6 y una tabla dinamica libre sobre Gold.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-214b",
@@ -710,7 +710,7 @@
       "updated": "2026-08-29",
       "objective": "Series de matricula, distribucion por nivel educativo y tarjetas de KPI reutilizables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-222",
@@ -782,7 +782,7 @@
       "updated": "2026-08-30",
       "objective": "Shell de la app Streamlit (src/frontend/) con navegación y los 10 dashboards de Superset embebidos por guest token con row-level security por rol.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 23
+      "age_days": 22
     },
     {
       "id": "US-207",
@@ -800,7 +800,7 @@
       "updated": "2026-08-10",
       "objective": "Formulario de parámetros que llama a la API de inferencia (US-412/US-415) y muestra la salida de los 3 modelos (ML-01/02/03) en FARO Web.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 23
+      "age_days": 22
     },
     {
       "id": "US-301",
@@ -818,7 +818,7 @@
       "updated": "2026-08-10",
       "objective": "Los 3 modelos, particion temporal (nunca aleatoria), protocolo de backtesting y manejo de cobertura parcial en features. Documentar como ADR.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 20
     },
     {
       "id": "US-302",
@@ -836,7 +836,7 @@
       "updated": "2026-08-28",
       "objective": "Multiclase: cual de los 6 drivers explica el riesgo de cada escuela. Con SHAP para explicabilidad. Es el corazon prescriptivo del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 13
     },
     {
       "id": "US-303",
@@ -854,7 +854,7 @@
       "updated": "2026-08-29",
       "objective": "Versionado, metricas, artefactos y contrato de inferencia batch y en tiempo real.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 13
     },
     {
       "id": "US-304a",
@@ -868,11 +868,11 @@
       "status": "in_review",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "PR #92/#104 (prompt, guardarraíles y servicio seguro) · PR #108 entrega RAG/evaluación · PR #119 mergeado: procesar_consulta_con_rag() integra la recuperación con los guardarraíles y el texto de excepción deja de entrar al prompt como contexto. Falta conectar el endpoint real de C4, ejecutar el E2E con Chroma/Gold levantados y aprobar 15_ML_Models/Agente_Guardrails_US304a. BUG-024: SELECT … INTO atraviesa el validador de SQL",
-      "updated": "2026-08-28",
+      "evidence": "PR #92/#104 (prompt, guardarraíles y servicio seguro) · PR #108 entrega RAG/evaluación · PR #119 mergeado: procesar_consulta_con_rag() integra la recuperación con los guardarraíles y el texto de excepción deja de entrar al prompt como contexto. PR #142 mergeado (C4): /agente/consulta deja de ser stub y llama al servicio real — BUG-025 fixed, verificado en vivo. BUG-024 fixed por PR #121: SELECT … INTO ya rebota en el validador. Falta desplegar ChromaDB (BUG-033) para que el E2E sea posible, y aprobar 15_ML_Models/Agente_Guardrails_US304a",
+      "updated": "2026-08-30",
       "objective": "Diseno del agente conversacional, prompt del sistema y guardarraines de seguridad: rechazar consultas fuera de alcance y nunca ejecutar DELETE/UPDATE/DROP. La capa de recuperacion (indexado y contexto) la construye Carlos en US-304b.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 13
     },
     {
       "id": "US-311",
@@ -890,7 +890,7 @@
       "updated": "2026-08-25",
       "objective": "Predecir variacion de matricula por escuela para el siguiente ciclo. MAE/RMSE con backtesting temporal.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 22
+      "age_days": 21
     },
     {
       "id": "US-312",
@@ -908,7 +908,7 @@
       "updated": "2026-08-30",
       "objective": "Tabla comparativa, curvas y analisis de error por entidad. Va a 06_Quality_Testing/.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 12
+      "age_days": 11
     },
     {
       "id": "US-313",
@@ -922,11 +922,11 @@
       "status": "in_review",
       "started": "2026-08-14",
       "blocked_since": "—",
-      "evidence": "PR #41 (job batch) · PR #83 (grano dual) · PR #96 (serie histórica) · PR #111/#117 (Gold real, cobertura y etiqueta real). BUG-010 ya está fixed por PR #95 y --desde-gold está en main; falta ratificar ADR-007/BUG-019, ejecutar contra el Gold real actual, verificar joins/ciclos y aprobar 15_ML_Models/Publicacion_Gold",
-      "updated": "2026-08-28",
+      "evidence": "PR #41 (job batch) · PR #83 (grano dual) · PR #96 (serie histórica) · PR #111/#117 (Gold real, cobertura y etiqueta real). BUG-010 ya está fixed por PR #95 y --desde-gold está en main; ADR-007 ratificado y accepted el 29-ago (PR #147), así que BUG-019 tiene decisión: el target va en fracción. Falta el paso 1 de ADR-007 —que Célula 1 normalice el target y reprocese Gold—, después regenerar las 45 249 filas, ejecutar contra el Gold real, verificar joins/ciclos y aprobar 15_ML_Models/Publicacion_Gold",
+      "updated": "2026-08-30",
       "objective": "Job batch que escribe gold.predicciones y gold.recomendaciones para DB-06 y DB-09.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 16
+      "age_days": 15
     },
     {
       "id": "US-321",
@@ -994,11 +994,11 @@
       "status": "in_review",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "_DevLog/2026-08-27-carlos-mayorga-us304b-us323 · PR #108 mergeado · 15_ML_Models/Agente_Recuperacion_US304b en approved · PR #119 mergeado: carga diferida del modelo, errores tipados e indexación idempotente con IDs deterministas. Falta verificar la recuperación dentro del contenedor antes de cerrar",
-      "updated": "2026-08-28",
+      "evidence": "_DevLog/2026-08-27-carlos-mayorga-us304b-us323 · PR #108 mergeado · 15_ML_Models/Agente_Recuperacion_US304b en approved · PR #119 mergeado: carga diferida del modelo, errores tipados e indexación idempotente con IDs deterministas. Falta verificar la recuperación dentro del contenedor: hoy no se puede, porque ChromaDB no está desplegado en producción (BUG-033) y toda pregunta en alcance devuelve «contexto no disponible»",
+      "updated": "2026-08-30",
       "objective": "Indexar el esquema de Gold en ChromaDB (embeddings con sentence-transformers) y construir la consulta de contexto que alimenta al agente disenado por Andres en US-304a.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 13
     },
     {
       "id": "US-323",
@@ -1016,7 +1016,7 @@
       "updated": "2026-08-28",
       "objective": "20 preguntas de negocio con su respuesta esperada, para probar el agente de forma objetiva.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 3
+      "age_days": 2
     },
     {
       "id": "US-324",
@@ -1034,7 +1034,7 @@
       "updated": "2026-08-28",
       "objective": "Una ficha por modelo en 15_ML_Models/: proposito, features de entrada, metrica obtenida, limitaciones conocidas y en que contextos NO debe usarse la prediccion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 3
+      "age_days": 2
     },
     {
       "id": "US-305",
@@ -1048,11 +1048,11 @@
       "status": "in_review",
       "started": "2026-08-26",
       "blocked_since": "—",
-      "evidence": "PR #92/#94 (widget e historial) · PR #98 (JWT) · PR #104 (cliente 401/403) · PR #108 (RAG disponible) · PR #119 (integración RAG mergeada). Falta E2E widget → API → RAG con login real US-405 y resolver BUG-020 de la API desplegada",
-      "updated": "2026-08-28",
+      "evidence": "PR #92/#94 (widget e historial) · PR #98 (JWT) · PR #104 (cliente 401/403) · PR #108 (RAG disponible) · PR #119 (integración RAG mergeada). BUG-020 fixed: la API desplegada ya responde 200 en las rutas de datos. Falta el E2E widget → API → RAG con login real (US-405) y BUG-033 — el agente responde pero sin ChromaDB detrás",
+      "updated": "2026-08-30",
       "objective": "Widget de chat conectado a la API del agente RAG (US-304/US-323), integrado en FARO Web.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 4
+      "age_days": 3
     },
     {
       "id": "US-401",
@@ -1070,7 +1070,7 @@
       "updated": "2026-08-11",
       "objective": "Especificacion de TODOS los endpoints ANTES de construir, para que las Celulas 2 y 3 trabajen en paralelo con mocks. Va a 03_Architecture/API_Specification.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 27
+      "age_days": 26
     },
     {
       "id": "US-402",
@@ -1088,7 +1088,7 @@
       "updated": "2026-08-18",
       "objective": "Login con Google y manejo seguro de tokens. Es el requisito mas delicado del PRD.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-403",
@@ -1106,7 +1106,7 @@
       "updated": "2026-08-28",
       "objective": "Rol ciudadano (dashboards + agente) y analista (pipelines, export bruto, ML avanzado), como dependencias reutilizables de FastAPI.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-404",
@@ -1124,7 +1124,7 @@
       "updated": "2026-08-18",
       "objective": "Rate limiting, CORS, validacion estricta con Pydantic y errores sin fuga de informacion interna.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 14
     },
     {
       "id": "US-411",
@@ -1138,11 +1138,11 @@
       "status": "in_review",
       "started": "2026-08-20",
       "blocked_since": "—",
-      "evidence": "_DevLog/2026-08-20-karla-monter-us411-endpoints-gold · PR #59 (Gold real) · PR #99 (BUG-008 resuelto y app real desplegada). No cierra: BUG-020 critical hace que las rutas con BD respondan 500 en producción. Tras corregirlo, Karla valida /escuelas, /municipios, /kpis y confirma /series fuera de alcance",
-      "updated": "2026-08-28",
+      "evidence": "_DevLog/2026-08-20-karla-monter-us411-endpoints-gold · PR #59 (Gold real) · PR #99 (BUG-008 resuelto y app real desplegada). BUG-020 fixed (PR #141/#144, Luis Téllez): verificado en vivo el 30-ago, /escuelas, /municipios y /kpis responden 200 contra Cloud SQL. Se cumple el criterio de DEC-012. Único gate restante: que Karla valide las tres rutas contra el dato real y confirme /series fuera de alcance",
+      "updated": "2026-08-30",
       "objective": "Rutas de lectura parametrizadas: escuelas, municipios, KPIs y series. Con paginacion, filtros y ordenamiento.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 10
+      "age_days": 9
     },
     {
       "id": "US-412",
@@ -1156,11 +1156,11 @@
       "status": "in_review",
       "started": "2026-08-26",
       "blocked_since": "—",
-      "evidence": "_DevLog/2026-08-26-juan-macias-us412-repositorio-modelos-bug010 · PR #95 mergeado: /predicciones/* lee gold.predicciones + gold.recomendaciones mediante repositorio inyectable, BUG-010 fixed, contrato/OpenAPI y pruebas de 200/404/batch. No cierra: BUG-020 critical hace que /predicciones y /predicciones/batch respondan 500 en producción — son las rutas que esta historia entrega y de las que depende la demo de ML. Se cierra igual que US-411: cuando la ruta responda en el despliegue. La integración Postgres E2E sigue trazada a US-422",
-      "updated": "2026-08-28",
+      "evidence": "_DevLog/2026-08-26-juan-macias-us412-repositorio-modelos-bug010 · PR #95 mergeado: /predicciones/* lee gold.predicciones + gold.recomendaciones mediante repositorio inyectable, BUG-010 fixed, contrato/OpenAPI y pruebas de 200/404/batch. BUG-020 fixed: /predicciones/{cct} pasa de 500 a 404 estructurado — la base conecta y la ruta responde, así que el criterio de DEC-012 queda cumplido. No cierra todavía por una razón distinta: gold.predicciones está vacío en producción, así que ninguna CCT devuelve 200 y la demo de ML no tiene qué mostrar. Eso lo destraba el paso 1 de ADR-007 (Célula 1), no C4. La integración Postgres E2E sigue trazada a US-422",
+      "updated": "2026-08-30",
       "objective": "Rutas que sirven las predicciones de los 3 modelos, leyendo gold.predicciones y gold.recomendaciones por SQL. Modo unitario y batch, con validación de entrada. Cierra BUG-010.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 4
+      "age_days": 3
     },
     {
       "id": "US-413",
@@ -1214,7 +1214,7 @@
       "updated": "2026-08-28",
       "objective": "Esquemas Pydantic de entrada/salida por modelo, alineados al contrato de gold.features_escuela. Es la pieza que conecta Celula 3 y Celula 4.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 4
+      "age_days": 3
     },
     {
       "id": "US-416",
@@ -1232,7 +1232,7 @@
       "updated": "2026-08-28",
       "objective": "Cache de predicciones batch, timeouts, y respuesta degradada cuando falta el dato.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 3
+      "age_days": 2
     },
     {
       "id": "US-421",
@@ -1250,7 +1250,7 @@
       "updated": "2026-08-26",
       "objective": "Estructura del proyecto, /health, configuracion por variables de entorno y documentacion automatica.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 20
     },
     {
       "id": "US-422",
@@ -1304,7 +1304,7 @@
       "updated": "2026-08-10",
       "objective": "Login/logout con Google (OAuth2/JWT de US-402/US-403) en el frontend y vistas protegidas por rol ciudadano/analista.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 23
+      "age_days": 22
     },
     {
       "id": "US-501",
@@ -1322,7 +1322,7 @@
       "updated": "2026-08-10",
       "objective": "CRITICO: elimina el riesgo del techo de 6.0 desde la semana 1. Cloud Run con URL accesible. Se hace en pareja con Manuel Serrania (Tech Lead de BI) como apoyo de arranque.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 20
     },
     {
       "id": "US-502",
@@ -1340,7 +1340,7 @@
       "updated": "2026-08-17",
       "objective": "Airflow, dbt, Postgres, Superset, MLflow, FastAPI y agente. Healthchecks, volumenes y red interna. Con apoyo de Manuel Serrania.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 17
+      "age_days": 16
     },
     {
       "id": "US-503",
@@ -1358,7 +1358,7 @@
       "updated": "2026-08-17",
       "objective": "Lint, pruebas y ejecucion de vault_lint.py en cada PR. Sin esto el vault se degrada con 21 personas.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 16
+      "age_days": 15
     },
     {
       "id": "US-504",
@@ -1376,7 +1376,7 @@
       "updated": "2026-08-17",
       "objective": "Base administrada, red, Secret Manager y registro de imagenes.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 13
     },
     {
       "id": "US-505",
@@ -1394,7 +1394,7 @@
       "updated": "2026-08-17",
       "objective": "Todo el ecosistema en GCP, estable, con la URL publica verificada para la demo del 9 de septiembre.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 13
     },
     {
       "id": "US-521a",
@@ -1412,7 +1412,7 @@
       "updated": "2026-08-17",
       "objective": "Documentar el setup local reproducible de FastAPI (API) y Postgres/Cloud SQL: variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 17
     },
     {
       "id": "US-522a",
@@ -1430,7 +1430,7 @@
       "updated": "2026-08-28",
       "objective": "Dockerfile y servicio en docker-compose para FastAPI y Postgres, con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 17
     },
     {
       "id": "US-523a",
@@ -1448,7 +1448,7 @@
       "updated": "2026-08-28",
       "objective": "Configurar la proteccion de main: PR obligatorio, required reviews y prohibicion de push directo.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 17
     },
     {
       "id": "US-524a",
@@ -1462,11 +1462,11 @@
       "status": "in_review",
       "started": "2026-08-28",
       "blocked_since": "—",
-      "evidence": "PR #102 abierto: logs estructurados, healthcheck y monitoreo de API/Postgres; la rama contiene correcciones de revisión y DevLog. Pendiente checks, revisión de C5 y merge",
-      "updated": "2026-08-28",
+      "evidence": "PR #102 abierto: logs estructurados, healthcheck y monitoreo de API/Postgres. Los dos defectos de la revisión están corregidos y verificados por el PM — JsonFormatter emite JSON válido para las líneas de acceso de uvicorn y una URL maliciosa queda escapada dentro de message sin forjar severity. Bloquean: conflicto en Traceability_Matrix.md (sin conflicto no ha corrido el CI ni una vez) y el visto bueno de C5 por regla 7 — cambia el arranque del contenedor",
+      "updated": "2026-08-30",
       "objective": "Metricas, logs y alertas para FastAPI y Postgres.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 1
     },
     {
       "id": "US-525a",
@@ -1502,7 +1502,7 @@
       "updated": "2026-08-17",
       "objective": "Documentar el setup local de Airflow y los jobs de ML (MLflow): variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 20
     },
     {
       "id": "US-522b",
@@ -1520,7 +1520,7 @@
       "updated": "2026-08-28",
       "objective": "Dockerfile y servicios en docker-compose para Airflow y los jobs de ML/MLflow, con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 5
+      "age_days": 4
     },
     {
       "id": "US-523b",
@@ -1592,7 +1592,7 @@
       "updated": "2026-08-28",
       "objective": "Documentar el setup local de Superset y el agente (RAG/ChromaDB): variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 17
     },
     {
       "id": "US-522c",
@@ -1610,7 +1610,7 @@
       "updated": "2026-08-28",
       "objective": "Dockerfile y servicios en docker-compose para Superset y el agente (RAG/ChromaDB), con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 12
+      "age_days": 11
     },
     {
       "id": "US-523c",
@@ -1628,7 +1628,7 @@
       "updated": "2026-08-25",
       "objective": "Configurar el gate que corre vault_lint.py y verifica la plantilla de PR completa.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 7
     },
     {
       "id": "US-524c",
@@ -2704,6 +2704,17 @@
       "alternative": "Entrenar y ver métricas en la UI sin registrar en el registry (no cierra AC-003.4)",
       "owner": "Luis Téllez Domínguez",
       "status": "mitigating"
+    },
+    {
+      "id": "BLOCK-002",
+      "story": "US-313, US-412, US-311",
+      "provider": "Célula 1 (gold.features_escuela)",
+      "consumer": "Célula 3 (ML-01, publicación) y Célula 4 (/predicciones)",
+      "description": "Paso 1 de ADR-007: normalizar target_variacion_matricula a fracción y reprocesar Gold. ADR-007 quedó accepted el 29-ago (PR #147), pero ratificar no cambia el dato: [features_escuela.sql:71](dbt/models/gold/features_escuela.sql) sigue calculando matricula_total - matricula_ciclo_anterior, alumnos absolutos. Mientras siga así, verificar_escala_variacion() detiene la publicación —correctamente—, gold.predicciones queda vacío en producción, /api/v1/predicciones/{cct} responde 404 para toda CCT y la demo de ML no tiene qué mostrar. Bloquea además los pasos 2, 3 y 4 del propio ADR y mantiene BUG-019 abierto",
+      "since": "2026-08-29",
+      "alternative": "Ninguna que preserve el contrato: normalizar al leer en C3 fue evaluada y rechazada en el ADR (opción C) porque dejaría Gold declarando una unidad y sirviendo otra",
+      "owner": "SIN ASIGNAR — decisión del PM",
+      "status": "open"
     }
   ],
   "performance": {
@@ -3588,10 +3599,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 24,
-        "devlogs": 35,
+        "devlogs": 36,
         "active_us": 4,
-        "activity": 63,
-        "signal": "24 PR · 35 DevLog · 4 US activas"
+        "activity": 64,
+        "signal": "24 PR · 36 DevLog · 4 US activas"
       },
       {
         "name": "Héctor Rafael Morales Marbán",
@@ -4421,7 +4432,7 @@
   ],
   "readiness": {
     "score": 60,
-    "confidence": 55,
+    "confidence": 50,
     "gates": [
       {
         "name": "URL pública y healthcheck",
@@ -6992,11 +7003,11 @@
     },
     {
       "date": "2026-08-29",
-      "remaining": 60,
-      "weighted_remaining": 40.2,
-      "done": 31,
+      "remaining": 52,
+      "weighted_remaining": 36.2,
+      "done": 39,
       "scope": 91,
-      "wip": 36,
+      "wip": 28,
       "blocked": 0
     },
     {
