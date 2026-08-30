@@ -1,0 +1,176 @@
+{
+  "expectations": [
+    {
+      "id": "e5bda755-16fd-451f-ab86-d045470d37f2",
+      "kwargs": {
+        "column": "cct"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "83e7a18f-bf3e-4cb3-b9cd-2e4e4be87233",
+      "kwargs": {
+        "column": "cct"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_unique"
+    },
+    {
+      "id": "b53143d7-1c51-4e45-a99a-03a6151f99c0",
+      "kwargs": {
+        "column": "cct",
+        "value": 10.0
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_value_lengths_to_equal"
+    },
+    {
+      "id": "d4c276bd-2f88-4aa2-81fc-8f91c0cf0a4f",
+      "kwargs": {
+        "column": "agua"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "72aebdec-27c0-45d4-a156-0ebf623c3e10",
+      "kwargs": {
+        "column": "agua",
+        "value_set": [
+          "0",
+          "1",
+          "SIN_DATO"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "ade73efa-2702-4cb6-833f-4d09a711f209",
+      "kwargs": {
+        "column": "drenaje"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "5ef3d8d1-c621-4195-9b62-4400f685f5b5",
+      "kwargs": {
+        "column": "drenaje",
+        "value_set": [
+          "0",
+          "1",
+          "SIN_DATO"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "24db0ba4-d9e1-4ba2-87c2-4bd0c860a5c6",
+      "kwargs": {
+        "column": "electricidad"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "697d33d8-7ded-4bbb-93fa-e737a0a0382a",
+      "kwargs": {
+        "column": "electricidad",
+        "value_set": [
+          "0",
+          "1",
+          "SIN_DATO"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "c9fedaec-44c1-4e34-acc8-2f90765b6bf3",
+      "kwargs": {
+        "column": "sanitarios"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "dd255c0e-a1d2-480e-b1bc-810601db2f90",
+      "kwargs": {
+        "column": "sanitarios",
+        "value_set": [
+          "0",
+          "1",
+          "SIN_DATO"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "075d7bd3-b375-4777-8ce1-5591ecb76713",
+      "kwargs": {
+        "column": "internet"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "4892a46a-422c-4c85-94bc-d425dec7e1ee",
+      "kwargs": {
+        "column": "internet",
+        "value_set": [
+          "0",
+          "1",
+          "SIN_DATO"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    },
+    {
+      "id": "186a88ab-3ea7-46e8-9010-6cc5ce9ecc26",
+      "kwargs": {
+        "column": "computadoras"
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_not_be_null"
+    },
+    {
+      "id": "41be9103-7455-4bab-9b2c-b60fd23ff8cc",
+      "kwargs": {
+        "column": "computadoras",
+        "value_set": [
+          "0",
+          "1",
+          "SIN_DATO"
+        ]
+      },
+      "meta": {},
+      "severity": "critical",
+      "type": "expect_column_values_to_be_in_set"
+    }
+  ],
+  "id": "08372615-49ab-4cde-9012-3456789abcde",
+  "meta": {
+    "great_expectations_version": "1.20.0"
+  },
+  "name": "suite_ds03_cemabe",
+  "notes": null
+}
