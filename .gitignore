@@ -39,6 +39,7 @@ logs/
 mlruns/
 mlartifacts/
 great_expectations/uncommitted/
+gx/                       # contexto por defecto que crea Great Expectations 0.18+ al llamar get_context() sin dir (BUG-025 heads-up)
 airflow.db
 superset.db
 

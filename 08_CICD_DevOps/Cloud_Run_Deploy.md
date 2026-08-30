@@ -221,6 +221,34 @@ Proxy (contenedor oficial, token OAuth efímero) reusando la vía de fixtures Br
 `dbt run` acotado; se quitó la IP pública al terminar. Detalle en el DevLog
 [[_DevLog/2026-08-29-luis-tellez-us505-fase2-gold-cloudsql-redeploy]].
 
+### 4.4 Redeploy con **imagen nueva** (cambia el código, no sólo la config)
+
+Cuando el cambio está en `src/` (p.ej. desplegar en prod un fix ya mergeado a `main`),
+el §4.3 no basta: hay que **reconstruir y publicar** la imagen antes de desplegar.
+
+> ⚠️ **Arquitectura:** `build-and-push.sh` usa `docker build` sin `--platform`, así que en
+> un Mac Apple Silicon (arm64) produciría una imagen que Cloud Run **rechaza** (`Container
+> manifest type ... not supported`, ver §10). Construye siempre con `buildx --platform
+> linux/amd64`.
+
+```bash
+# 1) Build + push (amd64) con un tag inmutable nuevo
+docker buildx build --platform linux/amd64 \
+  -t us-central1-docker.pkg.dev/faro-escuela-sensor/faro-images/faro-api:<TAG> \
+  -f docker/api.Dockerfile --push .
+
+# 2) Deploy: el script preserva SA / VPC connector / secretos de Fase 2 (§4.3)
+./08_CICD_DevOps/scripts/deploy-cloud-run.sh <TAG>
+```
+
+**Ejemplo real (BUG-025):** el fix de `src/api/v1/agente.py` (PR #142, C4) estaba en `main`
+pero prod seguía sirviendo el stub porque corría la imagen `v0.2.1-hotfix-bug008` (Fase 2 no
+hizo rebuild). Se reconstruyó como **`v0.2.2-bug025`** y se desplegó → revisión
+**`faro-api-00006-q8f`**. Verificado en prod: `/agente/consulta` ya **no** es el stub (degrada
+seguro, `sql_generado:null`, la frase destructiva ya no se acepta) y `/escuelas` sigue 200 con
+25 escuelas. El RAG real sigue pendiente de C3 (LLM) + añadir `chromadb`/`sentence-transformers`
+a la imagen. Detalle en [[_DevLog/2026-08-29-luis-tellez-bug025-redeploy-agente-prod]].
+
 ---
 
 ## 5. Verificación del Deploy
