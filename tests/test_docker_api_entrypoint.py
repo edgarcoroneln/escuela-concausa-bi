@@ -69,10 +69,10 @@ def test_referencia_del_cmd_es_extraible() -> None:
 def test_app_que_arranca_el_contenedor_expone_el_contrato_v1() -> None:
     """BUG-008: la app que el Dockerfile arranca debe exponer el contrato v1.
 
-    Este es el corazon del bug: hoy el CMD apunta a 'src.api.main:app' (el
-    hola-mundo de 3 rutas), no a 'src.api.app:app' (el contrato real con 18
-    rutas bajo /api/v1). Esta prueba falla mientras el Dockerfile no arranque
-    la app correcta, y protege contra que el bug regrese en el futuro.
+    El CMD del Dockerfile apuntaba a 'src.api.main:app' (el hola-mundo de
+    3 rutas), en vez de 'src.api.app:app' (el contrato real con 18 rutas
+    bajo /api/v1). Luis Tellez lo corrigio el 27-ago (BUG-008). Esta prueba
+    no detecta el bug: reprueba si el bug regresa en el futuro.
 
     Las rutas esperadas NO estan escritas a mano: se obtienen en vivo del
     esquema OpenAPI de src.api.app (la fuente oficial del contrato v1), para
