@@ -2,9 +2,9 @@
 id: ADR-007
 title: "ADR-007 — Unidad de target_variacion_matricula: fracción, no diferencia absoluta"
 owner: "Héctor Rafael Morales Marbán"
-status: proposed
+status: accepted
 traces_up: ["REQ-003", "ADR-003", "DEC-006"]
-traces_down: ["US-104", "US-311", "US-313", "US-212", "15_ML_Models/Indice_Riesgo_ML01", "03_Architecture/Data_Model", "DEC-006"]
+traces_down: ["US-104", "US-311", "US-313", "US-212", "US-204", "DEC-012", "BUG-017", "BUG-019", "15_ML_Models/Indice_Riesgo_ML01", "03_Architecture/Data_Model", "DEC-006"]
 supersedes: []
 tags: [architecture, adr, ml, celula-1, celula-2, celula-3, celula-4]
 date: "2026-08-28"
@@ -24,6 +24,48 @@ date: "2026-08-28"
 > El costo de la decisión es asimétrico y conviene tenerlo a la vista: si se ratifica fracción,
 > `DEC-006` y el umbral 0.6 siguen válidos sin tocar nada; si no, hay que rehacer §5.1 del contrato
 > de DB-03/DB-04. Cinco minutos para Célula 3, medio sprint para Célula 2.
+
+## Ratificación — 2026-08-30
+
+> **RATIFICADO.** La mesa (Andrés González, Christian Ruiz, Diana Alvarez, Marina García; convoca
+> Edgar Coronel) ratifica **fracción**, sin cambios a la calibración de la sigmoide ni al umbral 0.6
+> de `DEC-006`. Registrado como **DEC-012**.
+
+La ratificación **no fue una decisión nueva**: `DEC-006` fijó el 13 de agosto que «escuela en riesgo
+= `indice_riesgo ≥ 0.6` ↔ pérdida de ~5 % de matrícula», y ese «~5 %» ya es una fracción. Lo que se
+decidió fue **alinear el código con una decisión que el equipo ya había tomado** y que la unidad
+actual contradecía en silencio.
+
+La mesa amplió el alcance en cuatro puntos, todos aportados por Célula 2:
+
+### R-1 · El ADR se extiende más allá del target de ML
+
+`fact_escuela_ciclo.variacion_matricula` tiene **exactamente el mismo defecto** y no estaba cubierta.
+Es la que leen los tableros — **cuatro, no uno**. Ratificar sólo el target dejaba el ML coherente y
+el frontend roto.
+
+### R-2 · La unidad se declara en el contrato, no en el acuerdo
+
+`Data_Model.md` §5.3 dice `StrictFloat` y nada más. **Mientras la unidad viva en la memoria de una
+junta y no en el contrato, el siguiente productor vuelve a elegir por su cuenta.** Ésa es la causa
+raíz; lo demás es síntoma.
+
+### R-3 · Convención de nombres, para que no se repita
+
+Toda columna que exprese una razón lleva la unidad en el nombre — **`_pct` o `_frac`** — o se guarda
+como **numerador y denominador por separado**. Lo segundo ya es la convención de los cubos de C2
+(`DEC-008`), y es la razón de que el resto de sus métricas estén bien: ésta se escapó por
+reconstruirse dentro de la expresión en vez de guardar los componentes.
+
+### R-4 · Tres cosas con dueño y fecha antes de cerrar la mesa
+
+| Qué | Dueño | Por qué |
+|---|---|---|
+| **Fecha del reentrenamiento de ML-01**, no sólo de la firma | Héctor Morales | C2 verifica DB-03 con predicciones nuevas publicadas, no con el ADR firmado |
+| **Dueño de BUG-019** | por asignar en el standup | DB-06 y DB-09 de Manuel también leen `gold.predicciones` |
+| **La guarda de escala queda como control permanente**, no medida temporal | Héctor Morales | Es lo único que impidió publicar 45,249 filas saturadas en silencio |
+
+---
 
 ## Contexto
 

@@ -24,6 +24,7 @@ tags: [moc, reports]
 | [[13_Reports/Vault_Correcciones_2026-08-29]] | Plan de corrección del vault: hallazgos de gobernanza de la revisión de PRs del 29-ago, con dueño y fecha |
 | [[13_Reports/Junta_Mock_2026-08-29]] | Guion de la junta del mock: qué se puede demostrar hoy, las 3 decisiones a tomar y los bloqueos con dueño |
 | [[13_Reports/US_Pendientes_Cierre_2026-08-30]] | Qué le falta a cada una de las 30 US abiertas, separando lo que depende de su dueño de lo que está frenado por un tercero |
+| [`Cierre_Desarrollo_2026-09-02.html`](Cierre_Desarrollo_2026-09-02.html) | Reporte para el equipo: qué le falta a cada quien antes del congelamiento del 2-sep y el plan de QA |
 
 ## Convención
 - Un reporte por fecha: `Executive_YYYY-MM-DD.md`.

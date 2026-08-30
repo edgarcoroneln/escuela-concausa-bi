@@ -1,0 +1,560 @@
+<title>Cierre de Desarrollo FARO</title>
+<style>
+  :root{
+    --ground:#FBFCFD; --panel:#FFFFFF; --panel-2:#F3F6F8;
+    --ink:#0F1620; --ink-2:#44525F; --ink-3:#6B7A88;
+    --rule:#DCE4EA; --rule-2:#C6D2DB;
+    --accent:#155E8C; --accent-soft:#E4EEF5;
+    --crit:#A81E14; --crit-soft:#FBE9E7;
+    --warn:#7A5200; --warn-soft:#FBF0DC;
+    --ok:#14603C; --ok-soft:#E2F0E8;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0C1218; --panel:#131C24; --panel-2:#1A242D;
+      --ink:#E8EEF3; --ink-2:#AEBECB; --ink-3:#7F909F;
+      --rule:#25323D; --rule-2:#33434F;
+      --accent:#6FB2DA; --accent-soft:#17303F;
+      --crit:#F0938A; --crit-soft:#3A1A18;
+      --warn:#E0B364; --warn-soft:#3A2E14;
+      --ok:#7CC9A2; --ok-soft:#14301F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0C1218; --panel:#131C24; --panel-2:#1A242D;
+    --ink:#E8EEF3; --ink-2:#AEBECB; --ink-3:#7F909F;
+    --rule:#25323D; --rule-2:#33434F;
+    --accent:#6FB2DA; --accent-soft:#17303F;
+    --crit:#F0938A; --crit-soft:#3A1A18;
+    --warn:#E0B364; --warn-soft:#3A2E14;
+    --ok:#7CC9A2; --ok-soft:#14301F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px 96px;}
+
+  /* ── Cabecera ── */
+  header{
+    border-bottom:2px solid var(--ink); padding:56px 0 28px; margin-bottom:8px;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 18px;
+  }
+  h1{
+    font-family:var(--serif); font-weight:600; font-size:clamp(34px,5.4vw,54px);
+    line-height:1.05; letter-spacing:-.015em; margin:0 0 16px; text-wrap:balance;
+  }
+  .standfirst{
+    font-size:19px; line-height:1.5; color:var(--ink-2);
+    max-width:60ch; margin:0;
+  }
+  .standfirst strong{color:var(--ink); font-weight:600;}
+
+  /* ── Cuenta regresiva ── */
+  .clock{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    gap:1px; background:var(--rule); border:1px solid var(--rule);
+    margin:32px 0 8px;
+  }
+  .tick{background:var(--panel); padding:16px 18px;}
+  .tick.now{background:var(--crit-soft);}
+  .tick .d{font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:6px;}
+  .tick .l{font-size:14.5px; font-weight:600; line-height:1.3;}
+  .tick.now .l{color:var(--crit);}
+  .tick .n{font-family:var(--mono); font-size:12px; color:var(--ink-3); margin-top:4px;}
+
+  /* ── Secciones ── */
+  section{margin-top:56px;}
+  h2{
+    font-family:var(--serif); font-size:30px; font-weight:600; letter-spacing:-.01em;
+    margin:0 0 8px; padding-bottom:10px; border-bottom:1px solid var(--rule-2);
+    text-wrap:balance;
+  }
+  .lede{color:var(--ink-2); margin:0 0 24px; max-width:64ch; font-size:16.5px;}
+  h3{
+    font-family:var(--sans); font-size:15px; font-weight:700; letter-spacing:.02em;
+    margin:32px 0 12px; color:var(--ink);
+  }
+
+  /* ── Barra de avance ── */
+  .bar{display:flex; height:34px; border:1px solid var(--rule-2); overflow:hidden; margin:4px 0 10px;}
+  .bar span{display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:12px; font-weight:600; color:#fff;}
+  .bar .b-ok{background:var(--ok);}
+  .bar .b-rev{background:var(--warn);}
+  .bar .b-prog{background:var(--crit);}
+  .legend{display:flex; flex-wrap:wrap; gap:18px; font-size:13.5px; color:var(--ink-2);}
+  .legend i{display:inline-block; width:11px; height:11px; margin-right:6px; vertical-align:-1px;}
+
+  /* ── Tarjetas de persona ── */
+  .people{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px;}
+  .card{border:1px solid var(--rule); background:var(--panel); padding:16px 18px;}
+  .card.hot{border-left:3px solid var(--crit);}
+  .card .who{font-weight:700; font-size:15.5px; margin-bottom:2px;}
+  .card .cell{font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:12px;}
+  .item{padding:9px 0; border-top:1px solid var(--rule);}
+  .item:first-of-type{border-top:none;}
+  .item .top{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;}
+  .us{font-family:var(--mono); font-size:13px; font-weight:600; color:var(--accent);}
+  .what{font-size:13.5px; color:var(--ink-2); margin-top:3px; line-height:1.45;}
+  .chip{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase;
+    padding:2px 7px; border:1px solid currentColor; white-space:nowrap;}
+  .c-rev{color:var(--warn); background:var(--warn-soft);}
+  .c-prog{color:var(--crit); background:var(--crit-soft);}
+  .c-blk{color:var(--accent); background:var(--accent-soft);}
+  .c-ok{color:var(--ok); background:var(--ok-soft);}
+
+  /* ── Tablas ── */
+  .scroll{overflow-x:auto; border:1px solid var(--rule); background:var(--panel);}
+  table{border-collapse:collapse; width:100%; min-width:560px; font-size:14.5px;}
+  th{
+    text-align:left; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:600;
+    padding:11px 14px; border-bottom:1px solid var(--rule-2); background:var(--panel-2);
+    white-space:nowrap;
+  }
+  td{padding:11px 14px; border-bottom:1px solid var(--rule); vertical-align:top; line-height:1.5;}
+  tr:last-child td{border-bottom:none;}
+  td.id{font-family:var(--mono); font-size:13px; white-space:nowrap; color:var(--accent); font-weight:600;}
+  td.pts{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  td.who{font-weight:600; white-space:nowrap;}
+
+  /* ── Avisos ── */
+  .note{border-left:3px solid var(--accent); background:var(--panel-2);
+    padding:16px 20px; margin:22px 0; font-size:15.5px; color:var(--ink-2);}
+  .note strong{color:var(--ink);}
+  .note.alarm{border-left-color:var(--crit); background:var(--crit-soft);}
+  .note.alarm strong{color:var(--crit);}
+
+  code{font-family:var(--mono); font-size:.88em; background:var(--panel-2);
+    padding:1px 5px; border:1px solid var(--rule);}
+
+  ul{padding-left:20px; color:var(--ink-2);} li{margin:6px 0;}
+  ul strong, ol strong{color:var(--ink);}
+  ol{padding-left:20px; color:var(--ink-2);}
+
+  footer{margin-top:72px; padding-top:20px; border-top:1px solid var(--rule);
+    font-size:13.5px; color:var(--ink-3);}
+  a{color:var(--accent);}
+  a:focus-visible, [tabindex]:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">FARO · Escuela como Sensor Social · 30 de agosto · Post-junta de liderazgo</p>
+  <h1>Los bloqueos cayeron. Quedan tres días</h1>
+  <p class="standfirst">
+    La junta ratificó <strong>ADR-007</strong>, <strong>BUG-020 quedó resuelto y verificado en
+    vivo</strong>, y el choque de DB-05 se cerró. De nueve bugs abiertos quedan cuatro y ninguno es
+    crítico. El miércoles 2 de septiembre se congela el desarrollo: lo que no esté en
+    <code>done</code> con evidencia ese día entra a la demo como deuda declarada.
+  </p>
+</header>
+
+<div class="clock">
+  <div class="tick now">
+    <div class="d">Mié 2 sep</div>
+    <div class="l">Congelamiento de desarrollo</div>
+    <div class="n">faltan 3 días</div>
+  </div>
+  <div class="tick">
+    <div class="d">Jue 3 – vie 5</div>
+    <div class="l">Ejecución del plan de QA</div>
+    <div class="n">solo correcciones</div>
+  </div>
+  <div class="tick">
+    <div class="d">Dom 6 sep</div>
+    <div class="l">Code freeze</div>
+    <div class="n">ni una línea más</div>
+  </div>
+  <div class="tick">
+    <div class="d">Mié 9 sep</div>
+    <div class="l">Demo en vivo</div>
+    <div class="n">evaluación</div>
+  </div>
+</div>
+
+<section>
+  <h2>Dónde estamos</h2>
+  <p class="lede">
+    <strong>21 de las 28 abiertas ya tienen el código escrito.</strong> Con los bloqueos caídos,
+    la mayoría solo espera una verificación o un cierre formal, no más desarrollo. Y la casilla 6
+    del ensayo E2E <em>ya es verificable sobre la URL pública</em>.
+  </p>
+
+  <div class="bar" role="img" aria-label="39 cerradas, 21 en revisión, 7 en progreso">
+    <span class="b-ok" style="flex:39">39 cerradas</span>
+    <span class="b-rev" style="flex:21">21 en revisión</span>
+    <span class="b-prog" style="flex:7">7 en curso</span>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--ok)"></i>Cerradas con evidencia</span>
+    <span><i style="background:var(--warn)"></i>Código listo, falta cerrar</span>
+    <span><i style="background:var(--crit)"></i>Trabajo pendiente</span>
+  </div>
+
+  <div class="note">
+    <strong>Una historia «en revisión» no está terminada.</strong> Cerrar significa: PR mergeado,
+    prueba que lo demuestre, DevLog escrito y fila en la matriz de trazabilidad. Si tu historia
+    lleva días en revisión, probablemente le falta uno de esos cuatro, no más código.
+  </div>
+</section>
+
+<section>
+  <h2>Lo que le falta a cada quien</h2>
+  <p class="lede">
+    Busca tu nombre. Si algo aquí ya lo cerraste y no aparece actualizado, avísame hoy — el tablero
+    se alimenta de <code>Execution_Status.md</code> y prefiero corregirlo antes que discutirlo el
+    miércoles.
+  </p>
+
+  <div class="people">
+
+    <div class="card">
+      <div class="who">Christian Ruiz</div>
+      <div class="cell">Célula 4 · Backend y seguridad</div>
+      <div class="item"><div class="top"><span class="us">US-403</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what"><strong>Desbloqueada:</strong> la URL pública ya responde. Definir <code>ANALISTA_EMAILS</code> y ejecutar el E2E de 401/403.</div></div>
+      <div class="item"><div class="top"><span class="us">US-404</span><span class="chip c-prog">en curso</span></div>
+        <div class="what">Sin arrancar.</div></div>
+      <div class="item"><div class="top"><span class="us">US-405</span><span class="chip c-prog">en curso</span></div>
+        <div class="what">Sin arrancar.</div></div>
+      <div class="item"><div class="top"><span class="us">BUG-025</span><span class="chip c-ok">cerrado</span></div>
+        <div class="what">PR #142: <code>/agente/consulta</code> deja de ser el stub y conecta con el RAG real. Los guardarraíles por fin se invocan desde la API desplegada.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Luis Téllez</div>
+      <div class="cell">Célula 5 · Cloud y DevOps</div>
+      <div class="item"><div class="top"><span class="us">US-504</span><span class="chip c-prog">en curso</span></div>
+        <div class="what"><strong>Fase 2 ejecutada. BUG-020 cerrado</strong> y verificado en vivo: 4/4 etapas del smoke test, exit code 0. Recupera 1.0 punto de rúbrica.</div></div>
+      <div class="item"><div class="top"><span class="us">US-505</span><span class="chip c-prog">en curso</span></div>
+        <div class="what">Sin arrancar.</div></div>
+      <div class="item"><div class="top"><span class="us">PR #102</span><span class="chip c-blk">bloquea a otro</span></div>
+        <div class="what">Tu <em>Approve</em> por regla 7 es lo único que separa a US-524a del merge. Cuarta petición.</div></div>
+    </div>
+
+    <div class="card hot">
+      <div class="who">Edgar Ulises Jiménez</div>
+      <div class="cell">Célula 5 · Cloud y DevOps</div>
+      <div class="item"><div class="top"><span class="us">US-522b</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">PR #87 abierto desde el <strong>25 de agosto</strong>. El CI reprueba por colisión de ID: renombra tu ADR a <code>ADR-008</code> y marca las casillas del PR.</div></div>
+      <div class="item"><div class="top"><span class="us">US-521b</span><span class="chip c-prog">en curso</span></div>
+        <div class="what">Guía de ambiente local, sin arrancar.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Andrés González Habib</div>
+      <div class="cell">Célula 3 · ML y agente</div>
+      <div class="item"><div class="top"><span class="us">US-302</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Gold real, Registry en Docker, endpoint SHAP y pasar el documento a <code>approved</code>.</div></div>
+      <div class="item"><div class="top"><span class="us">US-303</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Al 90 %. Falta el E2E contra el MLflow de Célula 5.</div></div>
+      <div class="item"><div class="top"><span class="us">US-304a</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what"><strong>BUG-025 cerrado</strong> por Christian en el PR #142. Falta aprobar el documento del prompt.</div></div>
+      <div class="item"><div class="top"><span class="us">US-305</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what"><strong>Desbloqueada:</strong> BUG-020 y BUG-025 cerrados. El E2E widget → API → RAG con login real ya se puede ejecutar.</div></div>
+    </div>
+
+    <div class="card hot">
+      <div class="who">Héctor Morales Marbán</div>
+      <div class="cell">Célula 3 · ML</div>
+      <div class="item"><div class="top"><span class="us">US-311</span><span class="chip c-prog">en curso</span></div>
+        <div class="what"><strong>Camino crítico:</strong> ADR-007 ratificado en fracción. R-4 te asigna el <strong>reentrenamiento de ML-01 con fecha</strong> — de eso dependen Marina y Manuel.</div></div>
+      <div class="item"><div class="top"><span class="us">US-313</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Desbloqueada. Publicar predicciones nuevas con la unidad definida. <strong>Tu guarda de escala queda como control permanente</strong>, no medida temporal (R-4).</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Marina García del Buey</div>
+      <div class="cell">Célula 2 · Analytics y BI</div>
+      <div class="item"><div class="top"><span class="us">US-212</span><span class="chip c-rev">95 %</span></div>
+        <div class="what"><strong>ADR-007 ratificado en fracción: tu umbral 0.6 sigue válido y no tocas nada.</strong> Verificas AC-002.4 contra predicciones nuevas publicadas, no contra la firma — espera el reentrenamiento de Héctor.</div></div>
+      <div class="item"><div class="top"><span class="us">US-207</span><span class="chip c-prog">en curso</span></div>
+        <div class="what">Sin arrancar.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Manuel Serranía</div>
+      <div class="cell">Célula 2 · Tech Lead</div>
+      <div class="item"><div class="top"><span class="us">US-204</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Repetir 15/15 charts con salidas reales. Depende del reentrenamiento de ML-01 y de la implementación de BUG-019, <strong>cuyo dueño se asigna en el standup de hoy</strong>.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Diana Alvarez Varela</div>
+      <div class="cell">Célula 1 · Tech Lead</div>
+      <div class="item"><div class="top"><span class="us">US-106</span><span class="chip c-prog">en curso</span></div>
+        <div class="what">Pendiente de su plan de sprint.</div></div>
+      <div class="item"><div class="top"><span class="us">DEC-014</span><span class="chip c-blk">nuevo</span></div>
+        <div class="what"><strong>Red de seguridad de D1:</strong> documentar cobertura parcial explícita con <code>SIN_DATO</code>, en paralelo a Deni. Mismo patrón que ya conoces de BUG-009/BUG-030 con D5.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Deni Garrido</div>
+      <div class="cell">Célula 1 · Data Engineering</div>
+      <div class="item"><div class="top"><span class="us">US-113</span><span class="chip c-rev">destrabada</span></div>
+        <div class="what">DS-06 entró con el PR #107 y su extractor es automático. Materializa DB-10 <code>cubo_pipeline</code> y confirma el cierre.</div></div>
+      <div class="item"><div class="top"><span class="us">DS-07</span><span class="chip c-blk">riesgo</span></div>
+        <div class="what"><strong>BLOCK-002 registrado.</strong> Nunca fue una tarea con fecha — tu sprint no tiene ningún <code>US-1XXa</code> para DS-07. Se pide <strong>fecha compromiso concreta</strong>, con Diana implementando la red de seguridad en paralelo.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Juan Carlos Macías</div>
+      <div class="cell">Célula 4 · API</div>
+      <div class="item"><div class="top"><span class="us">US-412</span><span class="chip c-blk">bloqueada por otro</span></div>
+        <div class="what"><strong>Desbloqueada: BUG-020 cerrado.</strong> Tu código y tus pruebas siempre estuvieron correctos. Confirma el cierre.</div></div>
+      <div class="item"><div class="top"><span class="us">US-416</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Ratificar el diseño y que el E2E de Postgres pertenece a US-422.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Karla Monter</div>
+      <div class="cell">Célula 4 · API</div>
+      <div class="item"><div class="top"><span class="us">US-411</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what"><strong>Desbloqueada:</strong> <code>/api/v1/escuelas</code> responde 200 con datos reales. Falta ratificar <code>/series</code> fuera de alcance y confirmar el cierre.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Carlos Mayorga</div>
+      <div class="cell">Célula 3 · Agente</div>
+      <div class="item"><div class="top"><span class="us">US-304b</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Probar la recuperación RAG dentro del contenedor.</div></div>
+      <div class="item"><div class="top"><span class="us">US-324</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Corregir la ficha ML-03 — ya no es cierto que esté sin implementar — y obtener revisión de los tres dueños.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Alejandro Velázquez</div>
+      <div class="cell">Célula 5 · Cloud</div>
+      <div class="item"><div class="top"><span class="us">US-524a</span><span class="chip c-blk">espera firma</span></div>
+        <div class="what">Todo resuelto de tu lado. Falta el <em>Approve</em> de Luis por regla 7.</div></div>
+      <div class="item"><div class="top"><span class="us">US-522a</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">E2E local Compose API ↔ Postgres.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="who">Edward Ruiz Bustillos</div>
+      <div class="cell">Célula 5 · Cloud</div>
+      <div class="item"><div class="top"><span class="us">US-521c</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Convertir el DevLog a <code>.md</code> filed, actualizar índice y repetir la guía.</div></div>
+      <div class="item"><div class="top"><span class="us">US-522c</span><span class="chip c-rev">en revisión</span></div>
+        <div class="what">Verificar conexión, escribir DevLog y pasar BUG-004 a <code>fixed</code>.</div></div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>Las cuatro decisiones de la junta</h2>
+  <p class="lede">
+    El 30 % de lo que faltaba no necesitaba código, necesitaba que alguien decidiera. Ya está
+    decidido. Esto es lo que cambia para cada quien.
+  </p>
+
+  <h3>DEC-012 · ADR-007 ratificado en fracción</h3>
+  <p class="lede">
+    <strong>No fue una decisión nueva.</strong> <code>DEC-006</code> ya había fijado el 13 de agosto
+    que «escuela en riesgo = <code>indice_riesgo ≥ 0.6</code> ↔ pérdida de ~5 % de matrícula», y ese
+    «~5 %» ya era una fracción. Lo que se decidió fue alinear el código con algo que el equipo ya
+    había acordado y que la unidad actual contradecía en silencio. Sin cambios a la sigmoide ni al
+    umbral 0.6.
+  </p>
+  <p class="lede">La mesa amplió el alcance en cuatro puntos, todos aportados por Célula 2:</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Cláusula</th><th>Qué añade</th><th>Por qué importa</th></tr></thead>
+      <tbody>
+        <tr><td class="id">R-1</td><td>El ADR cubre también <code>fact_escuela_ciclo.variacion_matricula</code></td>
+          <td>Tenía el mismo defecto y la leen <strong>cuatro tableros</strong>. Ratificar solo el target dejaba el ML coherente y el frontend roto</td></tr>
+        <tr><td class="id">R-2</td><td>La unidad se declara en el contrato, no en el acuerdo</td>
+          <td><code>Data_Model.md</code> §5.3 decía <code>StrictFloat</code> y nada más. Mientras la unidad viva en la memoria de una junta, el siguiente productor vuelve a elegir por su cuenta. Es la causa raíz</td></tr>
+        <tr><td class="id">R-3</td><td>Toda columna que exprese una razón lleva <code>_pct</code> o <code>_frac</code></td>
+          <td>O se guarda como numerador y denominador por separado, que ya es la convención de los cubos (<code>DEC-008</code>)</td></tr>
+        <tr><td class="id">R-4</td><td>Tres cosas con dueño y fecha</td>
+          <td>Reentrenamiento de ML-01 (<strong>Héctor</strong>) · dueño de BUG-019 (<strong>standup de hoy</strong>) · la guarda de escala queda como <strong>control permanente</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <strong>Marina, Héctor y Manuel: esto los desbloquea, pero no del todo.</strong>
+    US-212 se verifica contra <em>predicciones nuevas publicadas</em>, no contra el ADR firmado. La
+    cadena es: Héctor reentrena ML-01 → se publican predicciones con la unidad correcta → Marina
+    verifica AC-002.4 de DB-03 → US-204 de Manuel cierra. <strong>La fecha del reentrenamiento es la
+    que manda</strong>, y por eso R-4 la exige con dueño.
+  </div>
+
+  <h3>BUG-020 resuelto · verificado en vivo</h3>
+  <div class="note">
+    <strong>Las cuatro etapas del smoke test pasan, exit code 0.</strong> Luis ejecutó la Fase 2:
+    Cloud Run redesplegado con VPC connector, service account de mínimo privilegio y secretos desde
+    Secret Manager. <code>/api/v1/escuelas</code> responde <strong>200 con 25 CCT reales</strong>.
+    <br><br>
+    La causa raíz era una línea que faltaba: el despliegue solo pasaba
+    <code>ENVIRONMENT=production</code>, así que sin variables de conexión la API caía a su default
+    <code>postgres_host="localhost"</code> y buscaba un Postgres inexistente dentro del contenedor.
+    Eso explicaba los dos síntomas a la vez — <code>/health</code> en 200 por no tocar la base, y 500
+    en todo lo demás <em>antes</em> de evaluar auth, por eso nunca aparecía un 401.
+    <br><br>
+    <strong>Desbloquea cinco historias:</strong> US-411, US-412, US-403, US-305 y US-304a. Y recupera
+    el <strong>1.0 punto de rúbrica</strong> de URL pública viva.
+  </div>
+
+  <h3>DEC-013 · DB-05 adopta la salida B</h3>
+  <p class="lede">
+    Los 18 charts se remapean a la métrica nueva y <code>valor_promedio_driver</code> sale del
+    catálogo. <strong>La salida A no era «dejar los charts quietos» sino una reversión:</strong>
+    obligaba a re-exponer <code>valor_promedio</code> en <code>db05_cubo_driver.sql</code> —hoy
+    passthrough de <code>gold.cubo_driver</code>— y a reintroducir el KPI-19 que US-205 excluyó a
+    propósito.
+  </p>
+  <p class="lede">
+    La magnitud por driver no se pierde: vive en DB-08 (<code>valor_driver</code>, KPI-20).
+    <strong>DB-05 queda como tablero de decisión y DB-08 como tablero de exploración</strong>, que es
+    una separación más limpia que la que había. Ya estaba implementada y probada en el PR #134:
+    53/53 en la suite DB-05/DB-08.
+  </p>
+
+  <h3>DEC-014 · DS-07 se ataca por tres vías en paralelo</h3>
+  <p class="lede">
+    El diagnóstico cambió la decisión. <strong>DS-07 lleva cinco semanas en cero no por postergación,
+    sino porque nunca se convirtió en una tarea con fecha:</strong> el sprint de Deni tiene US-111 a
+    US-114 y <em>ningún <code>US-1XXa</code> para DS-07</em>, a diferencia de DS-06, que sí tuvo
+    US-121a a US-124a asignadas a Emilio. La checklist §9 de la ficha sigue con las cinco casillas
+    vacías y la URL en <code>PENDIENTE-CONFIRMAR</code>.
+  </p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Vía</th><th>Qué</th><th>Dueño</th></tr></thead>
+      <tbody>
+        <tr><td class="id">1</td><td>Intentar la descarga real, con <strong>fecha compromiso concreta</strong> antes del freeze — no «cuando pueda»</td><td class="who">Deni Garrido</td></tr>
+        <tr><td class="id">2</td><td><strong>En paralelo</strong>, documentar D1 como cobertura parcial explícita con <code>SIN_DATO</code>. Red de seguridad, no plan B tardío. Mismo patrón que BUG-009/BUG-030 con D5</td><td class="who">Diana Alvarez (C1)</td></tr>
+        <tr><td class="id">3</td><td>Registrar el bloqueo con ID — <strong>ya hecho: BLOCK-002</strong></td><td class="who">Edgar Coronel</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <strong>Por qué tres vías y no una.</strong> La URL de CONEVAL sigue sin confirmar, así que el
+    tiempo de investigación es incierto — igual que le pasó a Emilio con el endpoint de CONAGUA. Y
+    Deni ya carga US-113 y US-114, esta última venciendo <em>el mismo día del code freeze</em>. La
+    demo no puede depender de que una sola persona resuelva algo con fecha límite incierta.
+  </div>
+</section>
+
+<section>
+  <h2>Plan de control de calidad</h2>
+  <p class="lede">
+    Arranca el jueves 3, cuando el desarrollo esté cerrado. Probar sobre código que aún se mueve
+    produce hallazgos que caducan el mismo día.
+  </p>
+
+  <h3>Nadie prueba lo suyo</h3>
+  <p class="lede">
+    Cada módulo lo prueba alguien de otra célula. No es desconfianza: quien escribió el código
+    recorre el camino feliz sin darse cuenta. Los tres defectos más caros de esta semana
+    — BUG-017, BUG-026 y BUG-028 — los encontró alguien ajeno al código, y <em>ninguno producía
+    error</em>. Los probadores se eligieron por rigor demostrado.
+  </p>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Módulo</th><th>Pts</th><th>Probador</th><th>Por qué esa persona</th></tr></thead>
+      <tbody>
+        <tr><td class="id">QA-01</td><td class="pts">2.5</td><td class="who">Marina García</td>
+          <td>Verifica corriendo, no leyendo. Su revisión del PR #129 trajo conteos reales, MD5 del fixture y la corrida completa de dbt</td></tr>
+        <tr><td class="id">QA-02</td><td class="pts">—</td><td class="who">Monserrat Miranda</td>
+          <td>Validó DB-05 y DB-08 levantando el pipeline dbt completo en vez del mock</td></tr>
+        <tr><td class="id">QA-03</td><td class="pts">2.5</td><td class="who">Héctor Morales</td>
+          <td>Entiende el contrato desde el consumidor: detectó que <code>isna()</code> dejaba pasar escuelas ausentes de la dimensión</td></tr>
+        <tr><td class="id">QA-04</td><td class="pts">1.5</td><td class="who">Diana Alvarez</td>
+          <td>Produce el contrato que los modelos consumen y ya detectó de rebote lo que a otros se les pasó</td></tr>
+        <tr><td class="id">QA-05</td><td class="pts">1.5</td><td class="who">Andrés González</td>
+          <td>Sabe buscar el caso que atraviesa la validación: encontró que <code>SELECT INTO</code> pasaba el filtro de solo lectura</td></tr>
+        <tr><td class="id">QA-06</td><td class="pts">1.0</td><td class="who">Luis Téllez · Eloisa González</td>
+          <td>Único módulo con dos probadores: es el único riesgo vivo. Eloisa prueba desde fuera, sin permisos de GCP — la posición del evaluador</td></tr>
+        <tr><td class="id">QA-07</td><td class="pts">0.5</td><td class="who">Carlos Mayorga</td>
+          <td>Construyó la recuperación RAG</td></tr>
+        <tr><td class="id">QA-08</td><td class="pts">0.5</td><td class="who">Edgar Coronel</td>
+          <td>Gobernanza y el recorrido del evaluador</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Reglas de ejecución</h3>
+  <ol>
+    <li><strong>Todo hallazgo se registra como <code>BUG-###</code></strong>, aunque se arregle en el momento. Sin ID no existe.</li>
+    <li><strong>Se prueba sobre <code>main</code>, nunca sobre una rama.</strong> Si no está mergeado, no se prueba.</li>
+    <li><strong>Un hallazgo sin pasos de reproducción no es un hallazgo</strong>, es una impresión.</li>
+    <li>La severidad la pone quien reporta; la prioridad la pone el PM.</li>
+    <li><strong>Nadie cierra su propio hallazgo.</strong> Lo cierra quien lo reportó, verificando.</li>
+    <li>Si un caso no se puede ejecutar, <strong>eso es el resultado</strong> y se registra igual.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>La prueba que define el proyecto</h2>
+  <p class="lede">
+    Mi plan de pruebas como PM recorre la demo como la va a recorrer el evaluador: en frío, sin abrir
+    el repositorio y sin preguntarle nada a nadie. Si necesito ayuda para completarlo, ese es el
+    hallazgo.
+  </p>
+
+  <div class="note">
+    <strong>PM-01.3 · Comparar dos escuelas con el mismo riesgo y verificar que reciben
+    recomendaciones distintas.</strong><br>
+    Todo lo demás es infraestructura. El diferenciador del proyecto es que el driver dominante cambie
+    la recomendación en cada caso. Si eso no se demuestra en vivo, no importa cuánto de lo demás
+    funcione.
+  </div>
+
+  <h3>Lo que voy a declarar como deuda</h3>
+  <p class="lede">
+    Cerrar el proyecto no es fingir que todo está completo: es decidir qué queda fuera y decirlo
+    antes de que lo pregunten. <strong>Una limitación explicada es rigor; la misma limitación
+    descubierta en vivo es un error.</strong>
+  </p>
+  <ul>
+    <li><strong>D5 (agua)</strong> — el extractor no entrega volumen ni coordenadas (BUG-030).</li>
+    <li><strong>D1 (pobreza)</strong> — DS-07 sin descarga real (BLOCK-002). Si la vía 1 no llega,
+      la vía 2 lo convierte en cobertura parcial declarada, que es defendible.</li>
+    <li><strong>ML-03</strong> — entrena con Silhouette 0.1086 contra un umbral de 0.3.</li>
+    <li><strong>CEMABE 2013</strong> — censo de hace 13 años; D3 y D4 se apoyan en él.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Qué hacer hoy</h2>
+  <div class="note alarm">
+    <strong>El camino crítico cambió de dueño.</strong> Ya no es BUG-020: ahora es el
+    <strong>reentrenamiento de ML-01</strong>. De él cuelgan US-311, US-313, US-212 de Marina y
+    US-204 de Manuel. R-4 del ADR lo exige con fecha, no solo con firma.
+  </div>
+  <ol>
+    <li><strong>Revisa tu tarjeta</strong> arriba. Si algo ya lo cerraste y no aparece, avísame hoy.</li>
+    <li><strong>Cierra lo que solo necesita evidencia.</strong> Veinte historias tienen el código
+      escrito y les falta una prueba, un DevLog o una fila en la matriz.</li>
+    <li><strong>Si estás bloqueado por alguien, dilo con nombre.</strong> Tres historias están
+      abiertas por razones que sus dueños no controlan, y eso no debe leerse como retraso suyo.</li>
+    <li><strong>No abras trabajo nuevo</strong> que no puedas cerrar antes del miércoles.</li>
+  </ol>
+</section>
+
+<footer>
+  FARO · Escuela como Sensor Social — MTIIA Anáhuac · Inteligencia de Negocios<br>
+  Corte del 30 de agosto de 2026 · Fuente canónica: <code>12_Roadmap_Sprints/Execution_Status.md</code><br>
+  Plan de QA: <code>06_Quality_Testing/Plan_Control_Calidad_S6.md</code> · Decisiones: <code>DEC-012</code> <code>DEC-013</code> <code>DEC-014</code> · Bloqueo: <code>BLOCK-002</code>
+</footer>
+
+</div>
