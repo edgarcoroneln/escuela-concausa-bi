@@ -1,22 +1,40 @@
 """Administración `/admin/*` — solo `analista` (§3.6).
 
-RBAC no forzado en este stub (US-403). El agente y los endpoints de datos **nunca** ejecutan
-escritura/borrado; `pipeline/run` solo encola un DAG (respuesta 202 accepted en el contrato).
+RBAC ya se aplica a nivel de router (`src/api/v1/__init__.py`, US-403): todo `/admin/*` exige
+`Depends(require_role(Rol.analista))`, así que aquí no hay que repetirlo. El agente y los
+endpoints de datos **nunca** ejecutan escritura/borrado.
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from src.api import mock_data
+from src.api.orquestador import DAGS_VALIDOS, Orquestador, OrquestadorError, get_orquestador
 from src.api.schemas import MetricsOut, PipelineRunIn, PipelineRunOut
 
 router = APIRouter(prefix="/admin", tags=["Administración"])
 
 
 @router.post("/pipeline/run", response_model=PipelineRunOut, status_code=status.HTTP_202_ACCEPTED)
-def pipeline_run(body: PipelineRunIn) -> PipelineRunOut:
-    """Encola una corrida de pipeline (rol: **analista**). Devuelve 202 accepted."""
-    return PipelineRunOut(run_id=f"run-{body.dag}-{body.ciclo}", estado="accepted")
+def pipeline_run(
+    body: PipelineRunIn, orquestador: Orquestador = Depends(get_orquestador)
+) -> PipelineRunOut:
+    """Encola una corrida real de `body.dag` en Airflow (rol: **analista**).
+
+    `dag` se valida contra `DAGS_VALIDOS` (los DAG reales de `dags/`) -- 422 si no está en la
+    lista, nunca se le pasa texto libre a Airflow.
+    """
+    if body.dag not in DAGS_VALIDOS:
+        # 422 literal, no status.HTTP_422_UNPROCESSABLE_ENTITY (deprecado en Starlette reciente,
+        # ver _ERROR_POR_STATUS en app.py que ya usa el literal por portabilidad de versión).
+        raise HTTPException(
+            422, detail=f"'{body.dag}' no es un DAG válido. Usa uno de: {', '.join(DAGS_VALIDOS)}."
+        )
+    try:
+        run_id = orquestador.disparar_dag(body.dag, ciclo=body.ciclo)
+    except OrquestadorError as exc:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, detail="Airflow no aceptó la corrida.") from exc
+    return PipelineRunOut(run_id=run_id, estado="accepted")
 
 
 @router.get("/export")

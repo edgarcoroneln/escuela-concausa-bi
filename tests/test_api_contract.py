@@ -14,8 +14,10 @@ from fastapi.testclient import TestClient
 
 from scripts.export_openapi import SALIDA
 from src.api.app import API_PREFIX, app
+from src.api.orquestador import get_orquestador
 from src.api.repositorio_gold import get_repositorio_gold
 from src.api.repositorio_modelos import get_repositorio_modelos
+from tests.fixtures_admin import OrquestadorFake
 from tests.fixtures_gold import RepositorioGoldFake
 from tests.fixtures_modelos import RepositorioModelosFake
 
@@ -24,17 +26,19 @@ RAIZ = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def client() -> TestClient:
-    """Suite rápida del contrato: corre sin Postgres.
+    """Suite rápida del contrato: corre sin Postgres ni Airflow.
 
     `/escuelas`, `/municipios` y `/kpis` dependen de `RepositorioGold` (`Depends`), y
     `/predicciones/*` de `RepositorioModelos` (`Depends`, US-412), así que aquí se sustituyen por
     sus fakes en memoria (`tests/fixtures_gold.py`, `tests/fixtures_modelos.py`) en vez de
     conectar a una base real -- patrón acordado con Christian Ruiz (Tech Lead C4) el 2026-08-20
-    para la Decisión 2 de US-411, extendido a US-412 el 2026-08-26. Las pruebas de integración
-    contra Postgres real viven en US-422 (Eloisa González Rubio), nunca aquí.
+    para la Decisión 2 de US-411, extendido a US-412 el 2026-08-26 y a `/admin/pipeline/run`
+    (`Orquestador`, US-413) el 2026-08-27. Las pruebas de integración contra Postgres/Airflow
+    reales viven en US-422 (Eloisa González Rubio), nunca aquí.
     """
     app.dependency_overrides[get_repositorio_gold] = RepositorioGoldFake
     app.dependency_overrides[get_repositorio_modelos] = RepositorioModelosFake
+    app.dependency_overrides[get_orquestador] = OrquestadorFake
     try:
         yield TestClient(app)
     finally:
@@ -241,19 +245,33 @@ def test_auth_me_requiere_token(client: TestClient) -> None:
     assert r.json()["role"] in ("ciudadano", "analista")
 
 
-def test_admin_pipeline_run_202(client: TestClient) -> None:
-    # Desde US-403 /admin/* exige rol `analista`. La matriz completa (401/403) vive en test_rbac.py.
+def _token_analista() -> str:
     from src.api.schemas import Rol
     from src.api.security.jwt import create_access_token
 
-    token = create_access_token(sub="a1", role=Rol.analista, email="ana@faro.mx")
+    return create_access_token(sub="a1", role=Rol.analista, email="ana@faro.mx")
+
+
+def test_admin_pipeline_run_202(client: TestClient) -> None:
+    # Desde US-403 /admin/* exige rol `analista`. La matriz completa (401/403) vive en test_rbac.py.
     r = client.post(
         f"{API_PREFIX}/admin/pipeline/run",
-        json={"dag": "bronze", "ciclo": "2024-2025"},
-        headers={"Authorization": f"Bearer {token}"},
+        json={"dag": "dag_diario", "ciclo": "2024-2025"},
+        headers={"Authorization": f"Bearer {_token_analista()}"},
     )
     assert r.status_code == 202
     assert r.json()["estado"] == "accepted"
+    assert r.json()["run_id"]  # viene de Orquestador, no un string fabricado en el endpoint
+
+
+def test_admin_pipeline_run_dag_invalido_422(client: TestClient) -> None:
+    """Un `dag` que no existe en `dags/` se rechaza antes de tocar el orquestador (US-413)."""
+    r = client.post(
+        f"{API_PREFIX}/admin/pipeline/run",
+        json={"dag": "no_existe", "ciclo": "2024-2025"},
+        headers={"Authorization": f"Bearer {_token_analista()}"},
+    )
+    assert r.status_code == 422
 
 
 # --------------------------------------------------------------------------- #

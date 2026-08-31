@@ -60,6 +60,13 @@ class Settings(BaseSettings):
     postgres_user: str = "postgres"
     postgres_password: str = ""
 
+    # ---- Airflow (US-413) ----
+    # El webserver ya corre en docker-compose.yml (puerto 8080); reutiliza las credenciales de
+    # bootstrap _AIRFLOW_WWW_USER_* del .env del equipo para autenticar la API REST de Airflow.
+    airflow_base_url: str = "http://localhost:8080"
+    airflow_www_user_username: str = "airflow"
+    airflow_www_user_password: str = ""
+
     @property
     def database_url(self) -> str:
         return (

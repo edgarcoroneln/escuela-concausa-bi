@@ -7,7 +7,7 @@ version: "1.0"
 source_of_truth: true
 traces_up: ["REQ-004", "03_Architecture/Data_Model"]
 traces_down: ["US-401", "US-402", "US-403", "US-411", "US-412", "US-415"]
-last_reviewed: "2026-08-26"
+last_reviewed: "2026-08-27"
 tags: [architecture, api, contract, fastapi, oauth2]
 ---
 
@@ -153,9 +153,17 @@ C2/C3), no se retoma como pendiente de US-411.
 ### 3.6 Administración `/admin/*` (solo `analista`)
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
-| POST | `/admin/pipeline/run` | analista | `PipelineRunIn` | `PipelineRunOut` | 202, 401, 403, 422 |
+| POST | `/admin/pipeline/run` | analista | `PipelineRunIn` | `PipelineRunOut` | 202, 401, 403, 422, 502 |
 | GET | `/admin/export` | analista | `?tabla&ciclo&formato` | `ExportOut` (o stream) | 200, 401, 403 |
 | GET | `/admin/metrics` | analista | — | `MetricsOut` | 200, 401, 403 |
+
+**`/admin/pipeline/run` (US-413, Karla Monter, 2026-08-27):** `PipelineRunIn.dag` se valida contra
+los 6 `dag_id` reales de `dags/*.py` (`dag_anual`, `dag_bienal`, `dag_censal_estatico`,
+`dag_diario`, `dag_horario`, `dag_mensual`) — un valor fuera de esa lista responde `422` antes de
+tocar Airflow. La corrida se dispara de verdad contra la API REST de Airflow
+(`src/api/orquestador.py`, `Depends(get_orquestador)`, mismo patrón inyectable que
+`RepositorioGold` de US-411); si Airflow rechaza o no responde, `502` (nunca se inventa un
+`run_id`). RBAC (`analista`) ya viene aplicado a nivel de router desde US-403, no se repite aquí.
 
 ---
 

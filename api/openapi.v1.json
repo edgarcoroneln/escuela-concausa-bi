@@ -904,7 +904,7 @@
     },
     "/api/v1/admin/pipeline/run": {
       "post": {
-        "description": "Encola una corrida de pipeline (rol: **analista**). Devuelve 202 accepted.",
+        "description": "Encola una corrida real de `body.dag` en Airflow (rol: **analista**).\n\n`dag` se valida contra `DAGS_VALIDOS` (los DAG reales de `dags/`) -- 422 si no está en la\nlista, nunca se le pasa texto libre a Airflow.",
         "operationId": "pipeline_run_api_v1_admin_pipeline_run_post",
         "requestBody": {
           "content": {
