@@ -16,9 +16,11 @@ from scripts.export_openapi import SALIDA
 from src.api.app import API_PREFIX, app
 from src.api.orquestador import get_orquestador
 from src.api.repositorio_gold import get_repositorio_gold
+from src.api.repositorio_export import get_repositorio_export
 from src.api.repositorio_metricas import get_repositorio_metricas
 from src.api.repositorio_modelos import get_repositorio_modelos
 from tests.fixtures_admin import OrquestadorFake
+from tests.fixtures_export import RepositorioExportFake
 from tests.fixtures_gold import RepositorioGoldFake
 from tests.fixtures_metricas import RepositorioMetricasFake
 from tests.fixtures_modelos import RepositorioModelosFake
@@ -42,6 +44,7 @@ def client() -> TestClient:
     app.dependency_overrides[get_repositorio_modelos] = RepositorioModelosFake
     app.dependency_overrides[get_orquestador] = OrquestadorFake
     app.dependency_overrides[get_repositorio_metricas] = RepositorioMetricasFake
+    app.dependency_overrides[get_repositorio_export] = RepositorioExportFake
     try:
         yield TestClient(app)
     finally:
@@ -277,6 +280,41 @@ def test_admin_metrics_frescura_real_y_sin_dato_explicito(client: TestClient) ->
     # DS-06 nunca se ingirió en el fake -- no aparece, no se inventa una fecha.
     assert "DS-06_CONAGUA_SINA" not in cuerpo["frescura_por_fuente"]
     assert cuerpo["suites_ge_en_verde"] is None
+
+
+def test_admin_export_csv_ok(client: TestClient) -> None:
+    """`/admin/export` regresa el stream real de `gold.<tabla>` (US-413), no una URL fabricada."""
+    r = client.get(
+        f"{API_PREFIX}/admin/export",
+        params={"tabla": "dim_escuela"},
+        headers={"Authorization": f"Bearer {_token_analista()}"},
+    )
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/csv")
+    assert "09DPR0001A" in r.text
+    assert "url" not in r.text  # ya no es el stub que fabricaba gs://faro-exports/...
+
+
+def test_admin_export_json_ok(client: TestClient) -> None:
+    r = client.get(
+        f"{API_PREFIX}/admin/export",
+        params={"tabla": "fact_escuela_ciclo", "ciclo": "2024-2025", "formato": "json"},
+        headers={"Authorization": f"Bearer {_token_analista()}"},
+    )
+    assert r.status_code == 200
+    cuerpo = r.json()
+    assert len(cuerpo) == 1
+    assert cuerpo[0]["id_ciclo"] == "2024-2025"
+
+
+def test_admin_export_tabla_invalida_422(client: TestClient) -> None:
+    """Una tabla fuera de la whitelist se rechaza -- nunca una relación arbitraria (Luis Téllez)."""
+    r = client.get(
+        f"{API_PREFIX}/admin/export",
+        params={"tabla": "gold.pg_shadow"},
+        headers={"Authorization": f"Bearer {_token_analista()}"},
+    )
+    assert r.status_code == 422
 
 
 def test_admin_pipeline_run_dag_invalido_422(client: TestClient) -> None:

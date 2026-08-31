@@ -154,7 +154,7 @@ C2/C3), no se retoma como pendiente de US-411.
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
 | POST | `/admin/pipeline/run` | analista | `PipelineRunIn` | `PipelineRunOut` | 202, 401, 403, 422, 502 |
-| GET | `/admin/export` | analista | `?tabla&ciclo&formato` | `ExportOut` (o stream) | 200, 401, 403 |
+| GET | `/admin/export` | analista | `?tabla&ciclo&formato` | *stream* CSV/JSON | 200, 401, 403, 422 |
 | GET | `/admin/metrics` | analista | — | `MetricsOut` | 200, 401, 403 |
 
 **`/admin/pipeline/run` (US-413, Karla Monter, 2026-08-27):** `PipelineRunIn.dag` se valida contra
@@ -173,6 +173,22 @@ ningún checkpoint de Great Expectations persistido de dónde leer un resultado 
 definiciones de las suites en `great_expectations/expectations/`), así que responde `None`
 explícito (SIN_DATO) en vez de inventar `True`/`False`. Avisado a Luis García (dueño de las suites
 GE) para que, cuando exista persistencia de resultados, esto deje de ser SIN_DATO.
+
+**`/admin/export` (US-413, Karla Monter, 2026-08-27):** regresa el *stream* real (CSV o JSON) de
+`gold.<tabla>` directo desde Postgres — ya no es una URL fabricada. `tabla` y `formato` se validan
+contra una whitelist (`Literal`, 422 fuera de lista): `tabla ∈ {dim_escuela, dim_municipio,
+fact_escuela_ciclo, predicciones, recomendaciones}` (nunca las 9 `gold.cubo_*` de Superset ni
+ninguna relación arbitraria — pedido de seguridad de Luis Téllez, Tech Lead C5). `ExportOut` nunca
+llegó a existir como modelo (el contrato original ya anticipaba "o stream"); se retira la mención
+de la tabla de §3.6 para que documente lo que de verdad se implementó.
+
+**Export completo a Cloud Storage — fuera de alcance de US-413 (Luis Téllez, C5, 2026-08-27):**
+verificado que no existe bucket `faro-exports` (ni ningún otro) en el proyecto GCP, y la service
+account del API no tiene permisos de Cloud Storage — solo `cloudsql.client` y `logWriter`.
+Provisionarlo (bucket privado, lifecycle de expiración, `storage.objectCreator` acotado a la SA,
+signed URLs V4 de corta duración vía `iam.serviceAccountTokenCreator`) es cambio de seguridad de
+Fase 3/4, gated a que exista contenido real en Gold-prod, y requiere revisión humana explícita
+(regla 7 del vault). Se retoma como historia nueva cuando C5 lo provisione.
 
 ---
 

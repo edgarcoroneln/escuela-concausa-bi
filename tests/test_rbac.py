@@ -20,10 +20,12 @@ from fastapi.testclient import TestClient
 
 from src.api.app import API_PREFIX, app
 from src.api.config import Settings, get_settings
+from src.api.repositorio_export import get_repositorio_export
 from src.api.repositorio_metricas import get_repositorio_metricas
 from src.api.schemas import Rol, UserOut
 from src.api.security import jwt as jwtmod
 from src.api.security.rbac import require_role
+from tests.fixtures_export import RepositorioExportFake
 from tests.fixtures_metricas import RepositorioMetricasFake
 
 
@@ -34,10 +36,12 @@ def _auth(token: str) -> dict[str, str]:
 @pytest.fixture
 def client() -> TestClient:
     app.dependency_overrides[get_repositorio_metricas] = RepositorioMetricasFake
+    app.dependency_overrides[get_repositorio_export] = RepositorioExportFake
     try:
         yield TestClient(app)
     finally:
         app.dependency_overrides.pop(get_repositorio_metricas, None)
+        app.dependency_overrides.pop(get_repositorio_export, None)
 
 
 @pytest.fixture
@@ -77,9 +81,16 @@ def test_admin_como_analista_ok(client: TestClient) -> None:
 def test_admin_export_ciudadano_da_403(client: TestClient) -> None:
     """El export en bruto es la ruta sensible: un ciudadano nunca debe alcanzarlo."""
     token = jwtmod.create_access_token(sub="c1", role=Rol.ciudadano)
-    r = client.get(f"{API_PREFIX}/admin/export", params={"tabla": "gold.fact_escuela_ciclo"},
+    r = client.get(f"{API_PREFIX}/admin/export", params={"tabla": "fact_escuela_ciclo"},
                    headers=_auth(token))
     assert r.status_code == 403
+
+
+def test_admin_export_como_analista_ok(client: TestClient) -> None:
+    """Antes de US-413 nadie probaba el 200 real de /admin/export (era puro stub)."""
+    token = jwtmod.create_access_token(sub="a1", role=Rol.analista, email="ana@faro.mx")
+    r = client.get(f"{API_PREFIX}/admin/export", params={"tabla": "dim_escuela"}, headers=_auth(token))
+    assert r.status_code == 200
 
 
 # --------------------------------------------------------------------------- #

@@ -807,7 +807,7 @@
   "paths": {
     "/api/v1/admin/export": {
       "get": {
-        "description": "Exporta datos en bruto (rol: **analista**). En el stub devuelve una referencia, no el stream.",
+        "description": "Exporta `gold.<tabla>` real en CSV o JSON (rol: **analista**).\n\n`tabla` y `formato` se validan contra una whitelist (`Literal` -> 422 fuera de lista, nunca\nuna relación arbitraria). El export completo a GCS queda **fuera de alcance de US-413**: no\nexiste bucket ni permisos de Cloud Storage en la service account del API (confirmado por Luis\nTéllez, Tech Lead C5, 2026-08-27) -- mientras tanto se regresa el *stream* real desde Postgres,\nviable porque Gold en producción son ~25 escuelas.",
         "operationId": "export_api_v1_admin_export_get",
         "parameters": [
           {
@@ -815,6 +815,13 @@
             "name": "tabla",
             "required": true,
             "schema": {
+              "enum": [
+                "dim_escuela",
+                "dim_municipio",
+                "fact_escuela_ciclo",
+                "predicciones",
+                "recomendaciones"
+              ],
               "title": "Tabla",
               "type": "string"
             }
@@ -841,6 +848,10 @@
             "required": false,
             "schema": {
               "default": "csv",
+              "enum": [
+                "csv",
+                "json"
+              ],
               "title": "Formato",
               "type": "string"
             }
@@ -850,11 +861,7 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Export Api V1 Admin Export Get",
-                  "type": "object"
-                }
+                "schema": {}
               }
             },
             "description": "Successful Response"
