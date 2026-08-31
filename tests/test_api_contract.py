@@ -317,6 +317,26 @@ def test_admin_export_tabla_invalida_422(client: TestClient) -> None:
     assert r.status_code == 422
 
 
+def test_admin_pipeline_run_airflow_caido_502(client: TestClient) -> None:
+    """Si Airflow rechaza/no responde, 502 -- nunca se inventa un `run_id` (US-413)."""
+    app.dependency_overrides[get_orquestador] = lambda: OrquestadorFake(fallar=True)
+    try:
+        r = client.post(
+            f"{API_PREFIX}/admin/pipeline/run",
+            json={"dag": "dag_diario", "ciclo": "2024-2025"},
+            headers={"Authorization": f"Bearer {_token_analista()}"},
+        )
+    finally:
+        app.dependency_overrides[get_orquestador] = OrquestadorFake  # restaura el fake del módulo
+
+    assert r.status_code == 502
+    cuerpo = r.json()
+    assert "run_id" not in cuerpo
+    # 502 no está en _ERROR_POR_STATUS (app.py) -> cae en el bucket genérico, sin filtrar el
+    # detalle real de OrquestadorError (mensaje uniforme, nunca la excepción de httpx cruda).
+    assert cuerpo["error"] == "internal_error"
+
+
 def test_admin_pipeline_run_dag_invalido_422(client: TestClient) -> None:
     """Un `dag` que no existe en `dags/` se rechaza antes de tocar el orquestador (US-413)."""
     r = client.post(
