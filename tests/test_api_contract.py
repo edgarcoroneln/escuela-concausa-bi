@@ -16,9 +16,11 @@ from scripts.export_openapi import SALIDA
 from src.api.app import API_PREFIX, app
 from src.api.orquestador import get_orquestador
 from src.api.repositorio_gold import get_repositorio_gold
+from src.api.repositorio_metricas import get_repositorio_metricas
 from src.api.repositorio_modelos import get_repositorio_modelos
 from tests.fixtures_admin import OrquestadorFake
 from tests.fixtures_gold import RepositorioGoldFake
+from tests.fixtures_metricas import RepositorioMetricasFake
 from tests.fixtures_modelos import RepositorioModelosFake
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -39,6 +41,7 @@ def client() -> TestClient:
     app.dependency_overrides[get_repositorio_gold] = RepositorioGoldFake
     app.dependency_overrides[get_repositorio_modelos] = RepositorioModelosFake
     app.dependency_overrides[get_orquestador] = OrquestadorFake
+    app.dependency_overrides[get_repositorio_metricas] = RepositorioMetricasFake
     try:
         yield TestClient(app)
     finally:
@@ -262,6 +265,18 @@ def test_admin_pipeline_run_202(client: TestClient) -> None:
     assert r.status_code == 202
     assert r.json()["estado"] == "accepted"
     assert r.json()["run_id"]  # viene de Orquestador, no un string fabricado en el endpoint
+
+
+def test_admin_metrics_frescura_real_y_sin_dato_explicito(client: TestClient) -> None:
+    """`/admin/metrics` lee `RepositorioMetricas` (US-413): frescura real por fuente, y
+    `suites_ge_en_verde` en `None` (SIN_DATO, no hay checkpoints de GE persistidos)."""
+    r = client.get(f"{API_PREFIX}/admin/metrics", headers={"Authorization": f"Bearer {_token_analista()}"})
+    assert r.status_code == 200
+    cuerpo = r.json()
+    assert "DS-05_SINAICA" in cuerpo["frescura_por_fuente"]
+    # DS-06 nunca se ingirió en el fake -- no aparece, no se inventa una fecha.
+    assert "DS-06_CONAGUA_SINA" not in cuerpo["frescura_por_fuente"]
+    assert cuerpo["suites_ge_en_verde"] is None
 
 
 def test_admin_pipeline_run_dag_invalido_422(client: TestClient) -> None:

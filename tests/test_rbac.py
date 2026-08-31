@@ -8,8 +8,8 @@ Verifican la matriz de acceso de §3 del contrato con las dos dependencias de `s
   cualquier rol).
 
 Todo offline: tokens firmados con el secreto de desarrollo; no se toca la base de datos (los 401/403
-se emiten en la dependencia de router, antes del cuerpo del endpoint; los 200 usan endpoints que
-corren sobre stubs sin BD: `/admin/metrics` y `/agente/consulta`).
+se emiten en la dependencia de router, antes del cuerpo del endpoint; los 200 usan `/admin/metrics`
+-- con `RepositorioMetricas` sustituido por un fake, US-413 -- y `/agente/consulta`, sobre stub).
 """
 from __future__ import annotations
 
@@ -20,9 +20,11 @@ from fastapi.testclient import TestClient
 
 from src.api.app import API_PREFIX, app
 from src.api.config import Settings, get_settings
+from src.api.repositorio_metricas import get_repositorio_metricas
 from src.api.schemas import Rol, UserOut
 from src.api.security import jwt as jwtmod
 from src.api.security.rbac import require_role
+from tests.fixtures_metricas import RepositorioMetricasFake
 
 
 def _auth(token: str) -> dict[str, str]:
@@ -31,7 +33,11 @@ def _auth(token: str) -> dict[str, str]:
 
 @pytest.fixture
 def client() -> TestClient:
-    return TestClient(app)
+    app.dependency_overrides[get_repositorio_metricas] = RepositorioMetricasFake
+    try:
+        yield TestClient(app)
+    finally:
+        app.dependency_overrides.pop(get_repositorio_metricas, None)
 
 
 @pytest.fixture

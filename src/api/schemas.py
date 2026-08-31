@@ -185,7 +185,9 @@ class PipelineRunOut(BaseModel):
 
 class MetricsOut(BaseModel):
     frescura_por_fuente: dict[str, datetime]
-    suites_ge_en_verde: bool
+    # None => SIN_DATO explícito: no hay checkpoints de Great Expectations persistidos todavía
+    # para leer un resultado real (US-413, 2026-08-27, avisado a C2/C3 y a Luis García/C1).
+    suites_ge_en_verde: bool | None = None
 
 
 # --------------------------------------------------------------------------- #

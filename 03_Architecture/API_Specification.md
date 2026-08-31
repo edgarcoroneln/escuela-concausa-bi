@@ -165,6 +165,15 @@ tocar Airflow. La corrida se dispara de verdad contra la API REST de Airflow
 `RepositorioGold` de US-411); si Airflow rechaza o no responde, `502` (nunca se inventa un
 `run_id`). RBAC (`analista`) ya viene aplicado a nivel de router desde US-403, no se repite aquí.
 
+**`/admin/metrics` (US-413, Karla Monter, 2026-08-27 — cambio de forma, avisado a C2/C3):**
+`frescura_por_fuente` lee `gold.cubo_pipeline` (DB-10, US-113) de verdad -- una fuente sin ingerir
+simplemente no aparece como llave del dict (no se inventa fecha ni se pone `null`). Distinto:
+`MetricsOut.suites_ge_en_verde` pasa de `bool` obligatorio a **`bool | None`**: hoy no existe
+ningún checkpoint de Great Expectations persistido de dónde leer un resultado real (solo las
+definiciones de las suites en `great_expectations/expectations/`), así que responde `None`
+explícito (SIN_DATO) en vez de inventar `True`/`False`. Avisado a Luis García (dueño de las suites
+GE) para que, cuando exista persistencia de resultados, esto deje de ser SIN_DATO.
+
 ---
 
 ## 4. Modelos Pydantic (request/response)
@@ -276,8 +285,8 @@ class PipelineRunOut(BaseModel):
     run_id: StrictStr
     estado: str = "accepted"
 class MetricsOut(BaseModel):
-    frescura_por_fuente: dict[str, datetime]
-    suites_ge_en_verde: bool
+    frescura_por_fuente: dict[str, datetime]  # fuente ausente => no aparece, nunca inventada
+    suites_ge_en_verde: bool | None           # None = SIN_DATO (US-413, sin checkpoints GE aún)
 ```
 
 ---

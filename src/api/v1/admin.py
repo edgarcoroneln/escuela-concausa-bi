@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from src.api import mock_data
 from src.api.orquestador import DAGS_VALIDOS, Orquestador, OrquestadorError, get_orquestador
+from src.api.repositorio_metricas import RepositorioMetricas, get_repositorio_metricas
 from src.api.schemas import MetricsOut, PipelineRunIn, PipelineRunOut
 
 router = APIRouter(prefix="/admin", tags=["Administración"])
@@ -53,6 +53,15 @@ def export(
 
 
 @router.get("/metrics", response_model=MetricsOut)
-def metrics() -> MetricsOut:
-    """Métricas internas (rol: **analista**): frescura por fuente y estado de suites GE."""
-    return MetricsOut(**mock_data.metrics_mock())
+def metrics(repo: RepositorioMetricas = Depends(get_repositorio_metricas)) -> MetricsOut:
+    """Métricas internas (rol: **analista**): frescura real por fuente (`gold.cubo_pipeline`,
+    US-113) y estado de las suites de Great Expectations.
+
+    `suites_ge_en_verde` es `None` (SIN_DATO explícito): no hay checkpoints de GE persistidos
+    todavía de dónde leer un resultado real -- avisado a Luis García (dueño de las suites) y a
+    C2/C3 (cambio de forma del contrato, ver `API_Specification.md` §4).
+    """
+    return MetricsOut(
+        frescura_por_fuente=repo.obtener_frescura_por_fuente(),
+        suites_ge_en_verde=None,
+    )
