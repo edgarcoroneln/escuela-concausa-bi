@@ -278,8 +278,8 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 
 | ID | Historia | Estado | % | Bloqueado por | Fecha compromiso |
 |---|---|---|---|---|---|
-| `US-411` | Implementar los endpoints de datos sobre G | 🟡 En curso | 90% | — | Dom 23 ago |
-| `US-413` | Endpoints administrativos protegidos | ⬜ Por iniciar | 0% | — | Dom 6 sep |
+| `US-411` | Implementar los endpoints de datos sobre G | ✅ Terminado | 100% | — | Dom 23 ago |
+| `US-413` | Endpoints administrativos protegidos | 🟡 En curso | 90% | — | Dom 6 sep |
 | `US-414` | Documentar la API en OpenAPI y publicar la | ⬜ Por iniciar | 0% | — | Dom 6 sep |
 
 **Estados válidos:** ⬜ Por iniciar · 🟡 En curso · 🔵 En revisión (PR abierto) · ✅ Terminado · 🔴 Bloqueado
