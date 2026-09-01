@@ -18,15 +18,20 @@ REGION="${REGION:-us-central1}"
 IMAGE_NAME="${IMAGE_NAME:-faro-api}"
 IMAGE_TAG="${1:-latest}"
 
+# Sello de la imagen: SHA del commit construido. Lo lee /api/v1/version (ENV GIT_COMMIT
+# en el Dockerfile) para saber qué imagen corre en prod. Sin git, cae a "dev".
+GIT_SHA="$(git rev-parse HEAD 2>/dev/null || echo dev)"
+
 IMAGE_URL="${REGION}-docker.pkg.dev/${PROJECT_ID}/faro-images/${IMAGE_NAME}:${IMAGE_TAG}"
 
 echo -e "${BLUE}🔨 Building Docker image...${NC}"
 echo "   Project: ${PROJECT_ID}"
 echo "   Region: ${REGION}"
 echo "   Image: ${IMAGE_NAME}:${IMAGE_TAG}"
+echo "   Commit: ${GIT_SHA}"
 echo ""
 
-docker build -t ${IMAGE_URL} -f docker/api.Dockerfile .
+docker build --build-arg GIT_SHA="${GIT_SHA}" -t ${IMAGE_URL} -f docker/api.Dockerfile .
 
 echo ""
 echo -e "${BLUE}📤 Pushing to Artifact Registry...${NC}"

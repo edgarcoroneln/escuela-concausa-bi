@@ -17,6 +17,13 @@ ENV PORT=8080
 ENV ENVIRONMENT=production
 ENV PYTHONUNBUFFERED=1
 
+# Sello de la imagen: el SHA del commit con el que se construyó.
+# Se pasa con `--build-arg GIT_SHA=$(git rev-parse HEAD)` y lo lee /api/v1/version
+# vía la variable de entorno GIT_COMMIT. Sin el build-arg queda "dev" (build local
+# sin sellar). Va DESPUÉS de los COPY para no invalidar la capa de `pip install`.
+ARG GIT_SHA=dev
+ENV GIT_COMMIT=${GIT_SHA}
+
 EXPOSE 8080
 
 # Health check

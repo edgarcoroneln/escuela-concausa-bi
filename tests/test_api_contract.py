@@ -61,6 +61,22 @@ def test_version_ok(client: TestClient) -> None:
     assert r.json()["api"] == "v1"
 
 
+def test_version_refleja_git_commit(client: TestClient, monkeypatch) -> None:
+    """/version reporta el commit sellado en la imagen (ENV GIT_COMMIT), no un valor fijo."""
+    monkeypatch.setenv("GIT_COMMIT", "abc1234sha")
+    r = client.get(f"{API_PREFIX}/version")
+    assert r.status_code == 200
+    assert r.json()["commit"] == "abc1234sha"
+
+
+def test_version_default_dev_sin_sellar(client: TestClient, monkeypatch) -> None:
+    """Sin GIT_COMMIT (imagen no sellada / build local), el commit cae a 'dev'."""
+    monkeypatch.delenv("GIT_COMMIT", raising=False)
+    r = client.get(f"{API_PREFIX}/version")
+    assert r.status_code == 200
+    assert r.json()["commit"] == "dev"
+
+
 # --------------------------------------------------------------------------- #
 # Lectura sobre Gold
 # --------------------------------------------------------------------------- #

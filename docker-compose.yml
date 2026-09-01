@@ -88,6 +88,11 @@ services:
     build:
       context: .
       dockerfile: docker/api.Dockerfile
+      args:
+        # Sella la imagen con el commit; /api/v1/version lo reporta. Exporta GIT_SHA
+        # antes de `docker compose build` (p.ej. GIT_SHA=$(git rev-parse HEAD)); si no,
+        # queda "dev". No confundir con GIT_COMMIT, que es la ENV que fija el Dockerfile.
+        GIT_SHA: ${GIT_SHA:-dev}
     restart: unless-stopped
     environment:
       ENVIRONMENT: ${ENVIRONMENT}
