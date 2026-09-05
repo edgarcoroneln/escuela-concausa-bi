@@ -130,12 +130,12 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-09-05T23:10:11+00:00",
+    "generated_at": "2026-09-05T23:18:56+00:00",
     "generated_date": "2026-09-05",
-    "commit": "eb77c80",
+    "commit": "165542f",
     "branch": "dev/edgar-coronel",
     "working_tree": "modified",
-    "source_fingerprint": "becba71be169",
+    "source_fingerprint": "b6ec9d23ec80",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -2821,6 +2821,22 @@
         "US-111"
       ],
       "mitigation_date": "2026-09-06 (freeze)"
+    },
+    {
+      "id": "RISK-009",
+      "description": "Las métricas con división de la capa semántica están a salvo por coincidencia de tipos, no por diseño. Hay 33 métricas con división en 5 archivos; hoy sólo una devuelve entero (BUG-054) y las 32 restantes se salvan, pero no todas por la misma razón: unas porque su columna ya es bigint y SUM(bigint) promueve a numeric; matricula_por_escuela sólo porque su denominador es bigint aunque el numerador sea integer; y variacion_ponderada_pct porque lleva un * 1.0 explícito, que es el arreglo de BUG-031. El detonante latente: matricula_total tiene tipo distinto según el cubo — integer en cubo_escuela_360, cubo_pivot y cubo_recomendaciones; bigint en cubo_matricula, cubo_comparador_municipio y cubo_riesgo_territorial; numeric en matricula_municipio_nivel —, y la misma métrica variacion_ponderada_pct existe en 5 copias, 2 con * 1.0 y 3 sin él. Cuál variante es segura depende de contra qué cubo corre. Copiar la variante sin * 1.0 a un cubo con matricula_total integer reproduce el acantilado de BUG-054, y también en silencio",
+      "probability": 3,
+      "impact": 4,
+      "score": 12,
+      "response": "mitigar",
+      "mitigation": "Guarda propuesta, no implementada (post-freeze, para no tocar 33 métricas de C2 a un día del cierre). Dos opciones, la segunda es más fuerte: (a) prueba que consulte pg_typeof de cada métrica con división y reprueba si alguna devuelve bigint/integer — la que sugiere Marina García, exige base viva; (b) guarda estática: exigir que toda métrica con división lleve cast explícito o * 1.0, con lo que la seguridad pasa a ser propiedad de la expresión y no de los datos, y corre en CI sin Postgres",
+      "trigger": "una métrica de porcentaje o razón que empiece a mostrar sólo 0 % o 100 %, o un variacion_* que salte a −100 %",
+      "owner": "Manuel Alejandro Serranía Reinada",
+      "status": "abierto",
+      "stories": [
+        "US-204"
+      ],
+      "mitigation_date": "Post-freeze"
     }
   ],
   "blockers": [
@@ -3740,10 +3756,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 35,
-        "devlogs": 47,
+        "devlogs": 48,
         "active_us": 5,
-        "activity": 87,
-        "signal": "35 PR · 47 DevLog · 5 US activas"
+        "activity": 88,
+        "signal": "35 PR · 48 DevLog · 5 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
