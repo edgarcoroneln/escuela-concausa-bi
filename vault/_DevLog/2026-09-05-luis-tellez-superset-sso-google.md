@@ -146,10 +146,75 @@ Ruff 0.16.6 (versión de CI) + latest + AST + `vault_lint`, todo verde.
 `SUPERSET_SSO_ROLLBACK=true`; o se despliega **directo con SSO ON** (recomendado: crear el Client dedicado
 primero y registrar el redirect `…/oauth-authorized/google` cuando ya exista la URL de Cloud Run).
 
+## Despliegue a Cloud Run (Bloque 1) + fixes de runtime del SSO (2026-09-05)
+
+Con el código SSO ya mergeado se **desplegó Superset a Cloud Run con Google SSO obligatorio y URL
+pública viva**. Aparecieron **dos bugs que solo se manifiestan en runtime** (no en el smoke local) y se
+resolvieron en la misma sesión, con OK paso a paso de Luis (regla 7).
+
+### Cadena de revisiones
+
+| Rev | Cambio | Estado |
+|---|---|---|
+| `00001-hb9` | Bootstrap SSO-OFF (blindado con IAM + `SUPERSET_SSO_ROLLBACK=true`) para obtener la URL | vivo, vacío |
+| `00002-967` | SSO-ON + `allUsers→run.invoker` (público). Client dedicado + redirect `…/oauth-authorized/google` (los creó Luis) | SSO vivo |
+| `00003-fvb` | **Fix runtime 1** (userinfo) — imagen nueva `00d3c14` | login funciona |
+| `00004-s82` | **Fix runtime 2** (correo del admin → cuenta de servicio, defensivo) | e2e OK |
+
+Config del servicio: SA dedicado `faro-superset-sa` (roles mínimos), `--vpc-connector faro-connector
+--vpc-egress private-ranges-only`, metadata en base `superset`/`superset_app`, secrets desde Secret
+Manager, `min=max=1`, 2 vCPU/2Gi. La exposición pública (`allUsers`) es el **diseño final acordado** (el
+SSO reemplaza el blindaje IAM), no un estado temporal.
+
+### Fix runtime 1 — `oauth_user_info` resuelve el userinfo vía OIDC discovery (commit `00d3c14`)
+
+- **Síntoma:** tras autenticar con Google, Superset rebotaba al login.
+- **Causa:** con `server_metadata_url` (OIDC discovery), `oauth_remotes["google"].get("userinfo")` trata
+  `"userinfo"` como **URL relativa** → authlib revienta con *"Invalid URL 'userinfo': No scheme
+  supplied"* → el callback falla → rebote.
+- **Fix (1 línea):** `remote.userinfo()`, que resuelve el `userinfo_endpoint` publicado en el discovery.
+- **Validado en vivo:** el PO (Edgar) entró correctamente. Es el **único cambio de código** de estos
+  fixes ⇒ va en el PR.
+
+### Fix runtime 2 — colisión del correo del admin de servicio con el SSO
+
+- **Síntoma:** con el fix 1 ya desplegado, **una** persona seguía rebotando al login mientras el resto
+  entraba (fallaba también en incógnito limpio, en Chrome y Safari).
+- **Causa (probada en logs + `describe`):** `SUPERSET_ADMIN_EMAIL` se había fijado a un **correo personal
+  que también estaba en la lista blanca SSO**. El admin de servicio (`username="admin"`) ocupaba ese
+  email. FAB (`auth_user_oauth`) empareja **solo por `username`** (= el correo del usuario SSO); no lo
+  encuentra, e intenta `add_user(...)` con ese email → choca con el del admin (`duplicate key ...
+  ab_user_email_key`) → rebota. Los demás entran porque su correo no es el del admin.
+- **Reparación (con OK de Luis, regla 7):**
+  1. **Job one-shot in-VPC** (`faro-superset-fixadmin`, misma imagen, vía **ORM** de Superset —no SQL
+     crudo—) cambió el email del usuario `admin` de ese correo personal → `admin@faro.local`,
+     liberándolo. Evidencia del log: `ADMIN_ANTES admin <correo-personal>` →
+     `ADMIN_ACTUALIZADO admin admin@faro.local`; el listado de usuarios confirmó que **nunca** existió el
+     usuario SSO de esa persona (el INSERT siempre falló por la colisión). Job **borrado** tras usarse.
+  2. **`SUPERSET_ADMIN_EMAIL` → `admin@faro.local`** en el deploy (rev `00004-s82`, sin rebuild), para
+     que un eventual re-bootstrap no vuelva a robar un correo personal.
+  3. **Guard preventivo** en `docker/superset_config.py` (fail-loud, mismo criterio que `SECRET_KEY`/SSO):
+     si `SUPERSET_ADMIN_EMAIL` está en `SUPERSET_SSO_ALLOWED_EMAILS` con SSO activo, el arranque revienta
+     con un mensaje que explica la colisión. Cierra el bug en el código; no dispara con la config actual
+     y entra en la próxima imagen (Bloque 2).
+- **Verificación e2e (Luis, en vivo):** la persona afectada ya entra por Google; `/health` 200 en
+  `00004-s82`, botón "Sign in with Google" presente, **cero** campos de contraseña (SSO obligatorio
+  intacto).
+
+### Aprendizaje
+
+El admin de servicio de Superset **no debe usar el correo de una persona real** que también entra por
+SSO: FAB empareja por `username`, no por `email`, y la unicidad del `email` provoca una colisión
+silenciosa que se percibe como "el login rebota". El guard preventivo lo vuelve imposible de
+reintroducir por configuración.
+
 ## 🤖 Sesión de IA
 
 - **Agente / modelo:** Claude Code / claude-opus-4-8.
 - **Creados:** este DevLog.
-- **Modificados:** `docker/superset_config.py`, `docker/superset.Dockerfile`, `vault/_DevLog/_index.md`
-  (fila de este DevLog).
+- **Modificados (código SSO + guardas):** `docker/superset_config.py` (bloque §6 SSO; guarda fail-loud del
+  SSO; fix `userinfo` `00d3c14`; guarda de colisión admin/SSO), `docker/superset.Dockerfile` (authlib),
+  `vault/_DevLog/_index.md` (fila de este DevLog).
+- **Infra GCP (sin código):** deploy de Cloud Run `faro-superset` revs `00001`→`00004`; Job efímero de
+  reparación `faro-superset-fixadmin` (creado y **borrado** tras usarse); env `SUPERSET_ADMIN_EMAIL`.
 - **Sin cambios de código de aplicación** (`src/`) ni de dashboards/semántica (C2).

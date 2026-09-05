@@ -160,6 +160,23 @@ _SSO_ADMIN_EMAILS = {
 # el rol público.
 _SSO_VIEWER_ROLE = os.environ.get("SUPERSET_SSO_VIEWER_ROLE", "Gamma")
 
+# Guarda de colisión admin/SSO (fail-loud, mismo criterio que SECRET_KEY/SSO).
+# El admin de servicio (username="admin") se crea con SUPERSET_ADMIN_EMAIL. Si ese
+# correo está en la lista blanca SSO, el primer login SSO de esa persona chocaría
+# con el email del admin (constraint ab_user_email_key): FAB empareja por username,
+# no lo encuentra, e intenta INSERTAR por email —que ya ocupa el admin— y rebota al
+# login. El admin es una cuenta de SERVICIO: su correo NO debe ser el de una persona
+# que entra por SSO. (Bug cazado en el primer deploy SSO-ON; ver DevLog 2026-09-05.)
+_ADMIN_EMAIL = os.environ.get("SUPERSET_ADMIN_EMAIL", "").strip().lower()
+if _SSO_ENABLED and _ADMIN_EMAIL and _ADMIN_EMAIL in _SSO_ALLOWED_EMAILS:
+    raise RuntimeError(
+        f"SUPERSET_ADMIN_EMAIL ({_ADMIN_EMAIL}) está en la lista blanca SSO: el "
+        "admin de servicio (username='admin') colisionaría con el login SSO de "
+        "ese correo (constraint ab_user_email_key), porque FAB empareja por "
+        "username y luego inserta por email. Usa un correo de servicio que no "
+        "sea de una persona que entra por SSO (p. ej. admin@faro.local)."
+    )
+
 if _SSO_ENABLED:
     AUTH_TYPE = AUTH_OAUTH
     # Auto-alta en el primer login (ya validado contra la lista blanca en el
