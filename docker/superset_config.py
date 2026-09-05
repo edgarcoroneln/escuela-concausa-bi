@@ -199,7 +199,10 @@ if _SSO_ENABLED:
         def oauth_user_info(self, provider, response=None):
             if provider != "google":
                 return {}
-            me = self.appbuilder.sm.oauth_remotes[provider].get("userinfo").json()
+            # authlib resuelve el userinfo_endpoint desde el OIDC discovery
+            # (server_metadata_url). NO usar .get("userinfo"): trataría
+            # "userinfo" como URL relativa y revienta con "No scheme supplied".
+            me = self.appbuilder.sm.oauth_remotes[provider].userinfo()
             email = (me.get("email") or "").strip().lower()
             # Puerta 1: correo presente y verificado por Google.
             if not email or not me.get("email_verified", False):
