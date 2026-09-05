@@ -138,3 +138,31 @@ markdown, una por tab de driver. **No es defecto.**
 
 - Que Manuel revise las 7 capturas y cierre el gate visual de BUG-049.
 - BUG-050 sigue `open` como deuda declarada, ya con su medición.
+
+---
+
+## Adenda — un hallazgo mío que envejeció (misma fecha)
+
+Edgar señaló al revisar el **PR #247** que el hallazgo 1 de
+[[vault/06_Quality_Testing/Usability_Accessibility_Test_Plan_DB03_DB04]] acusaba a
+[[vault/04_UX_Design/Accessibility]] de prometer *"verificados en CI (Lighthouse a11y)"* y
+*"≥ 0.9 (bloqueante)"*.
+
+**Ya no lo promete.** Su sección de meta se titula *"no bloqueante — sin CI que lo mida"* y
+declara la meta aspiracional hasta que exista el gate. Y lo incómodo: **esa corrección la
+hice yo misma el 3-sep**, con una nota en ese documento. Mi plan de pruebas siguió citando la
+versión anterior dos días.
+
+La otra mitad del hallazgo se reverificó hoy y sí se sostiene: no hay una sola referencia a
+Lighthouse en `.github/` ni en `vault/08_CICD_DevOps/`, así que el §3 se sigue verificando a
+mano. El hallazgo se reescribió para decir eso y nada más.
+
+Es la misma lección de esta semana en otra forma: **un hallazgo que no se re-verifica
+envejece igual que un bloqueo.** Ya me había pasado con "US-207 está bloqueada por Manuel".
+
+### Lo que no se tocó, y por qué
+
+La fila de **BUG-050** arrastra desde el PR #229 la frase *"requiere primero que alguien
+llene la paleta de `UX_Guidelines.md` (C2 · Manuel Serranía)"*, que **DEC-016 dejó sin
+sentido** —no se adoptó paleta propia— y que además nombra al dueño equivocado: el registro
+es de Edgar Coronel. Verificado que sigue ahí. **La limpia él**, lo pidió explícitamente.

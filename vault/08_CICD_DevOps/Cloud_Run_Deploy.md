@@ -338,6 +338,16 @@ gcloud run services describe faro-api \
 https://faro-api-eanzfglvyq-uc.a.run.app
 ```
 
+**URL de Superset (BI · Fase 2) — requiere login con Google:**
+```
+https://faro-superset-eanzfglvyq-uc.a.run.app
+```
+
+> **SSO obligatorio, sin acceso anónimo:** a diferencia de la API (hoy con lectura pública para la
+> demo), Superset **siempre** pide autenticación con Google (Client OAuth dedicado + lista blanca de
+> correos). Servicio Cloud Run `faro-superset`; metadata BI en Cloud SQL (base `superset`, separada de
+> la analítica `faro`). Detalle en [[vault/_DevLog/2026-09-05-luis-tellez-superset-sso-google]].
+
 ### 5.2 Probar endpoints
 
 ```bash

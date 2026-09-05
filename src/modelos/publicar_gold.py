@@ -29,13 +29,21 @@ falla si las features de alguna predicción no están disponibles para ML-02.
 from __future__ import annotations
 
 import argparse
+import math
 import os
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
 import pandas as pd
-from pydantic import BaseModel, Field, StrictFloat, StrictStr, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    StrictFloat,
+    StrictStr,
+    field_validator,
+    model_validator,
+)
 from sqlalchemy import (
     CheckConstraint,
     Column,
@@ -59,6 +67,7 @@ from src.modelos.entrenar_ml01 import (
 from src.modelos.entrenar_ml02 import (
     COLUMNA_TARGET_PROXY,
     COLUMNA_TARGET_REAL,
+    explicar_driver,
     generar_driver_dominante_proxy,
     predecir_driver,
 )
@@ -79,6 +88,7 @@ from src.modelos.riesgo import (
 ESQUEMA_GOLD = "gold"
 TABLA_PREDICCIONES = "predicciones"
 TABLA_RECOMENDACIONES = "recomendaciones"
+COLUMNAS_SHAP = tuple(f"shap_d{i}" for i in range(1, 7))
 
 class Prioridad(str, Enum):
     """Urgencia de la intervención, derivada del `indice_riesgo`."""
@@ -148,6 +158,19 @@ class RecomendacionGold(BaseModel):
     driver_dominante: StrictStr
     recomendacion: StrictStr
     prioridad: Prioridad
+    shap_d1: StrictFloat | None = None
+    shap_d2: StrictFloat | None = None
+    shap_d3: StrictFloat | None = None
+    shap_d4: StrictFloat | None = None
+    shap_d5: StrictFloat | None = None
+    shap_d6: StrictFloat | None = None
+
+    @field_validator(*COLUMNAS_SHAP)
+    @classmethod
+    def _shap_finito_o_sin_dato(cls, valor: float | None) -> float | None:
+        if valor is not None and not math.isfinite(valor):
+            raise ValueError("una contribución SHAP debe ser finita o None")
+        return valor
 
 
 def prioridad_de_riesgo(riesgo: float) -> Prioridad:
@@ -226,6 +249,12 @@ def _metadatos(esquema: str | None = ESQUEMA_GOLD) -> tuple[MetaData, Table, Tab
         Column("driver_dominante", String, nullable=False),
         Column("recomendacion", String, nullable=False),
         Column("prioridad", String, nullable=False),
+        Column("shap_d1", Float, nullable=True),
+        Column("shap_d2", Float, nullable=True),
+        Column("shap_d3", Float, nullable=True),
+        Column("shap_d4", Float, nullable=True),
+        Column("shap_d5", Float, nullable=True),
+        Column("shap_d6", Float, nullable=True),
     )
     return metadata, predicciones, recomendaciones
 
@@ -361,6 +390,7 @@ def construir_predicciones_municipio_nivel(
 def construir_recomendaciones(
     predicciones: pd.DataFrame,
     driver_por_escuela: dict[str, str],
+    contribuciones_por_escuela: dict[str, dict[str, float | None]] | None = None,
 ) -> pd.DataFrame:
     """Genera las filas de `gold.recomendaciones` a partir del driver dominante.
 
@@ -387,6 +417,7 @@ def construir_recomendaciones(
 
     con_driver = predicciones[predicciones["cct"].isin(driver_por_escuela)].copy()
     drivers = con_driver["cct"].map(driver_por_escuela)
+    contribuciones_por_escuela = contribuciones_por_escuela or {}
 
     filas = pd.DataFrame(
         {
@@ -397,9 +428,16 @@ def construir_recomendaciones(
             "prioridad": [
                 prioridad_de_riesgo(r).value for r in con_driver["indice_riesgo"].to_numpy()
             ],
+            **{
+                f"shap_d{i}": [
+                    contribuciones_por_escuela.get(cct, {}).get(f"D{i}")
+                    for cct in con_driver["cct"]
+                ]
+                for i in range(1, 7)
+            },
         }
     )
-    for fila in filas.to_dict(orient="records"):
+    for fila in filas.astype(object).where(pd.notna(filas), None).to_dict(orient="records"):
         RecomendacionGold(**fila)
     return filas
 
@@ -440,6 +478,7 @@ def construir_recomendaciones_ml02(
     predicciones: pd.DataFrame,
     features: pd.DataFrame,
     modelo_ml02,
+    incluir_shap: bool = False,
 ) -> pd.DataFrame:
     """Conecta las clases de ML-02 con las recomendaciones del mismo ciclo de ML-01."""
     llaves = ["cct", "id_ciclo"]
@@ -458,7 +497,18 @@ def construir_recomendaciones_ml02(
     drivers = dict(
         zip(salida_ml02["cct"], salida_ml02["driver_dominante"], strict=True)
     )
-    return construir_recomendaciones(predicciones, drivers)
+    contribuciones = None
+    if incluir_shap:
+        explicaciones = explicar_driver(
+            modelo_ml02,
+            referencia=features,
+            filas=corte.drop(columns="_merge"),
+        )
+        contribuciones = {
+            explicacion["cct"]: explicacion["contribuciones"]
+            for explicacion in explicaciones
+        }
+    return construir_recomendaciones(predicciones, drivers, contribuciones)
 
 
 def _objetivo_de_conflicto(df: pd.DataFrame, tabla: Table):
@@ -528,12 +578,27 @@ def escribir(
         raise NotImplementedError(f"UPSERT no implementado para el dialecto {dialecto!r}.")
 
     llaves, filtro = _objetivo_de_conflicto(df, tabla)
-    registros = df.to_dict(orient="records")
+    registros = df.astype(object).where(pd.notna(df), None).to_dict(orient="records")
 
     with engine.begin() as conexion:
         if tabla.schema:
             conexion.exec_driver_sql(f'CREATE SCHEMA IF NOT EXISTS "{tabla.schema}"')
         metadata.create_all(conexion, tables=[tabla])
+        if tabla.name == TABLA_RECOMENDACIONES:
+            from sqlalchemy import inspect
+
+            existentes = {
+                columna["name"]
+                for columna in inspect(conexion).get_columns(tabla.name, schema=tabla.schema)
+            }
+            nombre_tabla = (
+                f'"{tabla.schema}"."{tabla.name}"' if tabla.schema else f'"{tabla.name}"'
+            )
+            for columna in (f"shap_d{i}" for i in range(1, 7)):
+                if columna not in existentes:
+                    conexion.exec_driver_sql(
+                        f'ALTER TABLE {nombre_tabla} ADD COLUMN "{columna}" FLOAT'
+                    )
 
         sentencia = insert(tabla).values(registros)
         actualizables = {
@@ -585,6 +650,11 @@ def main() -> int:
         "--solo-predicciones",
         action="store_true",
         help="omite el entrenamiento de ML-02 y gold.recomendaciones",
+    )
+    parser.add_argument(
+        "--con-shap",
+        action="store_true",
+        help="calcula y persiste SHAP en batch; requiere el stack completo de C3",
     )
     args = parser.parse_args()
 
@@ -638,6 +708,7 @@ def main() -> int:
         con_recomendacion,
         features_ml02,
         resultado_ml02.modelo,
+        incluir_shap=args.con_shap,
     )
     escritas = escribir(recomendaciones, tabla_rec, engine, metadata)
     print(

@@ -8,8 +8,8 @@ author_human: "Andrés González Habib"
 agent: "GitHub Copilot"
 model: "GitHub Copilot"
 session_duration: "sesión crítica BUG-048"
-touches: ["BUG-048", "US-302", "US-311", "US-313", "REQ-003"]
-traces_up: ["BUG-048", "US-302", "US-311", "US-313"]
+touches: ["BUG-048", "BUG-053", "US-302", "US-311", "US-313", "REQ-003"]
+traces_up: ["BUG-048", "BUG-053", "US-302", "US-311", "US-313"]
 traces_down: ["src/modelos/entrenar_ml01.py", "tests/test_entrenar_ml01.py"]
 tags: [devlog, celula-3, bug048, ml-01, ml-02, gold, demo]
 ---
@@ -85,6 +85,18 @@ forzar el gate. El cubo observado contiene 44,108 recomendaciones y 213 escuelas
 - SHA-256: `b8a3fc50a636a2943eb0bc25cbe495ed49914429a76838346e7ebcf6aaa5b32a`.
 - Restauración desde cero: 45,276 predicciones, 45,276 recomendaciones, cinco drivers, ocho
 	materialized views y `cubo_pipeline` real con 11 filas.
+
+## Persistencia SHAP para BUG-053
+
+- `gold.recomendaciones` incorpora `shap_d1`…`shap_d6` como `float` nullable mediante migración
+	idempotente del publicador.
+- `TreeExplainer` reemplaza `KernelExplainer`: benchmark de 100 filas en 0.64 s y cálculo batch de
+	las 45,276 recomendaciones completado fuera de la API.
+- D1–D4/D6 quedaron poblados en las 45,276 filas; D5 quedó en 45,276 `NULL` reales y cero `NaN`.
+- El dump `gold_bug048_final2_2026-09-05.sql` con SHAP pesa 74,429,971 bytes; SHA-256:
+	`6d81527b92aa186ae15837e66a03d177dffa8e466e5282847f05047a95e53b09`.
+- Restauración aislada validada con las seis columnas y los nueve cubos.
+- Pruebas C3 de ML-02/publicación: 60 passed; Ruff limpio.
 - El dump contiene únicamente las 45,276 predicciones/recomendaciones vigentes, antes de los ocho
 	`REFRESH MATERIALIZED VIEW`; las 80 filas sintéticas 2023-2024 no se exportaron.
 - Restauración desde cero verificada en una base aislada: 45,276 predicciones, 45,276
@@ -93,3 +105,5 @@ forzar el gate. El cubo observado contiene 44,108 recomendaciones y 213 escuelas
 ## Pendiente operativo
 
 - C5 importa con backup previo, valida read-only y levanta Superset.
+- Diana Alvarez revisa explícitamente las seis columnas por tratarse de un cambio de esquema.
+- Christian Ruiz/C4 consume las columnas desde el repositorio y reemplaza el mock del endpoint.
