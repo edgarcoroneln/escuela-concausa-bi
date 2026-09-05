@@ -15,7 +15,7 @@ tags: [data-source, bronze, driver-d5, ingesta-continua]
 
 # DS-06 · CONAGUA SINA (Sistema Nacional de Información del Agua)
 
-> → [[vault/14_Data_Sources/_index]] · Prueba de descarga real **PENDIENTE** (Semana 1)
+> → [[vault/14_Data_Sources/_index]] · Prueba de descarga real **CONFIRMADA** (ver §9, 24/08/2026)
 > **Ingesta continua #3** (diaria).
 
 ## 1. Identificación
@@ -24,9 +24,9 @@ tags: [data-source, bronze, driver-d5, ingesta-continua]
 - **Qué aporta al proyecto:** disponibilidad hídrica, nivel de presas y estrés hídrico regional.
 
 ## 2. Acceso
-- **URL de descarga / API:** PENDIENTE-CONFIRMAR (portal esperado: SINA / CONAGUA).
-- **Formato:** CSV / API.
-- **Tamaño aproximado:** PENDIENTE-CONFIRMAR.
+- **URL de descarga / API:** https://sisuar.imta.mx/aplicacion/vista/presa/presas.php (IMTA, con datos oficiales de CONAGUA); extracción automatizada vía POST al endpoint interno `mapa.php` (Accion=Presas, 33 id_estado), ver §9.
+- **Formato:** HTML/POST — no hay CSV ni API pública directa; el extractor replica la petición del formulario web.
+- **Tamaño aproximado:** 180 presas por corrida.
 
 ## 3. Frecuencia real de actualización
 - **Diaria.** → satisface el requisito de ingesta continua.
