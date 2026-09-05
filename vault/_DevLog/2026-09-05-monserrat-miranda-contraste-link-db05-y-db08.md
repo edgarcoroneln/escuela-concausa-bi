@@ -5,7 +5,7 @@ author_human: "Monserrat Xcaret Miranda Olivas"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "sesión: defecto de contraste del link de DB-05 bajo DEC-016 y §3 medido por primera vez sobre DB-08"
-touches: ["US-215b", "US-214b", "US-213", "REQ-002", "BUG-051", "BUG-056", "DEC-016", "US-215a"]
+touches: ["US-215b", "US-214b", "US-213", "REQ-002", "BUG-051", "BUG-056", "BUG-037", "DEC-016", "US-215a"]
 tags: [devlog, accesibilidad, superset, bi, qa, celula-2]
 ---
 
@@ -116,6 +116,28 @@ Corregidos declarando la corrección, no borrándola. Es la misma lección de la
 otro ángulo: **un hallazgo que no se re-verifica envejece igual que un bloqueo**, y aquí el plan
 citaba dos documentos que ya habían cambiado bajo sus pies.
 
+## 5. BUG-037 deja de estar huérfano
+
+Llevaba desde el 30-ago sin dueño formal: el registro decía "pendiente de dueño de
+`sync_semantic_layer.py`", Marina García lo listó como pendiente de Manuel Serranía, y se preguntó
+sin respuesta en la revisión del PR #228. Un bug que aparece en el runbook de ambiente local como
+problema conocido no puede quedarse sin responsable.
+
+**Se asume aquí**, y la razón no es voluntarismo sino que los precedentes del repositorio apuntan en
+una sola dirección: en C2 **el script compartido lo corrige quien encuentra el defecto**, con Manuel
+como reviewer por ser dueño de la convención (US-202). Marina lo hizo con BUG-049, Oscar con el
+filtro de ciclo, y esta autora con BUG-038. A eso se suma que BUG-037 nació de **US-214b** —historia
+propia—, vive en `superset/**` —alcance propio—, lo reportó esta autora, y **el fix ya estaba
+propuesto por ella** en el propio registro.
+
+**No se corrige antes del freeze, y eso también es la decisión.** Es `medium`, tiene mitigación
+documentada (`PUT /api/v1/dataset/<id>/refresh`, recogida en el runbook), y el arreglo tocaría la
+herramienta compartida de los 10 tableros justo cuando C5 va a correr el bootstrap de Superset a
+producción. El riesgo de mover esa pieza hoy supera al del defecto que corrige. Lo que resolvía el
+problema real —que nadie lo tomara— es que tenga dueño, no que se arregle esta noche.
+
+Queda para después de la demo, con Manuel como reviewer.
+
 ## 🤖 Sesión de IA
 
 - **Agente / modelo:** Claude Code / claude-opus-5
@@ -156,8 +178,9 @@ habría reportado un falso negativo, igual que el 4-sep en DB-05.
 - **PM + C1:** **BUG-030** deja D5 en `SIN_DATO`, y en el **pivote de DB-08** el efecto es peor que
   en otros tableros: Superset **omite la columna entera** en vez de mostrarla vacía, así que se ven
   5 drivers donde el proyecto promete 6. La decisión ya está asignada al PM en el propio bug.
-- **Manuel Serranía / PM:** **BUG-037** sigue **sin dueño formal**. No mordió esta vez porque el
-  cambio no alteró la lista de columnas del dataset, sólo el contenido de una.
+- **Manuel Serranía / PM:** **BUG-037 deja de estar huérfano — lo asume esta autora** (ver §5).
+  No mordió esta vez porque el cambio no alteró la lista de columnas del dataset, sólo el contenido
+  de una.
 - **Oscar Quiroz:** el commit `c059f34` cita "BUG-050" en el asunto, pero su defecto está registrado
   como **BUG-047**; BUG-050 es de Marina. Cosmético y ya mergeado — sólo para que no confunda.
 
