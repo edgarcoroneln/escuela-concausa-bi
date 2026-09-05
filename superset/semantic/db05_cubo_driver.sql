@@ -60,6 +60,18 @@ SELECT
     -- reports/models.py) contra Superset 6.1.0 real. cve_mun va entre %27...%27
     -- (mismo workaround del backend) porque prison cita valores con forma
     -- numerica; id_driver (D1..D6) no, porque es identificador RISON valido.
+    --
+    -- `style="color:inherit;text-decoration:underline"` (2026-09-05, DEC-016):
+    -- este <a> lo escribe FARO, asi que FARO responde por su contraste. Sin
+    -- estilo propio heredaba el azul de acento de Superset y reprobaba WCAG AA
+    -- en tema CLARO sobre el fondo de la celda de tabla, aunque pasara en
+    -- oscuro -- que es donde se reviso el 4-sep, por eso no se vio.
+    -- No se arregla eligiendo otro azul: pasar 4.5:1 contra el gris de la celda
+    -- exige luminancia baja y contra el negro exige alta, y los rangos no se
+    -- cruzan (demostrado por Marina Garcia en US-215a). Heredar el color del
+    -- texto de la celda pasa en ambos temas, y el subrayado cumple ademas
+    -- WCAG 1.4.1: el color deja de ser el unico medio para reconocer el link.
+    -- Guarda: tests/test_semantic_db05_db08.py::test_el_link_db08_no_depende_del_color_del_tema
     '<a href="/superset/dashboard/db08-explorador-cubo/?native_filters=' ||
         '(NATIVE_FILTER-US203-3:(extraFormData:(filters:!((col:cve_mun,op:IN,val:!(%27' || cd.cve_mun || '%27)))),' ||
         'filterState:(label:cve_mun,validateStatus:!f,value:!(%27' || cd.cve_mun || '%27)),' ||
@@ -67,7 +79,7 @@ SELECT
         'NATIVE_FILTER-US203-4:(extraFormData:(filters:!((col:id_driver,op:IN,val:!(' || cd.id_driver || ')))),' ||
         'filterState:(label:id_driver,validateStatus:!f,value:!(' || cd.id_driver || ')),' ||
         'id:NATIVE_FILTER-US203-4,ownState:()))' ||
-        '" target="_blank">Ver detalle del municipio →</a>' AS link_db08
+        '" target="_blank" style="color:inherit;text-decoration:underline">Ver detalle del municipio →</a>' AS link_db08
     -- Texto de ancla decidido solo para DB-05 (Monserrat). Si este patron de
     -- link cruzado se reusa en otro tablero, falta una pasada de homologacion
     -- de nomenclatura orientada a usuario -- pendiente, no bloqueante hoy.
