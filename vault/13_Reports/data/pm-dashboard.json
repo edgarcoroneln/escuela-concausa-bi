@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-05T23:40:55+00:00",
+    "generated_at": "2026-09-05T23:46:12+00:00",
     "generated_date": "2026-09-05",
-    "commit": "ebdf21a",
-    "branch": "main",
-    "working_tree": "clean",
-    "source_fingerprint": "3d9eb8078f6e",
+    "commit": "31d1416",
+    "branch": "dev/edgar-coronel",
+    "working_tree": "modified",
+    "source_fingerprint": "ce0df3b2ba89",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -13,13 +13,13 @@
   "summary": {
     "total": 88,
     "done": 50,
-    "planned": 5,
-    "in_progress": 11,
+    "planned": 4,
+    "in_progress": 12,
     "in_review": 22,
     "blocked": 0,
-    "wip": 33,
+    "wip": 34,
     "descoped": 3,
-    "progress": 77.4,
+    "progress": 77.8,
     "days_to_demo": 4
   },
   "delivery": {
@@ -128,11 +128,11 @@
       "sprint": "S6",
       "req": "REQ-007",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "status": "planned",
-      "started": "—",
+      "status": "in_progress",
+      "started": "2026-09-05",
       "blocked_since": "—",
-      "evidence": "Sin artefacto de ensayo de pitch encontrado — auditoría 2026-09-03",
-      "updated": "2026-09-03",
+      "evidence": "vault/01_Product/Guion_Demo_US006 approved: guion de 10 minutos con reparto por persona, las tres cosas que decimos antes de que las pregunten (escuelas_en_riesgo = 0 como resultado y no falla, /explicacion sin SHAP, y la deuda de contraste medida), plan B por modo de falla y checklist de la mañana del 9. No pasa a done con el documento: el objetivo del plan dice *\"preparar y ensayar\"*, y el ensayo con cronómetro y pantallas reales queda comprometido para el lunes 7-sep. Es uno de los dos gates en rojo del readiness",
+      "updated": "2026-09-05",
       "objective": "Guion de 10 min, reparto de quien muestra que y plan B si falla la conexion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 0
@@ -1882,9 +1882,9 @@
       "pr_merged": 36,
       "stories": 6,
       "done": 3,
-      "wip": 2,
+      "wip": 3,
       "blocked": 0,
-      "progress": 71.7
+      "progress": 77.5
     },
     {
       "name": "Edgar Ulises Jiménez López",
@@ -2314,9 +2314,9 @@
       ],
       "stories": 6,
       "done": 3,
-      "wip": 2,
+      "wip": 3,
       "blocked": 0,
-      "progress": 71.7
+      "progress": 77.5
     },
     {
       "name": "Célula 1 · Data Engineering & Quality",
@@ -2456,8 +2456,8 @@
       "points": 0.5,
       "stories": 13,
       "done": 8,
-      "progress": 79.2,
-      "secured_points": 0.4,
+      "progress": 81.9,
+      "secured_points": 0.41,
       "band": "green"
     }
   ],
@@ -3166,6 +3166,47 @@
         }
       },
       {
+        "name": "Edgar Edmundo Coronel Navarrete",
+        "cell": "PO",
+        "engagement": 77.5,
+        "commits": 515,
+        "prs_merged": 36,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S2": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          }
+        }
+      },
+      {
         "name": "Carlos Guillermo Mayorga Tapia",
         "cell": "Célula 3",
         "engagement": 76.7,
@@ -3285,47 +3326,6 @@
             "n": 0,
             "done": 0,
             "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Edgar Edmundo Coronel Navarrete",
-        "cell": "PO",
-        "engagement": 71.7,
-        "commits": 515,
-        "prs_merged": 36,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S2": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 1,
-            "done": 0,
-            "state": "planned"
           }
         }
       },
@@ -3627,9 +3627,9 @@
         "active": true,
         "prs_merged": 36,
         "devlogs": 48,
-        "active_us": 5,
-        "activity": 89,
-        "signal": "36 PR · 48 DevLog · 5 US activas"
+        "active_us": 6,
+        "activity": 90,
+        "signal": "36 PR · 48 DevLog · 6 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
@@ -4169,7 +4169,7 @@
       "owner": "Edgar Edmundo Coronel Navarrete",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
       "sprint": "S6",
-      "status": "planned",
+      "status": "in_progress",
       "su_turno": false
     },
     {
@@ -4269,7 +4269,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 79.2
+      "progress": 81.9
     }
   ],
   "current_sprint": "S5",
@@ -8389,10 +8389,10 @@
     {
       "date": "2026-09-05",
       "remaining": 38,
-      "weighted_remaining": 19.9,
+      "weighted_remaining": 19.5,
       "done": 50,
       "scope": 88,
-      "wip": 33,
+      "wip": 34,
       "blocked": 0
     }
   ]

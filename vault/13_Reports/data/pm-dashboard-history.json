@@ -250,10 +250,10 @@
   {
     "date": "2026-09-05",
     "remaining": 38,
-    "weighted_remaining": 19.9,
+    "weighted_remaining": 19.5,
     "done": 50,
     "scope": 88,
-    "wip": 33,
+    "wip": 34,
     "blocked": 0
   }
 ]
