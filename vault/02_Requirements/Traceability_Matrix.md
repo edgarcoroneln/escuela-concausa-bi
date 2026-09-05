@@ -121,7 +121,7 @@ tags: [requirements, traceability, matrix]
 > incremental se agrega al final de este mismo archivo — sería una máquina de conflictos a tres días
 > de la demo. Anotado en el punto 7 de [[vault/_Meta/Vault_Steward]].
 
-**Corte del snapshot: `1b45e85` · 2026-09-05 · 88 historias en alcance (91 en catálogo − 3 recortadas por `DEC-014`)**
+**Corte del snapshot: `19cc588` · 2026-09-05 · 88 historias en alcance (91 en catálogo − 3 recortadas por `DEC-014`)**
 
 | REQ | Módulo | US hechas | Avance | Puntos asegurados |
 |---|---|---|---|---|
