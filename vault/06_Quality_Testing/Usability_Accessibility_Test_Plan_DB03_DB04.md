@@ -87,11 +87,19 @@ Requiere navegador; ninguno automatizable con lo que hay hoy en el proyecto.
 
 ## Hallazgos de alcance (huecos del proyecto, no se rellenan por cuenta propia)
 
-1. **No hay CI de accesibilidad.** [[vault/04_UX_Design/Accessibility]] declara
-   *"verificados en CI (Lighthouse a11y)"* y *"Lighthouse Accessibility ≥ 0.9
-   (bloqueante)"*. No existe ninguna referencia a Lighthouse en `.github/` ni en
-   `vault/08_CICD_DevOps/`. Todo el §3 se verifica a mano. Mismo hueco que documentó
-   Monserrat en US-215b: es del proyecto, no de esta historia.
+1. **No hay CI de accesibilidad, pero el documento ya no dice lo contrario.**
+   Reverificado el 2026-09-05: sigue sin haber una sola referencia a Lighthouse en
+   `.github/` ni en `vault/08_CICD_DevOps/`, así que todo el §3 se verifica a mano — ese
+   hueco es real y es del proyecto, no de esta historia. Mismo que documentó Monserrat en
+   US-215b.
+
+   **Lo que este hallazgo afirmaba de más, y se corrige aquí.** Decía que
+   [[vault/04_UX_Design/Accessibility]] prometía *"verificados en CI (Lighthouse a11y)"* y
+   *"≥ 0.9 (bloqueante)"*. **Ya no lo promete**: su §"Meta objetivo" se titula *"no
+   bloqueante — sin CI que lo mida"* y declara la meta **aspiracional hasta que exista el
+   gate**. Se corrigió el 2026-09-03 con una nota mía en ese mismo documento, y este plan
+   siguió citando la versión anterior dos días. Señalado por Edgar Coronel al revisar el
+   PR #247. **Un hallazgo que no se re-verifica envejece igual que un bloqueo.**
 
 2. ~~**No hay paleta de colores documentada.**~~ **Resuelto el 2026-09-05.**
    [[vault/04_UX_Design/UX_Guidelines]] pasó a `status: approved` y declara **WCAG 2.1 AA**
