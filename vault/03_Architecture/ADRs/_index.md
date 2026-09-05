@@ -23,3 +23,4 @@ tags: [moc, adr, architecture]
 | [[vault/03_Architecture/ADRs/ADR-008-contenerizacion-airflow-sqlalchemy]] | Contenerización propia de Airflow con SQLAlchemy fijado en 1.4.x | accepted | 2026-08-25 |
 | [[vault/03_Architecture/ADRs/ADR-009-monitoreo-mlflow-webhook]] | Monitoreo de runs de MLflow con alertas por webhook genérico | proposed | 2026-08-31 |
 | [[vault/03_Architecture/ADRs/ADR-010-puente-oauth-frontend]] | Puente OAuth → frontend: código de un solo uso, nunca tokens en la URL | proposed | 2026-09-03 |
+| [[vault/03_Architecture/ADRs/ADR-011-universo-features-escuela]] | Universo canónico de features y hecho central | accepted | 2026-09-05 |

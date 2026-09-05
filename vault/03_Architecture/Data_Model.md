@@ -176,6 +176,10 @@ cobertura**. Mapa cubo → dashboard:
 - **Grano:** una fila por **CCT × ciclo**. `cve_mun` (clave INEGI, 5 caracteres) + los 6 drivers
   **normalizados** (0–1) + banderas de cobertura + el target de entrenamiento. Contrato **cerrado
   y versionado** (ver §5.3).
+- **Universo canónico (ADR-011):** es exactamente el de `gold.fact_escuela_ciclo`: sólo CCT
+  presentes en `gold.dim_escuela` (DS-02) con matrícula y ciclo previo en DS-01. `cve_mun`
+  también procede de `dim_escuela`; CCT presentes sólo en DS-01 no se publican como features ni
+  como salidas ML, porque ningún cubo Gold podría consumirlos.
 - **`cve_mun` (US-325, 2026-08-29):** existía como llave de join interna desde el día 1 (D1/D2 se
   resuelven por municipio); se expone en el contrato a partir de aquí para el análisis de sesgo
   por cobertura parcial de Estefany Hernández Loredo (C3). Decisión de esquema tomada por Diana
@@ -253,6 +257,10 @@ propiedades que **solo existen a nivel de conjunto** y que Pydantic no puede ver
 ### 5.3 `FeaturesEscuela` — contrato formal Célula 1 ↔ Célula 3
 El modelo Pydantic de `gold.features_escuela` es el **contrato versionado** entre Data Engineering
 (produce) y ML (consume). Cambiar una columna = cambiar el contrato = PR con aviso a la Célula 3.
+
+ADR-011 fija además su contrato de **universo**: `features_escuela` y
+`fact_escuela_ciclo` deben tener las mismas llaves `(cct, id_ciclo)` y el mismo `cve_mun`
+canónico de DS-02. Cambiar esa regla requiere ADR y revisión de C1/C3, aunque no cambie una columna.
 
 ```python
 class FeaturesEscuela(BaseModel):
