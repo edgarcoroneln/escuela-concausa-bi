@@ -5,7 +5,7 @@ author_human: "Christian Imanol Ruiz Hurtado"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "1 sesión — SIN_DATO representable en /predicciones/{cct}/explicacion antes de que C3 persista SHAP"
-touches: ["US-412", "US-302", "REQ-004", "BUG-053"]
+touches: ["US-412", "US-302", "REQ-004", "BUG-055"]
 tags: [devlog, celula-4, api, contrato, sin-dato, shap, us412]
 ---
 
