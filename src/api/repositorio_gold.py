@@ -14,12 +14,19 @@ para que el router los construya igual sin importar qué implementación esté d
 """
 from __future__ import annotations
 
+import time
 from typing import Protocol
 
 from sqlalchemy import Numeric, cast, func, select
 from sqlalchemy.engine import Engine
 
 from src.api.db import get_engine, get_tablas
+
+# TTL del cache de `_ciclo_mas_reciente()` (BUG-044, revisión de Christian Ruiz 2026-09-05): el
+# set de ciclos materializados solo cambia cuando corre dbt (cadencia de días), así que 5 minutos
+# de margen no arriesga servir un ciclo obsoleto por mucho tiempo, y evita un `SELECT MAX(id_ciclo)`
+# extra en cada petición a /escuelas, /kpis y /escuelas/{cct}.
+_CICLO_CACHE_TTL_SEGUNDOS = 300
 
 # Whitelist de `order_by` (Decisión 3 de US-411, avisada a C2/C3, ver API_Specification.md §3.3).
 # Fuente de verdad para el Literal de FastAPI en `src/api/v1/gold.py` -- un valor fuera de aquí
@@ -49,7 +56,10 @@ class RepositorioGold(Protocol):
         llegar aquí, ver `src/api/v1/gold.py`); `SIN_DATO` (`None`) siempre queda al final.
 
         Si `ciclo` viene `None`, se usa el ciclo más reciente materializado en
-        `fact_escuela_ciclo` -- **nunca** todos los ciclos a la vez (BUG-044).
+        `fact_escuela_ciclo` -- **nunca** todos los ciclos a la vez (BUG-044). Ese default es
+        **global** (el máximo de toda la tabla), no por `cve_ent`/`cve_mun`: una entidad sin
+        filas todavía para ese ciclo da lista vacía, no su propio último ciclo disponible. Ver
+        `RepositorioGoldPostgres._ciclo_mas_reciente` para el porqué.
         """
         ...
 
@@ -73,7 +83,8 @@ class RepositorioGold(Protocol):
         """Agregados del tablero (KPI-02/04/05 de `Screen_Specs.md`).
 
         Si `ciclo` viene `None`, se usa el ciclo más reciente materializado -- nunca la suma de
-        todos los ciclos a la vez (BUG-044).
+        todos los ciclos a la vez (BUG-044). Ese default es **global**, no por `cve_ent`/`cve_mun`
+        -- ver `RepositorioGoldPostgres._ciclo_mas_reciente`.
         """
         ...
 
@@ -81,6 +92,11 @@ class RepositorioGold(Protocol):
 class RepositorioGoldPostgres:
     """Implementación real sobre `gold.*` vía SQLAlchemy Core (mismo estilo que
     `src/modelos/publicar_gold.py`, ver `src/api/db.py`)."""
+
+    # Cache del ciclo más reciente compartido entre instancias (BUG-044): `get_repositorio_gold()`
+    # crea una instancia nueva por petición (`Depends`), así que un cache de instancia no serviría
+    # de nada -- tiene que vivir a nivel de clase para sobrevivir entre requests del mismo proceso.
+    _ciclo_cache: tuple[str | None, float] | None = None
 
     def __init__(self, engine: Engine | None = None) -> None:
         self._engine = engine or get_engine()
@@ -169,12 +185,34 @@ class RepositorioGoldPostgres:
         return consulta.order_by(criterio.nulls_last())
 
     def _ciclo_mas_reciente(self) -> str | None:
-        """`id_ciclo` más alto materializado en `fact_escuela_ciclo` (formato `AAAA-AAAA`, orden
-        lexicográfico == orden cronológico). Sirve como default cuando el caller omite `ciclo`:
-        antes de BUG-044, omitirlo dejaba `fact` sin filtrar y listaba/sumaba **todos** los ciclos
-        a la vez (escuelas triplicadas, `matricula_total` de `/kpis` triplicado en producción)."""
+        """`id_ciclo` más alto materializado en TODO `fact_escuela_ciclo` (formato `AAAA-AAAA`,
+        orden lexicográfico == orden cronológico). Sirve como default cuando el caller omite
+        `ciclo`: antes de BUG-044, omitirlo dejaba `fact` sin filtrar y listaba/sumaba **todos**
+        los ciclos a la vez (escuelas triplicadas, `matricula_total` de `/kpis` triplicado en
+        producción). Cacheado `_CICLO_CACHE_TTL_SEGUNDOS` (revisión de Christian Ruiz,
+        2026-09-05): el set de ciclos solo cambia cuando corre dbt, así que recalcularlo en cada
+        petición era un `SELECT MAX` gratuito de más.
+
+        **El ciclo resuelto es GLOBAL, no por entidad/municipio/filtro** (aclarado a petición de
+        Christian Ruiz, para que esto no se lea como un bug en dos semanas): es el máximo de TODO
+        `fact_escuela_ciclo`, calculado una sola vez y aplicado igual sin importar qué `cve_ent`,
+        `cve_mun` o `nivel` pida el caller. Si una entidad todavía no tiene filas para ese ciclo
+        global -- por ejemplo, si CDMX ya recibió el ciclo 2025-2026 pero Jalisco todavía no --
+        filtrar por ese `cve_ent` da **lista vacía**, no el último ciclo *disponible para esa
+        entidad*. Es intencional: la alternativa (resolver el ciclo por entidad) mostraría
+        matrículas de ciclos distintos una al lado de otra en el mismo tablero sin ninguna marca
+        que lo distinga -- exactamente el tipo de número "creíble y falso" que el proyecto evita
+        en otras partes (ver BUG-017, BUG-030). Todas las entidades avanzan de ciclo juntas o la
+        comparación entre ellas deja de tener sentido."""
+        ahora = time.monotonic()
+        if self._ciclo_cache is not None:
+            valor, marca = self._ciclo_cache
+            if ahora - marca < _CICLO_CACHE_TTL_SEGUNDOS:
+                return valor
         with self._engine.connect() as conexion:
-            return conexion.execute(select(func.max(self._fact.c.id_ciclo))).scalar_one_or_none()
+            valor = conexion.execute(select(func.max(self._fact.c.id_ciclo))).scalar_one_or_none()
+        RepositorioGoldPostgres._ciclo_cache = (valor, ahora)
+        return valor
 
     def listar_escuelas(
         self,
