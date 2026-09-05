@@ -283,13 +283,11 @@ def registrar_en_mlflow(
     return registrar_sklearn(resultado.modelo, config)
 
 
-def calcular_shap_kernel(
+def calcular_shap_batch(
     modelo: HistGradientBoostingClassifier,
-    referencia: pd.DataFrame,
     filas: pd.DataFrame,
-    max_referencia: int = 50,
 ) -> list[dict[str, float]]:
-    """Calcula contribuciones SHAP para ML-02 si `shap` esta instalado.
+    """Calcula contribuciones SHAP en batch para ML-02 si `shap` esta instalado.
 
     Se mantiene fuera del camino critico de pruebas porque SHAP vive en `requirements/celula-3.txt`,
     no en el requirements base del CI.
@@ -300,9 +298,8 @@ def calcular_shap_kernel(
         raise RuntimeError("Instala shap para calcular explicabilidad de ML-02.") from exc
 
     columnas = list(getattr(modelo, "feature_names_in_", DRIVERS))
-    x_ref = _matriz(referencia, columnas).head(max_referencia)
     x_filas = _matriz(filas, columnas)
-    explainer = shap.KernelExplainer(modelo.predict_proba, x_ref)
+    explainer = shap.TreeExplainer(modelo)
     valores = explainer.shap_values(x_filas)
     probabilidades = modelo.predict_proba(x_filas)
 
@@ -313,7 +310,7 @@ def calcular_shap_kernel(
         else:
             arr = np.asarray(valores, dtype=float)
             contribuciones = arr[indice_fila, :, indice_clase] if arr.ndim == 3 else arr[indice_fila]
-        resultados.append(dict(zip(DRIVERS, contribuciones, strict=True)))
+        resultados.append(dict(zip(columnas, contribuciones, strict=True)))
     return resultados
 
 
@@ -325,12 +322,7 @@ def explicar_driver(
 ) -> list[dict[str, object]]:
     """Devuelve la explicación por escuela según `ExplicacionSHAPOut` de la API."""
     predicciones = predecir_driver(modelo, filas)
-    valores_shap = calcular_shap_kernel(
-        modelo,
-        referencia,
-        filas,
-        max_referencia=max_referencia,
-    )
+    valores_shap = calcular_shap_batch(modelo, filas)
 
     explicaciones: list[dict[str, object]] = []
     for prediccion, contribuciones in zip(
@@ -343,8 +335,10 @@ def explicar_driver(
                 "cct": prediccion["cct"],
                 "driver_dominante": prediccion["driver_dominante"],
                 "contribuciones": {
-                    DRIVER_A_CLASE[driver]: float(valor)
-                    for driver, valor in contribuciones.items()
+                    DRIVER_A_CLASE[driver]: (
+                        float(contribuciones[driver]) if driver in contribuciones else None
+                    )
+                    for driver in DRIVERS
                 },
             }
         )

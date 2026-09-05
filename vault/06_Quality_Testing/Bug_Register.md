@@ -2190,3 +2190,15 @@ El entregable `gold_bug048_final2_2026-09-05.sql` fue restaurado desde cero con 
 45,276 recomendaciones, ocho materialized views y `cubo_pipeline` real. SHA-256:
 `b8a3fc50a636a2943eb0bc25cbe495ed49914429a76838346e7ebcf6aaa5b32a`. La parte C3 queda completa;
 BUG-048 permanece abierto hasta que C5 haga backup, importe y valide Cloud SQL/Superset.
+
+## Actualización BUG-053 — fuente SHAP persistida por C3 (2026-09-05)
+
+C3 completó el primer paso del orden acordado con C4: `gold.recomendaciones` incorpora
+`shap_d1`…`shap_d6` nullable mediante migración idempotente, y `publicar_gold --con-shap` calcula
+las contribuciones en batch con `TreeExplainer`. En el ciclo 2024-2025, D1–D4/D6 quedaron poblados
+en 45,276 filas; D5 quedó `NULL` en las 45,276 por cobertura ausente, con cero `NaN` y nunca cero de
+relleno. El dump se restauró desde cero y 60 pruebas enfocadas pasaron.
+
+El bug sigue `open` hasta que Diana Alvarez revise explícitamente el cambio de esquema y C4 lea
+estas columnas desde el repositorio, reemplace el cuerpo mock de `/predicciones/{cct}/explicacion`
+y ejecute sus ocho pruebas de contrato. La parte C3 ya no bloquea.

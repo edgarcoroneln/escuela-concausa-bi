@@ -136,6 +136,40 @@ def test_recomendaciones_solo_para_escuelas_con_driver(predicciones: pd.DataFram
 
     assert len(recomendaciones) == 3
     assert set(recomendaciones["cct"]) == set(ccts)
+    assert recomendaciones[[f"shap_d{i}" for i in range(1, 7)]].isna().all().all()
+
+
+def test_recomendaciones_persisten_shap_nullable(predicciones: pd.DataFrame) -> None:
+    cct = predicciones["cct"].iloc[0]
+    contribuciones = {
+        cct: {"D1": 0.25, "D2": -0.10, "D3": 0.0, "D4": 0.05, "D5": None, "D6": 0.01}
+    }
+
+    recomendaciones = construir_recomendaciones(
+        predicciones,
+        {cct: "D1"},
+        contribuciones,
+    )
+
+    fila = recomendaciones.iloc[0]
+    assert fila["shap_d1"] == pytest.approx(0.25)
+    assert fila["shap_d2"] == pytest.approx(-0.10)
+    assert pd.isna(fila["shap_d5"])
+
+
+def test_recomendacion_rechaza_shap_no_finito() -> None:
+    from pydantic import ValidationError
+    from src.modelos.publicar_gold import RecomendacionGold
+
+    with pytest.raises(ValidationError, match="debe ser finita o None"):
+        RecomendacionGold(
+            cct="09DPR0001X",
+            id_ciclo="2024-2025",
+            driver_dominante="D1",
+            recomendacion="Apoyo focalizado.",
+            prioridad="media",
+            shap_d1=float("nan"),
+        )
 
 
 def test_el_texto_corresponde_al_driver(predicciones: pd.DataFrame) -> None:
@@ -181,6 +215,45 @@ def test_conecta_ml02_con_recomendaciones_del_mismo_ciclo(
     assert set(recomendaciones["cct"]) == set(predicciones["cct"])
     assert set(recomendaciones["id_ciclo"]) == set(predicciones["id_ciclo"])
     assert set(recomendaciones["driver_dominante"]) <= set(CODIGOS_DRIVER)
+
+
+def test_conecta_shap_batch_con_recomendaciones(
+    predicciones: pd.DataFrame,
+    features: pd.DataFrame,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    features_ml02 = features.copy()
+    features_ml02["driver_dominante_proxy"] = generar_driver_dominante_proxy(features_ml02)
+    modelo_ml02 = entrenar_ml02(features_ml02, n_ventanas=3).modelo
+
+    def explicar(modelo, referencia, filas):
+        return [
+            {
+                "cct": cct,
+                "driver_dominante": "D1",
+                "contribuciones": {
+                    "D1": 0.3,
+                    "D2": -0.1,
+                    "D3": 0.0,
+                    "D4": 0.2,
+                    "D5": None,
+                    "D6": 0.05,
+                },
+            }
+            for cct in filas["cct"]
+        ]
+
+    monkeypatch.setattr("src.modelos.publicar_gold.explicar_driver", explicar)
+
+    recomendaciones = construir_recomendaciones_ml02(
+        predicciones,
+        features_ml02,
+        modelo_ml02,
+        incluir_shap=True,
+    )
+
+    assert recomendaciones["shap_d1"].eq(0.3).all()
+    assert recomendaciones["shap_d5"].isna().all()
 
 
 def test_el_catalogo_cubre_los_seis_drivers() -> None:
@@ -254,6 +327,33 @@ def test_publica_recomendaciones(predicciones: pd.DataFrame, engine) -> None:
         fila = conexion.execute(select(tabla)).fetchone()
     assert fila.driver_dominante == "D3"
     assert fila.prioridad in {p.value for p in Prioridad}
+
+
+def test_migra_recomendaciones_legacy_con_columnas_shap(predicciones: pd.DataFrame, engine) -> None:
+    with engine.begin() as conexion:
+        conexion.exec_driver_sql(
+            "CREATE TABLE recomendaciones ("
+            "cct VARCHAR(10) NOT NULL, id_ciclo VARCHAR NOT NULL, "
+            "driver_dominante VARCHAR NOT NULL, recomendacion VARCHAR NOT NULL, "
+            "prioridad VARCHAR NOT NULL, PRIMARY KEY (cct, id_ciclo))"
+        )
+
+    metadata, _, tabla = _metadatos(esquema=None)
+    cct = predicciones["cct"].iloc[0]
+    recomendaciones = construir_recomendaciones(
+        predicciones,
+        {cct: "D4"},
+        {cct: {"D1": None, "D2": None, "D3": None, "D4": 0.4, "D5": None, "D6": None}},
+    )
+
+    escribir(recomendaciones, tabla, engine, metadata)
+
+    with engine.connect() as conexion:
+        columnas = {fila[1] for fila in conexion.exec_driver_sql("PRAGMA table_info(recomendaciones)")}
+        fila = conexion.execute(select(tabla)).one()
+    assert {f"shap_d{i}" for i in range(1, 7)} <= columnas
+    assert fila.shap_d4 == pytest.approx(0.4)
+    assert fila.shap_d5 is None
 
 
 # --------------------------------------------------------------------- grano dual (DEC-010)
