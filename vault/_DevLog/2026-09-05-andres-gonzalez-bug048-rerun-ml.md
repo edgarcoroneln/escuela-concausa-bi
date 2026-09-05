@@ -25,10 +25,11 @@ Regenerar sobre el Gold post-BUG-045 las predicciones ML-01 y recomendaciones ML
 
 ## Insumo
 
-- Dump recibido de Diana Alvarez: `gold_bug048_drivers_2026-09-05.sql`, transferido fuera de Git.
+- Dump definitivo recibido de Diana Alvarez: `gold_bug048_final1_2026-09-05.sql`, transferido fuera
+	de Git; reemplaza los dumps anteriores al incorporar CONAPO real y nueve cubos.
 - Importación local: 136,046 filas de `gold.features_escuela`, 46,547 escuelas y tres ciclos.
-- Cobertura: D1 100 %, D2 16.6 %, D3/D4 ~83 %, D6 parcial y D5 sin datos.
-- Aviso de C1: D1/D2 aún usan población CONAPO de fixture como denominador.
+- Cobertura: D1/D2 100 %, D3/D4 ~83 %, D6 parcial y D5 `SIN_DATO` en features; `cubo_pipeline`
+	llega materializado con CONAGUA real.
 
 ## Diagnóstico ML-01
 
@@ -47,14 +48,18 @@ buscar un porcentaje objetivo:
 La pérdida absoluta se adopta porque mejora el holdout frente al baseline y reduce la influencia de
 una cola minoritaria de outliers del target; no es un ajuste cosmético del porcentaje de riesgo.
 
+Con CONAPO real, el rerun definitivo mantiene MAE 0.141458 pero cambia la señal: riesgo mínimo
+0.0292, mediana 0.3533 y máximo 0.5717. Ninguna escuela cruza 0.6 porque la caída máxima predicha es
+4.53 %, por debajo del umbral ratificado de 5 %. No se movió el umbral para fabricar casos.
+
 ## Resultado ML-02 y publicación local
 
 `publicar_gold --desde-gold --ventanas 1` produjo por upsert:
 
 - 45,276 predicciones ML-01 para 2024-2025.
 - 45,276 recomendaciones ML-02 para 2024-2025, sin huérfanas respecto a predicciones/features.
-- F1 macro ML-02: 0.8331.
-- Drivers: D1 24,180; D2 5,850; D3 2,206; D4 12,621; D6 419.
+- F1 macro ML-02: 0.8333.
+- Drivers: D1 2,843; D2 27,075; D3 2,104; D4 12,835; D6 419.
 - D5 excluido explícitamente por ausencia total, nunca convertido en cero.
 
 ## Seguridad y calidad
@@ -75,8 +80,11 @@ forzar el gate. El cubo observado contiene 44,108 recomendaciones y 213 escuelas
 
 ## Entregable para C5
 
-- `gold_bug048_final_2026-09-05.sql`, 68,791,104 bytes, transferido fuera de Git.
-- SHA-256: `d5cb21297f28cf6da5f32e51eb2b38a0027f07bc7efc60302945990499165cce`.
+- El primer dump C3 quedó superseded por `gold_bug048_final1_2026-09-05.sql` de C1 al llegar CONAPO
+	real. El entregable definitivo es `gold_bug048_final2_2026-09-05.sql`, 69,873,466 bytes.
+- SHA-256: `b8a3fc50a636a2943eb0bc25cbe495ed49914429a76838346e7ebcf6aaa5b32a`.
+- Restauración desde cero: 45,276 predicciones, 45,276 recomendaciones, cinco drivers, ocho
+	materialized views y `cubo_pipeline` real con 11 filas.
 - El dump contiene únicamente las 45,276 predicciones/recomendaciones vigentes, antes de los ocho
 	`REFRESH MATERIALIZED VIEW`; las 80 filas sintéticas 2023-2024 no se exportaron.
 - Restauración desde cero verificada en una base aislada: 45,276 predicciones, 45,276

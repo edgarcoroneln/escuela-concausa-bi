@@ -2178,3 +2178,15 @@ fallo de red no rompe el sync ni pierde el respaldo estático, guardia paramétr
 recapturar la suya, aunque el número que ya documentaron (`"2024-2025"`) no cambia con mi
 fix — solo deja de requerir mantenimiento manual en el próximo ciclo. 872 passed, `vault_lint`
 limpio.
+
+## Actualización BUG-048 — rerun definitivo C3 con CONAPO real (2026-09-05)
+
+El dump `gold_bug048_final1_2026-09-05.sql` de C1 reemplazó la base preliminar al incorporar CONAPO
+real y nueve cubos. C3 repitió el backtesting temporal y la publicación: ML-01 obtuvo MAE 0.141458;
+el riesgo queda entre 0.0292 y 0.5717, sin escuelas sobre 0.6 porque ninguna caída predicha alcanza
+el 5 % ratificado. ML-02 obtuvo F1 0.8333 y publicó 45,276 recomendaciones de cinco drivers.
+
+El entregable `gold_bug048_final2_2026-09-05.sql` fue restaurado desde cero con 45,276 predicciones,
+45,276 recomendaciones, ocho materialized views y `cubo_pipeline` real. SHA-256:
+`b8a3fc50a636a2943eb0bc25cbe495ed49914429a76838346e7ebcf6aaa5b32a`. La parte C3 queda completa;
+BUG-048 permanece abierto hasta que C5 haga backup, importe y valide Cloud SQL/Superset.
