@@ -661,3 +661,47 @@ def test_pivote_de_db08_agrupa_por_id_driver_en_columnas(dashboard_db08: dict) -
         assert "id_driver" in extra.get("groupbyColumns", []) + extra.get("groupbyRows", []), (
             f"{ch['nombre']}: el pivote debe agrupar por id_driver (filas o columnas) por defecto."
         )
+
+# --------------------------------------------------------- contraste del link (DEC-016)
+
+
+def _bloque_del_link(sql: str, columna_link: str) -> str:
+    """Devuelve solo el fragmento de SQL que construye `columna_link`.
+
+    Mismo helper que `tests/test_drill_down_db03_db04.py:72` (Marina García): un
+    `.sql` puede definir varios links, y validar contra el archivo completo
+    mezclaría el bloque de uno con el de otro.
+    """
+    fin = sql.index(f"AS {columna_link}")
+    ini = sql.rindex("<a href=", 0, fin)
+    return sql[ini:fin]
+
+
+def test_el_link_db08_no_depende_del_color_del_tema(db05: str) -> None:
+    """El `<a>` de DB-05 lo escribe FARO, así que FARO responde por su contraste (DEC-016).
+
+    Reportado por Marina García el 2026-09-05 tras encontrar el mismo defecto en
+    sus cuatro links de DB-03/DB-04: sin estilo propio el ancla hereda el azul de
+    acento de Superset, que **pasa en tema oscuro y reprueba en claro** sobre el
+    fondo de la celda de tabla. El barrido de contraste del 4-sep (§3.1 del plan
+    de usabilidad) no lo cazó por dos razones que conviene dejar escritas: se
+    midió el tema oscuro primero, y la tabla que contiene el link queda **debajo
+    del pliegue**, fuera del viewport que se recorrió.
+
+    **No se arregla eligiendo otro azul**, y es aritmética: para pasar 4.5:1
+    contra el gris claro de la celda hace falta luminancia baja, y contra el
+    fondo oscuro hace falta alta; los dos rangos no se cruzan, así que ningún
+    color único sirve para ambos temas. La salida es heredar el color del texto
+    de la celda —que ya pasa en los dos— y marcar el link con subrayado en vez
+    de con tono, lo que además cumple WCAG 1.4.1.
+
+    Gemela de `test_drill_down_db03_db04.py::test_el_link_no_depende_del_color_del_tema`.
+    """
+    bloque = _bloque_del_link(db05, "link_db08")
+
+    assert "color:inherit" in bloque, (
+        "link_db08 deja que el ancla tome el color de acento del tema; en claro reprueba AA"
+    )
+    assert "text-decoration:underline" in bloque, (
+        "link_db08 se reconocería sólo por color: falta el subrayado (WCAG 1.4.1)"
+    )
