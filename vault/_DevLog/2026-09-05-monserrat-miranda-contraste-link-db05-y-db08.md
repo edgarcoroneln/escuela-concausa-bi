@@ -5,7 +5,7 @@ author_human: "Monserrat Xcaret Miranda Olivas"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "sesión: defecto de contraste del link de DB-05 bajo DEC-016 y §3 medido por primera vez sobre DB-08"
-touches: ["US-215b", "US-214b", "US-213", "REQ-002", "BUG-051", "BUG-056", "DEC-016"]
+touches: ["US-215b", "US-214b", "US-213", "REQ-002", "BUG-051", "BUG-056", "DEC-016", "US-215a"]
 tags: [devlog, accesibilidad, superset, bi, qa, celula-2]
 ---
 
@@ -98,6 +98,23 @@ elemento, aunque compartan el color de origen.
 
 **Pesa más que el chrome**: no es un botón de la barra, son los valores del explorador — el
 contenido central del tablero. Vale que quede dicho aunque la regla no lo bloquee.
+
+## 4. Los dos "huecos de alcance" del plan también habían envejecido
+
+Al revisar el repo antes de abrir el PR apareció el **#249 de Marina**: su plan de DB-03/DB-04
+acusaba a `Accessibility.md` de prometer un gate de Lighthouse bloqueante que **ese documento ya no
+promete** desde el 3-sep. Este plan tenía **la misma cita vieja**, palabra por palabra.
+
+Re-verificados los dos hallazgos propios:
+
+| Hallazgo | Veredicto |
+|---|---|
+| "Sin CI de accesibilidad real" | **A medias.** La cita estaba vieja —`Accessibility.md` ya dice *"no bloqueante — sin CI que lo mida"*—, pero el hueco se sostiene: cero referencias a Lighthouse en `.github/` y `vault/08_CICD_DevOps/` |
+| "Sin paleta de colores documentada" | **Dejó de ser hueco.** DEC-016 lo resolvió en sentido contrario: FARO **no adopta paleta propia** a propósito, así que el contraste heredado es limitación conocida y el caso de daltonismo queda fuera por decisión, no por insumo faltante |
+
+Corregidos declarando la corrección, no borrándola. Es la misma lección de la sesión anterior desde
+otro ángulo: **un hallazgo que no se re-verifica envejece igual que un bloqueo**, y aquí el plan
+citaba dos documentos que ya habían cambiado bajo sus pies.
 
 ## 🤖 Sesión de IA
 

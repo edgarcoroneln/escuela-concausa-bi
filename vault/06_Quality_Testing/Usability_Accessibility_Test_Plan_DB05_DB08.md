@@ -3,7 +3,7 @@ id: DOC-USABILIDAD-DB0508
 title: "Usability & Accessibility Test Plan — DB-05 / DB-08"
 owner: "Monserrat Xcaret Miranda Olivas"
 status: approved
-traces_up: ["US-215b", "REQ-002"]
+traces_up: ["US-215b", "REQ-002", "DEC-016"]
 traces_down: ["BUG-038", "BUG-051", "BUG-056"]
 last_reviewed: "2026-09-05"
 tags: [qa, usability, accessibility, db05, db08]
@@ -80,13 +80,24 @@ Superset embebido (ver exclusiones en §Alcance).
 
 ## Hallazgos de alcance (huecos del proyecto, no se rellenan por cuenta propia)
 
-- **Sin CI de accesibilidad real.** [[vault/04_UX_Design/Accessibility]] declara "Lighthouse Accessibility
-  ≥ 0.9 (bloqueante)", pero no hay ningún job de CI que lo ejecute — es aspiracional, no
-  implementado. Este plan no puede heredar ese gate porque no existe.
-- **Sin paleta de colores documentada.** No hay una paleta oficial del proyecto contra la cual
-  verificar "colorblind-safe" (p. ej. distinguibilidad de series en gráficas de driver por tipo de
-  daltonismo). Sin ese insumo, §3 no puede incluir un caso de prueba real para esto — se deja
-  anotado aquí como hueco, no como caso ⏳.
+> **Los dos hallazgos de abajo se re-verificaron el 2026-09-05 y los dos habían envejecido.** Se
+> corrigen declarando la corrección en vez de borrarla. La lección va con el mismo espíritu con el
+> que Marina García corrigió el suyo en el PR #249: **un hallazgo que no se re-verifica envejece
+> igual que un bloqueo**, y este plan citaba dos documentos que ya habían cambiado.
+
+- **Sin CI de accesibilidad — el hueco sigue, la cita estaba vieja.** Este plan afirmaba que
+  [[vault/04_UX_Design/Accessibility]] declaraba *"Lighthouse Accessibility ≥ 0.9 (bloqueante)"*.
+  **Ya no lo declara**: desde el 3-sep su sección se titula *"Meta objetivo (no bloqueante — sin CI
+  que lo mida)"* y marca la meta como aspiracional. Lo que **sí** se sostiene, reverificado hoy: no
+  hay una sola referencia a Lighthouse en `.github/` ni en `vault/08_CICD_DevOps/`, así que el §3 se
+  sigue verificando a mano y este plan no puede heredar un gate que no existe.
+- **Sin paleta propia — dejó de ser un hueco y pasó a ser una decisión.** Este plan lo anotaba como
+  insumo faltante que impedía un caso de "colorblind-safe". **DEC-016** (5-sep) lo resolvió en
+  sentido contrario: FARO **no declara paleta propia** de forma deliberada —los 10 tableros heredan
+  el tema de Superset 6.1— porque adoptar identidad visual a tres días de la demo significaría
+  re-teñir 103 charts sin ninguna prueba detrás. Con esa regla, el contraste heredado se registra
+  como limitación conocida (BUG-051, BUG-056) y el caso de daltonismo queda fuera de alcance por
+  decisión, no por falta de insumo.
 
 ## Cierre
 
