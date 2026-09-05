@@ -94,6 +94,11 @@ def prediccion_batch(
 def explicacion(cct: str) -> ExplicacionSHAPOut:
     """Contribución de cada driver al riesgo (acceso: `require_lectura`, ver el módulo).
 
+    Un driver sin dato viaja como **`None` (SIN_DATO), nunca como `0.0`**. La diferencia no es
+    cosmética: D5 es regional y D6 cubre ~80 zonas urbanas, así que el hueco es el caso normal, y
+    decir "contribuyó cero" donde no se sabe es afirmar algo falso sobre por qué una escuela está
+    en riesgo -- justo la pregunta que el proyecto existe para responder.
+
     **Esta ruta todavía NO devuelve valores SHAP.** Las `contribuciones` son los seis drivers de
     `mock_data`, no la salida de ningún modelo. No es un pendiente de C4 solamente: hoy **no existe
     fuente que leer**. `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma
@@ -108,9 +113,10 @@ def explicacion(cct: str) -> ExplicacionSHAPOut:
     lectura del repositorio → prueba de contrato**. El primer paso no es de esta célula.
     """
     escuela = _buscar_escuela(cct)
-    contribuciones = {
-        f"D{i}": (escuela.get(f"d{i}") or 0.0) for i in range(1, 7)
-    }
+    # Sin `or 0.0`: un driver sin dato viaja como `None` (SIN_DATO), no como cero de relleno.
+    # El `or` anterior ademas convertia un 0.0 legitimo y un hueco en el MISMO valor, borrando
+    # una distincion que con SHAP real importa: "no influyo" y "no lo sabemos" no son lo mismo.
+    contribuciones = {f"D{i}": escuela.get(f"d{i}") for i in range(1, 7)}
     return ExplicacionSHAPOut(
         cct=escuela["cct"],
         driver_dominante=escuela["driver_dominante"],

@@ -74,10 +74,63 @@ def test_responde_la_forma_del_contrato(client: TestClient, escuela: dict) -> No
 
 
 def test_contribuciones_trae_los_seis_drivers(client: TestClient, escuela: dict) -> None:
-    """Los seis drivers del proyecto, siempre presentes. Nunca un subconjunto silencioso."""
+    """Las seis claves siempre presentes. Nunca un subconjunto silencioso."""
     contribuciones = client.get(_ruta(escuela["cct"])).json()["contribuciones"]
     assert tuple(contribuciones) == DRIVERS
-    assert all(isinstance(v, float) for v in contribuciones.values())
+    assert all(v is None or isinstance(v, float) for v in contribuciones.values())
+
+
+# --------------------------------------------------------------------------- #
+# SIN_DATO: el hueco se dice, no se rellena
+# --------------------------------------------------------------------------- #
+
+
+def _cct_con_driver_vacio(driver: str) -> str:
+    """CCT de `mock_data` cuyo driver `dN` viene sin dato, o `skip` si ya no existe ninguno."""
+    clave = driver.lower()
+    for e in mock_data.ESCUELAS:
+        if e.get(clave) is None:
+            return e["cct"]
+    pytest.skip(f"mock_data ya no tiene ninguna escuela con {driver} vacio")
+
+
+@pytest.mark.parametrize("driver", ["D5", "D6"])
+def test_un_driver_sin_dato_viaja_como_none_no_como_cero(
+    client: TestClient, driver: str
+) -> None:
+    """Regresión: la ruta devolvía `0.0` donde `mock_data` dice `None`.
+
+    D5 (estrés hídrico) es regional y D6 (aire) cubre ~80 zonas urbanas: el hueco es el caso
+    **normal**, no la excepción, y `mock_data` ya lo modelaba con `None`. El `or 0.0` que había en
+    el endpoint lo borraba y afirmaba "este driver contribuyó cero" -- falso, y contradictorio con
+    la regla de cobertura parcial del proyecto y con `indice_completitud_drivers`, que sí marcan
+    `SIN_DATO`.
+
+    Con SHAP real la distinción pesa más todavía: "no influyó" y "no lo sabemos" son respuestas
+    distintas a la pregunta de por qué una escuela está en riesgo.
+    """
+    cct = _cct_con_driver_vacio(driver)
+    contribuciones = client.get(_ruta(cct)).json()["contribuciones"]
+
+    assert driver in contribuciones  # la clave está: el hueco se declara, no se omite
+    assert contribuciones[driver] is None
+
+
+def test_un_cero_legitimo_no_se_confunde_con_un_hueco(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`0.0` y `None` son valores distintos y deben llegar distintos.
+
+    El `or 0.0` anterior los colapsaba en el mismo número: una contribución medida como cero y una
+    no medida salían idénticas. Con SHAP real eso hace indistinguible un driver irrelevante de uno
+    que nunca se evaluó.
+    """
+    escuela = {**mock_data.ESCUELAS[0], "cct": "09DPR9999Z", "d1": 0.0, "d2": None}
+    monkeypatch.setattr(mock_data, "ESCUELAS", [escuela])
+
+    contribuciones = client.get(_ruta("09DPR9999Z")).json()["contribuciones"]
+    assert contribuciones["D1"] == 0.0
+    assert contribuciones["D2"] is None
 
 
 def test_cct_inexistente_da_404_estructurado(client: TestClient) -> None:
