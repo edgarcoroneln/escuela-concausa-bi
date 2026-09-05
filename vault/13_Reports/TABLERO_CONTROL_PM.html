@@ -130,26 +130,26 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-09-05T23:46:12+00:00",
+    "generated_at": "2026-09-05T23:54:47+00:00",
     "generated_date": "2026-09-05",
-    "commit": "31d1416",
+    "commit": "9cf7fa1",
     "branch": "dev/edgar-coronel",
     "working_tree": "modified",
-    "source_fingerprint": "ce0df3b2ba89",
+    "source_fingerprint": "762de0e47ecc",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
   },
   "summary": {
     "total": 88,
-    "done": 50,
+    "done": 51,
     "planned": 4,
     "in_progress": 12,
-    "in_review": 22,
+    "in_review": 21,
     "blocked": 0,
-    "wip": 34,
+    "wip": 33,
     "descoped": 3,
-    "progress": 77.8,
+    "progress": 78.2,
     "days_to_demo": 4
   },
   "delivery": {
@@ -1320,11 +1320,11 @@
       "sprint": "S5",
       "req": "REQ-004",
       "cell": "Célula 4 · Backend, API & Seguridad",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-27",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-27-juan-macias-us416-cache-timeouts · PR #101 mergeado: cache TTL por fila, cache negativo, timeout SQL y error 503. Última pieza cerrada el 2-sep: RepositorioModelosPostgres._con_timeout traduce SQLAlchemyError a RepositorioModelosNoDisponible → 503 (antes un esquema gold ausente escapaba como 500) — vault/_DevLog/2026-09-02-juan-macias-cierre-us412-us416, suite 778 passed. Único pendiente: Christian Ruiz (TL C4) no ha ratificado el diseño (cache/endurecimiento) ni confirmado que la prueba con Postgres real corresponde a US-422",
-      "updated": "2026-09-02",
+      "evidence": "vault/_DevLog/2026-08-27-juan-macias-us416-cache-timeouts · PR #101 mergeado: cache TTL por fila, cache negativo, timeout SQL y error 503. Última pieza cerrada el 2-sep: RepositorioModelosPostgres._con_timeout traduce SQLAlchemyError a RepositorioModelosNoDisponible → 503, con el endurecimiento aplicado. Ratificada por Christian Ruiz (TL C4) el 2026-09-05 en el PR #240, leyendo el código y no el reporte: 🟢 al diseño —destaca el SET LOCAL en vez de SET, que muere con la transacción y no deja el statement_timeout pegado en conexiones que vuelven al pool compartido con RepositorioGold— y 🟢 al endurecimiento a SQLAlchemyError. Confirmado desde el padrón, no de memoria: el E2E con Postgres real es US-422 (Eloisa González, C4), no parte de esta historia. La condición de cierre que la propia fila pedía queda cumplida",
+      "updated": "2026-09-05",
       "objective": "Cache de predicciones batch, timeouts, y respuesta degradada cuando falta el dato.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 9
@@ -2207,22 +2207,22 @@
       "reviewer": "Edgar Edmundo Coronel Navarrete (PM) — compuerta única (DEC-003). Christian Imanol Ruiz Hurtado (Tech Lead) revisa como apoyo, no bloquea",
       "delivery": "Rama fija dev/juan-macias (sincronizada con main) → PR con plantilla y título estándar → 1 aprobación (PM) → merge a main",
       "plan_path": "vault/12_Roadmap_Sprints/Sprints/4-juan-carlos-macias-mayen.md",
-      "github_user": "juanmmayen98",
-      "github_status": "Usuario confirmado; nivel por conciliar",
-      "github_profile": "https://github.com/juanmmayen98",
+      "github_user": "juanmmayen98-pixel",
+      "github_status": "Confirmado. Corregido el 2026-09-05: decía juanmmayen98, handle que no existe en GitHub, y el tablero lee esta tabla —no ownership.yml— para contar PRs, así que le marcaba 0 teniendo 3 mergeados (#95, #101, #191)",
+      "github_profile": "https://github.com/juanmmayen98-pixel",
       "assigned_story_ids": [
         "US-412",
         "US-415",
         "US-416"
       ],
-      "pr_count": 0,
+      "pr_count": 3,
       "pr_open": 0,
-      "pr_merged": 0,
+      "pr_merged": 3,
       "stories": 3,
-      "done": 2,
-      "wip": 1,
+      "done": 3,
+      "wip": 0,
       "blocked": 0,
-      "progress": 88.3
+      "progress": 100.0
     },
     {
       "name": "Karla Alejandra Monter Benitez",
@@ -2499,10 +2499,10 @@
         "Karla Alejandra Monter Benitez"
       ],
       "stories": 12,
-      "done": 6,
-      "wip": 6,
+      "done": 7,
+      "wip": 5,
       "blocked": 0,
-      "progress": 72.5
+      "progress": 75.4
     },
     {
       "name": "Célula 5 · Cloud Infrastructure & DevOps",
@@ -2555,9 +2555,9 @@
       "name": "Backend/API/Auth",
       "points": 1.5,
       "stories": 12,
-      "done": 6,
-      "progress": 72.5,
-      "secured_points": 1.09,
+      "done": 7,
+      "progress": 75.4,
+      "secured_points": 1.13,
       "band": "green"
     },
     {
@@ -2968,6 +2968,47 @@
         }
       },
       {
+        "name": "Juan Carlos Macías Mayen",
+        "cell": "Célula 4",
+        "engagement": 100.0,
+        "commits": 8,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
         "name": "Karla Alejandra Monter Benitez",
         "cell": "Célula 4",
         "engagement": 100.0,
@@ -3163,47 +3204,6 @@
           "S5": {
             "n": 2,
             "done": 1,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Juan Carlos Macías Mayen",
-        "cell": "Célula 4",
-        "engagement": 88.3,
-        "commits": 0,
-        "prs_merged": 0,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S5": {
-            "n": 1,
-            "done": 0,
             "state": "wip"
           },
           "S6": {
@@ -3905,6 +3905,17 @@
         "signal": "5 PR · 4 DevLog · 4 US activas"
       },
       {
+        "name": "Juan Carlos Macías Mayen",
+        "cell": "Célula 4",
+        "cell_group": "Célula 4 · Backend, API & Seguridad",
+        "active": true,
+        "prs_merged": 3,
+        "devlogs": 4,
+        "active_us": 3,
+        "activity": 10,
+        "signal": "3 PR · 4 DevLog · 3 US activas"
+      },
+      {
         "name": "Estefany Lucero Hernández Loredo",
         "cell": "Célula 3",
         "cell_group": "Célula 3 · Machine Learning & Agente IA",
@@ -3958,17 +3969,6 @@
         "active_us": 3,
         "activity": 7,
         "signal": "3 PR · 1 DevLog · 3 US activas"
-      },
-      {
-        "name": "Juan Carlos Macías Mayen",
-        "cell": "Célula 4",
-        "cell_group": "Célula 4 · Backend, API & Seguridad",
-        "active": true,
-        "prs_merged": 0,
-        "devlogs": 4,
-        "active_us": 3,
-        "activity": 7,
-        "signal": "4 DevLog · 3 US activas"
       },
       {
         "name": "Karla Alejandra Monter Benitez",
@@ -4258,15 +4258,6 @@
       "su_turno": false
     },
     {
-      "id": "US-416",
-      "objective": "Cache de predicciones batch, timeouts, y respuesta degradada cuando falta el dato.",
-      "owner": "Juan Carlos Macías Mayen",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
       "id": "US-423",
       "objective": "Expiracion de token, acceso denegado por rol, rutas protegidas. Hallazgos como SEC-###.",
       "owner": "Eloisa González Rubio",
@@ -4369,7 +4360,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 72.5
+      "progress": 75.4
     },
     {
       "criterion": "5 · Deploy GCP + Docker + URL",
@@ -8518,11 +8509,11 @@
     },
     {
       "date": "2026-09-05",
-      "remaining": 38,
-      "weighted_remaining": 19.5,
-      "done": 50,
+      "remaining": 37,
+      "weighted_remaining": 19.2,
+      "done": 51,
       "scope": 88,
-      "wip": 34,
+      "wip": 33,
       "blocked": 0
     }
   ]
