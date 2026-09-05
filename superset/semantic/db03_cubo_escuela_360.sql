@@ -100,7 +100,7 @@ SELECT
         'NATIVE_FILTER-US203-4:(extraFormData:(filters:!((col:cve_mun,op:IN,val:!(%27' || s.cve_mun || '%27)))),' ||
         'filterState:(label:cve_mun,validateStatus:!f,value:!(%27' || s.cve_mun || '%27)),' ||
         'id:NATIVE_FILTER-US203-4,ownState:()))' ||
-        '" target="_blank">Comparar su municipio →</a>' AS link_db04,
+        '" target="_blank" style="color:inherit;text-decoration:underline">Comparar su municipio →</a>' AS link_db04,
 
     -- ---------- navegacion cruzada hacia DB-06 (US-214a) ---------------------
     -- Ruta `DB-03 -> DB-06` del contrato drill_down. Estuvo BLOQUEADA hasta que
@@ -121,7 +121,7 @@ SELECT
         'NATIVE_FILTER-US203-3:(extraFormData:(filters:!((col:cct,op:IN,val:!(%27' || s.cct || '%27)))),' ||
         'filterState:(label:cct,validateStatus:!f,value:!(%27' || s.cct || '%27)),' ||
         'id:NATIVE_FILTER-US203-3,ownState:()))' ||
-        '" target="_blank">Ver su predicción →</a>' AS link_db06,
+        '" target="_blank" style="color:inherit;text-decoration:underline">Ver su predicción →</a>' AS link_db06,
 
     -- ---------- navegacion cruzada hacia DB-09 (US-214a) ---------------------
     -- Ruta `DB-03 -> DB-09`. Misma historia y mismo desbloqueo que la anterior.
@@ -133,6 +133,6 @@ SELECT
         'NATIVE_FILTER-US203-3:(extraFormData:(filters:!((col:cct,op:IN,val:!(%27' || s.cct || '%27)))),' ||
         'filterState:(label:cct,validateStatus:!f,value:!(%27' || s.cct || '%27)),' ||
         'id:NATIVE_FILTER-US203-3,ownState:()))' ||
-        '" target="_blank">Ver su recomendación →</a>' AS link_db09
+        '" target="_blank" style="color:inherit;text-decoration:underline">Ver su recomendación →</a>' AS link_db09
 
 FROM gold.cubo_escuela_360 s

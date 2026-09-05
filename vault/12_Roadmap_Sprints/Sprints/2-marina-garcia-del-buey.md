@@ -316,11 +316,27 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 | ID | Historia | Estado | % | Bloqueado por | Fecha compromiso |
 |---|---|---|---|---|---|
 | `US-211a` | Cubos y metricas de DB-03 y DB-04 | ✅ Terminado | 100% | — | Dom 23 ago |
-| `US-212` | Construir DB-03 Ficha de escuela y DB-04 C | 🟡 En curso | 95% | **ADR-007** (unidad de `target_variacion_matricula`) | Dom 30 ago |
-| `US-214a` | Filtros y drill-down en DB-03 y DB-04 | ⬜ Por iniciar | 0% | — | Dom 6 sep |
-| `US-215a` | Usabilidad/accesibilidad DB-03 y DB-04 | ⬜ Por iniciar | 0% | — | Dom 6 sep |
-| `US-207` | FARO Web: panel de ML interactivo | ⬜ Por iniciar | 0% | API de inferencia (US-412/US-415) | Dom 6 sep |
+| `US-212` | Construir DB-03 Ficha de escuela y DB-04 C | ✅ Terminado | 100% | — | Dom 30 ago |
+| `US-214a` | Filtros y drill-down en DB-03 y DB-04 | ✅ Terminado | 100% | — | Mie 3 sep |
+| `US-215a` | Usabilidad/accesibilidad DB-03 y DB-04 | ✅ Terminado | 100% | — | Vie 5 sep |
+| `US-207` | FARO Web: panel de ML interactivo | ✅ Terminado | 100% | — | Vie 5 sep |
 
+> **Cierre de las cinco historias (2026-09-05).** Esta tabla llevaba días contando `US-207`,
+> `US-214a` y `US-215a` como *"Por iniciar, 0%"* cuando ya estaban entregadas, y `US-212` al 95%
+> bloqueada por un **ADR-007** que se resolvió hace tiempo. Se corrige aquí:
+>
+> - **US-212** — cerrada. DB-03 y DB-04 corren sobre el pipeline real.
+> - **US-214a** — cerrada (PR #211 y PR #232). Las 2 rutas de drill-down cuyo origen vive en esta
+>   historia, con `native_filters` RISON. Las otras 2 nacen en DB-01/DB-02 y son de Manuel.
+> - **US-215a** — **22 de 22 casos**. El último, el 3.1 de contraste, cerró con el criterio de
+>   **DEC-016**; ver [[vault/06_Quality_Testing/Usability_Accessibility_Test_Plan_DB03_DB04]].
+> - **US-207** — cerrada con ML-01 y ML-02 servidos y **ML-03 declarado como `SIN_DATO`**, alcance
+>   ratificado por el PM en **DEC-015**. ML-03 sigue sin productor: depende de US-321 (C3).
+>
+> **`Execution_Status.md` sigue desactualizado y no es mío**: cuenta `US-207` como `in_review` y
+> `US-215a` como `in_progress`. Es el archivo que **sí** alimenta el tablero del PM
+> (`generate_pm_dashboard.py`), así que ahí es donde el conteo importa. Avisado a Edgar Coronel.
+>
 > **US-211a cerrada al 100% (2026-08-21).** El contrato semántico, el SQL de referencia, la capa semántica
 > y las 28 pruebas se mergearon en el PR #32 ([[vault/04_UX_Design/Cube_Specs_DB03_DB04]]). Las dos respuestas
 > que faltaban ya llegaron: Diana aceptó el cambio de grano a `municipio × nivel × ciclo` (Data_Model §4.3)
