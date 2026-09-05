@@ -1047,12 +1047,50 @@ def _position_con_uuid(position: dict, charts_con_uuid: list[tuple[int, str]]) -
     return position
 
 
-def _filtros_nativos(cfg_dashboard: dict, datasets_uuids: dict[str, str]) -> list[dict]:
+def _resolver_valor_mas_reciente(token: str, ds_id: int, columna: str) -> Any | None:
+    """Resuelve el valor mas reciente de una columna contra los datos reales (ORDER BY DESC LIMIT 1).
+
+    Usado para defaults declarativos tipo `default: ultimo_ciclo`: nunca se hardcodea
+    el ciclo vigente en el codigo -- si hoy responde "2024-2025" y el proximo ciclo
+    carga "2025-2026", el default se mueve solo en la siguiente corrida del sync.
+    """
+    try:
+        resp = _request("POST", "/api/v1/chart/data", token=token, body={
+            "datasource": {"id": ds_id, "type": "table"},
+            "queries": [{"columns": [columna], "orderby": [[columna, False]], "row_limit": 1}],
+        })
+        filas = resp.get("result", [{}])[0].get("data", [])
+        return filas[0].get(columna) if filas else None
+    except Exception as e:  # noqa: BLE001 - sin default dinamico el filtro sigue funcionando, solo sin preseleccion
+        print(f"    ⚠ No se pudo resolver el valor por defecto de '{columna}': {e}")
+        return None
+
+
+def _filtros_nativos(
+    cfg_dashboard: dict,
+    datasets_uuids: dict[str, str],
+    token: str | None = None,
+    datasets_by_name: dict[str, int] | None = None,
+) -> list[dict]:
     """Arma la configuración de filtros nativos globales (AC-002.2).
 
     Formato Superset 6: `filterType: filter_select` (el viejo
     `native_filters.SelectFilter` ya no está registrado) y los targets van por
     `datasetUuid`; el importador v1 los remapea a datasetId.
+
+    Dos formas de fijar un valor por defecto, ambas OPCIONALES y aditivas —
+    un filtro que no declara ninguna se comporta igual que antes:
+
+    - `valor_por_defecto` (US-214a, Marina García): valor(es) explícitos y
+      estáticos en el YAML. Simple, pero "al cargar un ciclo nuevo hay que
+      actualizar este valor" a mano en cada tablero.
+    - `default: ultimo_<algo>` (BUG-047): resuelve el valor dinámicamente
+      contra los datos reales (requiere `token`/`datasets_by_name`; sin
+      ellos, esta rama simplemente no aplica). Nunca queda desactualizado.
+
+    Si un filtro declara ambas, `default` dinámico gana cuando logra
+    resolver un valor; `valor_por_defecto` queda como respaldo si la
+    resolución dinámica no está disponible o falla (sin red, sin token).
     """
     filtros = []
     for i, f_cfg in enumerate(cfg_dashboard.get("filtros_globales", [])):
@@ -1063,7 +1101,7 @@ def _filtros_nativos(cfg_dashboard: dict, datasets_uuids: dict[str, str]) -> lis
                 targets.append({"column": {"name": f_cfg["columna"]}, "datasetUuid": ds_uuid})
         if not targets:
             continue
-        filtro = {
+        filtro: dict[str, Any] = {
             "id": f"NATIVE_FILTER-US203-{i}",
             "name": f_cfg.get("etiqueta", f_cfg["columna"]),
             "filterType": "filter_select",
@@ -1073,26 +1111,30 @@ def _filtros_nativos(cfg_dashboard: dict, datasets_uuids: dict[str, str]) -> lis
             "scope": {"rootPath": ["ROOT_ID"], "excluded": []},
         }
 
-        # `valor_por_defecto` (US-214a) — OPCIONAL y aditivo: un tablero que no lo
-        # declara se comporta exactamente igual que antes.
-        #
-        # Por qué existe: un filtro nativo sin valor inicial deja el tablero SIN filtrar
-        # al abrirlo, y una tarjeta `SUM(matricula_total)` sobre un cubo con varios ciclos
-        # suma TODOS los ciclos. En DB-03/DB-04 eso pintaba 32 312 alumnos donde el ciclo
-        # real tiene 11 828 — 2.7x inflado, sin ningun error visible. Es el mismo defecto
-        # que Luis Tellez reporto el 2026-09-04 sobre `/api/v1/kpis` en produccion
-        # (20.6M contra 6.7M reales); alla se arreglo en la API, pero los tableros no pasan
-        # por la API: leen la base directo, asi que necesitan su propio arreglo.
-        #
-        # `defaultDataMask` es la misma forma que Superset usa en el parametro
-        # `native_filters` de la URL (ver los links de drill-down en
-        # db03_cubo_escuela_360.sql), asi que el formato ya esta verificado contra 6.1.0.
-        if (valor := f_cfg.get("valor_por_defecto")) is not None:
+        # BUG-047: `default: ultimo_<algo>` se documentaba en el contrato semantico
+        # pero nunca se traducia en un defaultDataMask real -- el filtro nacia sin
+        # preseleccion y, con enableEmptyFilter=False + multiSelect=True, Superset
+        # preseleccionaba TODAS las opciones (los 3 ciclos), triplicando cualquier
+        # metrica SUM() aguas abajo (ver tests/test_filtros_nativos_default_dinamico.py).
+        valores: list[Any] | None = None
+        default_cfg = f_cfg.get("default", "")
+        if default_cfg.startswith("ultimo_") and token and datasets_by_name:
+            ds_name = next((d for d in f_cfg.get("datasets", []) if d in datasets_by_name), None)
+            valor = (
+                _resolver_valor_mas_reciente(token, datasets_by_name[ds_name], f_cfg["columna"])
+                if ds_name else None
+            )
+            if valor is not None:
+                valores = [valor]
+
+        # `valor_por_defecto` (US-214a) — respaldo estático si no hubo resolución
+        # dinámica (sin red/token, o el filtro no declara `default: ultimo_*`).
+        if valores is None and (valor := f_cfg.get("valor_por_defecto")) is not None:
             valores = valor if isinstance(valor, list) else [valor]
+
+        if valores is not None:
             filtro["defaultDataMask"] = {
-                "extraFormData": {
-                    "filters": [{"col": f_cfg["columna"], "op": "IN", "val": valores}]
-                },
+                "extraFormData": {"filters": [{"col": f_cfg["columna"], "op": "IN", "val": valores}]},
                 "filterState": {
                     "label": ", ".join(str(v) for v in valores),
                     "validateStatus": False,
@@ -1176,7 +1218,7 @@ def ensure_dashboard(token: str, csrf: str, dash_cfg: dict, datasets_by_name: di
         "filter_bar_orientation": "VERTICAL",
         "color_scheme": "",
     }
-    nativos = _filtros_nativos(dash_cfg, datasets_uuids)
+    nativos = _filtros_nativos(dash_cfg, datasets_uuids, token=token, datasets_by_name=datasets_by_name)
     if nativos:
         json_metadata["native_filter_configuration"] = nativos
 

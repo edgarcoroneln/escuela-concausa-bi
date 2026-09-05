@@ -42,3 +42,8 @@ pipeline, no para declarar perfiles de negocio o resultados sobre escuelas reale
 US-321 puede consumir estas variables después de revisar correlaciones y cobertura. La preparación
 del pipeline puede avanzar, pero la imputación definitiva permanece pendiente de ratificar el
 fallback para municipios sin suficientes observaciones.
+
+Desde el PR #197, Bronze DS-01/DS-02 ya es reproducible y tiene suites de Great Expectations. Para
+cerrar la limitación conocida todavía se debe reconstruir Gold y ejecutar este diagnóstico sobre
+`gold.features_escuela`; ver
+[[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].

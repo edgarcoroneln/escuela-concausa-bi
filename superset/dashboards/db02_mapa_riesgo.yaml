@@ -27,6 +27,7 @@ dashboards:
         etiqueta: "Ciclo escolar"
         valor_por_defecto: "2024-2025"
         datasets: [db02_cubo_riesgo_territorial, db02_coropletico, db02_puntos_escuela]
+        default: ultimo_ciclo
       - columna: nombre_entidad
         etiqueta: "Entidad"
         datasets: [db02_cubo_riesgo_territorial, db02_coropletico, db02_puntos_escuela]

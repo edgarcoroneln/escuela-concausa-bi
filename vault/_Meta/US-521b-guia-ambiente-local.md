@@ -2,38 +2,52 @@
 id: DOC-US521B-AMBIENTE
 title: "Guía de ambiente local reproducible — Airflow y jobs ML (US-521b)"
 owner: "Edgar Ulises Jiménez López"
-status: in_progress
-traces_up: ["vault/12_Roadmap_Sprints/Sprints/5-edgar-ulises-jimenez-lopez"]
+status: approved
+version: "1.0"
+traces_up: ["vault/12_Roadmap_Sprints/Sprints/5-edgar-ulises-jimenez-lopez.md"]
+traces_down: []
 tags: [devops, local-env, airflow, mlflow, US-521b]
 ---
 
-# Guía de ambiente local reproducible
+# US-521b — Guía de ambiente local: Airflow y jobs ML
 
-Este documento detalla la configuración local para correr Airflow y los jobs de Machine Learning
-(MLflow) de manera aislada y controlada. Implementa la historia **US-521b**.
+Esta guía documenta cómo reproducir el ambiente local de desarrollo para **Airflow** (orquestación de DAGs) y **MLflow** (tracking de experimentos) — componentes de **Célula 5 (Cloud & DevOps)** del proyecto FARO.
 
-> Archivos del componente: [[VERIFICACION|guía de verificación]] y `configuracion.env` (plantilla de
-> variables) en `guia-ambiente-local/`.
+> **Última verificación:** 2026-09-04 · Todos los servicios Healthy en Mac
 
-## 1. Mapeo de puertos
+---
 
-Para evitar conflictos en la máquina local, se asignan estos puertos:
+## 1. Requisitos previos
 
-- **Airflow Webserver:** puerto `8080`
-- **MLflow Tracking Server:** puerto `5000`
+- **Python 3.11+** — verificar: `python3 --version`
+- **Docker Desktop** ejecutándose
+- **Git** configurado: `git config --global user.name "Tu Nombre"` y `git config --global user.email "tu@email.com"`
+- **Virtualenv** (se crea en esta guía)
 
-## 2. Variables de entorno
+---
 
-Las variables se declaran en `guia-ambiente-local/configuracion.env`:
+## 2. Clonar y preparar el ambiente
 
-- `AIRFLOW_PORT`: puerto de acceso a la interfaz de Airflow.
-- `MLFLOW_PORT`: puerto de acceso a la interfaz de MLflow.
-- `MLFLOW_TRACKING_URI`: dirección local para el registro de experimentos de ML.
+```bash
+# 1. Clona el repositorio (si aún no lo hiciste)
+git clone https://github.com/edgarcoroneln/escuela-concausa-bi.git
+cd escuela-concausa-bi
 
-> **Nunca** subir credenciales reales ni `.env` con secretos. El archivo `configuracion.env` es solo
-> una plantilla de puertos/rutas locales (ver [[vault/_Meta/Vault_Rules]] y `vault/07_Security/Secrets_Policy`).
+# 2. Crea ambiente virtual (SOLO la primera vez)
+python3 -m venv .venv
 
-## 3. Verificación del entorno
+# 3. Actívalo (cada vez que abres terminal)
+source .venv/bin/activate                    # macOS / Linux
+# .venv\Scripts\Activate.ps1                 # Windows PowerShell
 
-Una vez levantados los servicios, se valida ingresando desde el navegador a las URL locales de cada
-puerto. El detalle está en [[VERIFICACION|la guía de verificación]].
+# 4. Verifica que está activo (debe ver (.venv) en el prompt)
+which python
+
+# 5. Actualiza pip
+pip install --upgrade pip
+
+# 6. Instala dependencias del proyecto
+pip install -r requirements.txt
+
+# 7. Instala dependencias extras de DevOps (Célula 5)
+pip install docker-compose python-dotenv google-cloud-storage

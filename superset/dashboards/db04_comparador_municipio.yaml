@@ -35,7 +35,9 @@ dashboards:
         datasets: [db04_cubo_comparador_municipio]
         # US-214a — ver la nota equivalente en db03_ficha_escuela.yaml. Sin valor inicial,
         # `KPI-01 · Matrícula de los municipios` suma los tres ciclos (32 312 en vez de
-        # 11 828). Al cargar un ciclo nuevo hay que actualizar este valor.
+        # 11 828). BUG-047: `default: ultimo_ciclo` resuelve esto dinámicamente y tiene
+        # prioridad; `valor_por_defecto` queda como respaldo estático.
+        default: ultimo_ciclo
         valor_por_defecto: "2024-2025"
       - columna: nombre_entidad
         etiqueta: "Entidad"

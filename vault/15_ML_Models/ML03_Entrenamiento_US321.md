@@ -41,6 +41,12 @@ escuelas reales.
 
 ## Criterio pendiente para cierre
 
+El PR #197 (mergeado el 3-sep-2026) eliminó el bloqueo de disponibilidad reproducible de Bronze para
+DS-01/DS-02 y añadió sus suites de Great Expectations. No cierra esta historia automáticamente:
+falta ejecutar `dbt run && dbt test`, verificar `gold.features_escuela` y repetir el entrenamiento.
+El plan y prompt de ejecución están en
+[[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
+
 - Ratificar mediana municipal y fallback cuando un municipio no tenga observaciones suficientes.
 - Repetir backtesting y selección de `k` con la política aprobada.
 - Ejecutar sobre `gold.features_escuela` con al menos tres ciclos disponibles para ML; debido a que

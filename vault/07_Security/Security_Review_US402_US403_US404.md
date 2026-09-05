@@ -3,11 +3,11 @@ id: DOC-SECREV-C4
 title: "Revisión de seguridad — cierre de US-402, US-403 y US-404"
 owner: "Christian Imanol Ruiz Hurtado"
 status: in_review
-version: "1.0"
+version: "1.1"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/07_Security/Security_Review_Checklist", "vault/_Meta/Vault_Rules"]
-traces_down: ["US-402", "US-403", "US-404", "US-405", "SEC-002", "SEC-003", "SEC-004", "SEC-005", "SEC-006"]
-last_reviewed: "2026-09-02"
+traces_down: ["US-402", "US-403", "US-404", "US-405", "SEC-002", "SEC-003", "SEC-004", "SEC-005", "SEC-006", "SEC-007", "SEC-009", "BUG-046"]
+last_reviewed: "2026-09-04"
 tags: [security, review, oauth2, jwt, rbac, hardening, celula-4]
 ---
 
@@ -135,3 +135,102 @@ limpio.
 | **Fecha** | 2026-09-02 |
 | **Veredicto** | 🟡 Aprobado con riesgos residuales aceptados (§5) |
 | **Asistencia de IA** | Claude Code / claude-opus-5 — código revisado línea por línea antes de commitear ([[vault/_DevLog/2026-09-02-christian-ruiz-us402-cierre-oauth-e2e]]) |
+
+---
+
+## 8. Anexo A (2026-09-04) — Revisión de C4 sobre `BUG-046` (`options={"verify_at_hash": False}`)
+
+> **Este anexo es el sello de regla 7 que faltaba.** El parche de `BUG-046` toca
+> `src/api/security/**` —alcance verde de C4— pero lo diagnosticó y validó Luis Téllez (C5) y lo
+> mergeó Edgar Coronel (PO) como excepción, porque el gate de propiedad reprueba —correctamente— un
+> PR de C5 sobre esta ruta. El procedimiento fue el adecuado: se pidió mi revisión **antes** del
+> redespliegue. Lo que no existía hasta ahora era el registro. Aquí está.
+
+### 8.1 Qué se cambió
+
+Una línea en `_verificar_id_token` (`src/api/security/google.py`): `options={"verify_at_hash": False}`
+en la llamada a `jwt.decode`, con el comentario que explica el porqué.
+
+### 8.2 Verificación independiente (no me basé en el reporte)
+
+| Comprobación | Resultado |
+|---|---|
+| Revertir el parche y correr `tests/test_oauth_google.py` | **1 failed, 23 passed** — `JWTClaimsError`, el mismo tipo de excepción de los logs de producción. El fallo es exclusivamente el caso de `at_hash` |
+| Reponer el parche y correr la familia completa de auth (`test_oauth_google`, `test_puente_oauth_frontend`, `test_auth_jwt`, `test_frontend_auth`) | **66 passed** |
+| Lectura del código de `jose` en vez de asumir su comportamiento | Ver §8.3 |
+
+El bug era real, el fix lo cierra y no arrastra efectos colaterales en la superficie de auth.
+
+### 8.3 Dos detalles del código de `jose` que sostienen el veredicto
+
+1. **`jwt.py:458` — `_validate_at_hash` retorna de inmediato si el claim no está presente**, y
+   `require_at_hash` es `False` por defecto. Es decir: no truena por *no traer* `at_hash`, truena por
+   **traerlo sin el `access_token` para compararlo**. Esto explica por qué 23 pruebas pasaban en verde
+   contra un flujo que en producción estaba roto al 100 %: el fixture nunca emitía el claim.
+2. **`jwt.py:153` — `defaults.update(options)`**, no reemplazo. Pasar `options` **actualiza** los
+   valores por defecto en vez de sustituirlos, así que **firma RS256, `aud`, `iss` y `exp` siguen
+   activas**. Es un apagado quirúrgico de una comprobación, no un `verify_signature: False`
+   encubierto. Este es el punto que decide el veredicto de seguridad.
+
+### 8.4 El razonamiento de seguridad, y lo que sí queda pendiente
+
+`at_hash` existe para **atar dos tokens que llegan por canales distintos**: es el caso del *implicit
+flow*, donde el `id_token` viaja por el navegador y podría ser sustituido por otro. En el
+*authorization code flow* server-to-server los dos llegan en el **mismo cuerpo de respuesta TLS** del
+token endpoint de Google. No hay nada que atar. OIDC Core lo declara REQUIRED en implicit y
+**OPTIONAL** en code flow, precisamente por esto.
+
+**Pero existe un fix más fuerte, y conviene decirlo en voz alta:** `_intercambiar_code` lee
+únicamente `id_token` de la respuesta de Google y **descarta el `access_token`**, que viene en ese
+mismo JSON. Pasarlo a `jwt.decode` haría que `at_hash` se **verificara** de verdad en vez de
+desactivarse.
+
+**No se pide para la entrega**, y la razón es explícita: cambia el tipo de retorno de una función en
+el camino crítico del login a dos días del *code freeze*, y la ganancia real de seguridad en este
+flujo es **nula** por lo dicho arriba. Queda como `SEC-009`, follow-up con dueño, no como deuda
+silenciosa.
+
+### 8.5 El hallazgo de fondo, que es responsabilidad de C4
+
+La causa raíz no es la línea que faltaba: es que **el doble de prueba era más angosto que el
+proveedor real**. `google_falso` emitía los claims que se nos ocurrió emitir, no los que Google
+emite. Veintitrés pruebas daban verde contra un Google que no se comportaba como Google.
+
+El test de regresión de Luis (`test_verifier_acepta_id_token_con_at_hash`, que reprueba con el parche
+revertido) cierra este hueco concreto. La lección general —un *fake* de un proveedor de identidad
+debe modelarse sobre la respuesta real, no sobre la esperada— es de C4 y queda aquí escrita.
+
+### 8.6 Veredicto del anexo A
+
+**🟢 Aprobado por C4 sin cambios.** El fix entra tal cual. `SEC-009` queda abierto como follow-up de
+severidad *low*.
+
+## 9. Anexo B (2026-09-04) — Verificación contra la URL pública, y su límite
+
+Tras el redespliegue de C5 se ejercitaron **11 comprobaciones de seguridad contra la URL pública**
+(revisión `faro-api-00009-svt`), todas con el resultado esperado: `state` firmado y distinto en cada
+`/auth/login`; cookie `faro_oauth_state` con `HttpOnly`, `Secure` y `SameSite=Lax`; allowlist de
+`redirect` respondiendo **400** —incluido el ataque por sufijo `...8501.evil.tld`, que un `startswith`
+habría dejado pasar—; `/auth/callback` **401** sin `state` y sin cookie; `/auth/exchange` **401** con
+código inventado y **422** con cuerpo malformado; `/auth/me` **401** sin token; `/admin/*` **401**; y
+`ErrorOut` uniforme sin fuga de detalle interno en todos los casos.
+
+> **El límite de esa verificación, y hay que decirlo con claridad.** Las 11 comprobaciones son
+> **casos negativos**: confirman que el perímetro *rechaza* lo que debe rechazar. **Ninguna ejercitó
+> un login real completo**, porque en ese momento no había *test users* dados de alta. `BUG-046` cayó
+> exactamente en ese punto ciego: el perímetro estaba perfecto y el camino feliz estaba roto al
+> 100 %. Un tablero en verde compuesto solo de rechazos no es evidencia de que el sistema funcione.
+>
+> Por eso **el login e2e real sigue siendo la única prueba que falta y la de mayor riesgo abierto**
+> de C4. No se puede cerrar `US-402` de producto hasta ejecutarla contra la revisión que ya incluye
+> el parche de `BUG-046`, que al momento de escribir esto **aún no está desplegada**.
+
+## 10. Firma del anexo
+
+| | |
+|---|---|
+| **Revisor** | Christian Imanol Ruiz Hurtado — Tech Lead C4, dueño de `vault/07_Security/**` |
+| **Fecha** | 2026-09-04 |
+| **Alcance** | `BUG-046` (anexo A) y verificación en la URL pública (anexo B) |
+| **Veredicto** | 🟢 `BUG-046` aprobado sin cambios · `SEC-009` abierto como follow-up · login e2e real **pendiente** |
+| **Asistencia de IA** | Claude Code / claude-opus-5 — reversión del parche y lectura del código de `jose` ejecutadas y comprobadas antes de firmar |

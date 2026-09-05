@@ -27,6 +27,7 @@ dashboards:
         etiqueta: "Ciclo escolar"
         valor_por_defecto: "2024-2025"
         datasets: [db06_cubo_predicciones, db06_predicciones_escuela]
+        default: ultimo_ciclo
       - columna: nombre_entidad
         etiqueta: "Entidad"
         datasets: [db06_cubo_predicciones, db06_predicciones_escuela]

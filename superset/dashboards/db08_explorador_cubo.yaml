@@ -78,6 +78,7 @@ dashboards:
         etiqueta: "Ciclo escolar"
         valor_por_defecto: "2024-2025"
         datasets: [db08_cubo_pivot]
+        default: ultimo_ciclo
       - columna: nombre_entidad
         etiqueta: "Entidad"
         datasets: [db08_cubo_pivot]

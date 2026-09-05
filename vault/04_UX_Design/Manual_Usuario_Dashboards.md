@@ -3,7 +3,7 @@ id: DOC-MANUAL-DASHBOARDS
 title: "Manual de Usuario — Dashboards FARO"
 owner: "Oscar Antonio Quiroz Lázaro"
 status: approved
-version: "1.2"
+version: "1.3"
 traces_up: ["vault/04_UX_Design/Screen_Specs", "US-224"]
 traces_down: []
 last_reviewed: "2026-09-04"
@@ -238,14 +238,21 @@ territoriales (dónde el Estado literalmente no está midiendo).
 **Ya registrado y vivo en Superset local** (2026-09-02) tras el fix de BUG-029 — ver
 [[vault/04_UX_Design/Cube_Specs_DB07]] §4 para el detalle del bloqueo ya resuelto.
 
-![DB-07 · Calidad y cobertura de datos, capturado en local tras el fix de BUG-029](capturas/db07-calidad-cobertura.png)
+![DB-07 · Calidad y cobertura de datos, capturado en local tras el fix de BUG-047](capturas/db07-calidad-cobertura.png)
 
-**Captura real, 2026-09-02**, tomada contra Superset local tras el fix de BUG-029 y con
-`gold.cubo_completitud` ya materializado en este ambiente (72 filas). Los 6 tiles/tabla muestran
-números reales. El mapa (KPI-06) carga correctamente — las geometrías de los 3 municipios están
-confirmadas en `gold.geo_municipio` — pero el autozoom de Superset no centra la vista en México al
-cargar; hay que hacer zoom manual en el navegador para verlo. No es un problema de datos, es una
-interacción pendiente de ajustar en el propio Superset.
+**Captura real, 2026-09-04**, tomada contra Superset local tras el fix de **BUG-047**: el filtro
+"Ciclo escolar" ya arranca preseleccionado en el ciclo vigente (2024-2025), resuelto dinámicamente
+contra los datos reales — no un valor fijo en el código. Antes de este fix la captura del
+2026-09-02 mostraba "Total de escuelas" = 25,578 y "Escuelas sin dato" = 20,017: el filtro nacía
+sin valor por defecto y Superset sumaba los 3 ciclos materializados a la vez. Ahora muestra los
+valores correctos del ciclo 2024-2025: **8,382** escuelas totales, **6,564** sin dato. KPI-05
+(22%) y KPI-06 (78.3%) no cambiaron — al ser razones `SUM/SUM`, numerador y denominador se inflaban
+igual antes del fix, así que el porcentaje ya era confiable. Detalle completo en `BUG-047`
+([[vault/06_Quality_Testing/Bug_Register]]) y en [[vault/04_UX_Design/Cube_Specs_DB07]] §4. El mapa
+(KPI-06) carga correctamente — las geometrías de los 3 municipios están confirmadas en
+`gold.geo_municipio` — pero el autozoom de Superset no centra la vista en México al cargar; hay que
+hacer zoom manual en el navegador para verlo. No es un problema de datos, es una interacción
+pendiente de ajustar en el propio Superset.
 
 ### DB-08 · Explorador del cubo
 

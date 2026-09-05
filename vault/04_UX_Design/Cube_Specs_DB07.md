@@ -96,6 +96,22 @@ registrado y vivo en Superset local, con captura real en
 dependen de `gold.predicciones`/`recomendaciones` (mock ML-01/02) siguen en SIN_DATO porque ese
 mock no cruza con el catálogo real de escuelas.
 
+**Actualización 2026-09-04 — BUG-047: el filtro de ciclo triplicaba los conteos absolutos.**
+Edgar reportó (mismo aviso a Manuel) que un tile "total" sin el filtro de ciclo vigente aplicado
+podía heredar el patrón de BUG-044 (API). Verificado en vivo: el filtro "Ciclo escolar" de DB-07
+nacía sin `defaultDataMask` — `enableEmptyFilter: False` + `multiSelect: True` hacía que Superset
+preseleccionara los 3 ciclos materializados. `total_escuelas` mostraba **25,578** (suma de
+2022-2023 + 2023-2024 + 2024-2025) en vez de **8,382** (el ciclo vigente); mismo factor ~3× en
+`escuelas_con_dato`/`escuelas_sin_dato`. `completitud_promedio` y `pct_sin_dato` (KPI-05/06) no se
+vieron afectados — al ser razones `SUM/SUM`, numerador y denominador se inflaban igual (78.3%
+antes y después). Corregido en `_filtros_nativos()` (`superset/sync_semantic_layer.py`): el
+`default: ultimo_ciclo` ya declarado en `metrics_db07.yaml` ahora se resuelve dinámicamente contra
+`MAX(id_ciclo)` real (nunca hardcodeado) y se agregó al YAML del tablero
+(`superset/dashboards/db07_calidad_cobertura.yaml`), que no lo traía. Verificado tras el fix:
+`total_escuelas` = 8,382. Detalle completo y evidencia de los otros 7 tableros afectados en
+`BUG-047` ([[vault/06_Quality_Testing/Bug_Register]]). La captura de DB-07 en el manual quedó
+tomada con el defecto activo — pendiente retomarla.
+
 ## 5. Trazabilidad
 
 - **Implementa:** US-222 (REQ-002)

@@ -25,6 +25,16 @@ tags: [sprint, plan, celula-3, nivel-bajo]
 
 Tienes historias **acotadas y bien definidas**, pensadas para que aprendas haciendo. Cada una tiene un resultado claro y verificable. **Pedir ayuda temprano no es debilidad: es el comportamiento correcto.** Si a las 2 horas sigues atorado, escribe en el canal de tu célula.
 
+### Misión actualizada al 4-sep-2026
+
+Llevar `US-322` y `US-325` de evidencia sintética a evidencia agregada sobre Gold real, e iterar
+`US-321` con un protocolo temporal honesto hasta superar el umbral de Silhouette o presentar a
+Andrés y Edgar una decisión explícita sobre el uso de ML-03. El PR #197 de Diana ya resolvió la
+reproducción de Bronze para DS-01/DS-02; todavía se debe ejecutar y verificar Bronze → Silver → Gold.
+
+La propuesta ejecutable y el prompt maestro canónico están en
+[[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
+
 ---
 
 ## 2. Mapa de dependencias
@@ -150,6 +160,12 @@ setup: es el error más caro de la semana 1.
 > Puedes usar **Claude Code, ChatGPT, Gemini, Copilot o el que prefieras**. Los prompts están escritos para ser agnósticos.
 
 > Adapta los `<PLACEHOLDERS>`. **Todo lo que genere la IA lo revisas tú antes de commitear, y cada sesión genera una entrada de DevLog** (regla 6 del vault).
+
+> **Prompt recomendado para las misiones pendientes:** usa el prompt maestro de
+> [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325#3. Prompt maestro potenciado]].
+> Contiene el corte post-PR #197, los criterios reales de cierre, el límite de Silhouette y las
+> condiciones de paro por alcance. Los prompts siguientes quedan como auxiliares para consultas
+> pequeñas; no sustituyen el prompt maestro.
 
 **Contexto que debes pegar al inicio de tu sesión, sea cual sea el LLM:**
 

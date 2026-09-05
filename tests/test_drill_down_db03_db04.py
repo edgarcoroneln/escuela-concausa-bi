@@ -39,12 +39,22 @@ YAML_POR_TABLERO = {
     "DB-03": DASHBOARDS / "db03_ficha_escuela.yaml",
     "DB-04": DASHBOARDS / "db04_comparador_municipio.yaml",
 }
+
+# Tableros que son DESTINO de un link pero no de esta historia: no se validan sus
+# charts ni sus filtros propios, solo que el indice al que apunta el link exista y
+# tenga la columna que el link dice. Desbloqueados por el PR #215 de Manuel Serrania.
+YAML_DESTINO_AJENO = {
+    "DB-06": DASHBOARDS / "db06_predicciones.yaml",
+    "DB-09": DASHBOARDS / "db09_recomendaciones.yaml",
+}
 YAML_METRICAS = SEMANTIC / "metrics_db03_db04.yaml"
 
 # Cada link declarado: en que SQL vive y a que tablero apunta.
 LINKS = {
     "link_db04": {"origen": "db03", "destino": "DB-04", "slug": "db04-comparador-municipio"},
     "link_db03": {"origen": "db04", "destino": "DB-03", "slug": "db03-ficha-escuela"},
+    "link_db06": {"origen": "db03", "destino": "DB-06", "slug": "db06-predicciones"},
+    "link_db09": {"origen": "db03", "destino": "DB-09", "slug": "db09-recomendaciones"},
 }
 
 ESTADOS_VALIDOS = {"implementado", "bloqueado", "ajeno"}
@@ -57,6 +67,18 @@ PAR_FILTRO = re.compile(
 
 def leer(ruta: Path) -> str:
     return ruta.read_text(encoding="utf-8")
+
+
+def _bloque_del_link(sql: str, columna_link: str) -> str:
+    """Devuelve solo el fragmento de SQL que construye `columna_link`.
+
+    Un mismo .sql puede definir varios links (DB-03 define tres). Cada uno lleva sus
+    propios `NATIVE_FILTER-US203-N`, asi que validar contra el archivo completo
+    compara los indices de un link con los filtros del tablero de otro.
+    """
+    fin = sql.index(f"AS {columna_link}")
+    ini = sql.rindex("<a href=", 0, fin)
+    return sql[ini:fin]
 
 
 def sin_comentarios(sql: str) -> str:
@@ -82,7 +104,7 @@ def tableros(yaml_mod) -> dict[str, dict]:
     """El primer (y unico) dashboard declarado en cada YAML de tablero."""
     return {
         nombre: yaml_mod.safe_load(leer(ruta))["dashboards"][0]
-        for nombre, ruta in YAML_POR_TABLERO.items()
+        for nombre, ruta in {**YAML_POR_TABLERO, **YAML_DESTINO_AJENO}.items()
     }
 
 
@@ -105,11 +127,17 @@ def test_los_indices_del_link_apuntan_a_la_columna_que_dicen(
     vuelta al final de la lista.
     """
     cfg = LINKS[columna_link]
-    sql = leer(SQL_POR_CUBO[cfg["origen"]])
     filtros = tableros[cfg["destino"]]["filtros_globales"]
 
+    # ACOTAR AL BLOQUE DE ESTE LINK, no al archivo entero: db03_cubo_escuela_360.sql
+    # define tres links (a DB-04, DB-06 y DB-09) y cada uno usa sus propios indices.
+    # Escanear todo el archivo mezclaba los indices de un link con los de otro, y la
+    # prueba fallaba contra el tablero equivocado. Lo cazo ella misma al agregar el
+    # tercer link (2026-09-04).
+    sql = _bloque_del_link(leer(SQL_POR_CUBO[cfg["origen"]]), columna_link)
+
     pares = PAR_FILTRO.findall(sql)
-    assert pares, f"{columna_link}: no se encontro ningun NATIVE_FILTER en el SQL de origen."
+    assert pares, f"{columna_link}: no se encontro ningun NATIVE_FILTER en su bloque."
 
     for indice, columna in pares:
         i = int(indice)
@@ -128,7 +156,7 @@ def test_los_indices_del_link_apuntan_a_la_columna_que_dicen(
 @pytest.mark.parametrize("columna_link", sorted(LINKS))
 def test_el_link_apunta_al_slug_del_tablero_destino(columna_link: str, tableros: dict) -> None:
     cfg = LINKS[columna_link]
-    sql = leer(SQL_POR_CUBO[cfg["origen"]])
+    sql = _bloque_del_link(leer(SQL_POR_CUBO[cfg["origen"]]), columna_link)
     assert f"/superset/dashboard/{cfg['slug']}/" in sql, (
         f"{columna_link}: no apunta al slug `{cfg['slug']}`."
     )
@@ -144,8 +172,7 @@ def test_los_valores_del_link_van_citados(columna_link: str) -> None:
     Sin `%27` el filtro se arma con un valor invalido y aterriza sin preseleccion.
     """
     cfg = LINKS[columna_link]
-    sql = leer(SQL_POR_CUBO[cfg["origen"]])
-    bloque = sql[sql.index("native_filters") :]
+    bloque = _bloque_del_link(leer(SQL_POR_CUBO[cfg["origen"]]), columna_link)
     assert "val:!(%27" in bloque, f"{columna_link}: valores sin citar con %27 en `val`."
     assert "value:!(%27" in bloque, f"{columna_link}: valores sin citar con %27 en `filterState`."
 

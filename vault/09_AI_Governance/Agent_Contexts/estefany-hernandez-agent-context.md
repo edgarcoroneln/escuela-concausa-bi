@@ -112,6 +112,10 @@ tags: [ai, agent-context, ownership, celula-3]
 
 > Funcionan en Claude Code, ChatGPT, Gemini o Copilot. Todo lo generado se revisa antes de
 > commitear, y cada sesión genera DevLog.
+>
+> Para ejecutar las misiones pendientes post-PR #197, la fuente canónica es
+> [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325#3. Prompt maestro potenciado]].
+> Este Agent Context conserva únicamente lanzadores breves y las reglas de alcance.
 
 **Contexto para pegar al inicio de la sesión:**
 ```
@@ -125,7 +129,10 @@ Entrena <ML-01 regresion / ML-02 clasificacion> con particion temporal (nunca al
 
 **Clustering:**
 ```
-Implementa el clustering de escuelas (ML-03): selecciona k, valida con Silhouette y perfila cada grupo en lenguaje de negocio.
+Revisa el estado real de US-321 antes de editar. Reproduce el baseline de ML-03 sobre Gold real,
+selecciona k con walk-forward y reporta filas excluidas por cobertura. Compara sólo alternativas
+justificadas bajo el mismo protocolo. Si Silhouette no alcanza 0.30, no declares cierre: prepara
+una decisión para Andrés y Edgar. Usa el prompt maestro del plan de cierre como contrato completo.
 ```
 
 **Agente RAG:**

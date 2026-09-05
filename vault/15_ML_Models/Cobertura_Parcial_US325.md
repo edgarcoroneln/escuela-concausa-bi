@@ -43,3 +43,7 @@ La implementación queda lista para revisión con el fixture sintético. Para de
 se requiere integrar el contrato de Célula 1, reconstruir `gold.features_escuela` y ejecutar el
 diagnóstico sobre Gold real. D5 seguirá identificado como cobertura parcial mientras falte el
 crosswalk `region_hidrologica → cve_mun`.
+
+El PR #197 ya resolvió la reproducción de Bronze DS-01/DS-02 y sus suites de calidad; el pendiente
+es ahora una corrida Bronze → Silver → Gold y la evidencia agregada de cobertura real. Secuencia y
+criterios: [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].

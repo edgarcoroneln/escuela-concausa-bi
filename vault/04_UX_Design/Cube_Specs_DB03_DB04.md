@@ -554,6 +554,50 @@ Si aun así se decide mover el umbral, este es el costo en interpretación:
 Distribución real (55 escuelas con predicción, ciclo 2024-2025): mínimo 0.164, mediana
 0.317, p90 0.499, p95 0.515, máximo **0.562**.
 
+### 8.quinquies.3.bis CORRECCIÓN (2026-09-04) — el dato de "nadie cruza" estaba sesgado
+
+> **La conclusión de §8.quinquies.4 no cambia; un dato de apoyo sí.** Se corrige aquí en
+> vez de reescribir arriba, porque Edgar Coronel ya ratificó citando este análisis y hay
+> que poder ver qué cambió.
+
+Las cifras de §8.quinquies.2 (*"la escuela peor proyecta −4.37 %, ninguna llega a −5 %"*)
+se midieron en el ambiente local **cuando CONEVAL no era ingerible** (BUG-045), así que
+**D1 estaba vacío en las 145 escuelas** y ML-01 entrenaba con 4 de 6 drivers. No era una
+muestra representativa.
+
+Con los fixtures que publicó Diana Alvarez el 2026-09-04 (BUG-045 `fixed`), D1 vuelve, el
+modelo entrena con 5 de 6 y la distribución del riesgo cambia:
+
+| | Sin D1 (medición original) | Con D1 (correcta) |
+|---|---|---|
+| Riesgo mínimo | 0.1637 | 0.0841 |
+| Riesgo máximo | 0.5615 | **0.7423** |
+| `escuelas_en_riesgo` | 0 | **2** |
+| ML-01 MAE | 0.0818 | 0.0844 |
+
+**Y las dos que cruzan lo hacen por la razón correcta:**
+
+| CCT | `indice_riesgo` | Variación proyectada | Driver dominante |
+|---|---|---|---|
+| `15DJN0049A` | 0.7423 | **−7.60 %** | D1 |
+| `09DSN0042A` | 0.6692 | **−6.19 %** | D2 |
+| `14DJN0061A` | 0.5384 | −4.00 % | *(no cruza — correcto)* |
+
+Ambas proyectan perder **más del 5 %**, que es exactamente lo que DEC-006 define. La
+sigmoide dispara cuando debe y no dispara cuando no debe: **la calibración queda
+verificada empíricamente**, no solo por lectura del código.
+
+**En producción sigue en cero.** Consultado el 2026-09-04:
+`/api/v1/kpis` → `escuelas_en_riesgo: 0`, y esos dos CCT allá tienen riesgo 0.129 y 0.098.
+Los fixtures son sintéticos (12 municipios CONEVAL, generación determinista), así que su
+distribución no representa a las ~132 000 escuelas reales. **Para la demo, el número que
+se verá es el de producción.**
+
+Qué cambia en la práctica: nada de la recomendación, y **mejora el argumento**. Ya no hay
+que decir *"nadie cruza el umbral, confíen en que está bien calibrado"*; ahora se puede
+mostrar un caso donde **sí dispara, a −7.60 %**. Eso responde por adelantado la pregunta
+obvia de cualquiera que vea un KPI en cero: *"¿y cómo sé que no está roto?"*
+
 ### 8.quinquies.4 Recomendación de Célula 2
 
 **No mover DEC-006.** Tres razones: el cero es verdadero, el umbral tiene un significado
@@ -569,6 +613,19 @@ recomendación cuenta la historia completa aunque ninguna llegue a 0.60.
 Alternativa si se quiere conservar un conteo: **una banda intermedia** ("atención",
 0.40–0.60) como KPI adicional, sin redefinir "en riesgo". No toca DEC-006 y da 15 escuelas
 que mostrar. Requiere aval de Manuel (catálogo de KPIs) y de Edgar.
+
+### 8.quinquies.5 Resolución — ratificado por el PM (2026-09-04)
+
+**Edgar Coronel ratificó la recomendación: DEC-006 no se reabre.** El umbral 0.6 se queda.
+
+> *"Está calibrado contra el criterio de negocio real (~5 % de pérdida), y bajarlo sería
+> mover la meta para que el conteo no dé cero. Para la demo del 9 usamos el ranking de
+> mayor riesgo con driver dominante y recomendación."*
+
+La banda "atención" queda **descartada por ahora**. El ranking que se usará ya existe y
+funciona con datos reales: es el chart *"Escuelas a intervenir (mayor riesgo)"* de DB-09
+(US-204, Manuel Serranía), y desde US-214a se llega a él directo con el link `link_db09`
+de la ficha de escuela. **No hay trabajo pendiente de Célula 2 por esta decisión.**
 
 ---
 

@@ -40,7 +40,10 @@ dashboards:
         # 11 828 (2.7x), sin ningún error visible. Mismo defecto que Luis Téllez reportó
         # el 2026-09-04 en `/api/v1/kpis` de producción (20.6M contra 6.7M); allá se
         # arregló en la API, pero los tableros leen la base directo y no pasan por ella.
-        # Al cargar un ciclo nuevo hay que actualizar este valor.
+        # BUG-047: `default: ultimo_ciclo` resuelve esto dinámicamente contra los datos
+        # reales y tiene prioridad; `valor_por_defecto` queda como respaldo estático si
+        # la resolución dinámica no está disponible (sin red/token).
+        default: ultimo_ciclo
         valor_por_defecto: "2024-2025"
       - columna: nombre_entidad
         etiqueta: "Entidad"
@@ -155,8 +158,12 @@ dashboards:
         viz: table
         ancho: 6
         alto: 55
-        dimensiones: [cct, driver_dominante, nombre_driver, recomendacion, prioridad, cobertura_recomendacion]
+        dimensiones: [cct, driver_dominante, nombre_driver, recomendacion, prioridad, cobertura_recomendacion, link_db09]
         row_limit: 25
+        params_extra:
+          # US-214a: el link a DB-09 va aquí y no en otro chart porque es donde el
+          # usuario ya está mirando la recomendación y puede querer el detalle.
+          allow_render_html: true
 
       # ----- Fila 5: prediccion y ubicacion ------------------------------------
       - nombre: "KPI-17 · Detalle de la predicción"
@@ -165,8 +172,11 @@ dashboards:
         viz: table
         ancho: 6
         alto: 55
-        dimensiones: [cct, ciclo, indice_riesgo, en_riesgo, variacion_proyectada, cobertura_prediccion]
+        dimensiones: [cct, ciclo, indice_riesgo, en_riesgo, variacion_proyectada, cobertura_prediccion, link_db06]
         row_limit: 25
+        params_extra:
+          # US-214a: el link a DB-06 va junto al detalle de la predicción.
+          allow_render_html: true
 
       - nombre: "Ubicación del plantel"
         dataset: db03_cubo_escuela_360

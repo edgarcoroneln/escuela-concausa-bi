@@ -453,6 +453,18 @@ comunes:
   # una sola célula.
   - "vault/03_Architecture/ADRs/**"
   - ".env.example"
+  # Hueco real hallado 2026-09-04 (Diana Alvarez, freeze de US-106): el archivo del freeze
+  # del esquema Gold no estaba en ningun verde/amarillo de C1 ni en comunes -- ni la propia
+  # dueña del contenido podia aplicar su flip draft->approved. Freezes de esquema son
+  # decision compartida (regla 7, TL de C1 + PM), mismo espiritu que ADRs/**.
+  - "vault/03_Architecture/Data_Lineage_US106.md"
+  # Hueco real hallado 2026-09-04 (PR #220, Edgar Jimenez): la guia de ambiente local de
+  # US-521b vive en vault/_Meta/**, verde exclusivo del PM, asi que su propio dueño no podia
+  # actualizar su entrega -- el gate lo reprobaba por tocar su propio documento. Mismo patron
+  # que Accessibility.md (Marina) y Data_Lineage_US106.md (Diana). Nota estructural: el
+  # documento esta mal ubicado -- es una guia de usuario, no metadatos del vault; moverlo a
+  # 00_Start_Here queda como follow-up post-freeze para no romper su PR abierto.
+  - "vault/_Meta/US-521b-guia-ambiente-local.md"
   # Hueco real hallado 2026-09-04 (Christian Ruiz, US-405): requirements.txt de
   # la raíz -- el que instala el job "quality" de ci.yml -- no tenía dueño; el
   # padrón solo cubría requirements/** (la carpeta). Sin esto nadie podía agregar

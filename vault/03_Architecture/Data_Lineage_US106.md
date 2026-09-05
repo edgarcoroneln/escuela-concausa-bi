@@ -2,12 +2,12 @@
 id: DOC-LINEAGE
 title: "Linaje de datos completo — fuente → dashboard (US-106)"
 owner: "Diana Aracely Alvarez Varela"
-status: draft
-version: "0.1"
+status: approved
+version: "1.0"
 source_of_truth: true
 traces_up: ["US-106", "vault/03_Architecture/Data_Model", "REQ-001"]
 traces_down: ["vault/02_Requirements/Traceability_Matrix"]
-last_reviewed: "2026-08-23"
+last_reviewed: "2026-09-04"
 tags: [architecture, lineage, freeze, us-106]
 ---
 
@@ -23,12 +23,11 @@ tags: [architecture, lineage, freeze, us-106]
 
 ## 1. Estado de este documento
 
-**`status: draft`** — no es un freeze todavía. US-106 vence en el **Sprint S5 (31 ago – 6 sep
-2026)**; el freeze real se declara el **6 de septiembre**, una vez cerrados los pendientes de la
-§4. Este documento se prepara ahora (23-ago) porque el esquema Gold ya está mayormente estable y
-no tiene sentido esperar al último día para documentar el linaje — pero **declarar el freeze hoy
-sería prematuro** mientras sigan abiertos BUG-009, la materialización de los 4 cubos de DEC-009 y
-el PR de Monserrat.
+**`status: approved`** — freeze declarado el **2026-09-04**, dos días antes del objetivo original
+del Sprint S5 (6-sep). Los pendientes de la §4 que bloqueaban la declaración (BUG-009, el PR de
+Monserrat) ya se cerraron; **RISK-008** (`coneval_periodo_medicion`) sigue abierto como deuda
+técnica aceptada explícitamente en DEC-011, no como algo confirmado — ver la última fila del
+checklist de §4 para el detalle completo.
 
 ## 2. Cómo leer el diagrama
 
@@ -250,7 +249,9 @@ No declarar el freeze hasta que:
       cerrada en silencio. Incluye confirmar que `coneval_v2` es la tabla correcta y no `coneval_test`
 - [x] El PR de Monserrat (`feat/monserrat-olivas-us211b-cubos-db05-db08`) esté abierto y su SQL de
       `cubo_driver` revisado — PR #73, revisado y aprobado por Manuel Serranía, mergeado el 2026-08-23
-- [ ] Este documento pase de `status: draft` a `status: approved` con fecha de freeze real
+- [x] Este documento pase de `status: draft` a `status: approved` con fecha de freeze real
+      — hecho 2026-09-04, con RISK-008 (`coneval_periodo_medicion`) declarado abierto y visible,
+      no confirmado por Deni antes del freeze (deuda aceptada en DEC-011, no cerrada en silencio)
 
 ## 5. Qué significa "congelar" el esquema
 

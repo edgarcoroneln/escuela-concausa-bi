@@ -100,6 +100,39 @@ SELECT
         'NATIVE_FILTER-US203-4:(extraFormData:(filters:!((col:cve_mun,op:IN,val:!(%27' || s.cve_mun || '%27)))),' ||
         'filterState:(label:cve_mun,validateStatus:!f,value:!(%27' || s.cve_mun || '%27)),' ||
         'id:NATIVE_FILTER-US203-4,ownState:()))' ||
-        '" target="_blank">Comparar su municipio →</a>' AS link_db04
+        '" target="_blank">Comparar su municipio →</a>' AS link_db04,
+
+    -- ---------- navegacion cruzada hacia DB-06 (US-214a) ---------------------
+    -- Ruta `DB-03 -> DB-06` del contrato drill_down. Estuvo BLOQUEADA hasta que
+    -- Manuel Serrania agrego el filtro `cct` a db06_predicciones.yaml (PR #215,
+    -- 2026-09-04): sin el, el link aterrizaba en el tablero completo en vez de en
+    -- la escuela, que es justo lo que la ruta promete.
+    --
+    -- Indices en db06_predicciones.yaml: id_ciclo = 0, cct = 3. Manuel lo puso AL
+    -- FINAL a proposito, asi que no corrio ninguna posicion previa.
+    -- OJO: el filtro `cct` de DB-06 aplica solo al dataset de grano escuela
+    -- (`db06_predicciones_escuela`); los charts que leen `db06_cubo_predicciones`
+    -- (grano municipio x nivel) no se filtran por cct, y esta bien: ese cubo no
+    -- tiene la columna.
+    '<a href="/superset/dashboard/db06-predicciones/?native_filters=' ||
+        '(NATIVE_FILTER-US203-0:(extraFormData:(filters:!((col:id_ciclo,op:IN,val:!(%27' || s.id_ciclo || '%27)))),' ||
+        'filterState:(label:id_ciclo,validateStatus:!f,value:!(%27' || s.id_ciclo || '%27)),' ||
+        'id:NATIVE_FILTER-US203-0,ownState:()),' ||
+        'NATIVE_FILTER-US203-3:(extraFormData:(filters:!((col:cct,op:IN,val:!(%27' || s.cct || '%27)))),' ||
+        'filterState:(label:cct,validateStatus:!f,value:!(%27' || s.cct || '%27)),' ||
+        'id:NATIVE_FILTER-US203-3,ownState:()))' ||
+        '" target="_blank">Ver su predicción →</a>' AS link_db06,
+
+    -- ---------- navegacion cruzada hacia DB-09 (US-214a) ---------------------
+    -- Ruta `DB-03 -> DB-09`. Misma historia y mismo desbloqueo que la anterior.
+    -- Indices en db09_recomendaciones.yaml: id_ciclo = 0, cct = 3.
+    '<a href="/superset/dashboard/db09-recomendaciones/?native_filters=' ||
+        '(NATIVE_FILTER-US203-0:(extraFormData:(filters:!((col:id_ciclo,op:IN,val:!(%27' || s.id_ciclo || '%27)))),' ||
+        'filterState:(label:id_ciclo,validateStatus:!f,value:!(%27' || s.id_ciclo || '%27)),' ||
+        'id:NATIVE_FILTER-US203-0,ownState:()),' ||
+        'NATIVE_FILTER-US203-3:(extraFormData:(filters:!((col:cct,op:IN,val:!(%27' || s.cct || '%27)))),' ||
+        'filterState:(label:cct,validateStatus:!f,value:!(%27' || s.cct || '%27)),' ||
+        'id:NATIVE_FILTER-US203-3,ownState:()))' ||
+        '" target="_blank">Ver su recomendación →</a>' AS link_db09
 
 FROM gold.cubo_escuela_360 s
