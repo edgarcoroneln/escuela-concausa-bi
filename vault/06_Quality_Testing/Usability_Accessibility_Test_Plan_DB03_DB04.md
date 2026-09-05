@@ -2,8 +2,11 @@
 id: DOC-USABILIDAD-DB0304
 title: "Usability & Accessibility Test Plan — DB-03 / DB-04"
 owner: "Marina García del Buey"
-status: draft
-traces_up: ["US-215a", "REQ-002"]
+status: approved
+version: "1.0"
+traces_up: ["US-215a", "REQ-002", "DEC-016"]
+traces_down: ["BUG-049", "BUG-050"]
+last_reviewed: "2026-09-05"
 tags: [qa, usability, accessibility, db03, db04]
 ---
 
