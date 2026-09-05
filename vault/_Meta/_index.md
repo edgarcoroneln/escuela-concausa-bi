@@ -19,6 +19,7 @@ tags: [moc, meta]
 | [[vault/_Meta/Traceability_Model]] | Cómo se conecta todo (frontmatter + matriz) |
 | [[vault/_Meta/Definition_of_Filed]] | Cuándo algo "nuevo reportado" se considera archivado |
 | [[vault/_Meta/Link_Hygiene]] | Evitar links rotos y huérfanos |
+| [[vault/_Meta/Vault_Steward]] | Rol rotativo de higiene del vault: lista de verificación y turnos por sprint |
 | [[vault/_Meta/Adoption_Guide]] | Cómo adoptar el vault en un proyecto nuevo |
 | `scripts/vault_lint.py` | Check automatizable de higiene (links, frontmatter, IDs) |
 | `scripts/generate_pm_dashboard.py` | Genera el snapshot y HTML PM desde fuentes canónicas |

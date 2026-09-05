@@ -9,7 +9,9 @@ import sys
 from pathlib import Path
 
 
-VALID_STATES = {"planned", "in_progress", "in_review", "blocked", "done"}
+VALID_STATES = {"planned", "in_progress", "in_review", "blocked", "done", "descoped"}
+# Historias del catálogo (vault/02_Requirements/User_Stories.md), en alcance o recortadas.
+CATALOGO_US = 91
 
 
 def fail(message: str, failures: list[str]) -> None:
@@ -36,8 +38,14 @@ def main(root_value: str = ".") -> int:
         fail("La entrega no traza al Plan Maestro", failures)
     stories = data.get("stories", [])
     ids = [story.get("id") for story in stories]
-    if len(ids) != 91:
-        fail(f"Se esperaban 91 US y hay {len(ids)}", failures)
+    # El catálogo son 91 historias y sigue siéndolo: recortar no borra la historia, la
+    # saca del alcance (DEC-014). La guarda vigila el TOTAL -- alcance + recortadas --
+    # para que una US no pueda desaparecer del tablero en silencio, que es lo que esta
+    # comprobación existe para impedir.
+    catalogo = len(ids) + len(data.get("descoped", []))
+    if catalogo != CATALOGO_US:
+        fail(f"Se esperaban {CATALOGO_US} US en el catálogo y hay {catalogo} "
+             f"({len(ids)} en alcance + {len(data.get('descoped', []))} recortadas)", failures)
     if len(ids) != len(set(ids)):
         fail("Hay US duplicadas en el snapshot", failures)
     for story in stories:
@@ -90,7 +98,7 @@ def main(root_value: str = ".") -> int:
         if not activity.get("available") and pr_count is not None:
             fail(f"{person.get('name')} muestra PR sin snapshot de GitHub", failures)
     if sorted(assigned_ids) != sorted(ids):
-        fail("Las US del equipo no cubren exactamente las 91 historias", failures)
+        fail(f"Las US del equipo no cubren exactamente las {len(ids)} historias en alcance", failures)
     if len(data.get("sources", [])) != 8:
         fail(f"Se esperaban 8 fuentes y hay {len(data.get('sources', []))}", failures)
     if round(sum(item.get("points", 0) for item in data.get("rubric", [])), 2) != 10.0:
@@ -112,6 +120,20 @@ def main(root_value: str = ".") -> int:
         fail("engagement.people sin 'active'/'signal'", failures)
     if engagement.get("active", 0) + engagement.get("inactive", 0) != len(eng_people):
         fail("engagement: activos + inactivos no suman el total", failures)
+    # Una historia recortada no puede colarse al alcance ni quedar sin justificación:
+    # el recorte es una decisión del PO y tiene que poder leerse en el tablero.
+    for story in data.get("descoped", []):
+        if story.get("status") != "descoped":
+            fail(f"{story.get('id')} está en 'descoped' con estado {story.get('status')}", failures)
+        if story.get("evidence") in {"", "—", None}:
+            fail(f"{story.get('id')} recortada sin decisión registrada en la evidencia", failures)
+    ids_alcance = {story.get("id") for story in stories}
+    for story in data.get("descoped", []):
+        if story.get("id") in ids_alcance:
+            fail(f"{story.get('id')} aparece a la vez en alcance y en recortadas", failures)
+    if data.get("summary", {}).get("descoped") != len(data.get("descoped", [])):
+        fail("summary.descoped no coincide con el número de historias recortadas", failures)
+
     pending = data.get("pending", [])
     expected_pending = sum(story.get("status") != "done" for story in stories)
     if len(pending) != expected_pending:
