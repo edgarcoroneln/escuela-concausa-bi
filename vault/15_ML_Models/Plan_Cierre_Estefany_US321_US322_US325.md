@@ -179,3 +179,26 @@ fuera de mi alcance. Formula una pregunta concreta al dueño correcto. No uses u
 La aprobación del PM es una compuerta deliberadamente pendiente, no un incumplimiento del autor. No
 se propone cambiar `US-321`, `US-322` o `US-325` a `done`: este PR entrega el plan verificable de
 cierre y mantiene visibles la evidencia real aún necesaria y el Silhouette inferior al umbral.
+
+## 7. Inicio de ejecución — 4-sep-2026
+
+Se implementó `python -m src.modelos.ejecutar_cierre_ml03` como punto de entrada único para las
+fases B y C. El comando lee `gold.features_escuela` desde `DATABASE_URL`, valida el contrato y emite
+JSON exclusivamente agregado: metadatos del grano, EDA, correlaciones sin target, cobertura y
+completitud por driver/entidad/municipio, dispersión municipal y resultado temporal de ML-03.
+
+La corrida local sobre Gold real no se ejecutó: el equipo donde se inició esta fase no tiene Docker
+disponible ni `.env`, por lo que no existe una base local reconstruible. Esta limitación de ambiente
+no se presenta como evidencia de las historias. El comando quedó cubierto por pruebas con fixture y
+MLflow permanece opt-in mediante `--tracking-uri`; si la política `casos_completos` deja cero filas,
+el reporte conserva el estado `bloqueado` y no registra un modelo.
+
+Comando pendiente en un ambiente conforme al runbook:
+
+```bash
+python -m src.modelos.ejecutar_cierre_ml03 --salida /tmp/evidencia-ml03.json
+```
+
+El JSON contiene agregados y puede adjuntarse a la revisión, pero no debe commitearse si pudiera
+permitir reidentificación por grupos pequeños. Las historias conservan su estado hasta ejecutar y
+revisar esa evidencia con Edgar y Andrés.

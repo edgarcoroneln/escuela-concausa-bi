@@ -448,6 +448,12 @@ tags: [requirements, traceability, matrix]
 |---|---|---|---|---|
 | `REQ-003` | `US-321`, `US-322`, `US-325` | Revisión contra código, pruebas, fichas y `Execution_Status`: PR #197 ya resolvió la reproducción de Bronze DS-01/DS-02 y sus suites GE, pero aún se requiere materializar Gold y ejecutar la evidencia real. Se publica [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]] con fases, criterios de paro, prompt maestro y revisores. Se conserva el baseline de ML-03 (**Silhouette 0.1086 < 0.30**) y no se cambia ninguna historia a `done` sin nueva evidencia | Ejecutar Bronze → Silver → Gold; correr EDA/cobertura real; iterar ML-03 y solicitar decisión de Andrés/Edgar si no alcanza el umbral | 🟡 Plan listo; ejecución pendiente |
 
+## Evidencia incremental — 2026-09-04 · inicio de ejecución de Estefany
+
+| REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
+|---|---|---|---|---|
+| `REQ-003` | `US-321`, `US-322`, `US-325` | `src/modelos/ejecutar_cierre_ml03.py` incorpora un punto de entrada desde `gold.features_escuela` para EDA, correlaciones sin target, cobertura territorial y ML-03 temporal; emite sólo agregados, no registra MLflow por defecto y conserva el bloqueo si `casos_completos` deja cero filas. Tres pruebas nuevas cubren privacidad, bloqueo y ejecución. La corrida Gold real no se declara: el host no tiene Docker ni `.env` | Ejecutar el comando en un ambiente conforme al runbook; revisar agregados y solicitar decisión de Andrés/Edgar si Silhouette sigue <0.30 o no hay casos completos | 🟡 Ejecución iniciada; evidencia real pendiente |
+
 ## Evidencia incremental — 2026-09-04 · BUG-048: producción sirve un Gold empobrecido (PM)
 
 | REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
