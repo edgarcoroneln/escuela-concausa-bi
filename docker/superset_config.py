@@ -149,6 +149,23 @@ _SSO_ALLOWED_EMAILS = {
     for e in os.environ.get("SUPERSET_SSO_ALLOWED_EMAILS", "").split(",")
     if e.strip()
 }
+# Guarda de lista blanca vacía (fail-loud, mismo criterio que SECRET_KEY/SSO). Con SSO
+# activo en prod, una lista blanca vacía —o mal escrita— es el ÚNICO fallo de esta
+# configuración que no revienta y APARENTA funcionar: el contenedor arranca, /login/
+# muestra "Entrar con Google", cualquiera se autentica con Google y oauth_user_info lo
+# RECHAZA (puerta 2, fail-closed) por no estar en la lista ⇒ NADIE entra, ni el
+# profesor, como si el login sirviera. En prod eso es casi siempre un secreto no
+# inyectado o un typo, no una decisión: reventar el arranque lo vuelve evidente en vez
+# de descubrirlo el día de la demo. (Detectado por el PO, Edgar, tras el merge de #246.)
+if _IS_PROD and _SSO_ENABLED and not _SSO_ALLOWED_EMAILS:
+    raise RuntimeError(
+        "SSO activo en producción pero SUPERSET_SSO_ALLOWED_EMAILS está vacía o mal "
+        "escrita: la puerta de la lista blanca rechazaría a TODOS (fail-closed), pero "
+        "el contenedor arrancaría mostrando 'Entrar con Google' y aparentaría funcionar "
+        "mientras rechaza a cualquiera, incluido el profesor. Declara al menos un correo "
+        "autorizado. Para rollback al login nativo (AUTH_DB) quita las credenciales SSO "
+        "y declara SUPERSET_SSO_ROLLBACK=true."
+    )
 # Subconjunto que además recibe rol Admin (el resto entra como rol de lectura).
 _SSO_ADMIN_EMAILS = {
     e.strip().lower()

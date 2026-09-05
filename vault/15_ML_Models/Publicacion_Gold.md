@@ -38,6 +38,7 @@ señalamos en [[vault/15_ML_Models/Indice_Riesgo_ML01]] §4: la tabla guarda **l
 | `driver_dominante` | str | `D1`…`D6`; **salida de ML-02** |
 | `recomendacion` | str | del catálogo prescriptivo (§4) |
 | `prioridad` | enum | `alta` / `media` / `baja` (§5) |
+| `shap_d1`…`shap_d6` | float \| NULL | contribuciones batch de ML-02; `NULL` = `SIN_DATO`, nunca cero de relleno |
 
 ## 2. Grano dual (DEC-010)
 
@@ -132,6 +133,11 @@ ambas tablas. Si falta una fila de features para ML-02, el job falla en vez de i
 `--solo-predicciones` conserva la posibilidad explícita de omitir ML-02 cuando se necesite aislar
 ML-01 durante diagnóstico.
 
+`--con-shap` calcula las contribuciones con `TreeExplainer` durante el batch y las persiste junto a
+cada recomendación. El modo normal deja las seis columnas en `NULL`; no calcula SHAP por request ni
+convierte drivers excluidos por cobertura en `0.0`. Si la tabla ya existe, el publicador agrega las
+columnas faltantes de forma idempotente antes del UPSERT.
+
 ## 7. Uso
 
 ### Contra `gold.features_escuela` real (cierra BUG-013)
@@ -173,6 +179,8 @@ Las que importan:
 - `test_rechaza_drivers_fuera_del_catalogo` — un `D9` no se publica en silencio.
 - `test_conecta_ml02_con_recomendaciones_del_mismo_ciclo` — alinea ML-01 y ML-02 por llave.
 - `test_igual_riesgo_y_distinto_driver_producen_recomendaciones_distintas` — verifica AC-003.6.
+- `test_recomendaciones_persisten_shap_nullable` — diferencia contribución cero de `SIN_DATO`.
+- `test_migra_recomendaciones_legacy_con_columnas_shap` — actualiza una tabla existente sin borrar datos.
 - `test_predice_a_municipio_nivel_sin_repartir_a_escuelas` — DEC-010: la fila declara su grano.
 - `test_los_dos_granos_conviven_sin_colisionar` — cada uno usa su índice parcial.
 - `test_escribir_rechaza_un_lote_con_granos_mezclados` — objetivo de conflicto inequívoco.
