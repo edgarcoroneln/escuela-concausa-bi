@@ -121,7 +121,7 @@ tags: [requirements, traceability, matrix]
 > incremental se agrega al final de este mismo archivo — sería una máquina de conflictos a tres días
 > de la demo. Anotado en el punto 7 de [[vault/_Meta/Vault_Steward]].
 
-**Corte del snapshot: `c7c09a1` · 2026-09-05 · 88 historias en alcance (91 en catálogo − 3 recortadas por `DEC-014`)**
+**Corte del snapshot: `ef7e75d` · 2026-09-05 · 88 historias en alcance (91 en catálogo − 3 recortadas por `DEC-014`)**
 
 | REQ | Módulo | US hechas | Avance | Puntos asegurados |
 |---|---|---|---|---|
@@ -546,3 +546,12 @@ tags: [requirements, traceability, matrix]
 | REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
 |---|---|---|---|---|
 | `REQ-003` | `US-302`, `US-311`, `US-313` | Dump definitivo C1 con CONAPO real importado: 136,046 features/3 ciclos, D1/D2 completos y nueve cubos. `loss="absolute_error"` mantiene MAE 0.141458; riesgo 0.0292–0.5717 y 0 escuelas sobre 0.6, porque ninguna caída predicha alcanza el 5 % ratificado. ML-02 F1 0.8333; 45,276 recomendaciones de cinco drivers (D1 2,843; D2 27,075; D3 2,104; D4 12,835; D6 419). `gold_bug048_final2_2026-09-05.sql` restaurado desde cero: ocho vistas + `cubo_pipeline`; SHA-256 `b8a3fc50a636a2943eb0bc25cbe495ed49914429a76838346e7ebcf6aaa5b32a` ✅ | C5 importa con backup y valida producción/Superset | 🟡 C3 completado; BUG-048 abierto hasta C5 |
+
+
+## Evidencia incremental — 2026-09-05 · Cierre de hallazgos de C4 y séptimo hueco de propiedad (PO)
+
+| REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
+|---|---|---|---|---|
+| `REQ-004` | `US-416`, `US-412`, `US-422` | **Fila que faltaba del PR #240 de Christian Ruiz**, que la plantilla pide y su PR no traía — la agrega el PM porque la matriz es su crítico. **`US-416` ratificada** por C4 tras leer el código, no el reporte: `SET LOCAL` en vez de `SET` (muere con la transacción y no deja el `statement_timeout` pegado en conexiones que vuelven al pool compartido con `RepositorioGold`) y endurecimiento a `SQLAlchemyError` ✅ · **Ventana de `KeyError` cerrada en `cache_predicciones.py`**: leer con `in` + `[]` consulta el reloj **dos veces** y una entrada vigente puede caducar entre ambas → `KeyError` → 500; el `Lock` no protege de eso, guarda el estado pero no detiene el tiempo. **Verificado por el PM revirtiendo el parche**: las 2 pruebas de regresión fallan con `KeyError` real desde `cachetools/__init__.py:105`, y pasan con el parche ✅ · **Corrección de documentación de seguridad**: `API_Specification` prometía que `/batch` y `/explicacion` eran solo analista con 403 y **nunca lo fueron** — el router se monta con `require_lectura` (`v1/__init__.py:25`). Se alineó la documentación al código, no al revés (`DEC-017`) ✅ | El E2E con Postgres real es `US-422` (Eloisa González), confirmado contra el padrón | ✅ `US-416` ratificada; cierra al pasar a `done` |
+| `REQ-003` · `REQ-004` | `US-412`, `US-302` | **`BUG-053` dado de alta** (`medium`, `open`; ID según `DEC-013`, `BUG-052` era el máximo en `main`): `/explicacion` sirve `mock_data`, no SHAP, y **no existe fuente que leer** — `explicar_driver` no lo llama nadie y `publicar_gold` no persiste contribuciones. Verificado de forma independiente por el PM con `grep` en todo `src/` ✅ · Orden de cierre: **C3 persiste en Gold → C4 lee → prueba**; el primer paso no es de C4. Las 8 pruebas de contrato ya están escritas ✅ · **Alcance para la demo**: el driver dominante y la recomendación de `/predicciones/{cct}` sí son reales; lo mock es el desglose | C3 decide si entra antes del freeze | ⬜ Abierto, declarado, no bloqueante |
+| `REQ-007` | `US-001` | **Séptimo hueco de propiedad cerrado**: `guia-ambiente-local/` no estaba en ningún alcance —ni verde, ni amarillo, ni comunes—, así que el gate **reprobaba a quien intentara cumplir `Secrets_Policy`** haciendo el `git rm --cached` de `configuracion.env`, versionado y reportado por **Monserrat Miranda** y ratificado por **Christian Ruiz** ✅ · Carpeta a `comunes` y archivo des-trackeado en este PR; sigue en disco y ya lo cubre `*.env` de `.gitignore`. Revisado antes de tocarlo: 7 líneas, puertos de Airflow y MLflow, **cero credenciales** — riesgo bajo, incumplimiento real ✅ | El turno de Steward de S6 corre el punto 8 de la lista | ✅ Cerrado |
