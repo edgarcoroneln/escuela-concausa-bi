@@ -165,6 +165,15 @@ distinguir entre los casos.
 forma de distinguirlas, `EscuelaOut` no expone `id_ciclo`) y `/kpis.matricula_total` sumaba los ~3
 ciclos materializados a la vez (**20.6M en vez de ~7M reales** para las 4 entidades en producción).
 
+> **Ese default es GLOBAL, no por `cve_ent`/`cve_mun`** (ratificado por Christian Ruiz, TL C4,
+> 2026-09-05): es el máximo de ciclo en TODA `fact_escuela_ciclo`, no el máximo dentro de la
+> entidad o municipio que pida el filtro. Si una entidad todavía no tiene filas para ese ciclo
+> global, la respuesta es **lista vacía**, no el último ciclo *disponible para esa entidad*. Es a
+> propósito: resolver el ciclo por entidad mostraría matrículas de periodos distintos una junto a
+> otra sin ninguna marca que lo distinga, el mismo tipo de número engañoso que BUG-017/BUG-030
+> evitan en otras capas. **No es un bug si una entidad rezagada sale vacía sin `ciclo` explícito**
+> — es el filtro correcto y hay que pasar `ciclo` explícito para leer su último dato disponible.
+
 **Ordenamiento (Decisión 3 de US-411, Karla Monter, 2026-08-20 — avisado a C2/C3):**
 - `order_by` es opcional; si se omite, el orden es el natural de la consulta (no garantizado
   entre llamadas). `order` es `asc` (por defecto) o `desc`. Un `order_by` fuera de la whitelist
