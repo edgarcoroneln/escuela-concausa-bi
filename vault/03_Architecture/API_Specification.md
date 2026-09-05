@@ -207,6 +207,14 @@ C2/C3), no se retoma como pendiente de US-411.
   por fila, incompatible con el `statement_timeout` de US-416). Orden de cierre: **C3 persiste en
   Gold → C4 lee del repositorio → prueba de contrato**; el contrato de respuesta ya está fijado por
   `tests/test_explicacion_shap.py`, así que el cambio será del cuerpo, no de la forma.
+- **Un driver sin dato viaja como `None` (SIN_DATO), nunca como `0.0`.** Las seis claves `D1`..`D6`
+  están siempre presentes -- el hueco se **declara**, no se omite. Esto no es cosmético: D5 (estrés
+  hídrico) es regional y D6 (aire) cubre ~80 zonas urbanas, así que el hueco es el caso **normal**.
+  Responder `0.0` afirmaría "este driver no influyó" donde en realidad no se sabe, contradiciendo la
+  regla de cobertura parcial del proyecto y a `indice_completitud_drivers`, que sí marcan `SIN_DATO`.
+  Con SHAP real la distinción pesa más: *"no influyó"* y *"no lo sabemos"* son respuestas distintas a
+  la pregunta que el proyecto existe para responder. Quien persista las contribuciones (C3) debe
+  escribir **nulos**, no ceros. Fijado por `tests/test_explicacion_shap.py`.
 - `/predicciones/{cct}` y `/predicciones/batch` leen `gold.predicciones` + `gold.recomendaciones`
   (US-412, cierra BUG-010) vía `RepositorioModelos`; un CCT sin fila en `gold.predicciones` es
   `404`, nunca un valor inventado. `mlflow_run_id` conserva el enlace auditable a la corrida.
@@ -340,7 +348,7 @@ class PrediccionBatchIn(BaseModel):
 class ExplicacionSHAPOut(BaseModel):
     cct: StrictStr
     driver_dominante: StrictStr
-    contribuciones: dict[str, float]                  # driver -> valor SHAP
+    contribuciones: dict[str, float | None]           # None = SIN_DATO, nunca 0.0 de relleno
 
 # ---- agente ----
 class AgenteConsultaIn(BaseModel):
