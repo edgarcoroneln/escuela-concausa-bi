@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════
-# FARO — Configuración de Superset (metadata, caché, proxy, rol público)
+# FARO — Configuración de Superset (metadata, caché, proxy, SSO Google, rol público)
 # ═══════════════════════════════════════════════════════════════════════
 # Owner: Luis Téllez Domínguez (Célula 5 · Cloud & DevOps)
 # Historia: US-502 · Fase 2 (Superset → GCP)
@@ -18,6 +18,9 @@
 # ═══════════════════════════════════════════════════════════════════════
 import os
 from urllib.parse import quote_plus
+
+# Constantes de Flask-AppBuilder (modo de autenticación); se usan en §6 (SSO).
+from flask_appbuilder.security.manager import AUTH_DB, AUTH_OAUTH
 
 _ENVIRONMENT = os.environ.get("ENVIRONMENT", "local").lower()
 _IS_PROD = _ENVIRONMENT in ("production", "prod")
@@ -102,3 +105,99 @@ if SUPERSET_PUBLIC_READONLY:
     # upload, acceso solo a DB-01…DB-10) se aplica en el bootstrap (Bloque 2),
     # que es donde ya existen los datasets. Aquí queda el interruptor.
     PUBLIC_ROLE_LIKE = os.environ.get("SUPERSET_PUBLIC_ROLE_LIKE", "Gamma")
+
+
+# ── 6. Autenticación: Google SSO (OAuth2 / OIDC vía Flask-AppBuilder) ─────
+# Interruptor de entorno (mismo criterio que el resto del archivo): si están
+# las credenciales del OAuth Client DEDICADO de Superset, se activa Google SSO;
+# si NO están, se cae al login nativo usuario/contraseña (AUTH_DB), que es el
+# piso seguro para local y un rollback sin cambiar código (basta quitar las
+# env-vars del deploy). El SSO de Superset es INDEPENDIENTE del OAuth del API.
+#
+# Decisiones de seguridad (2026-09-05, Luis + C5):
+#   • Client OAuth DEDICADO a Superset (separado del API/C4).
+#   • Acceso restringido por LISTA BLANCA de correos (fail-closed: lista vacía
+#     ⇒ nadie entra). Mismo patrón que ANALISTA_EMAILS en la API.
+#   • SSO OBLIGATORIO, sin acceso anónimo ⇒ NO se enciende el rol público
+#     (dejar SUPERSET_PUBLIC_READONLY en su default `false`).
+_SSO_CLIENT_ID = os.environ.get("SUPERSET_GOOGLE_CLIENT_ID", "").strip()
+_SSO_CLIENT_SECRET = os.environ.get("SUPERSET_GOOGLE_CLIENT_SECRET", "").strip()
+_SSO_ENABLED = bool(_SSO_CLIENT_ID and _SSO_CLIENT_SECRET)
+
+# Lista blanca de correos autorizados (coma-separada, normalizada a minúsculas).
+_SSO_ALLOWED_EMAILS = {
+    e.strip().lower()
+    for e in os.environ.get("SUPERSET_SSO_ALLOWED_EMAILS", "").split(",")
+    if e.strip()
+}
+# Subconjunto que además recibe rol Admin (el resto entra como rol de lectura).
+_SSO_ADMIN_EMAILS = {
+    e.strip().lower()
+    for e in os.environ.get("SUPERSET_SSO_ADMIN_EMAILS", "").split(",")
+    if e.strip()
+}
+# Rol por defecto (solo lectura) para quien entra por SSO y no es admin. El
+# afinado fino del rol de lectura se hace en el bootstrap (Bloque 2), igual que
+# el rol público.
+_SSO_VIEWER_ROLE = os.environ.get("SUPERSET_SSO_VIEWER_ROLE", "Gamma")
+
+if _SSO_ENABLED:
+    AUTH_TYPE = AUTH_OAUTH
+    # Auto-alta en el primer login (ya validado contra la lista blanca en el
+    # SecurityManager); rol de lectura por defecto.
+    AUTH_USER_REGISTRATION = True
+    AUTH_USER_REGISTRATION_ROLE = _SSO_VIEWER_ROLE
+    # Sincroniza roles en CADA login según los `role_keys` que inyecta el
+    # SecurityManager ⇒ promover/expulsar admins por correo sin tocar la BD.
+    AUTH_ROLES_SYNC_AT_LOGIN = True
+    AUTH_ROLES_MAPPING = {"faro_admin": ["Admin"], "faro_viewer": [_SSO_VIEWER_ROLE]}
+
+    OAUTH_PROVIDERS = [
+        {
+            "name": "google",
+            "icon": "fa-google",
+            "token_key": "access_token",
+            "remote_app": {
+                "client_id": _SSO_CLIENT_ID,
+                "client_secret": _SSO_CLIENT_SECRET,
+                # OIDC discovery: authlib deriva authorize/token/userinfo/jwks.
+                "server_metadata_url": (
+                    "https://accounts.google.com/.well-known/openid-configuration"
+                ),
+                "client_kwargs": {"scope": "openid email profile"},
+            },
+        }
+    ]
+
+    # El redirect_uri que el Client dedicado de Google debe tener autorizado es:
+    #   https://<url-de-superset-en-cloud-run>/oauth-authorized/google
+    # (se registra en la consola tras el primer deploy, cuando se conoce la URL).
+
+    from superset.security import SupersetSecurityManager
+    class FaroSsoSecurityManager(SupersetSecurityManager):
+        """Restringe el SSO a la lista blanca y asigna rol según el correo."""
+
+        def oauth_user_info(self, provider, response=None):
+            if provider != "google":
+                return {}
+            me = self.appbuilder.sm.oauth_remotes[provider].get("userinfo").json()
+            email = (me.get("email") or "").strip().lower()
+            # Puerta 1: correo presente y verificado por Google.
+            if not email or not me.get("email_verified", False):
+                return {}
+            # Puerta 2: lista blanca (fail-closed: si está vacía, nadie entra).
+            if email not in _SSO_ALLOWED_EMAILS:
+                return {}
+            role_keys = ["faro_admin"] if email in _SSO_ADMIN_EMAILS else ["faro_viewer"]
+            return {
+                "username": email,
+                "email": email,
+                "first_name": me.get("given_name", ""),
+                "last_name": me.get("family_name", ""),
+                "role_keys": role_keys,
+            }
+
+    CUSTOM_SECURITY_MANAGER = FaroSsoSecurityManager
+else:
+    # Sin credenciales SSO ⇒ login nativo usuario/contraseña (local y rollback).
+    AUTH_TYPE = AUTH_DB
