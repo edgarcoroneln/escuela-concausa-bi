@@ -105,20 +105,49 @@ tags: [requirements, traceability, matrix]
 
 ## Estado del proyecto
 
+> **Transcripción del tablero, con su fecha de corte.** Estas cifras se **copian a mano** desde
+> `vault/13_Reports/data/pm-dashboard.json`, que sí genera `scripts/generate_pm_dashboard.py` a
+> partir de [[vault/12_Roadmap_Sprints/Execution_Status]]. **La cifra viva es la del tablero, no
+> ésta**: si las dos no coinciden, manda el tablero.
+>
+> La primera redacción de esta nota decía "derivado, no capturado… no se editan a mano", y era falsa
+> —lo señaló Marina García al revisar el PR—: el generador **lee** esta matriz para el hash de fuentes
+> y sólo **escribe** `pm-dashboard.json`, `pm-dashboard-history.json` y `TABLERO_CONTROL_PM.html`.
+> Declararlo derivado sin serlo es el mismo defecto que este bloque venía a corregir, un grado peor:
+> una nota que dice que el dato se mantiene solo apaga la sospecha del siguiente lector.
+>
+> Que el generador escriba este bloque entre marcadores queda como follow-up **post-freeze**, no
+> ahora: haría que cada refresco automático del tablero tocara la matriz, y hoy toda evidencia
+> incremental se agrega al final de este mismo archivo — sería una máquina de conflictos a tres días
+> de la demo. Anotado en el punto 7 de [[vault/_Meta/Vault_Steward]].
+
+**Corte del snapshot: `c7c09a1` · 2026-09-05 · 88 historias en alcance (91 en catálogo − 3 recortadas por `DEC-014`)**
+
+| REQ | Módulo | US hechas | Avance | Puntos asegurados |
+|---|---|---|---|---|
+| `REQ-001` | Data Engineering | 16 / 18 | 92.5 % | **2.31** / 2.5 |
+| `REQ-002` | Frontend BI | 15 / 19 | 91.1 % | **2.28** / 2.5 |
+| `REQ-003` | Modelos ML | 2 / 10 | 66.0 % | **0.99** / 1.5 |
+| `REQ-004` | Backend, API y Auth | 6 / 12 | 72.5 % | **1.09** / 1.5 |
+| `REQ-005` | Despliegue GCP | 2 / 12 | 47.1 % | **0.47** / 1.0 |
+| `REQ-006` | Agente conversacional | 1 / 4 | 73.8 % | **0.37** / 0.5 |
+| `REQ-007` | Equipo, Git y documentación | 8 / 13 | 79.2 % | **0.40** / 0.5 |
+| | **Total** | **50 / 88** | **77.4 %** | **7.91 / 10** |
+
 | Métrica | Valor |
 |---|---|
-| REQ totales | 7 |
-| REQ con **planeación completa** (AC + US + arquitectura) | **6 / 7** |
-| REQ con hueco de planeación | **1 / 7** (REQ-005: falta `System_Design.md`) |
-| REQ **pendientes de ejecución** (sin Release completo) | **7 / 7** |
-| REQ con Test | 1 / 7 |
-| REQ con DevLog | 1 / 7 |
-| REQ **Done** | 0 / 7 |
-| Historias mapeadas | 91 / 91 (cobertura 7/7 módulos) |
+| Historias mapeadas | 88 / 88 en alcance · 3 recortadas (`US-413`, `US-414`, `US-525a`) |
+| Estados | 50 `done` · 22 `in_review` · 11 `in_progress` · 5 `planned` · 0 `blocked` |
+| REQ con planeación completa | 7 / 7 — `System_Design.md` cerró el hueco de `REQ-005` |
+| Readiness de la demo | 75 / 100 · **2 gates en rojo** |
+| Gates en rojo | Tres modelos registrados (`REQ-003`) · Dry-run y contingencia (`US-006`) |
+| Bloqueos abiertos | 1 — `BLOCK-005` (cubos no materializados en Cloud SQL) |
 
-> **Lectura:** la **planeación** está prácticamente cerrada (6 de 7 REQ con cobertura completa); la
-> **ejecución** arrancó en REQ-007, pero aún hay 0 REQ Done. El único hueco es la **arquitectura de despliegue de
-> REQ-005**, que se resolverá al escribir `vault/03_Architecture/System_Design.md`.
+> **Lectura:** los dos módulos de mayor peso —Data Engineering y Frontend BI— están sobre 89 % y
+> aportan **4.59 de los 5.0 puntos** que valen juntos. El riesgo no está donde hay más historias
+> abiertas, sino en los **dos gates en rojo**: sin los tres modelos registrados se cae un cuarto del
+> readiness, y `US-006` (ensayo de la demo) no ha arrancado a cinco días de presentar. `REQ-005` es
+> el módulo con menor avance (47.1 %), y es también donde vive el hueco de desplegar FARO Web.
 
 ## Evidencia incremental — 2026-08-28 · etiqueta real y verificación E2E
 
@@ -414,6 +443,12 @@ tags: [requirements, traceability, matrix]
 |---|---|---|---|---|
 | `REQ-001` · `REQ-002` | `US-112`, `US-113`, `DS-07` | **BUG-045 cerrado** (`open` → `fixed`), atendido primero entre los pendientes del día por instrucción explícita de Diana Alvarez. Extendido `ESQUEMAS` en `src/ingesta/cargar_bronze_fixture.py` con `coneval_irs`/`coneval_pobreza` (columnas `c_…` hasheadas) y reescrito `generate_bronze_drivers_fixtures.py::generar_coneval` para emitir `bronze_coneval_irs_sample.csv` + `bronze_coneval_pobreza_sample.csv` en vez del fixture huérfano de esquema viejo, que se retiró del repo ✅ · **Mapeo hash→columna verificado contra evidencia real**, no inferido: los manifiestos de la propia carga DS-07 de Diana del 4-sep (`data/bronze/coneval/manifests/ds07_postgres_columns_{irs,pobreza}_2020.json`, artefactos locales) dan las 9 columnas completas, no solo las 4 ya documentadas en el registro del bug ✅ · Se tomó el camino "extender el generador" (opción 2 de las dos propuestas por Luis), consistente con el precedente de los 4 generadores de Formato 911 ✅ · Verificado sin Postgres (device_bash no alcanza Docker/`127.0.0.1:5432`): ambos CSV nuevos, leídos con `pd.read_csv(dtype=str, keep_default_na=False)`, no tienen columnas faltantes contra el esquema que el modelo exige — 12 filas c/u, 1 `SIN_DATO` ✅ · `tests/test_cargar_bronze_fixture_conteo.py` (único test existente sobre el módulo) solo usa `esquema="cct"`, sin riesgo de romperse ✅ — | 🟢 Verificado real contra Postgres: `pytest tests/ -q` → 884 passed/7 skipped; `dbt run --select rezago_municipio` → éxito (2,469 filas) contra las tablas reales de DS-07 de Diana; `dbt test --select rezago_municipio` → 6/6 pruebas propias del modelo en verde (el único ERROR de la corrida, `cubo_pipeline_rows_parity`, es de DS-06/CONAGUA, ajeno). De paso se encontró y corrigió un caso real: cargar el fixture contra una tabla que ya tiene datos reales (creada por el loader de producción, sin UNIQUE) fallaba con traceback crudo — ahora `cargar_fixture()` lo detecta y da un error accionable sin tocar ninguna fila real |
 
+## Evidencia incremental — 2026-09-05 · BUG-048: SESNSP real, CONAPO diagnosticado, cubo_pipeline destrabado (C1)
+
+| REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
+|---|---|---|---|---|
+| `REQ-001` | `US-113`, `US-122b` | **BUG-048 `fixed (parcial)`** (alta hoy, Diana Alvarez): `dbt/models/sources.yml` apuntaba `bronze.sesnsp` al fixture (`sesnsp_test`) pese a existir el cargador real de Luis García — corregido a `'sesnsp'` (commit `165c911`), verificado contra Postgres real (`silver.delitos_municipio` 2,486 municipios, `comp_media` D2 estable). Avisado a Luis García ✅ · **Segundo hueco destapado, no resuelto**: D2/D1 siguen dependiendo de población CONAPO (DS-08) en fixture (36 filas) — Emilio Galnares sin responder; se investigaron y descartaron con evidencia real dos fuentes alternas (SSL expirado; grano estatal no municipal) y se documentó una tercera viable (`lapanquecita/poblacion-estimada`, GitHub, MIT) pendiente de decisión explícita si no hay respuesta antes del freeze ⬜ · **US-113/Deni**: `gold.cubo_pipeline` bloqueaba por falta de `bronze.conagua_presas` en el ambiente local — resuelto corriendo el extractor+cargador real de DS-06/CONAGUA (ya existentes, de Emilio): 180 presas reales, `cubo_pipeline` → 11 filas ✅ · **Hallazgo abierto, no corregido aquí**: `cubo_pipeline` reporta DS-08 como `cobertura_pipeline='OK'` (36 filas) aunque sea fixture, porque su `_source` coincide con el que usaría una carga real — valida en concreto la preocupación de Deni Garrido sobre ambigüedad fixture/dato-real, pendiente de discutir con ella y Edgar Coronel · Entregados a C3 (Andrés González Habib) y C5 (Luis Téllez) el mismo dump de Gold (`gold_bug048_drivers_2026-09-05.sql`, 18 tablas) para no generar versiones distintas, y a Deni Garrido un dump más reciente (`gold_bug048_pipeline_2026-09-05.sql`, 19 tablas, incluye `cubo_pipeline`) para que valide US-113 de punta a punta sin esperar a Emilio — ambos dumps verificados con evidencia real (conteo de `COPY`/`DROP TABLE IF EXISTS` = tablas esperadas, filas cruzadas contra corrida en terminal) y con el caveat explícito de que todo es real salvo DS-08/CONAPO | Emilio Galnares responde con el extractor real de DS-08, o Diana/Edgar deciden adoptar la fuente alterna de GitHub antes del freeze · comunicar a Deni/Edgar el hallazgo de `cubo_pipeline` sobre DS-08 · gitignorar o mover fuera del repo los dumps `.sql` sueltos en la raíz (hallazgo de hoy, no estaban protegidos como sí lo está `*.dump`) | 🟡 SESNSP/D2 real y cerrado · CONAPO/DS-08 sigue abierto, no bloqueante para el freeze gracias a los dumps entregados |
+| `REQ-001` | `US-113`, `US-122b` | **Actualización el mismo día — CONAPO cerrado:** Emilio Galnares compartió el Parquet real de DS-08 (252,450 filas) por Teams. Verificado antes de programar (18 columnas de edad suman exacto `POB_TOTAL`, grano municipio×sexo×año) y construido `src/ingesta/cargar_bronze_conapo_real.py` (agrega sexo en el loader para no perder mitad de la población en el dedup de Silver, normaliza `_source` a `'DS-08_CONAPO'`) + default de `sources.yml` corregido a `'conapo'` (commit `19fecc4`). Verificado real contra Postgres: `comp_media` D2 sube de ~0.48 a ~0.62 y `d2_sin_dato` cae de ~36,700 a **0** en los 3 ciclos ✅ · Con esto **BUG-048 queda `fixed` de parte de C1** (SESNSP + CONAPO, los dos denominadores de D2); ya no aplica adoptar la fuente alterna de GitHub · Al sincronizar con `main` se encontró que esta alta compartía ID con una alta previa del PM sobre el mismo Gold empobrecido, ya con seguimiento de C3 (rerun de ML) — consolidadas en una sola fila en `Bug_Register.md` para no dejar dos altas activas con el mismo ID (mismo criterio que BUG-047/BUG-050, DEC-013) | Pendiente C5: importar el Gold regenerado a Cloud SQL y validar Superset — ahí cierra el bug completo | 🟢 C1 cerrado (SESNSP + CONAPO + cubo_pipeline) · pendiente despliegue de C5 |
 
 ## Evidencia incremental — 2026-09-04 · Fix ciclo por defecto en 7 dashboards + cct + st.html (C2, Manuel Serranía)
 
@@ -491,3 +526,23 @@ tags: [requirements, traceability, matrix]
 | `REQ-002` | `US-215b` | **13 de 13 casos ejecutados: 12 ✅, 1 ⚠️, 0 ❌.** Plan `DOC-USABILIDAD-DB0508` pasa a `status: approved`. Método de US-215a (Marina): verificar por datos/API lo verificable y **no marcar nada sin correrlo**. `2.4` cerrado con la prueba discriminante — **309 filas `SIN_DATO` sin un solo valor**, conviviendo con **60 ceros legítimos** en filas `OK`: el cero real existe y no se confunde con el hueco (R2) ✅ · `2.3` pivote `rowTotals`/`colTotals` en `false`, `/api/v1/chart/data` responde 180 filas ✅ · `2.1` **reescrito antes de ejecutarlo**: su esperado era anterior a BUG-047 y habría marcado falla falsa, hoy el Ciclo llega preseleccionado a propósito ✅ · regresión de índices por posición revisada: `link_db08` sigue apuntando a `-3`/`-4` correctos ✅ · `3.3` foco visible ✅ **con matiz que invalida la auditoría ingenua**: el indicador es `box-shadow`, no `outline` (que es `none`), y un `.focus()` programático no dispara `:focus-visible` · `3.2` ✅ **con comprobación humana**: el navegador automatizado no entregaba `Enter` a los tabs de React y habría dado un **falso negativo**; se dejó sin marcar hasta que la autora verificó a mano que `Tab`+`Enter` cambia de pestaña — era artefacto de medición, no defecto | — (§3.2 y el tema claro de §3.1 se cerraron el mismo día) | ✅ `US-215b` |
 | `REQ-002` | `US-213`, `US-214b` | **BUG-038 `fixed`** — eran **dos** defectos y por eso las dos hipótesis del 30-ago fallaron, cada una tapaba uno: `ROOT_ID` declarado `type: "TABS"` (Superset espera `ROOT` con el contenedor de tabs aparte) **y** un `GRID-<id>` interpuesto entre cada `TAB` y sus `ROW` (con tabs las filas cuelgan directo del TAB). Árbol corregido a `ROOT_ID(ROOT) → TABS-ROOT → TAB → ROW → CHART`; **cambio aditivo**, `_layout_grilla()` y los 8 tableros del camino plano intactos (suite 886 passed / 0 failed). **Los tests estaban en verde y mentían**: 3 codificaban la estructura defectuosa como la esperada —el registro decía 1— más 3 que dependían del GRID; los 6 reescritos con dos guardas nuevas por defecto. **Verificado en navegador real** contra Superset 6.1.0, que es la lección del bug: 6 tabs navegables con valores propios (D1 52.7 %/18, D4 30.9 %/17) y **los filtros globales llegando a los charts** — Jalisco → 0 de 7, contrastado contra `gold.cubo_driver`, no sólo contra la pantalla | Revisión de Manuel Serranía (dueño de la convención US-202) | ✅ |
 | `REQ-002` | `US-215b`, `US-213` | **BUG-051 dado de alta** (`low`, `open`; ID según DEC-013, BUG-050 era el máximo en `main` tras el sync). La etiqueta del tab activo de DB-05 queda en **4.07:1**, bajo el AA de 4.5:1 para texto normal. Es el acento de Superset, no un color propio, pero el texto lo introdujo US-213 y es el control con el que se navegan los 6 drivers. En el mismo barrido **30 de 32 nodos sí cumplen AA**. No se corrige por cuenta propia: el acento afecta a los 10 tableros y **`UX_Guidelines.md` está vacío con `source_of_truth: true`**, así que hoy no hay paleta oficial contra la cual ratificar un reemplazo | Decisión de Manuel (US-202) + sistema de diseño | 🟡 abierto |
+
+## Evidencia incremental — 2026-09-05 · US-004 cerrada: cola de validación resuelta y estado al día (PO)
+
+| REQ | Historias | Evidencia / decisión | Próxima validación | Estado |
+|---|---|---|---|---|
+| `REQ-007` | `US-004` | **Se resuelve el acuerdo pendiente de [[vault/13_Reports/US_Validation_Followup_2026-08-28]]**, que era el único ítem abierto de esta historia: *"resolver los acuerdos de la tabla, regenerar el tablero y cerrar TEST-002"*. De las **20 historias** que quedaron en la cola de validación del 28-ago, **8 cerraron** (`US-121a`, `US-122a`, `US-123a`, `US-124a`, `US-213`, `US-221`, `US-411`, `US-412`) y **12 están en revisión con PR mergeado**; **ninguna quedó en `in_progress` ni `planned`** ✅ · `TEST-002` (`validate_pm_dashboard.py`) en verde sobre el snapshot regenerado ✅ · El bloque §Estado del proyecto de esta matriz llevaba cifras de agosto ("0 REQ Done", "7/7 pendientes de ejecución") y se sustituyó por cifras **derivadas** de `Execution_Status` vía el generador, no capturadas a mano ✅ · La parte de **mantenimiento** de la historia no se declara terminada: pasa al rol rotativo de `US-005`, que es donde debe vivir | El Vault Steward de cada sprint refresca este bloque con el tablero | ✅ Entregable cerrado; el mantenimiento continúa bajo `US-005` |
+| `REQ-007` | `US-005` | **Rotación del Vault Steward creada**: [[vault/_Meta/Vault_Steward]] con rol, lista de verificación semanal y turnos asignados. **Se registra sin adornos que la rotación no operó en S1–S4** y se documenta el costo medible de esa ausencia, con los hallazgos de esta semana como evidencia: el hueco de `ownership.yml` que apareció **cinco veces**, `guia-ambiente-local/configuracion.env` versionado contra `Secrets_Policy`, la fila mal formada de `BUG-018` que contaba como abierta, tres documentos de ambiente local solapados contra la regla 1, y la colisión de `BUG-049` entre dos personas el mismo día ✅ · Cierra la mitigación de `RISK-006`, que dependía de "linter + steward rotativo" y sólo tenía la mitad | Turno de S6 corre la lista antes del freeze | ✅ Rol definido y turnos asignados |
+| `REQ-007` | `US-004`, `US-005` | **Estado `descoped` introducido** (`DEC-014`): `US-413`, `US-414` y `US-525a` salen del alcance sin marcarse como entregadas. El generador las reporta aparte y el validador exige que **alcance + recortadas = 91**, para que una historia no pueda desaparecer del tablero en silencio ✅ · Alcance 91 → 88, avance 73.5 % → 76.4 % sin afirmar ninguna entrega que no ocurrió | — | ✅ Aplicado y validado |
+
+
+## Evidencia incremental — 2026-09-05 · BUG-052: la suite de tableros de Streamlit es intermitente (PO)
+
+| REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
+|---|---|---|---|---|
+| `REQ-002` | `US-206`, `US-214b` | **`BUG-052` dado de alta** (`medium`, `open`; ID según `DEC-013`, `BUG-051` era el máximo en `main`). `tests/test_frontend_dashboards_streamlit.py` falla **2 de cada 6 corridas** sin que cambie el árbol, y **no siempre la misma prueba** — medido por **Marina García** sobre `f2ee9d2`, worktree limpio, mismo intérprete ✅ · Causa raíz **ya documentada en el propio fixture** (`superset_fake`, líneas 66-71): `AppTest` comparte `sys.modules` y `SUPERSET_URL` queda congelada de un puerto efímero ya apagado; la purga de módulos mitiga pero no cierra, y no se limpia `cache_resource` ✅ · **Corroborado de forma independiente antes del reporte**: el docstring del fixture `autouse` de `test_frontend_panel_ml_streamlit.py` ya decía que *"la fragilidad de esa suite es previa"* ✅ · **Corrección de mi propio diagnóstico:** lo declaré "no reproducible" tras **una sola corrida verde**, que es inferencia inválida sobre algo que falla 1 de cada 3. Volví a medir: 12 de 12 en macOS, así que no lo reproduzco aquí — pero eso acota la plataforma, no desmiente el defecto ✅ · **No lo introduce ni lo arregla el PR #234**: sin cambios entre `f2ee9d2` y la punta en ese archivo ni en `src/frontend/**` ✅ | C2 aplica el patrón que ya existe en el repo: limpiar `cache_data` **y** `cache_resource` antes de cada prueba | ⬜ Abierto, de C2 (Manuel Serranía) |
+## Evidencia incremental — 2026-09-05 · BUG-048 rerun ML sobre Gold post-BUG-045 (C3)
+
+| REQ | Historias | Evidencia / decisión de estado | Próxima validación | Estado |
+|---|---|---|---|---|
+| `REQ-003` | `US-302`, `US-311`, `US-313` | Dump definitivo C1 con CONAPO real importado: 136,046 features/3 ciclos, D1/D2 completos y nueve cubos. `loss="absolute_error"` mantiene MAE 0.141458; riesgo 0.0292–0.5717 y 0 escuelas sobre 0.6, porque ninguna caída predicha alcanza el 5 % ratificado. ML-02 F1 0.8333; 45,276 recomendaciones de cinco drivers (D1 2,843; D2 27,075; D3 2,104; D4 12,835; D6 419). `gold_bug048_final2_2026-09-05.sql` restaurado desde cero: ocho vistas + `cubo_pipeline`; SHA-256 `b8a3fc50a636a2943eb0bc25cbe495ed49914429a76838346e7ebcf6aaa5b32a` ✅ | C5 importa con backup y valida producción/Superset | 🟡 C3 completado; BUG-048 abierto hasta C5 |

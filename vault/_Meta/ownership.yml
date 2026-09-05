@@ -47,6 +47,10 @@ personas:
       # steward de contenido), pero vive en 04_UX_Design/, verde de C2. Path-scoped y
       # content-owner son cosas distintas; sin esto, el gate rechaza al dueño real del doc.
       - "vault/04_UX_Design/Accessibility.md"
+      # Mismo caso, hallado 2026-09-05 al desbloquear el caso 3.1 de US-215a de Marina:
+      # `UX_Guidelines.md` me declara owner en su frontmatter y ningun alcance lo cubria.
+      # Sexta aparicion del mismo hueco -- ver vault/_Meta/Vault_Steward.
+      - "vault/04_UX_Design/UX_Guidelines.md"
       - ".github/**"
 
   diana-alvarez:
@@ -482,6 +486,12 @@ criticos:
   "src/frontend/**": manuel-serrania
   "vault/02_Requirements/Traceability_Matrix.md": edgar-coronel
   "vault/10_Risk_Governance/**": edgar-coronel
+  # Hallazgo de Marina Garcia al revisar el PR #234 (2026-09-05): el gate lo dejo
+  # pasar sin un solo aviso aunque el PR fija el criterio de aceptacion de US-215a y
+  # US-215b -- se auto-concedio la ruta en el mismo commit en que la uso, y
+  # 04_UX_Design no estaba en criticos. Aviso, no veto: quien escriba las reglas de
+  # UX desde fuera de C2 pide revision del TL de C2.
+  "vault/04_UX_Design/**": manuel-serrania
   # dags/** es verde de C1 (Diana/Deni/Luis García/Emilio); se abre en amarillo a
   # edgar-jimenez para los callbacks de alerta de US-524b (BUG hallado 2026-09-03:
   # el hueco anterior le reprobaba el gate por "fuera de alcance" antes de llegar

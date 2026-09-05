@@ -24,7 +24,7 @@ tags: [qa, ml, celula-3, metricas]
 
 | modelo | tipo | metrica | valor | desviacion | baseline | mejora | ventanas |
 |---|---|---|---|---|---|---|---|
-| ML-01 | regresión | MAE | 0.0141 | 0.0012 | 0.0291 | 0.5155 | 3 |
+| ML-01 | regresión | MAE | 0.0150 | 0.0007 | 0.0291 | 0.4851 | 3 |
 | ML-02 | clasificación | F1 macro | 0.7731 | 0.0434 | 0.0534 | 13.8908 | 3 |
 | ML-03 | no supervisado | Silhouette (k=2) | 0.1086 | 0.0454 | nan | nan | 3 |
 
@@ -44,9 +44,9 @@ la cifra se vuelve significativa cuando Gold publique la etiqueta real.
 
 | ventana | modelo | ciclo_prueba | metrica | valor | baseline | mejora | n_entrena |
 |---|---|---|---|---|---|---|---|
-| 1 | ML-01 | 2021-2022 | MAE | 0.0128 | 0.0294 | 0.5654 | 160 |
-| 2 | ML-01 | 2022-2023 | MAE | 0.0138 | 0.0283 | 0.5128 | 240 |
-| 3 | ML-01 | 2023-2024 | MAE | 0.0157 | 0.0295 | 0.4682 | 320 |
+| 1 | ML-01 | 2021-2022 | MAE | 0.0145 | 0.0294 | 0.5085 | 160 |
+| 2 | ML-01 | 2022-2023 | MAE | 0.0145 | 0.0283 | 0.4881 | 240 |
+| 3 | ML-01 | 2023-2024 | MAE | 0.0160 | 0.0295 | 0.4588 | 320 |
 | 1 | ML-02 | 2021-2022 | F1 macro | 0.7475 | 0.0612 | 11.2094 | 160 |
 | 2 | ML-02 | 2022-2023 | F1 macro | 0.7376 | 0.0556 | 12.2763 | 240 |
 | 3 | ML-02 | 2023-2024 | F1 macro | 0.8342 | 0.0435 | 18.1867 | 320 |
@@ -63,14 +63,14 @@ renderiza en local para la demo, sin versionarlas.
 
 | entidad | escuelas | mae | desviacion_vs_global |
 |---|---|---|---|
-| 14 | 20 | 0.0200 | 0.2755 |
-| 19 | 20 | 0.0159 | 0.0158 |
-| 09 | 20 | 0.0155 | -0.0103 |
-| 15 | 20 | 0.0113 | -0.2810 |
+| 14 | 20 | 0.0183 | 0.1444 |
+| 19 | 20 | 0.0171 | 0.0714 |
+| 09 | 20 | 0.0167 | 0.0470 |
+| 15 | 20 | 0.0118 | -0.2627 |
 
 `desviacion_vs_global` es la diferencia relativa contra el MAE global de la ventana. La entidad con
-peor desempeño es **14**, con MAE 0.0200
-(+27.5% respecto al global).
+peor desempeño es **14**, con MAE 0.0183
+(+14.4% respecto al global).
 
 Importa porque un error global aceptable puede esconder una entidad en la que el modelo funciona
 mal, y las recomendaciones prescriptivas se emiten escuela por escuela.
@@ -79,9 +79,9 @@ mal, y las recomendaciones prescriptivas se emiten escuela por escuela.
 
 | tramo | escuelas | mae |
 |---|---|---|
-| ≤ 3 de 6 drivers | 3 | 0.0178 |
-| 4-5 de 6 | 22 | 0.0152 |
-| 6 de 6 | 55 | 0.0158 |
+| ≤ 3 de 6 drivers | 3 | 0.0244 |
+| 4-5 de 6 | 22 | 0.0130 |
+| 6 de 6 | 55 | 0.0167 |
 
 Responde la pregunta que el proyecto se hace explícitamente: **¿predecimos peor donde hay menos
 datos?** Si el error crece al bajar la completitud, el sistema es menos confiable justo en las
@@ -136,8 +136,8 @@ RMSE < 0.05 (5 puntos porcentuales); ML-02 F1 macro ≥
 
 | modelo | metrica | valor | umbral | cumple |
 |---|---|---|---|---|
-| ML-01 | MAE | 0.0141 | < 0.03 | ✅ sí |
-| ML-01 | RMSE | 0.0177 | < 0.05 | ✅ sí |
+| ML-01 | MAE | 0.0150 | < 0.03 | ✅ sí |
+| ML-01 | RMSE | 0.0187 | < 0.05 | ✅ sí |
 | ML-02 | F1 macro | 0.7731 | ≥ 0.6 | ✅ sí |
 | ML-03 | Silhouette | 0.1086 | ≥ 0.3 | ❌ **no** |
 

@@ -26,6 +26,11 @@ STATE_WEIGHT = {
     "in_review": 0.65,
     "blocked": 0.35,
     "done": 1.0,
+    # `descoped` = recortada del alcance por decisión del PO. No se entregó, así que
+    # NO puede pesar como `done`; pero tampoco es trabajo pendiente, así que sale del
+    # denominador en vez de arrastrar el avance hacia abajo. Se reporta aparte, con su
+    # decisión y su fecha, para que el recorte quede visible y no se lea como entrega.
+    "descoped": 0.0,
 }
 VALID_STATES = set(STATE_WEIGHT)
 SPRINT_DATES = {
@@ -738,6 +743,14 @@ def build_snapshot(root: Path) -> dict[str, Any]:
         except ValueError:
             story["age_days"] = 0
 
+    # Las historias recortadas salen del alcance ANTES de cualquier conteo, para que
+    # ni el avance, ni las células, ni la rúbrica, ni el readiness las cuenten como
+    # trabajo por hacer. Viajan aparte en `descoped`.
+    descoped = [story for story in stories if story["status"] == "descoped"]
+    stories = [story for story in stories if story["status"] != "descoped"]
+    if not stories:
+        raise ValueError("Todas las historias quedaron fuera de alcance; revisa Execution_Status.md.")
+
     counts = Counter(story["status"] for story in stories)
     progress = sum(STATE_WEIGHT[story["status"]] for story in stories) / len(stories)
     summary = {
@@ -748,6 +761,7 @@ def build_snapshot(root: Path) -> dict[str, Any]:
         "in_review": counts["in_review"],
         "blocked": counts["blocked"],
         "wip": counts["in_progress"] + counts["in_review"] + counts["blocked"],
+        "descoped": len(descoped),
         "progress": round(progress * 100, 1),
         "days_to_demo": max(0, (delivery_date - today).days),
     }
@@ -869,6 +883,7 @@ def build_snapshot(root: Path) -> dict[str, Any]:
         "summary": summary,
         "delivery": delivery,
         "stories": stories,
+        "descoped": descoped,
         "people": people,
         "cells": cells,
         "rubric": rubric,

@@ -85,3 +85,11 @@ _local/
 
 # ---- Dumps de Postgres (datos reales pesados, NUNCA versionar — CLAUDE.md) ----
 *.dump
+
+# ---- Volcados/parches sueltos generados por sesiones de debugging local (hallazgo BUG-048,
+# 2026-09-05): no son modelos dbt ni artefactos del repo, son evidencia/entregas puntuales por
+# Teams; mismo criterio que *.dump de arriba, nunca versionar ----
+/gold_bug048*.sql
+/gold_cubos_l2_*.sql
+/dbt/gold_bug048*.sql
+*.patch

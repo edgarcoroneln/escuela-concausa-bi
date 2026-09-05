@@ -325,8 +325,8 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 | `US-001` | Crear el repositorio nuevo y adaptar el va | ✅ Terminado | 100% | — | Cerrada 10 ago |
 | `US-002` | Cargar el PRD del profesor con criterios d | ✅ Terminado | 100% | — | Cerrada 10 ago |
 | `US-003` | Registrar a los 21 integrantes y crear sus | ✅ Terminado | 100% | — | Cerrada 10 ago |
-| `US-004` | Sembrar y mantener la Traceability_Matrix | 🔵 En revisión | 95% | Cerrar acuerdos del reporte de seguimiento | Junta de cierre |
-| `US-005` | Coordinar la rotacion del Vault Steward | ⬜ Por iniciar | 0% | — | Dom 30 ago |
+| `US-004` | Sembrar y mantener la Traceability_Matrix | 🔵 En revisión | 100% | Acuerdos del reporte de seguimiento resueltos; mantenimiento pasa a US-005 | PR 5 sep |
+| `US-005` | Coordinar la rotacion del Vault Steward | 🔵 En revisión | 100% | `Vault_Steward.md` con lista y turnos S5/S6 | PR 5 sep |
 | `US-006` | Preparar y ensayar el pitch de la demo en  | ⬜ Por iniciar | 0% | — | Mar 8 sep |
 
 **Estados válidos:** ⬜ Por iniciar · 🟡 En curso · 🔵 En revisión (PR abierto) · ✅ Terminado · 🔴 Bloqueado
