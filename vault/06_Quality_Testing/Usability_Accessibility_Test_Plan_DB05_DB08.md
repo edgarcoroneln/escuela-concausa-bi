@@ -71,7 +71,7 @@ Superset embebido (ver exclusiones en §Alcance).
 | Caso | Pasos | Esperado | Resultado (✅/⚠️/❌/⏳) | Bug |
 |---|---|---|---|---|
 | 3.1 | Verificar contraste de texto (tiles, tablas, filtros) contra su fondo | Contraste AA (≥ 4.5:1 texto normal) sobre color y fondo **efectivos**, en los **dos temas** (DEC-016) | ⚠️ **medido por separado en cada tablero (2026-09-05)**. **DB-05** — claro 31/34 · oscuro 30/32. **DB-08** — claro **1085/1209**, oscuro **1208/1209**. **Todo lo que reprueba es color heredado de Superset, ninguno lo estiliza FARO** → por DEC-016 son limitación conocida y no bloquean: `Published` (2.16 claro), `Edit dashboard` (3.07 claro / 3.41 oscuro) y, en DB-08, **122 celdas `pvtVal` del pivote** con el acento `#2893b3` sobre blanco a **3.55:1**. Verificado que el YAML de DB-08 **no declara ningún color ni formato condicional** —sólo estructura— así que el color lo pone Superset en línea. La etiqueta del tab activo de DB-05 sigue en 3.55/4.07 → **BUG-051**, reclasificado por DEC-016 como limitación que **ya no bloquea** US-215b. **En oscuro el pivote sí pasa**: el problema es exclusivo del tema claro | BUG-051 · BUG-056 |
-| 3.2 | Navegar los controles propios de Superset (filtros nativos, tabs, orden de columnas de tabla) solo con teclado (Tab/Enter/flechas) | Todos los controles son alcanzables y operables sin mouse | ⚠️ **parcial en DB-08 (2026-09-05)** · ✅ DB-05. **DB-05** (4-sep): 48 enfocables, 6/6 tabs y 3/3 filtros en el orden de tabulación; activación `Tab`+`Enter` **verificada a mano por Monserrat Xcaret Miranda Olivas**. **DB-08** (5-sep): **1056 enfocables y 5/5 filtros globales alcanzables** (Ciclo, Entidad, Nivel, Municipio, Driver) — el tablero **no tiene tabs**, así que el esperado de DB-05 no aplica aquí. **Activación en DB-08: pendiente de comprobación humana**, por el mismo artefacto ya documentado — el navegador automatizado no entrega `Enter` ni clic a los componentes React de Superset, aunque sí mueve el foco; no se marca ✅ ni ❌ para no reportar un falso negativo. Salvedad heredada: las flechas ← → no navegan entre tabs (patrón ARIA incompleto de Superset) | |
+| 3.2 | Navegar los controles propios de Superset (filtros nativos, tabs, orden de columnas de tabla) solo con teclado (Tab/Enter/flechas) | Todos los controles son alcanzables y operables sin mouse | ✅ **en los dos tableros (2026-09-05)**. **DB-05** (4-sep): 48 enfocables, 6/6 tabs y 3/3 filtros en el orden de tabulación; activación `Tab`+`Enter` **verificada a mano por Monserrat Xcaret Miranda Olivas**. **DB-08** (5-sep): **1056 enfocables y 5/5 filtros globales alcanzables** (Ciclo, Entidad, Nivel, Municipio, Driver) — el tablero **no tiene tabs**, así que el esperado de DB-05 no aplica aquí. **Activación verificada a mano por Monserrat Xcaret Miranda Olivas** (2026-09-05): `Tab` hasta el filtro *Ciclo escolar* + `Enter` **sí abre el desplegable**. La comprobación humana era necesaria por el artefacto ya documentado — el navegador automatizado no entrega `Enter` ni clic a los componentes React de Superset aunque sí mueva el foco, así que habría reportado un **falso negativo**, igual que en DB-05 el 4-sep. Salvedad heredada: las flechas ← → no navegan entre tabs (patrón ARIA incompleto de Superset) | |
 | 3.3 | Verificar foco visible al tabular por los controles | El elemento con foco tiene un indicador visual claro | ✅ **en los dos tableros**. DB-05 (4-sep) y **DB-08 (5-sep)**: tabulando con `Tab` real el elemento activo cumple `:focus-visible` y pinta el mismo anillo `box-shadow: rgb(37,128,155) 0 0 0 2px`. `outline-style` es `none`: el indicador es la sombra, no el outline — quien audite mirando sólo `outline` concluiría falsamente que no hay foco visible. Un `.focus()` programático **no** dispara `:focus-visible` y no sirve para este caso |
 
 ## Convención de resultados
@@ -97,10 +97,9 @@ contraste que el barrido del 4-sep no alcanzó.
 | | Casos |
 |---|---|
 | **Ejecutados** | **13 de 13**, ahora con §3 medido en **ambos** tableros |
-| ✅ pasan | **12** — 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.1, 2.2, 2.3, 2.4, 3.3 y 3.2 en DB-05 |
+| ✅ pasan | **12** — 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.1, 2.2, 2.3, 2.4, 3.2 y 3.3, **los dos tableros** |
 | ⚠️ pasan con observación | 1 — 3.1 (contraste heredado: BUG-051 · BUG-056) |
 | ❌ fallan | **0** |
-| ⏳ pendiente puntual | activación por teclado **en DB-08** (§3.2), por artefacto de medición |
 
 ### Lo que cambió respecto a la pasada del 4-sep
 
@@ -119,12 +118,13 @@ contraste que el barrido del 4-sep no alcanzó.
   bloquea — pero pesa más que el chrome, porque son los valores del explorador.
 - **BUG-051 dejó de bloquear** por DEC-016, sin trabajo de por medio.
 
-### Lo que queda pendiente y por qué
+### El §3.2 volvió a cerrarse con comprobación humana, y volvió a hacer falta
 
-La **activación por teclado en DB-08** (§3.2). El navegador automatizado no entrega `Enter` ni clic
-a los componentes React de Superset —sí mueve el foco—, y con ese instrumento no se puede separar un
-defecto de un artefacto de medición. El 4-sep el mismo caso en DB-05 habría dado un **falso
-negativo** de no haberse comprobado a mano. Se deja sin marcar hasta repetir esa comprobación.
+El navegador automatizado no entrega `Enter` ni clic a los componentes React de Superset —sí mueve
+el foco—, así que habría reportado un **falso negativo** por segunda vez. Se dejó sin marcar hasta
+que la autora verificó a mano que `Tab` + `Enter` abre el desplegable del filtro *Ciclo escolar*.
+Es el mismo patrón que en DB-05 el 4-sep: cuando el instrumento no puede distinguir un defecto de
+su propia limitación, el caso no se marca — se comprueba.
 
 - **Bugs abiertos:** [[vault/06_Quality_Testing/Bug_Register]] — **BUG-051** y **BUG-056**, los dos
   limitación conocida por DEC-016. **BUG-038** cerrado en la pasada anterior.

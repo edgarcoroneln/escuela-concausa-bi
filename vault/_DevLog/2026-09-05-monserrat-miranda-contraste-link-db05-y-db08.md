@@ -123,9 +123,10 @@ contenido central del tablero. Vale que quede dicho aunque la regla no lo bloque
 
 ## Bloqueantes
 
-- **Comprobación humana pendiente:** activación por teclado de los filtros de DB-08 (§3.2). El
-  navegador automatizado no entrega `Enter` a los componentes React; marcarlo sin comprobar habría
-  dado un falso negativo, como casi ocurre el 4-sep en DB-05.
+Ninguno. El único pendiente de la sesión —la activación por teclado en DB-08— se cerró con
+comprobación humana: `Tab` hasta *Ciclo escolar* + `Enter` abre el desplegable. Hizo falta por
+segunda vez: el navegador automatizado no entrega `Enter` a los componentes React de Superset y
+habría reportado un falso negativo, igual que el 4-sep en DB-05.
 
 ## Hallazgos para otros
 
@@ -145,5 +146,5 @@ contenido central del tablero. Vale que quede dicho aunque la regla no lo bloque
 
 ## Próximos pasos
 
-1. Comprobación humana de §3.2 en DB-08.
-2. PR con Manuel como reviewer de apoyo (no se tocó herramienta compartida).
+1. PR con Manuel como reviewer de apoyo (no se tocó herramienta compartida).
+2. Que el PM mueva `US-215b` a `done`: sus dos condiciones declaradas ya se cumplieron.
