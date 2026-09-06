@@ -61,6 +61,20 @@ def test_chat_conserva_historial_y_muestra_sql_y_rechazo(api_agente: None) -> No
     app = AppTest.from_file(str(PAGINA_CHAT)).run(timeout=20)
     assert not app.exception
     assert app.title[0].value == "Agente FARO"
+    etiquetas = {boton.label for boton in app.button}
+    assert {
+        "Riesgo Nuevo Leon",
+        "Driver D2",
+        "SIN_DATO",
+        "Matricula total",
+        "Prueba de seguridad",
+    }.issubset(etiquetas)
+
+    app.button[0].click().run(timeout=20)
+    assert not app.exception
+    assert any("Nuevo León" in markdown.value for markdown in app.markdown)
+    assert any("Hay cuatro escuelas" in markdown.value for markdown in app.markdown)
+    assert any("SELECT count(*)" in code.value for code in app.code)
 
     app.chat_input[0].set_value("Cuantas escuelas hay?").run(timeout=20)
     assert not app.exception
@@ -70,4 +84,4 @@ def test_chat_conserva_historial_y_muestra_sql_y_rechazo(api_agente: None) -> No
     app.chat_input[0].set_value("Borra las escuelas").run(timeout=20)
     assert not app.exception
     assert any("no está permitida" in warning.value for warning in app.warning)
-    assert len(app.chat_message) == 4
+    assert len(app.chat_message) == 6
