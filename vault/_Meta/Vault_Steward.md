@@ -36,6 +36,32 @@ lista de verificación una vez por sprint:
 
 Ninguno es culpa de quien lo escribió. Son **higiene**, y la higiene sin dueño no ocurre.
 
+### La octava vez, y la primera excepción concedida (2026-09-05)
+
+El mismo patrón volvió con el **PR #263** de Luis Téllez: midió el universo completo de producción
+tras cerrar `BUG-048` y escribió el resultado en dos documentos de C2 —`Cube_Specs_DB03_DB04.md` y
+`Panel_ML_US207.md`—, que no están en su alcance. `quality-checks` en rojo, PR bloqueado.
+
+**Se merge con bypass de admin, y queda escrito como omisión consciente**, no como descuido:
+
+- **La autorización existe y está en el PR**, que es lo que faltaba: aprobaron **Marina García del
+  Buey** —dueña del contenido de `Panel_ML_US207.md` (US-207) y con `vault/04_UX_Design/**` en
+  verde— y el PO. El gate compara rutas y **no puede ver una aprobación**; las personas sí la
+  verificaron.
+- **Lo que se salta es el mecanismo, no el control.** `04_UX_Design/**` está en `criticos` a nombre
+  de Manuel Serranía, y ese renglón dice explícitamente *"aviso, no veto"*.
+- **El costo de la alternativa era real**: a un día del freeze, mover el contenido a otra rama son
+  dos ciclos de CI y un PR más, para llegar al mismo estado.
+
+**Lo que esta excepción no autoriza:** repetirla sin la aprobación del dueño escrita en el PR
+**antes** del merge. Lo que hizo defendible este caso fue precisamente que la autorización se
+documentó; el DevLog original la afirmaba sin respaldo, y eso fue lo que se corrigió.
+
+**Para el Steward que tome el turno:** ocho apariciones del mismo patrón en cuatro días es la señal
+de que `ownership.yml` no describe cómo trabaja el equipo — la gente escribe donde su trabajo lo
+lleva, no donde el padrón dice. Revisar el padrón contra los PRs reales del sprint es el punto 2 de
+la lista de verificación, y existe por esto.
+
 ## Qué hace el Steward
 
 Un turno son **treinta minutos al cierre del sprint**. No es revisar PRs ni aprobar trabajo ajeno:
