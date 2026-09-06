@@ -1,10 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-09-06T22:29:24+00:00",
+    "generated_at": "2026-09-06T23:05:01+00:00",
     "generated_date": "2026-09-06",
-    "commit": "ad43ed6",
-    "branch": "main",
-    "working_tree": "clean",
+    "commit": "2d9b90b",
+    "branch": "dev/edgar-coronel",
+    "working_tree": "modified",
     "source_fingerprint": "9cda11ec541a",
     "source": "Fuentes canónicas del vault",
     "offline": true,
@@ -3662,10 +3662,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 39,
-        "devlogs": 50,
+        "devlogs": 51,
         "active_us": 6,
-        "activity": 95,
-        "signal": "39 PR · 50 DevLog · 6 US activas"
+        "activity": 96,
+        "signal": "39 PR · 51 DevLog · 6 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
