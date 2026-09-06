@@ -130,12 +130,12 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-09-06T00:28:43+00:00",
+    "generated_at": "2026-09-06T01:24:58+00:00",
     "generated_date": "2026-09-05",
-    "commit": "70fb30d",
+    "commit": "f071b80",
     "branch": "dev/edgar-coronel",
     "working_tree": "modified",
-    "source_fingerprint": "90c474375684",
+    "source_fingerprint": "19c28794d7ed",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -432,8 +432,8 @@
     {
       "id": "US-114",
       "title": "Optimizar consultas y crear índices",
-      "owner": "Deni Garrido Fragoso",
-      "owner_short": "Deni G.",
+      "owner": "Diana Aracely Alvarez Varela",
+      "owner_short": "Diana A.",
       "level": "Medio",
       "sprint": "S5",
       "req": "REQ-001",
@@ -441,10 +441,10 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "Sin PR ni commit de índices/optimización de consultas — auditoría 2026-09-03",
-      "updated": "2026-09-03",
-      "objective": "Perfilar queries lentas de dashboards y API; indices en Postgres; documentar el antes/despues.",
-      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
+      "evidence": "Reasignada a Diana Alvarez el 2026-09-05 por decisión del PO (era de Deni Garrido). Criterio: Deni tiene US-113 en revisión y Diana cerró sus 6 historias al 100 %, así que la capacidad libre está de su lado; y el entregable —índices y optimización de consultas— cae en dbt/, que es su verde. Sin dependencias: el Gold existe y los 9 cubos están materializados. Valor concreto para el 9: los tableros consultan cubos con 45,276 filas en producción, no las 145 de fixtures",
+      "updated": "2026-09-05",
+      "objective": "Optimizar consultas y crear índices",
+      "deliverable": "No documentado",
       "age_days": 0
     },
     {
@@ -1505,8 +1505,8 @@
       "blocked_since": "—",
       "evidence": "Dada de alta el 2026-09-05 por decisión del PO. El hueco existía desde que se decidió contenerizar FARO Web y la historia nunca se creó: US-206 (shell y embebido, Manuel Serranía) y US-207 (panel de ML, Marina García) están construidas y no se pueden mostrar, porque la raíz de la URL pública devuelve 404, no existe docker/frontend.Dockerfile y no hay servicio de frontend en docker-compose.yml. Alcance: Dockerfile del frontend, servicio en compose, despliegue a Cloud Run y el CORS de Superset para que acepte el embebido desde ese origen — sin eso, AC-002.1 no se cumple por más que la página exista. Riesgo asumido al darla de alta a 3 días de la demo: si no alcanza, el plan B ya está escrito en vault/01_Product/Guion_Demo_US006 — la demo corre sobre Superset y la API por separado, y se les avisa a Manuel y a Marina antes del ensayo del lunes, no en la sala",
       "updated": "2026-09-05",
-      "objective": "Contenerizar y desplegar FARO Web en Cloud Run",
-      "deliverable": "No documentado",
+      "objective": "Que FARO Web se vea en la URL pública. Hoy la raíz devuelve 404.",
+      "deliverable": "docker/frontend.Dockerfile + servicio en docker-compose.yml + despliegue a Cloud Run + CORS de Superset para que acepte el embebido desde ese origen",
       "age_days": 0
     },
     {
@@ -1746,8 +1746,8 @@
     {
       "id": "US-525c",
       "title": "Runbook de rollback de Superset y agente",
-      "owner": "Edward Ulysses Ruiz Bustillos",
-      "owner_short": "Edward R.",
+      "owner": "Marina García del Buey",
+      "owner_short": "Marina d.",
       "level": "Bajo",
       "sprint": "S6",
       "req": "REQ-005",
@@ -1755,10 +1755,10 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "Sin PR ni commit de runbook de rollback de Superset/agente (Edward Ruiz) — auditoría 2026-09-03",
-      "updated": "2026-09-03",
-      "objective": "Procedimiento probado de rollback para Superset y el agente.",
-      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
+      "evidence": "Reasignada a Marina García el 2026-09-05 por decisión del PO (era de Edward Ruiz, 14 días sin PR mergeado y con 4 historias abiertas). Criterio: es documentación sin dependencias —Superset ya está desplegado con SSO— y Marina es quien más conoce Superset después de esta semana. El entregable vive en vault/08_CICD_DevOps/, alcance de C5, así que se le abrió sólo ese archivo en ownership.yml; C5 sigue en criticos y el gate le pedirá su revisión. La reasignación no es un juicio sobre Edward: es que a 3 días de la demo una historia sin arrancar necesita a alguien con capacidad hoy",
+      "updated": "2026-09-05",
+      "objective": "Runbook de rollback de Superset y agente",
+      "deliverable": "No documentado",
       "age_days": 0
     }
   ],
@@ -1958,17 +1958,16 @@
       "assigned_story_ids": [
         "US-111",
         "US-112",
-        "US-113",
-        "US-114"
+        "US-113"
       ],
       "pr_count": 9,
       "pr_open": 1,
       "pr_merged": 8,
-      "stories": 4,
+      "stories": 3,
       "done": 2,
       "wip": 1,
       "blocked": 0,
-      "progress": 66.2
+      "progress": 88.3
     },
     {
       "name": "Diana Aracely Alvarez Varela",
@@ -1991,16 +1990,17 @@
         "US-103",
         "US-104",
         "US-105",
-        "US-106"
+        "US-106",
+        "US-114"
       ],
       "pr_count": 28,
       "pr_open": 0,
       "pr_merged": 27,
-      "stories": 6,
+      "stories": 7,
       "done": 6,
       "wip": 0,
       "blocked": 0,
-      "progress": 100.0
+      "progress": 85.7
     },
     {
       "name": "Edgar Edmundo Coronel Navarrete",
@@ -2084,17 +2084,16 @@
         "US-521c",
         "US-522c",
         "US-523c",
-        "US-524c",
-        "US-525c"
+        "US-524c"
       ],
       "pr_count": 3,
       "pr_open": 0,
       "pr_merged": 3,
-      "stories": 5,
+      "stories": 4,
       "done": 1,
       "wip": 2,
       "blocked": 0,
-      "progress": 46.0
+      "progress": 57.5
     },
     {
       "name": "Eloisa González Rubio",
@@ -2383,16 +2382,17 @@
         "US-211a",
         "US-212",
         "US-214a",
-        "US-215a"
+        "US-215a",
+        "US-525c"
       ],
       "pr_count": 13,
       "pr_open": 0,
       "pr_merged": 13,
-      "stories": 5,
+      "stories": 6,
       "done": 3,
       "wip": 2,
       "blocked": 0,
-      "progress": 80.0
+      "progress": 66.7
     },
     {
       "name": "Monserrat Xcaret Miranda Olivas",
@@ -2529,7 +2529,8 @@
         "Alejandro Velázquez Mendoza",
         "Edgar Ulises Jiménez López",
         "Edward Ulysses Ruiz Bustillos",
-        "Luis Téllez Domínguez"
+        "Luis Téllez Domínguez",
+        "Marina García del Buey"
       ],
       "stories": 20,
       "done": 7,
@@ -2905,47 +2906,6 @@
     "current_sprint": "S5",
     "people": [
       {
-        "name": "Diana Aracely Alvarez Varela",
-        "cell": "Célula 1",
-        "engagement": 100.0,
-        "commits": 105,
-        "prs_merged": 27,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S3": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
         "name": "Emilio Galnares Ruiz",
         "cell": "Célula 1",
         "engagement": 100.0,
@@ -3233,6 +3193,88 @@
         }
       },
       {
+        "name": "Deni Garrido Fragoso",
+        "cell": "Célula 1",
+        "engagement": 88.3,
+        "commits": 40,
+        "prs_merged": 8,
+        "prs_open": 1,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 2,
+            "done": 1,
+            "state": "wip"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Diana Aracely Alvarez Varela",
+        "cell": "Célula 1",
+        "engagement": 85.7,
+        "commits": 105,
+        "prs_merged": 27,
+        "prs_open": 0,
+        "risk": "retraso",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 2,
+            "done": 1,
+            "state": "risk"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
         "name": "Alejandro Velázquez Mendoza",
         "cell": "Célula 5",
         "engagement": 82.5,
@@ -3264,47 +3306,6 @@
           "S5": {
             "n": 1,
             "done": 0,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Marina García del Buey",
-        "cell": "Célula 2",
-        "engagement": 80.0,
-        "commits": 42,
-        "prs_merged": 13,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 3,
-            "done": 1,
             "state": "wip"
           },
           "S6": {
@@ -3520,13 +3521,13 @@
         }
       },
       {
-        "name": "Deni Garrido Fragoso",
-        "cell": "Célula 1",
-        "engagement": 66.2,
-        "commits": 40,
-        "prs_merged": 8,
-        "prs_open": 1,
-        "risk": "retraso",
+        "name": "Marina García del Buey",
+        "cell": "Célula 2",
+        "engagement": 66.7,
+        "commits": 42,
+        "prs_merged": 13,
+        "prs_open": 0,
+        "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
             "n": 0,
@@ -3534,29 +3535,29 @@
             "state": "idle"
           },
           "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
             "n": 1,
             "done": 1,
             "state": "done"
           },
-          "S3": {
-            "n": 2,
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 3,
             "done": 1,
             "state": "wip"
           },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
+          "S6": {
             "n": 1,
             "done": 0,
-            "state": "risk"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
+            "state": "planned"
           }
         }
       },
@@ -3598,6 +3599,47 @@
             "n": 2,
             "done": 0,
             "state": "wip"
+          }
+        }
+      },
+      {
+        "name": "Edward Ulysses Ruiz Bustillos",
+        "cell": "Célula 5",
+        "engagement": 57.5,
+        "commits": 5,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "retraso",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 2,
+            "done": 1,
+            "state": "wip"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 1,
+            "done": 0,
+            "state": "risk"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
           }
         }
       },
@@ -3716,47 +3758,6 @@
             "n": 1,
             "done": 0,
             "state": "wip"
-          },
-          "S6": {
-            "n": 1,
-            "done": 0,
-            "state": "planned"
-          }
-        }
-      },
-      {
-        "name": "Edward Ulysses Ruiz Bustillos",
-        "cell": "Célula 5",
-        "engagement": 46.0,
-        "commits": 5,
-        "prs_merged": 3,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 2,
-            "done": 1,
-            "state": "wip"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
           },
           "S6": {
             "n": 1,
@@ -4179,8 +4180,8 @@
     },
     {
       "id": "US-114",
-      "objective": "Perfilar queries lentas de dashboards y API; indices en Postgres; documentar el antes/despues.",
-      "owner": "Deni Garrido Fragoso",
+      "objective": "Optimizar consultas y crear índices",
+      "owner": "Diana Aracely Alvarez Varela",
       "cell": "Célula 1 · Data Engineering & Quality",
       "sprint": "S5",
       "status": "planned",
@@ -4332,8 +4333,8 @@
     },
     {
       "id": "US-525c",
-      "objective": "Procedimiento probado de rollback para Superset y el agente.",
-      "owner": "Edward Ulysses Ruiz Bustillos",
+      "objective": "Runbook de rollback de Superset y agente",
+      "owner": "Marina García del Buey",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
       "sprint": "S6",
       "status": "planned",
@@ -4341,7 +4342,7 @@
     },
     {
       "id": "US-526",
-      "objective": "Contenerizar y desplegar FARO Web en Cloud Run",
+      "objective": "Que FARO Web se vea en la URL pública. Hoy la raíz devuelve 404.",
       "owner": "Luis Téllez Domínguez",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
       "sprint": "S6",
