@@ -5,9 +5,8 @@
 -- Acotado a SCOPE_ENTIDADES (Data_Model.md §7) heredado del INNER JOIN contra dim_escuela
 -- (que ya viene filtrada) -- no se repite el filtro aquí, un solo lugar de verdad.
 --
--- cve_mun se toma de dim_escuela (origen documentado DS-02, Data_Model.md §6), NO de
--- silver.matricula directamente -- a diferencia de gold.features_escuela (US-104), que por ser
--- tabla de entrenamiento ML tomó cve_mun de DS-01 como simplificación aceptada en su momento.
+-- cve_mun se toma de dim_escuela (origen documentado DS-02, Data_Model.md §6), igual que
+-- gold.features_escuela desde ADR-011. Ambos productos comparten el mismo universo CCT x ciclo.
 --
 -- D1-D4 replican la misma lógica real que gold.features_escuela (mismas fuentes Silver,
 -- mismo ADR-005 para D3/D4). D6 aire ya es real (ADR-006, US-105): interpolación IDW de

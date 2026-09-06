@@ -1,5 +1,6 @@
 -- gold.features_escuela (US-104) — contrato Célula 1 -> Célula 3 (Data_Model.md §5.3/§4.4).
--- Grano: CCT x ciclo. Fuente de la llave y del target: silver.matricula (US-111, Deni).
+-- Grano: CCT x ciclo. El target procede de silver.matricula (US-111, Deni); la pertenencia
+-- al universo Gold y cve_mun proceden de dim_escuela/DS-02 (ADR-011).
 --
 -- Estado de los 6 drivers en esta primera versión:
 --   D1 pobreza          -- real, silver.rezago_municipio (DS-07) por cve_mun
@@ -25,11 +26,9 @@
 -- cobertura 'OK', acordada con Andrés González Habib/C3 -- ver el comentario de la CTE
 -- `con_driver_dominante` más abajo para la especificación completa.
 --
--- FIX (2026-08-19, Diana): Data_Model.md §7 es explícito -- "el filtro WHERE cve_ent IN
--- SCOPE_ENTIDADES se aplica únicamente en la frontera Silver -> Gold (Y EN FEATURES/MODELOS/
--- DASHBOARDS que derivan de Gold)". Esta tabla es Gold y es justo "features" -- debía llevar
--- el filtro desde el día 1 y no lo llevaba. Corregido aquí filtrando por cve_ent de
--- silver.matricula (mismo origen ya aceptado para cve_mun en esta tabla, ver nota de arriba).
+-- ADR-011 (2026-09-05): features y fact_escuela_ciclo comparten exactamente el universo
+-- CCT x ciclo. dim_escuela (DS-02) decide qué CCT pertenece a Gold y aporta el cve_mun
+-- canónico; un CCT sólo presente en DS-01 queda fuera de ambos productos.
 
 with matricula_ciclo as (
 
@@ -40,11 +39,9 @@ with matricula_ciclo as (
     select
         cct,
         ciclo as id_ciclo,
-        cve_mun,
         alumnos_total as matricula_total,
         cast(split_part(ciclo, '-', 1) as int) as anio_inicio
     from {{ ref('matricula') }}
-    where cve_ent in {{ scope_entidades() }}
 
 ),
 
@@ -75,12 +72,32 @@ base as (
     select
         cct,
         id_ciclo,
-        cve_mun,
         matricula_total,
         (cast(matricula_total as double precision) / matricula_ciclo_anterior) - 1.0
             as target_variacion_matricula
     from con_target
     where matricula_ciclo_anterior is not null
+
+),
+
+escuela_scope as (
+
+    -- Dimensión canónica, ya acotada a SCOPE_ENTIDADES.
+    select cct, cve_mun
+    from {{ ref('dim_escuela') }}
+
+),
+
+con_municipio as (
+
+    select
+        b.cct,
+        b.id_ciclo,
+        e.cve_mun,
+        b.matricula_total,
+        b.target_variacion_matricula
+    from base b
+    inner join escuela_scope e on e.cct = b.cct
 
 ),
 
@@ -360,7 +377,7 @@ ensamblado as (
         d6.d6_aire,
         coalesce(d6.d6_cobertura, 'SIN_DATO') as d6_cobertura,
         b.target_variacion_matricula
-    from base b
+    from con_municipio b
     left join d3_d4 dd on dd.cct = b.cct
     left join d1 on d1.cve_mun = b.cve_mun
     left join d2 on d2.cve_mun = b.cve_mun

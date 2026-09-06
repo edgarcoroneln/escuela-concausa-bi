@@ -48,8 +48,8 @@ models:
       - name: cve_mun
         description: >
           Clave INEGI de municipio a 5 caracteres (US-325: expuesta a partir de aquí para
-          análisis geográfico de cobertura parcial; misma fuente que cct, silver.matricula).
-          Ya se usaba internamente como llave de join de D1/D2, nunca antes en el contrato.
+          análisis geográfico de cobertura parcial). Proviene de gold.dim_escuela / DS-02,
+          igual que el universo CCT x ciclo de gold.fact_escuela_ciclo (ADR-011).
         data_tests:
           - not_null
           - relationships:
