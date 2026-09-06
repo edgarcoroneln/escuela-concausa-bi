@@ -21,3 +21,4 @@ tags: [moc, qa, testing]
 | [[vault/06_Quality_Testing/Guion_E2E_Verificacion_4]] | Guion de la verificación #4 del ensayo E2E: ML-01 sirviendo por API (C3) |
 | [[vault/06_Quality_Testing/Usability_Accessibility_Test_Plan_DB05_DB08]] | Plan de pruebas de usabilidad/accesibilidad de DB-05/DB-08 (US-215b) |
 | [[vault/06_Quality_Testing/Usability_Accessibility_Test_Plan_DB03_DB04]] | Plan de pruebas de usabilidad/accesibilidad de DB-03/DB-04, incluido el drill-down cruzado (US-215a) |
+| [[vault/06_Quality_Testing/Plan_Pruebas_Exhaustivas_Pre_Demo]] | Recorrido de **la aplicación desplegada** con Playwright, repartido entre cinco personas sin traslape: API (Eloisa), sesión y RBAC (Karla), los 10 tableros (Monserrat), corrección visual (Oscar) y coherencia del dato de punta a punta (Diana). Trae el prompt sugerido, dónde registrar resultados y a quién se asigna cada bug |
