@@ -33,7 +33,8 @@ from catalogo_client import (
     obtener_ficha,
 )
 from prediccion_client import (
-    UMBRAL_RIESGO,
+    ANCLA_SIGMOIDE,
+    LINEA_DE_ALERTA,
     EscuelaNoEncontrada,
     Prediccion,
     obtener_prediccion,
@@ -178,31 +179,41 @@ def _render_ficha(ficha: FichaEscuela, nombre_municipio: str, pred: Prediccion) 
 
 
 def _render_ml01(pred: Prediccion) -> None:
-    """ML-01 — índice de riesgo contra el umbral de DEC-006."""
+    """ML-01 — índice de riesgo contra la línea de alerta de DEC-019.
+
+    **Dos números distintos, y por eso se dicen por separado.** El ancla de calibración
+    (0.60 ≡ perder 5 %) explica qué *significa* el índice; la línea de alerta (0.50) decide
+    *cuándo se enciende*. Hasta DEC-019 eran el mismo valor y la página los presentaba como
+    uno solo, lo que hacía imposible bajar la alerta sin parecer que se recalibraba el
+    modelo.
+    """
     st.subheader("ML-01 · Índice de riesgo")
     izq, der = st.columns([1, 2])
     with izq:
         st.metric(
             "Índice de riesgo",
             f"{pred.indice_riesgo:.4f}",
-            delta="En riesgo" if pred.en_riesgo else "Bajo el umbral",
+            delta="Requiere atención" if pred.en_riesgo else "Bajo la línea de alerta",
             delta_color="inverse" if pred.en_riesgo else "off",
         )
     with der:
         if pred.en_riesgo:
             st.error(
-                f"Cruza el umbral de **{UMBRAL_RIESGO:.2f}** (DEC-006): el modelo proyecta "
-                "una pérdida de **5 % o más** de su matrícula."
+                f"Cruza la línea de alerta de **{LINEA_DE_ALERTA:.2f}** (DEC-019): el modelo "
+                "proyecta una pérdida de **~3.4 % o más** de su matrícula."
             )
         else:
             st.success(
-                f"Por debajo del umbral de **{UMBRAL_RIESGO:.2f}** (DEC-006): el modelo "
-                "**no** proyecta una pérdida de 5 % o más."
+                f"Por debajo de la línea de alerta de **{LINEA_DE_ALERTA:.2f}** (DEC-019): "
+                "el modelo **no** proyecta una pérdida de ~3.4 % o más."
             )
         st.caption(
-            "El umbral no es arbitrario: la sigmoide de `src/modelos/riesgo.py` está "
-            "calibrada con dos anclas de negocio — matrícula estable → 0.30, y perder "
-            "5 % → 0.60."
+            f"Dos números distintos. La **calibración** no cambia: la sigmoide de "
+            f"`src/modelos/riesgo.py` está fijada por matrícula estable → 0.30 y perder 5 % "
+            f"→ {ANCLA_SIGMOIDE:.2f}. La **línea de alerta** sí bajó a "
+            f"{LINEA_DE_ALERTA:.2f}, porque {ANCLA_SIGMOIDE:.2f} era inalcanzable en "
+            "educación básica: el máximo real es 0.5717 (−4.53 %), y la deserción nacional "
+            "es 0.6 % en primaria y 3.7 % en secundaria."
         )
 
 

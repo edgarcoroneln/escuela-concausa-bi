@@ -104,19 +104,42 @@ def test_un_cluster_no_entero_se_rechaza(cliente) -> None:
         )
 
 
-# --------------------------------------------------------- ML-01: el umbral de DEC-006
+# ------------------------------- ML-01: el ancla (DEC-006) y la línea de alerta (DEC-019)
 
 
-def test_el_umbral_es_el_de_dec_006(cliente) -> None:
-    assert cliente.UMBRAL_RIESGO == 0.60
+def test_el_ancla_de_calibracion_no_cambia(cliente) -> None:
+    """0.60 sigue significando "pierde 5 %": DEC-019 **no** recalibra la sigmoide.
+
+    Es la mitad que la gente confunde. Si alguien "arregla" BUG-058 moviendo el ancla, el
+    índice deja de ser interpretable —0.60 ya no querría decir 5 %— y habría que
+    re-entrenar y re-publicar Gold. La decisión fue exactamente la contraria.
+    """
+    assert cliente.ANCLA_SIGMOIDE == 0.60
+
+
+def test_la_linea_de_alerta_es_la_de_dec_019(cliente) -> None:
+    """0.50 ≈ perder 3.4 %, y es un número **distinto** del ancla.
+
+    El 0.60 era inalcanzable por construcción: el máximo real sobre el Gold de producción
+    es 0.5717 (−4.53 %), así que el KPI daba 0 estructuralmente.
+    """
+    assert cliente.LINEA_DE_ALERTA == 0.50
+    assert cliente.LINEA_DE_ALERTA < cliente.ANCLA_SIGMOIDE, (
+        "la alerta tiene que encender antes que el ancla, o no es temprana"
+    )
 
 
 @pytest.mark.parametrize(
     "riesgo, esperado",
-    [(0.7423, True), (0.60, True), (0.5999, False), (0.1637, False)],
+    [(0.7423, True), (0.5717, True), (0.50, True), (0.4999, False), (0.1637, False)],
 )
-def test_en_riesgo_se_deriva_del_umbral(cliente, riesgo: float, esperado: bool) -> None:
-    """`>= 0.60`, no `> 0.60`: exactamente 0.60 ya es "pierde 5 %"."""
+def test_en_riesgo_se_deriva_de_la_linea_de_alerta(cliente, riesgo: float, esperado: bool) -> None:
+    """`>= 0.50`, no `> 0.50`: exactamente 0.50 ya enciende.
+
+    `0.5717` es el máximo real medido en producción: con el corte viejo **no cruzaba**, y
+    ese es justamente el caso que BUG-058 vino a corregir. Si esta fila vuelve a `False`,
+    el KPI regresó a dar 0 estructuralmente.
+    """
     pred = cliente.obtener_prediccion(
         "http://api", "15DJN0049A", get=_get_que_devuelve({**PAYLOAD_OK, "indice_riesgo": riesgo})
     )

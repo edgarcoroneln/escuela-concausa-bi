@@ -80,11 +80,24 @@ def test_un_cct_de_longitud_invalida_no_llama_a_la_api(_ruta_frontend) -> None:
     assert app.error, "debió avisar que el CCT no tiene 10 caracteres"
 
 
-def test_la_pagina_anuncia_el_umbral_de_dec_006(_ruta_frontend) -> None:
-    """El usuario tiene que poder leer contra qué se compara el índice."""
+def test_la_pagina_distingue_el_ancla_de_la_linea_de_alerta(_ruta_frontend) -> None:
+    """El usuario tiene que poder leer contra qué se compara el índice — y son **dos**.
+
+    Desde DEC-019 la calibración (0.60 ≡ perder 5 %) y la línea que enciende la alerta
+    (0.50) son números distintos. Antes eran el mismo y la página los presentaba como uno
+    solo, que es lo que hacía imposible bajar la alerta sin parecer que se recalibraba el
+    modelo. Si vuelven a colapsarse en una sola constante, esta prueba lo dice.
+    """
     import prediccion_client
 
-    assert prediccion_client.UMBRAL_RIESGO == 0.60
+    assert prediccion_client.ANCLA_SIGMOIDE == 0.60
+    assert prediccion_client.LINEA_DE_ALERTA == 0.50
+
+    fuente = PAGINA.read_text(encoding="utf-8")
+    assert "DEC-019" in fuente, "la página no cita la decisión que fija la línea de alerta"
+    assert "ANCLA_SIGMOIDE" in fuente and "LINEA_DE_ALERTA" in fuente, (
+        "la página debe mostrar los dos números, no uno"
+    )
 
 
 def test_ml03_sin_productor_se_documenta_en_la_pagina(_ruta_frontend) -> None:
