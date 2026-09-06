@@ -24,6 +24,13 @@ PREDICCIONES_FAKE: list[dict] = [
         "recomendacion": "Coordinar con seguridad pública rutas escolares seguras y entornos protegidos.",
         "mlflow_run_id": "fake-run-ml01-0001",
         "cluster": None,  # ML-03 sin productor (BUG-010, US-321)
+        # Contribuciones SHAP de ML-02 (BUG-053). Esta escuela las tiene las seis.
+        "shap_d1": 0.11,
+        "shap_d2": 0.47,
+        "shap_d3": -0.05,
+        "shap_d4": 0.09,
+        "shap_d5": 0.0,
+        "shap_d6": -0.12,
     },
     {
         "cct": "19DES0007C",
@@ -33,6 +40,16 @@ PREDICCIONES_FAKE: list[dict] = [
         "recomendacion": "Ampliar conectividad y dotación de equipo de cómputo.",
         "mlflow_run_id": "fake-run-ml01-0002",
         "cluster": None,
+        # D5 y D6 en `None` a proposito: son los dos drivers de cobertura parcial del proyecto
+        # (agua regional, aire ~80 zonas urbanas), donde SIN_DATO es el caso NORMAL. Que el
+        # fixture lo modele es lo que impide que alguien "arregle" un null colapsandolo a 0.0
+        # y reintroduzca BUG-055 con datos reales.
+        "shap_d1": 0.30,
+        "shap_d2": 0.02,
+        "shap_d3": 0.14,
+        "shap_d4": 0.51,
+        "shap_d5": None,
+        "shap_d6": None,
     },
 ]
 
