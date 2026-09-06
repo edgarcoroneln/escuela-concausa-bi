@@ -202,3 +202,49 @@ python -m src.modelos.ejecutar_cierre_ml03 --salida /tmp/evidencia-ml03.json
 El JSON contiene agregados y puede adjuntarse a la revisión, pero no debe commitearse si pudiera
 permitir reidentificación por grupos pequeños. Las historias conservan su estado hasta ejecutar y
 revisar esa evidencia con Edgar y Andrés.
+
+## 8. Continuación verificada — 5-sep-2026
+
+Se integró `origin/main` (25d76e3) mediante merge en la rama permanente. Docker Engine y Compose
+responden; se creó `.env` local desde la plantilla con claves aleatorias, excluido de Git. El servicio
+`db` arrancó y la conexión SQLAlchemy desde Windows funciona. La consulta de catálogo confirma que
+`gold.features_escuela` todavía no existe en esta base. Instalar Docker no materializa Gold.
+
+El PR #231 ya solicita revisión a Edgar Coronel. Su fallo previo está en el paso de plantilla;
+las alternativas que no aplican deben conservar `<!-- opcional -->`, sin marcar afirmaciones falsas.
+Esta actualización entrega avance parcial, no cierre de las tres historias.
+
+### Secuencia propuesta para completar la evidencia
+
+1. Obtener de Diana/Andrés una copia autorizada del Gold definitivo post-BUG-048 por canal privado,
+   con fecha, commit y checksum; o ejecutar el runbook de reconstrucción de C1 completo. No mezclar
+   el Bronze DS-01/DS-02 con drivers de otra corrida. Los dumps nunca se versionan.
+2. Validar grano, duplicados, al menos tres ciclos ML, contrato y cobertura territorial. La ejecución
+   de dbt y sus pruebas debe conservar cualquier fallo real; no declarar que `dbt parse` prueba datos.
+3. Ejecutar EDA y cobertura desde Gold para US-322/325; revisar agregados, brechas y tamaños pequeños.
+   Estas dos historias pueden solicitar cierre con evidencia válida aunque ML-03 siga bloqueado.
+4. Ratificar con Andrés y Edgar la política de ausencia para US-321 antes de cambiar el vector o
+   imputar. El DevLog de Andrés del 5-sep reporta D5 totalmente `SIN_DATO` en features; con la política
+   actual puede no haber casos completos. El valor 0.1086 es histórico, no una nueva corrida local.
+5. Con política ratificada, comparar `k=2..6` temporalmente, documentar perfiles y Silhouette frente
+   a 0.30 y registrar la corrida validada en MLflow. Cualquier umbral alternativo requiere decisión.
+6. Coordinar publicación del cluster con C1/C4 si forma parte del cierre acordado: DEC-015 permite
+   al panel declarar `SIN_DATO`, pero no cierra US-321 ni publica clusters por registrar en MLflow.
+7. Actualizar fichas, matriz, índices y DevLog; solicitar aprobación de Edgar con CI verde. Mantener
+   la rama permanente y no autoaprobar, promover modelos ni cambiar historias a `done` por anticipado.
+
+### Ejecución desde PowerShell, cuando Gold esté disponible
+
+El ejecutor no carga `.env` automáticamente. Este comando lo carga dentro del proceso sin imprimir
+claves ni pasarlas como argumentos. Ejecutarlo desde la raíz del repositorio:
+
+```powershell
+& ./.venv/Scripts/python.exe -c "from dotenv import load_dotenv; load_dotenv('.env'); from src.modelos.ejecutar_cierre_ml03 import main; raise SystemExit(main())"
+```
+
+`DATABASE_URL` usa `127.0.0.1:5432` desde Windows; las conexiones de Compose conservan `db:5432`.
+Para registrar después de revisar resultados, levantar MLflow y utilizar `--tracking-uri
+http://127.0.0.1:5001`. MLflow todavía no se levantó ni se registró una corrida en esta verificación.
+
+Validación local tras el merge: **973 passed, 8 skipped**, Ruff limpio y tablero PM válido.
+Los skips y las pruebas con fixtures no sustituyen la evidencia sobre Gold real.
