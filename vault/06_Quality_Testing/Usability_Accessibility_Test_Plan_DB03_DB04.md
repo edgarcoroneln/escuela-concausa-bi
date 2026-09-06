@@ -2,8 +2,11 @@
 id: DOC-USABILIDAD-DB0304
 title: "Usability & Accessibility Test Plan — DB-03 / DB-04"
 owner: "Marina García del Buey"
-status: draft
-traces_up: ["US-215a", "REQ-002"]
+status: approved
+version: "1.0"
+traces_up: ["US-215a", "REQ-002", "DEC-016"]
+traces_down: ["BUG-049", "BUG-050"]
+last_reviewed: "2026-09-05"
 tags: [qa, usability, accessibility, db03, db04]
 ---
 
@@ -70,7 +73,8 @@ Requiere navegador; ninguno automatizable con lo que hay hoy en el proyecto.
 
 | Caso | Pasos | Esperado | Resultado | Bug |
 |---|---|---|---|---|
-| 3.1 | Verificar contraste de texto (tarjetas, tablas, filtros) contra su fondo, en claro y oscuro | Contraste AA (≥ 4.5:1) en el texto principal | 🟡 (2026-09-04, Marina · Lighthouse) — **score 93**. Dos hallazgos: *"Background and foreground colors do not have a sufficient contrast ratio"* y *"`<html>` element does not have a `[lang]` attribute"*. Idéntico en claro y oscuro. El del `lang` es del shell de Superset, no de estos tableros (BUG-050) | |
+| 3.1 | Verificar contraste de texto (tarjetas, tablas, filtros) contra su fondo, en claro y oscuro | **WCAG 2.1 AA** (4.5:1 texto normal, 3:1 texto grande y componentes) sobre color y fondo **efectivos**, en los dos temas — criterio de [[vault/04_UX_Design/UX_Guidelines]] | ⚠️ (2026-09-05, Marina · `getComputedStyle` en Chrome) — medido elemento por elemento, no con un score agregado. **Todo lo que escribe FARO pasa**: peor caso **19.26:1** en claro y **18.42:1** en oscuro, en los dos tableros. **Reprueban dos elementos heredados del tema de Superset**: `Published` **2.16:1** (claro) y `Edit dashboard` **3.07:1** claro / **3.41:1** oscuro. Por **DEC-016** son limitación conocida y no bloquean. **Se encontró y corrigió un defecto de FARO en el camino** — ver 3.1.bis | BUG-050 |
+| 3.1.bis | Medir el contraste de los `<a href>` de drill-down, que **los escribe FARO** y no el tema | WCAG 2.1 AA (4.5:1); por DEC-016 un elemento propio que no llegue **es defecto y bloquea** | ✅ (2026-09-05, Marina) — **reprobaba**: heredándole el azul de acento de Superset `#2893B3` daba **3.26:1** sobre el `#F5F5F5` de la celda en tema claro (en oscuro pasaba con 5.91:1, por eso no se había visto). Corregido en los 4 links de DB-03/DB-04: heredan el color del texto de la celda y se marcan con subrayado. **19.26:1 claro · 21:1 oscuro**, y de paso cumple WCAG 1.4.1. Guarda: `test_el_link_no_depende_del_color_del_tema` | |
 | 3.2 | Recorrer los controles de Superset (filtros nativos, orden de columnas, links de drill-down) solo con teclado | Todos alcanzables y operables sin mouse | ✅ (2026-09-04, Marina) — se alcanzan todos los controles solo con Tab | |
 | 3.3 | Verificar foco visible al tabular | El elemento con foco tiene indicador visual claro | ✅ (2026-09-04, Marina) — recuadro azul de foco siempre visible | |
 | 3.4 | Activar el link de drill-down con **Enter** (no con clic) | Navega igual que con el mouse | ✅ (2026-09-04, Marina) — **el link se alcanza con Tab y se activa con Enter**. Era el caso con más riesgo de fallar, porque es un `<a href>` inyectado con `allow_render_html` y no un control nativo de Superset | |
@@ -80,18 +84,32 @@ Requiere navegador; ninguno automatizable con lo que hay hoy en el proyecto.
 
 `✅` verificado · `⚠️` verificado con salvedad · `❌` falla, con bug registrado · `⏳` pendiente
 
+> El `🟡` que este documento usó en el caso 3.1 hasta el 2026-09-04 **no estaba en esta
+> leyenda**: se inventó sobre la marcha para un tercer estado que no existía. Ya no se usa —
+> el caso cerró con `⚠️`, que es exactamente "verificado con salvedad" y sí está definido.
+
 ## Hallazgos de alcance (huecos del proyecto, no se rellenan por cuenta propia)
 
-1. **No hay CI de accesibilidad.** [[vault/04_UX_Design/Accessibility]] declara
-   *"verificados en CI (Lighthouse a11y)"* y *"Lighthouse Accessibility ≥ 0.9
-   (bloqueante)"*. No existe ninguna referencia a Lighthouse en `.github/` ni en
-   `vault/08_CICD_DevOps/`. Todo el §3 se verifica a mano. Mismo hueco que documentó
-   Monserrat en US-215b: es del proyecto, no de esta historia.
+1. **No hay CI de accesibilidad, pero el documento ya no dice lo contrario.**
+   Reverificado el 2026-09-05: sigue sin haber una sola referencia a Lighthouse en
+   `.github/` ni en `vault/08_CICD_DevOps/`, así que todo el §3 se verifica a mano — ese
+   hueco es real y es del proyecto, no de esta historia. Mismo que documentó Monserrat en
+   US-215b.
 
-2. **No hay paleta de colores documentada.** [[vault/04_UX_Design/UX_Guidelines]] está en
-   `status: draft` con las tablas de tokens y componentes **vacías**, pese a llevar
-   `source_of_truth: true`. Sin paleta declarada, el §3.1 se verifica contra lo que
-   Superset trae por default, no contra un estándar del proyecto.
+   **Lo que este hallazgo afirmaba de más, y se corrige aquí.** Decía que
+   [[vault/04_UX_Design/Accessibility]] prometía *"verificados en CI (Lighthouse a11y)"* y
+   *"≥ 0.9 (bloqueante)"*. **Ya no lo promete**: su §"Meta objetivo" se titula *"no
+   bloqueante — sin CI que lo mida"* y declara la meta **aspiracional hasta que exista el
+   gate**. Se corrigió el 2026-09-03 con una nota mía en ese mismo documento, y este plan
+   siguió citando la versión anterior dos días. Señalado por Edgar Coronel al revisar el
+   PR #247. **Un hallazgo que no se re-verifica envejece igual que un bloqueo.**
+
+2. ~~**No hay paleta de colores documentada.**~~ **Resuelto el 2026-09-05.**
+   [[vault/04_UX_Design/UX_Guidelines]] pasó a `status: approved` y declara **WCAG 2.1 AA**
+   como criterio. La decisión de fondo es que **FARO no adopta paleta propia** y hereda los
+   temas de Superset y Streamlit; de ahí sale **DEC-016**, que separa lo que FARO escribe
+   —bloquea si no llega al umbral— de lo que hereda —limitación conocida con su medición—.
+   El §3.1 ya tiene criterio de aceptación y por eso pudo cerrarse.
 
 3. **El §3 no se puede cerrar sin sesión de navegador.** Se documenta como pendiente en
    vez de declararlo verificado: un plan de accesibilidad firmado sin haber tabulado por
@@ -100,6 +118,8 @@ Requiere navegador; ninguno automatizable con lo que hay hoy en el proyecto.
 ## Sesión de navegador — 2026-09-04 (Marina García, Chrome)
 
 Primera pasada real con navegador. **De 22 casos, 19 quedan verificados y 3 pendientes.**
+Los tres restantes cerraron después: **1.9** y **1.10** el 2026-09-05 tras corregir BUG-049,
+y **3.1** el mismo día con el criterio de DEC-016 ya publicado. **22 de 22.**
 
 ### Lo que se confirmó
 
@@ -119,15 +139,52 @@ Primera pasada real con navegador. **De 22 casos, 19 quedan verificados y 3 pend
 - **1.9 y 1.10** (saltos a DB-06 y DB-09): los links se ven correctos y su estructura está
   verificada por API, pero el salto no se probó — esos charts quedan al final del scroll y
   la sesión no llegó ahí. Pendiente de una segunda pasada corta.
-- **3.1** (contraste): medido con Lighthouse, score **93**. Queda como 🟡 en vez de ✅ porque
-  hay dos hallazgos abiertos, registrados en **BUG-050**.
+- **3.1** (contraste): medido con Lighthouse, score **93**. Quedó abierto porque no había
+  criterio de aceptación contra el cual medir. **Cerrado el 2026-09-05** — ver la sesión de
+  abajo.
 
 ### Hallazgos registrados
 
 | Bug | Qué | Dueño |
 |---|---|---|
 | **BUG-049** | Tarjetas alineadas al fondo con hueco vertical; tablas anchas exigen scroll horizontal para llegar a las columnas de link | C2 · Marina García |
-| **BUG-050** | Lighthouse 93: contraste insuficiente y `<html>` sin `[lang]` | C5 (el `lang`) + C2 (la paleta) |
+| **BUG-050** | Lighthouse 93: contraste insuficiente y `<html>` sin `[lang]`. **Medición fina 2026-09-05**: los dos elementos que reprueban son `Published` (**2.16:1** claro) y `Edit dashboard` (**3.07:1** claro / **3.41:1** oscuro), ambos del shell de Superset. Por **DEC-016** es limitación conocida y deja de bloquear `US-215a`; sigue `open` | C5 (el `lang` y el tema) |
+
+## Sesión de navegador — 2026-09-05 (Marina García, Chrome, claro y oscuro)
+
+Segunda pasada, ya con el criterio de **DEC-016** publicado. No se usó un score agregado:
+se midió **elemento por elemento** con `getComputedStyle`, sobre el color y el fondo
+**efectivos** —subiendo el árbol hasta el primer fondo opaco— y en los dos temas.
+
+| Tablero | Tema | Peor elemento escrito por FARO | Veredicto |
+|---|---|---|---|
+| DB-03 | claro | 19.26 : 1 | pasa |
+| DB-03 | oscuro | 21 : 1 | pasa |
+| DB-04 | claro | 19.26 : 1 | pasa |
+| DB-04 | oscuro | 18.42 : 1 | pasa |
+
+**Por qué Lighthouse no bastaba.** El score 93 señala que *hay* contraste insuficiente pero
+no dice **en qué elemento**, y DEC-016 decide precisamente por elemento: propio bloquea,
+heredado no. Medir por elemento fue lo que separó los dos casos — y lo que destapó un defecto
+propio que el score había escondido dentro del mismo hallazgo genérico.
+
+**El defecto que apareció (3.1.bis).** Los cuatro `<a href>` de drill-down de DB-03 y DB-04
+no traían estilo propio, así que tomaban el azul de acento de Superset `#2893B3`. En tema
+**oscuro** eso da 5.91 : 1 y pasa; en **claro**, sobre el `#F5F5F5` de la celda de tabla, da
+**3.26 : 1** y reprueba. Se había revisado en oscuro el 4-sep, que es donde no falla.
+
+No se arregló eligiendo otro azul, porque no existe: pasar 4.5 : 1 contra `#F5F5F5` exige
+luminancia ≤ 0.164 y contra `#000000` exige ≥ 0.175, y los rangos **no se cruzan**. Ningún
+color único sirve para los dos temas. La salida fue heredar el color del texto de la celda
+—que ya pasa en ambos— y marcar el link con **subrayado** en vez de con tono, lo que además
+cumple WCAG 1.4.1: el color deja de ser el único medio para reconocerlo.
+
+> **3.1.bis no es un caso 23.** Es el desglose del 3.1 que DEC-016 obliga a hacer: el
+> denominador de esta historia sigue siendo **22**.
+
+**Hallazgo ajeno, para su dueña.** `superset/semantic/db05_cubo_driver.sql:70` tiene el mismo
+link sin estilo (`Ver detalle del municipio →`). Cae en `US-215b` / `BUG-051`, de **Monserrat
+Miranda**, y no se toca desde aquí. El arreglo es el de arriba, ya con prueba en el repo.
 
 ### Un hallazgo de interpretación, no de defecto
 

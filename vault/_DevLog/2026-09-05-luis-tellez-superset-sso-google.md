@@ -208,13 +208,48 @@ SSO: FAB empareja por `username`, no por `email`, y la unicidad del `email` prov
 silenciosa que se percibe como "el login rebota". El guard preventivo lo vuelve imposible de
 reintroducir por configuración.
 
+## Guarda fail-loud de lista blanca vacía (post-merge #246)
+
+Revisando el **#246 ya mergeado**, el PO (Edgar) señaló que de las guardas *fail-loud* del
+`superset_config.py` faltaba **una**: la de **lista blanca vacía**. Es el único fallo de esta
+configuración que **no revienta y aparenta funcionar** — si `SUPERSET_SSO_ALLOWED_EMAILS` llega vacía o
+con un typo, el contenedor arranca, `/login/` muestra "Entrar con Google", cualquiera se autentica con
+Google y la **puerta 2** de `oauth_user_info` lo **rechaza** (fail-closed) por no estar en la lista ⇒
+**nadie entra, ni el profesor**, como si el login sirviera. En prod eso es casi siempre un secreto no
+inyectado o un typo, no una decisión: se descubriría el día de la demo.
+
+**Fix (este PR):** cuarta guarda *fail-loud* en `docker/superset_config.py`, mismo criterio que
+`SECRET_KEY` / SSO / colisión-admin:
+
+```python
+if _IS_PROD and _SSO_ENABLED and not _SSO_ALLOWED_EMAILS:
+    raise RuntimeError("SSO activo en producción pero SUPERSET_SSO_ALLOWED_EMAILS está vacía o mal escrita: ...")
+```
+
+Solo dispara en **prod + SSO activo + lista vacía**; en local no aplica (dev intacto) y **no afecta al
+servicio vivo** (rev `00004-s82` tiene la lista poblada). Entra en efecto en la próxima imagen.
+
+**Smoke** (imagen amd64 de prod `00d3c14`, importando el módulo por *bind-mount* de la config):
+
+| Escenario | Resultado |
+|---|---|
+| prod · SSO · lista **vacía** | `RuntimeError` (no arranca) ✅ |
+| prod · SSO · lista con correo | `AUTH_TYPE=4` (OAUTH), arranca ✅ |
+| local · SSO · lista vacía | `AUTH_TYPE=4`, arranca (dev intacto) ✅ |
+
+`py_compile` + `ruff 0.16.6` (versión de CI) + smoke, todo verde. **Registro de URL:** además se añade la
+**URL pública de Superset** a `vault/08_CICD_DevOps/Cloud_Run_Deploy.md` (junto a la de la API, con la nota
+de que **exige login**); el registro en `00_Start_Here` (verde del PO) lo aplica Edgar con el snippet que se
+le pasa.
+
 ## 🤖 Sesión de IA
 
 - **Agente / modelo:** Claude Code / claude-opus-4-8.
 - **Creados:** este DevLog.
 - **Modificados (código SSO + guardas):** `docker/superset_config.py` (bloque §6 SSO; guarda fail-loud del
-  SSO; fix `userinfo` `00d3c14`; guarda de colisión admin/SSO), `docker/superset.Dockerfile` (authlib),
-  `vault/_DevLog/_index.md` (fila de este DevLog).
+  SSO; fix `userinfo` `00d3c14`; guarda de colisión admin/SSO; **guarda de lista blanca vacía, post-#246**),
+  `docker/superset.Dockerfile` (authlib), `vault/08_CICD_DevOps/Cloud_Run_Deploy.md` (**URL pública de
+  Superset con nota de login**), `vault/_DevLog/_index.md` (fila de este DevLog).
 - **Infra GCP (sin código):** deploy de Cloud Run `faro-superset` revs `00001`→`00004`; Job efímero de
   reparación `faro-superset-fixadmin` (creado y **borrado** tras usarse); env `SUPERSET_ADMIN_EMAIL`.
 - **Sin cambios de código de aplicación** (`src/`) ni de dashboards/semántica (C2).

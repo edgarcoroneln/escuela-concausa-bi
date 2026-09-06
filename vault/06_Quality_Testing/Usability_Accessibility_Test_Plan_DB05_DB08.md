@@ -3,9 +3,9 @@ id: DOC-USABILIDAD-DB0508
 title: "Usability & Accessibility Test Plan — DB-05 / DB-08"
 owner: "Monserrat Xcaret Miranda Olivas"
 status: approved
-traces_up: ["US-215b", "REQ-002"]
-traces_down: ["BUG-038", "BUG-051"]
-last_reviewed: "2026-09-04"
+traces_up: ["US-215b", "REQ-002", "DEC-016"]
+traces_down: ["BUG-038", "BUG-051", "BUG-056"]
+last_reviewed: "2026-09-05"
 tags: [qa, usability, accessibility, db05, db08]
 ---
 
@@ -50,7 +50,7 @@ de Superset, no propios) y "Respeta `prefers-reduced-motion`" (shell de FARO Web
 | 1.1 | Abrir DB-05, confirmar que carga en el tab D1 | El dashboard abre sin error, tab D1 activo por default | ✅ (2026-09-04) — re-probado tras el fix de BUG-038: abre en D1 con `aria-selected: true` y **los 6 tabs visibles** en la barra. La salvedad de 2026-08-30 ("hoy es el único tab visible") queda resuelta | |
 | 1.2 | Cambiar entre los 6 tabs (D1 → D6) | Cada tab muestra sus propios KPI tiles y tabla, filtrados por su `id_driver` | ✅ (2026-09-04) — **antes ❌ por BUG-038**. Verificado en navegador real contra Superset 6.1.0: los 6 tabs se dibujan y al cambiar a D4 su panel queda `aria-hidden: false` con **6 charts** y su propia nota ("CEMABE (DS-03) · medido a nivel escuela"). Los valores son propios de cada tab, no heredados: D1 → 52.7 % / 18 escuelas; D4 → 30.9 % / 17. Antes del fix D2-D6 eran inalcanzables | BUG-038 ✅ |
 | 1.3 | Aplicar los filtros globales (Ciclo, Entidad, Nivel) | Los tiles y la tabla recalculan según el filtro aplicado | ✅ (2026-09-04) — **antes ❌ por BUG-038**. Con `nombre_entidad = 'Jalisco'` el panel muestra el valor y los charts **sí recalculan**: KPI-07 pasa de 52.7 % a 0.0 % y "Escuelas por driver dominante" de 18 a 0. **Contrastado contra la base**, no sólo contra la pantalla: `gold.cubo_driver` da para Jalisco/D1/2024-2025 `escuelas_driver = 0` sobre `total_escuelas = 7`, y el cuarto tile muestra exactamente 7. Sin filtro, los 18 del tablero son la suma real (0+0+10+8) de las 4 entidades | BUG-038 ✅ |
-| 1.4 | En la tabla "Municipios · driver dominante y cobertura" de cualquier tab, localizar la columna del link | La columna se ve como texto de link (no HTML crudo), rotulada "Ver detalle del municipio →" | ✅ (2026-08-30) | |
+| 1.4 | En la tabla "Municipios · driver dominante y cobertura" de cualquier tab, localizar la columna del link | La columna se ve como texto de link (no HTML crudo), rotulada "Ver detalle del municipio →", **y legible en los dos temas** (DEC-016) | ✅ (2026-08-30) el render · **⚠️→✅ el contraste (2026-09-05)**. Reportado por Marina García al cerrar US-215a: el `<a>` no traía estilo propio y heredaba el acento de Superset. **Medido en DB-05, no inferido** — antes: `#2893b3` sobre `#f5f5f5` = **3.26:1 REPRUEBA** en claro, 5.91:1 pasa en oscuro, sin subrayado. Corregido con `color:inherit` + `text-decoration:underline` → después: **19.26:1 claro / 21:1 oscuro**, subrayado presente. Por DEC-016 **este sí era defecto**: el `<a>` lo escribe FARO. Guarda: `test_el_link_db08_no_depende_del_color_del_tema`, validada reintroduciendo cada defecto por separado. **Por qué no se vio el 4-sep**: se midió el tema oscuro —donde pasa— y la tabla del link queda **debajo del pliegue**, fuera del viewport recorrido; los 30 links sólo aparecen en el DOM tras hacer scroll | |
 | 1.5 | Hacer clic en el link de una fila | Abre DB-08 en pestaña nueva, con Municipio y Driver de esa fila pre-seleccionados | ✅ (2026-08-30) — confirmado con 2 filas distintas (municipio 09003→19039), el chart "Valor promedio del driver" de DB-08 cambió de valor entre una y otra (0.10 → 0.90), evidencia de que el filtro sí llegó aplicado | |
 | 1.6 | Revisar legibilidad de números grandes en los KPI tiles | Formato consistente (separador de miles, decimales según `formato` de la métrica) | ✅ (2026-08-30) — contraste correcto en dark y light mode. Hallazgo aparte (no de formato numérico): el mensaje "sin datos" es inconsistente entre tiles y está en inglés — documentado como punto 5 de UX pendiente en `db08_explorador_cubo.yaml`, no se resuelve hoy (limitación de Superset) | |
 
@@ -70,9 +70,9 @@ Superset embebido (ver exclusiones en §Alcance).
 
 | Caso | Pasos | Esperado | Resultado (✅/⚠️/❌/⏳) | Bug |
 |---|---|---|---|---|
-| 3.1 | Verificar contraste de texto (tiles, tablas, filtros) contra su fondo | Contraste AA (≥ 4.5:1) en el texto principal | ⚠️ (2026-09-04, **oscuro y claro**) — ratio calculado sobre el color y el fondo **efectivos** de cada nodo de texto visible. **Oscuro: 30/32 cumplen** · **Claro: 31/34 cumplen**. El único fallo que es contenido del tablero —y no chrome de Superset— es la **etiqueta del tab activo**, y **está peor en claro que en oscuro: 3.55:1 vs 4.07:1**, ambos bajo el mínimo de 4.5:1 para texto de 14 px. Los demás fallos son del chrome, explícitamente fuera de alcance: `Edit dashboard` (3.41 oscuro / 3.07 claro) y `Published` (2.16, sólo claro). Ver [[vault/06_Quality_Testing/Bug_Register]] BUG-051 | BUG-051 |
-| 3.2 | Navegar los controles propios de Superset (filtros nativos, tabs, orden de columnas de tabla) solo con teclado (Tab/Enter/flechas) | Todos los controles son alcanzables y operables sin mouse | ✅ (2026-09-04) — **alcanzabilidad**, medida: 48 elementos enfocables, los **6/6 tabs** y los **3/3 filtros globales** en el orden de tabulación, y cada tab se anuncia como "Tab N of 6" (posición expuesta a lector de pantalla). **Activación, verificada a mano por Monserrat Xcaret Miranda Olivas** en Chrome: `Tab` hasta la pestaña + `Enter` **sí cambia de tab**. La comprobación humana era necesaria: el navegador automatizado no entregaba ni `Enter` ni clic a los tabs de React (aunque un `.click()` del DOM sí funcionaba), así que la herramienta habría reportado un falso negativo — **era artefacto de medición, no defecto**. Salvedad real: las **flechas ← → no mueven entre tabs**, Superset no implementa el patrón ARIA completo de `tablist`; no bloquea la operación porque `Tab`+`Enter` cubre el recorrido, y es su componente, no del equipo | |
-| 3.3 | Verificar foco visible al tabular por los controles | El elemento con foco tiene un indicador visual claro | ✅ (2026-09-04) — tabulando con `Tab` real, el elemento activo cumple `:focus-visible` y pinta un anillo `box-shadow: rgb(37,128,155) 0 0 0 2px`. `outline-style` es `none`: el indicador es la sombra, no el outline — quien audite mirando sólo `outline` concluiría falsamente que no hay foco visible. Un `.focus()` programático **no** dispara `:focus-visible` y no sirve para verificar este caso | |
+| 3.1 | Verificar contraste de texto (tiles, tablas, filtros) contra su fondo | Contraste AA (≥ 4.5:1 texto normal) sobre color y fondo **efectivos**, en los **dos temas** (DEC-016) | ⚠️ **medido por separado en cada tablero (2026-09-05)**. **DB-05** — claro 31/34 · oscuro 30/32. **DB-08** — claro **1085/1209**, oscuro **1208/1209**. **Todo lo que reprueba es color heredado de Superset, ninguno lo estiliza FARO** → por DEC-016 son limitación conocida y no bloquean: `Published` (2.16 claro), `Edit dashboard` (3.07 claro / 3.41 oscuro) y, en DB-08, **122 celdas `pvtVal` del pivote** con el acento `#2893b3` sobre blanco a **3.55:1**. Verificado que el YAML de DB-08 **no declara ningún color ni formato condicional** —sólo estructura— así que el color lo pone Superset en línea. La etiqueta del tab activo de DB-05 sigue en 3.55/4.07 → **BUG-051**, reclasificado por DEC-016 como limitación que **ya no bloquea** US-215b. **En oscuro el pivote sí pasa**: el problema es exclusivo del tema claro | BUG-051 · BUG-056 |
+| 3.2 | Navegar los controles propios de Superset (filtros nativos, tabs, orden de columnas de tabla) solo con teclado (Tab/Enter/flechas) | Todos los controles son alcanzables y operables sin mouse | ✅ **en los dos tableros (2026-09-05)**. **DB-05** (4-sep): 48 enfocables, 6/6 tabs y 3/3 filtros en el orden de tabulación; activación `Tab`+`Enter` **verificada a mano por Monserrat Xcaret Miranda Olivas**. **DB-08** (5-sep): **1056 enfocables y 5/5 filtros globales alcanzables** (Ciclo, Entidad, Nivel, Municipio, Driver) — el tablero **no tiene tabs**, así que el esperado de DB-05 no aplica aquí. **Activación verificada a mano por Monserrat Xcaret Miranda Olivas** (2026-09-05): `Tab` hasta el filtro *Ciclo escolar* + `Enter` **sí abre el desplegable**. La comprobación humana era necesaria por el artefacto ya documentado — el navegador automatizado no entrega `Enter` ni clic a los componentes React de Superset aunque sí mueva el foco, así que habría reportado un **falso negativo**, igual que en DB-05 el 4-sep. Salvedad heredada: las flechas ← → no navegan entre tabs (patrón ARIA incompleto de Superset) | |
+| 3.3 | Verificar foco visible al tabular por los controles | El elemento con foco tiene un indicador visual claro | ✅ **en los dos tableros**. DB-05 (4-sep) y **DB-08 (5-sep)**: tabulando con `Tab` real el elemento activo cumple `:focus-visible` y pinta el mismo anillo `box-shadow: rgb(37,128,155) 0 0 0 2px`. `outline-style` es `none`: el indicador es la sombra, no el outline — quien audite mirando sólo `outline` concluiría falsamente que no hay foco visible. Un `.focus()` programático **no** dispara `:focus-visible` y no sirve para este caso |
 
 ## Convención de resultados
 
@@ -80,43 +80,62 @@ Superset embebido (ver exclusiones en §Alcance).
 
 ## Hallazgos de alcance (huecos del proyecto, no se rellenan por cuenta propia)
 
-- **Sin CI de accesibilidad real.** [[vault/04_UX_Design/Accessibility]] declara "Lighthouse Accessibility
-  ≥ 0.9 (bloqueante)", pero no hay ningún job de CI que lo ejecute — es aspiracional, no
-  implementado. Este plan no puede heredar ese gate porque no existe.
-- **Sin paleta de colores documentada.** No hay una paleta oficial del proyecto contra la cual
-  verificar "colorblind-safe" (p. ej. distinguibilidad de series en gráficas de driver por tipo de
-  daltonismo). Sin ese insumo, §3 no puede incluir un caso de prueba real para esto — se deja
-  anotado aquí como hueco, no como caso ⏳.
+> **Los dos hallazgos de abajo se re-verificaron el 2026-09-05 y los dos habían envejecido.** Se
+> corrigen declarando la corrección en vez de borrarla. La lección va con el mismo espíritu con el
+> que Marina García corrigió el suyo en el PR #249: **un hallazgo que no se re-verifica envejece
+> igual que un bloqueo**, y este plan citaba dos documentos que ya habían cambiado.
+
+- **Sin CI de accesibilidad — el hueco sigue, la cita estaba vieja.** Este plan afirmaba que
+  [[vault/04_UX_Design/Accessibility]] declaraba *"Lighthouse Accessibility ≥ 0.9 (bloqueante)"*.
+  **Ya no lo declara**: desde el 3-sep su sección se titula *"Meta objetivo (no bloqueante — sin CI
+  que lo mida)"* y marca la meta como aspiracional. Lo que **sí** se sostiene, reverificado hoy: no
+  hay una sola referencia a Lighthouse en `.github/` ni en `vault/08_CICD_DevOps/`, así que el §3 se
+  sigue verificando a mano y este plan no puede heredar un gate que no existe.
+- **Sin paleta propia — dejó de ser un hueco y pasó a ser una decisión.** Este plan lo anotaba como
+  insumo faltante que impedía un caso de "colorblind-safe". **DEC-016** (5-sep) lo resolvió en
+  sentido contrario: FARO **no declara paleta propia** de forma deliberada —los 10 tableros heredan
+  el tema de Superset 6.1— porque adoptar identidad visual a tres días de la demo significaría
+  re-teñir 103 charts sin ninguna prueba detrás. Con esa regla, el contraste heredado se registra
+  como limitación conocida (BUG-051, BUG-056) y el caso de daltonismo queda fuera de alcance por
+  decisión, no por falta de insumo.
 
 ## Cierre
 
-**Segunda pasada — 2026-09-04.** El ambiente local se levantó desde cero siguiendo
-[[vault/00_Start_Here/Runbook_Ambiente_Local]] y todas sus cifras de control salieron exactas
-(`fact_escuela_ciclo` 145 · 55 predicciones · 8/9 cubos · 103 charts / 9 tableros ·
-`matricula_total` 11 828), así que lo verificado aquí corre sobre un Gold íntegro, no degradado.
+**Tercera pasada — 2026-09-05.** Cierra dos huecos de la pasada anterior: el §3 se había medido
+**sólo en DB-05** pese a declarar los dos tableros, y el `<a>` de drill-down tenía un defecto de
+contraste que el barrido del 4-sep no alcanzó.
 
 | | Casos |
 |---|---|
-| **Ejecutados** | **13 de 13** |
-| ✅ pasan | **12** — 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.1, 2.2, 2.3, 2.4, 3.2, 3.3 |
-| ⚠️ pasan con observación | 1 — 3.1 (contraste del tab activo, → BUG-051) |
+| **Ejecutados** | **13 de 13**, ahora con §3 medido en **ambos** tableros |
+| ✅ pasan | **12** — 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 2.1, 2.2, 2.3, 2.4, 3.2 y 3.3, **los dos tableros** |
+| ⚠️ pasan con observación | 1 — 3.1 (contraste heredado: BUG-051 · BUG-056) |
 | ❌ fallan | **0** |
 
-- **1.2 y 1.3 pasaron de ❌ a ✅**: eran los dos síntomas de **BUG-038**, corregido en esta misma
-  sesión (`_layout_tabs()` armaba `ROOT_ID` como `TABS` y colgaba un `GRID` entre cada `TAB` y sus
-  `ROW`; ambos defectos había que arreglarlos juntos). Verificado en navegador real, no sólo por API
-  — que es justo lo que hacía falta: los tests unitarios estaban en verde mientras el tablero
-  estaba roto, porque **codificaban la estructura defectuosa como la esperada**.
-- **El caso 2.1 se reescribió antes de ejecutarlo.** Su esperado era anterior a BUG-047 y habría
-  marcado una falla falsa: el Ciclo hoy llega preseleccionado a propósito.
-- **§3.2 se cerró con comprobación humana, y hacía falta.** El navegador automatizado no entregaba
-  `Enter` ni clic a los tabs de React —aunque sí movía el foco— y habría reportado un **falso
-  negativo**. Se dejó sin marcar hasta que la autora lo verificó a mano en Chrome: `Tab` + `Enter`
-  cambia de pestaña. Era artefacto de medición, no defecto. Queda como salvedad que las flechas
-  ← → no navegan entre tabs (patrón ARIA incompleto de Superset, no bloquea la operación).
-- **§3.1 se midió en los dos temas.** El único fallo que es contenido del tablero —la
-  etiqueta del tab activo— **está peor en claro (3.55:1) que en oscuro (4.07:1)**, así que
-  BUG-051 no se resuelve fijando un tema por defecto.
+### Lo que cambió respecto a la pasada del 4-sep
 
-- **Bugs abiertos:** [[vault/06_Quality_Testing/Bug_Register]] — **BUG-051** (contraste del tab
-  activo) nace de esta pasada. **BUG-038** queda listo para cerrarse con esta evidencia.
+- **El `<a>` de `link_db08` era un defecto real y está corregido.** Lo reportó Marina García tras
+  encontrar el mismo patrón en DB-03/DB-04. Medido en DB-05 —no heredado de su informe—:
+  **3.26 : 1 en claro** antes, **19.26 : 1** después; oscuro 5.91 → 21. Por DEC-016 este **sí**
+  bloqueaba: el ancla la escribe FARO.
+- **Dos razones por las que el barrido anterior no lo cazó**, ambas anotadas para que no se repitan:
+  se midió primero el tema oscuro —donde el defecto no aparece— y la tabla que contiene el link
+  está **debajo del pliegue**, así que sus 30 anclas ni siquiera estaban en el DOM.
+- **§3 medido en DB-08** por primera vez. Los números no son comparables con los de DB-05 y por eso
+  se reportan por separado: DB-08 tiene **1209 nodos de texto** contra 34, **5 filtros y ningún
+  tab**. Confirmó además que el §3 anterior describía DB-05: citaba "6/6 tabs y 3/3 filtros".
+- **BUG-056** nace de esta pasada: 122 celdas del pivote de DB-08 a 3.55 : 1 en claro. Se verificó
+  contra el YAML que **FARO no declara ese color**, así que por DEC-016 es limitación conocida y no
+  bloquea — pero pesa más que el chrome, porque son los valores del explorador.
+- **BUG-051 dejó de bloquear** por DEC-016, sin trabajo de por medio.
+
+### El §3.2 volvió a cerrarse con comprobación humana, y volvió a hacer falta
+
+El navegador automatizado no entrega `Enter` ni clic a los componentes React de Superset —sí mueve
+el foco—, así que habría reportado un **falso negativo** por segunda vez. Se dejó sin marcar hasta
+que la autora verificó a mano que `Tab` + `Enter` abre el desplegable del filtro *Ciclo escolar*.
+Es el mismo patrón que en DB-05 el 4-sep: cuando el instrumento no puede distinguir un defecto de
+su propia limitación, el caso no se marca — se comprueba.
+
+- **Bugs abiertos:** [[vault/06_Quality_Testing/Bug_Register]] — **BUG-051** y **BUG-056**, los dos
+  limitación conocida por DEC-016. **BUG-038** cerrado en la pasada anterior.

@@ -5,7 +5,7 @@ author_human: "Marina García del Buey"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "sesión: US-207 construida, causa raíz de BUG-049 y cierre de US-215a"
-touches: ["US-207", "US-215a", "US-214a", "US-321", "REQ-002", "BUG-049", "DEC-006"]
+touches: ["US-207", "US-215a", "US-214a", "US-321", "REQ-002", "BUG-049", "BUG-048", "DEC-006", "DEC-015"]
 tags: [devlog, frontend, streamlit, ml, bi, celula-2]
 ---
 
@@ -53,10 +53,20 @@ Verificado **contra la API real**, no solo con dobles:
 local  15DJN0049A  riesgo 0.7423  en_riesgo True   driver D1  ->  becas y apoyo alimentario
 local  09DSN0042A  riesgo 0.6692  en_riesgo True   driver D2  ->  rutas escolares seguras
 prod   09DBN0007I  riesgo 0.1060  en_riesgo False  driver D1
+prod   15DJN0049A  riesgo 0.129   en_riesgo False  driver D3  <- NO coincide con el local
 ```
 
 Esas dos primeras filas **son la historia del proyecto**: riesgo parecido, recomendación
 distinta según el driver que lo explica. El valor de US-207 no es el conteo de modelos.
+
+> **Corrección del 5-sep, señalada por Edgar Coronel al ratificar DEC-015.** Ese par es una
+> **medición local** y hay que decirlo así. La URL pública sirve un Gold anterior al fix de
+> BUG-045: para `15DJN0049A` devuelve **0.129 / D3** —infraestructura, no pobreza— y
+> `escuelas_en_riesgo = 0` en `/kpis`. Yo había escrito en el PR *"verificado contra la API
+> real, local y producción"* juntando ambos en un renglón, y eso indujo la lectura de que el
+> par era citable en la demo. **No lo es mientras BUG-048 siga abierto.** Reverificado hoy:
+> producción sigue devolviendo 0.129 / D3. No cambia la entrega; cambia lo que podemos
+> afirmar frente al profesor.
 
 22 casos nuevos (`test_prediccion_client.py` + `test_frontend_panel_ml_streamlit.py`), cada
 guarda validada reintroduciendo su defecto: convertir el `cluster` nulo en `0`, mover el

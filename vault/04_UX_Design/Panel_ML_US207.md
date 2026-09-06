@@ -2,10 +2,10 @@
 id: DOC-PANEL-ML-US207
 title: "Panel de ML interactivo — especificación y alcance entregado (US-207)"
 owner: "Marina García del Buey"
-status: in_review
+status: approved
 version: "1.0"
 traces_up: ["US-207", "REQ-002", "DOC-FRONTEND-ARCH", "ADR-002"]
-traces_down: ["US-321", "US-412", "US-415", "DEC-006"]
+traces_down: ["US-321", "US-412", "US-415", "DEC-006", "DEC-015", "BUG-048"]
 last_reviewed: "2026-09-05"
 tags: [ux, frontend, streamlit, ml, celula-2]
 ---
@@ -50,7 +50,8 @@ primero **cuánto** riesgo hay, después **por qué**, y de ahí **qué hacer**.
 solo diera el índice sería descriptivo; el driver y la recomendación son lo que lo vuelve
 prescriptivo.
 
-Verificado con dos escuelas de riesgo parecido y driver distinto:
+Verificado con dos escuelas de riesgo parecido y driver distinto — **medición local**,
+sobre el Gold reconstruido tras BUG-045:
 
 | CCT | `indice_riesgo` | Driver | Recomendación |
 |---|---|---|---|
@@ -59,6 +60,14 @@ Verificado con dos escuelas de riesgo parecido y driver distinto:
 
 **Mismo nivel de urgencia, intervención distinta.** Es el diferenciador que el PRD promete,
 y es lo que esta página hace visible en una sola pantalla.
+
+> **Este par no se puede citar en la demo mientras BUG-048 siga abierto.** La URL pública
+> sirve un Gold anterior al fix de BUG-045 y devuelve otra cosa para los mismos CCT:
+> `15DJN0049A` da **0.129 / D3** —infraestructura, no pobreza— y `09DSN0042A` da **0.0976 / D2**,
+> con `escuelas_en_riesgo = 0` en `/kpis` (reverificado 2026-09-05). El **contraste de drivers**
+> se sostiene en local; lo que no se sostiene en producción son los valores.
+> Así quedó asentado en **DEC-015**: se ratifica el alcance de la historia, no que este par
+> sea citable el 9-sep.
 
 ## 3. Contrato y frontera con la API
 
@@ -118,10 +127,14 @@ otra cosa.
 |---|---|
 | Formulario de CCT → inferencia real | Formulario de **parámetros libres** (simular una escuela hipotética): no está en la API, requiere un endpoint de inferencia sobre features arbitrarias |
 | ML-01 y ML-02 con datos reales | ML-03, bloqueado por **US-321** |
-| Verificado contra local y producción | Verificación visual en el despliegue público: FARO Web aún no está desplegado (coordinación de C5) |
+| Verificado contra local y producción, **reportados por separado** (§7) | Verificación visual en el despliegue público: FARO Web aún no está desplegado (coordinación de C5) |
 
-**El alcance entregado requiere ratificación del PM** (Edgar Coronel): la historia enuncia
-tres modelos y se entregan dos con el tercero declarado.
+**Alcance ratificado por el PM en DEC-015** (2026-09-05, Edgar Coronel): la historia enuncia
+tres modelos y cierra con dos servidos y el tercero declarado. Edgar verificó el argumento
+antes de ratificarlo —`schemas.py` declara `cluster: StrictInt | None` nombrando US-321,
+`repositorio_modelos.py` lo fija en `None`, y producción devuelve `"cluster": null`— y dejó
+asentado en la misma decisión que **el par de §2.1 no es citable en la demo** mientras
+BUG-048 siga abierto.
 
 ## 7. Cómo se probó
 
@@ -132,12 +145,23 @@ Cada guarda se validó **reintroduciendo su defecto**: convertir el `cluster` nu
 mover el umbral a 0.50, tratar el 404 como error genérico, que la página hable `httpx`
 directo, y borrar el aviso de `SIN_DATO`. Las cinco fallan cuando deben.
 
-Verificación contra la API real, no solo con dobles: local (`15DJN0049A`, `09DSN0042A`) y
-producción (`09DBN0007I`).
+Verificación contra la API real, no solo con dobles. **Los dos ambientes se reportan por
+separado a propósito**: juntarlos en un solo renglón ya indujo una lectura equivocada.
+
+| Ambiente | Gold que sirve | Medición |
+|---|---|---|
+| Local | reconstruido tras BUG-045 | `15DJN0049A` → 0.7423 / D1 · `09DSN0042A` → 0.6692 / D2 |
+| Producción | anterior a BUG-045 (**BUG-048 abierto**) | `09DBN0007I` → 0.1060 / D1 · `15DJN0049A` → **0.129 / D3** |
+
+El mismo CCT da driver distinto en cada ambiente. No es discrepancia del código —`/version`
+es correcto— sino del dato: es BUG-048. `cluster` viene `null` en **los dos**, que es lo que
+sostiene el aviso de ML-03 (§4).
 
 ## 8. Trazabilidad
 
 - **Implementa:** US-207 (REQ-002)
 - **Consume:** US-412 / US-415 (contrato de inferencia, Célula 4) · DEC-006 (umbral)
+- **Ratificado por:** DEC-015 (alcance de 2 de 3 modelos, con ML-03 declarado)
 - **Bloqueado parcialmente por:** US-321 (ML-03, Célula 3)
+- **Limitado en producción por:** BUG-048 (Gold viejo en Cloud SQL) — ver §2.1 y §7
 - **Complementa:** [[vault/03_Architecture/Frontend_Architecture]] §5 (canónico de la capa web)
