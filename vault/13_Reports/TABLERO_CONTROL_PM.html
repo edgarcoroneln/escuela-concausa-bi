@@ -130,12 +130,12 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-09-06T18:32:28+00:00",
+    "generated_at": "2026-09-06T18:47:26+00:00",
     "generated_date": "2026-09-06",
-    "commit": "989b839",
+    "commit": "192b8e9",
     "branch": "dev/edgar-coronel",
     "working_tree": "modified",
-    "source_fingerprint": "46d92e55e0d3",
+    "source_fingerprint": "9e131e014ba7",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -2866,7 +2866,7 @@
       "score": 16,
       "response": "Mitigar",
       "mitigation": "Post-freeze: una sola fuente — var de dbt para la capa de datos y una constante importada para Python — más una prueba que falle si dos sitios discrepan. La propuesta original es de Christian Ruiz, respaldada por Marina García. Hoy no se hace: tocar 4 células el día del freeze cambia lo que la demo enseña.",
-      "trigger": "Ya se disparó una vez: al firmar DEC-019 sólo dev/diana-alvarez tenía el cambio y sólo en dbt, así que los tableros dirían 7 y /api/v1/kpis diría 0 sobre el mismo dato",
+      "trigger": "El disparador es el orden de merge, no el código: las tres capas están escritas (C1 dbt, C4 API, C2 frontend) pero en tres ramas distintas; si entra una sola, los tableros y /api/v1/kpis dirían números distintos sobre el mismo dato. La duplicación persiste tras DEC-019: LINEA_DE_ALERTA queda definida dos veces, en repositorio_gold.py y en prediccion_client.py, sin prueba que las ate",
       "owner": "Edgar Coronel (PO)",
       "status": "open",
       "stories": [
@@ -3792,10 +3792,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 38,
-        "devlogs": 49,
+        "devlogs": 50,
         "active_us": 6,
-        "activity": 93,
-        "signal": "38 PR · 49 DevLog · 6 US activas"
+        "activity": 94,
+        "signal": "38 PR · 50 DevLog · 6 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",

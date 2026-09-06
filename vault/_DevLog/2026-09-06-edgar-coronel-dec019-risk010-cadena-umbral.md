@@ -31,23 +31,42 @@ El criterio de C2 para 0.50 es de negocio, no de conveniencia: ≈ −3.4 %, **j
 nacional. Y no baja más porque a 0.40 serían 11 775 escuelas (26 %) y a 0.35, 24 951 (55 %) — a esa
 escala deja de ser alerta y es un censo. Con 0.50 son **7 de 45 276**.
 
-## 2. Lo que Marina no vio, y es peor que lo que reportó
+## 2. Me equivoqué al decir que faltaba la mitad de la cadena
 
-Ella advirtió que si el PR de Christian entraba solo, la divergencia quedaría viva en `main`. **Fui a
-medirlo y el problema es de otro tamaño:** el corte está escrito a mano en **~11 sitios de cuatro
-células**, y hoy **sólo `dev/diana-alvarez` tiene el cambio, y sólo en los 5 archivos de dbt**.
+Escribí en `DEC-019` —y se lo dije al PO— que `src/api/repositorio_gold.py` y
+`src/frontend/prediccion_client.py` *"siguen en 0.60 y no los tiene nadie en ninguna rama"*. **Era
+falso.** El error fue de método, y es **el mismo que Marina García ya me señaló con `latitud`**:
+busqué por el **nombre viejo** de la constante (`UMBRAL_RIESGO`) y las dos células la habían
+**renombrado**.
 
-`src/api/repositorio_gold.py:325` y `src/frontend/prediccion_client.py:26` **siguen en 0.60 y no los
-tiene nadie en ninguna rama** — lo verifiqué recorriendo las 21.
+Buscando por el valor y no por el nombre, la realidad es la contraria y mucho mejor:
 
-**La consecuencia concreta:** si entra sólo la parte de dbt, los tableros dirán **7** y
-`/api/v1/kpis` dirá **0** sobre exactamente el mismo dato. Es el peor resultado posible de los tres:
-peor que dejar todo en 0.60, porque dos superficies del mismo sistema se contradicen frente al
-evaluador. Queda asentado como `RISK-010` y como salvedad dentro de la propia `DEC-019`.
+| Capa | Quién | Commit / PR |
+|---|---|---|
+| **dbt** (5 archivos) | Diana Alvarez | `ad3d2fd`, empujado, **sin PR** |
+| **API** (`repositorio_gold`, `mock_data`, `v1/gold`) | Christian Ruiz | `0f4b37c`, empujado, **sin PR** |
+| **Frontend** (`prediccion_client`, `2_Panel_ML`) | Marina García | **PR #268 abierto**, 4/4 verde |
+| **`DEC-019`** (registro) | Edgar Coronel | esta rama, **sin PR** |
 
-**Y hay una asimetría de costo que decide el orden:** la API filtra en tiempo de consulta, así que
-cambia con un **redespliegue**; los cubos materializan `escuelas_en_riesgo`, así que necesitan
-**regenerar Gold y reimportar a Cloud SQL**. No son el mismo esfuerzo ni el mismo riesgo.
+**Las tres capas están escritas, y las tres separan el ancla de la línea con el mismo nombre**
+—`ANCLA_SIGMOIDE` / `LINEA_DE_ALERTA`—. C1, C2 y C4 se coordinaron en la nomenclatura **sin que el
+PO lo pidiera**, que es exactamente lo que uno quiere ver el día del freeze.
+
+**Lo que falta no es código: son tres PRs y un orden.**
+
+## 2.bis El riesgo real es el orden, y hay una asimetría de costo
+
+Si entra una sola capa, **dos superficies del mismo sistema se contradicen**: los tableros dirían 7
+y `/api/v1/kpis` diría 0 sobre el mismo dato. Peor que dejar todo en 0.60.
+
+Y las capas no cuestan lo mismo:
+
+- **API y frontend filtran en tiempo de consulta** → cambian con un **redespliegue**.
+- **Los cubos de dbt materializan `escuelas_en_riesgo`** → exigen **regenerar Gold y reimportar a
+  Cloud SQL**, que es de C5 y es el eslabón largo.
+
+`RISK-010` sigue abierto porque la **duplicación persiste**: `LINEA_DE_ALERTA` queda definida dos
+veces, en `repositorio_gold.py` y en `prediccion_client.py`, sin prueba que las ate.
 
 ## 3. El dato de Marina sobre C1 ya está vencido
 
