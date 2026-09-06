@@ -12,11 +12,12 @@ aplica, que es la clase de desajuste que se descubre en una demo. Si algún día
 explicación sea solo de analista, el cambio va en `v1/__init__.py` con su propia dependencia, no en
 un comentario.
 
-`prediccion`/`prediccion_batch` leen `gold.predicciones` + `gold.recomendaciones` a través de
+Las **tres** rutas leen `gold.predicciones` + `gold.recomendaciones` a través de
 `RepositorioModelos` (`src/api/repositorio_modelos.py`, US-412) -- cierra BUG-010, que detectó que
-seguían leyendo `src/api/mock_data.py` (un valor fabricado, no la salida de ningún modelo).
-`explicacion` sigue sobre `mock_data` (SHAP no tiene fuente en Gold todavía; fuera de alcance de
-BUG-010, que cubre solo `/predicciones` y `/predicciones/batch`).
+seguían leyendo `src/api/mock_data.py` (un valor fabricado, no la salida de ningún modelo), y
+BUG-053, que era lo mismo para `explicacion`: desde que ML-02 persiste `shap_d1..shap_d6`
+(`publicar_gold.py`, C3) ya hay fuente real que leer. **Este router ya no consume `mock_data`
+salvo para el ciclo por defecto.**
 
 Si Postgres no responde a tiempo (`RepositorioModelosNoDisponible`, US-416), ambas rutas devuelven
 503 `service_unavailable` -- nunca dejan la excepción caer al handler genérico de `app.py` (que la
@@ -41,13 +42,6 @@ from src.api.schemas import (
 from src.api.v1.common import paginate
 
 router = APIRouter(prefix="/predicciones", tags=["Predicciones"])
-
-
-def _buscar_escuela(cct: str) -> dict:
-    for e in mock_data.ESCUELAS:
-        if e["cct"] == cct:
-            return e
-    raise HTTPException(status.HTTP_404_NOT_FOUND, detail="CCT inexistente o fuera de alcance.")
 
 
 @router.get("/{cct}", response_model=PrediccionOut)
@@ -91,28 +85,40 @@ def prediccion_batch(
 
 
 @router.get("/{cct}/explicacion", response_model=ExplicacionSHAPOut)
-def explicacion(cct: str) -> ExplicacionSHAPOut:
-    """Contribución de cada driver al riesgo (acceso: `require_lectura`, ver el módulo).
+def explicacion(
+    cct: str,
+    ciclo: str = Query(mock_data.CICLO_DEFAULT),
+    repo: RepositorioModelos = Depends(get_repositorio_modelos),
+) -> ExplicacionSHAPOut:
+    """Contribucion de cada driver al riesgo (acceso: `require_lectura`, ver el modulo).
 
-    **Esta ruta todavía NO devuelve valores SHAP.** Las `contribuciones` son los seis drivers de
-    `mock_data`, no la salida de ningún modelo. No es un pendiente de C4 solamente: hoy **no existe
-    fuente que leer**. `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma
-    exacta de `ExplicacionSHAPOut`, pero **no la llama nadie** y `publicar_gold.py` solo escribe
-    `gold.predicciones` y `gold.recomendaciones` -- ninguna guarda contribuciones.
+    Lee `gold.recomendaciones` (columnas `shap_d1..shap_d6`, que persiste `publicar_gold.py` desde
+    ML-02) a traves de `obtener_prediccion` -- la misma fila que sirve `/predicciones/{cct}`.
+    Reutilizarla en vez de hacer una consulta propia no es casualidad: hereda el cache TTL y la
+    traduccion a 503 de US-416, y hace **imposible** que la explicacion se desincronice del
+    `driver_dominante` que dice explicar. Cierra BUG-053; antes devolvia `mock_data`.
 
-    Calcularlo aquí, por petición, no es opción: `shap` vive en `requirements/celula-3.txt` (no en
-    la imagen de la API) y `KernelExplainer` tarda segundos por fila, incompatible con el
-    `statement_timeout` y la degradación 503 de US-416.
+    **`null` significa SIN_DATO, no cero.** Un driver sin contribucion calculable viaja como
+    `null`; colapsarlo a `0.0` afirmaria que ese driver no contribuyo al riesgo, que es una
+    afirmacion falsa sobre la causa (BUG-055). Las seis claves estan siempre presentes: el hueco
+    se declara, no se omite.
 
-    Orden para cerrarlo: **C3 persiste las contribuciones en Gold → C4 cambia este cuerpo por una
-    lectura del repositorio → prueba de contrato**. El primer paso no es de esta célula.
+    404 si el CCT no tiene fila para ese ciclo -- nunca una explicacion inventada.
     """
-    escuela = _buscar_escuela(cct)
-    contribuciones = {
-        f"D{i}": (escuela.get(f"d{i}") or 0.0) for i in range(1, 7)
-    }
+    try:
+        fila = repo.obtener_prediccion(cct, ciclo)
+    except RepositorioModelosNoDisponible as exc:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE, detail="Servicio de predicciones no disponible."
+        ) from exc
+    if fila is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="CCT sin prediccion o fuera de alcance."
+        )
     return ExplicacionSHAPOut(
-        cct=escuela["cct"],
-        driver_dominante=escuela["driver_dominante"],
-        contribuciones=contribuciones,
+        cct=fila["cct"],
+        driver_dominante=fila["driver_dominante"],
+        contribuciones={
+            f"D{i}": fila.get(f"shap_d{i}") for i in range(1, 7)
+        },
     )

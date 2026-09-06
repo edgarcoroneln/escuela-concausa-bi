@@ -80,21 +80,23 @@ ausencia total; los otros cinco drivers entraron al modelo.
 
 La pérdida cuadrática vigente no aportaba frente al baseline: MAE 0.159148 contra 0.159223 y
 predicciones exclusivamente positivas, por lo que ninguna escuela superaba el umbral de riesgo.
-Con `loss="absolute_error"`, en la misma ventana temporal y sin ajustar el umbral:
+Con `loss="absolute_error"`, en la misma ventana temporal y sin ajustar el umbral, el dump
+definitivo con CONAPO real produce:
 
 | Métrica | Resultado |
 |---|---:|
-| MAE | 0.141652 |
-| RMSE | 0.436390 |
+| MAE | 0.141458 |
+| RMSE | 0.436326 |
 | MAE baseline | 0.159223 |
 | Mejora sobre baseline | 11.04 % |
-| Riesgo mínimo / mediana / máximo | 0.0106 / 0.3595 / 0.8744 |
-| Escuelas con `indice_riesgo >= 0.6` | 0.47 % |
+| Riesgo mínimo / mediana / máximo | 0.0292 / 0.3533 / 0.5717 |
+| Escuelas con `indice_riesgo >= 0.6` | 0 (0 %) |
 
 No se movieron las anclas de negocio ni se optimizó un porcentaje objetivo. El cambio se aceptó
-porque mejora el holdout temporal frente al baseline y evita tanto 0 % como 98.9 % por causas de
-ajuste. La publicación local produjo 45,276 predicciones y 45,276 recomendaciones para 2024-2025;
-ML-02 obtuvo F1 macro 0.8331 y cinco drivers dominantes.
+porque mejora el holdout temporal frente al baseline. El 0 % definitivo es consistente con la
+calibración ratificada: la mayor caída predicha es 4.53 %, menor que el umbral de 5 %. La publicación
+local produjo 45,276 predicciones y 45,276 recomendaciones para 2024-2025; ML-02 obtuvo F1 macro
+0.8333 y cinco drivers dominantes.
 
 ### Error por entidad (ventana de producción)
 

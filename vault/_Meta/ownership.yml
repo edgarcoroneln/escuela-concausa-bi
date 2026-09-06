@@ -164,6 +164,10 @@ personas:
       - "src/frontend/**"
       - "tests/**"
       - "requirements/celula-2.txt"
+      # US-525c reasignada del PO el 2026-09-05: el runbook de rollback de Superset
+      # vive en 08_CICD_DevOps (C5) pero lo escribe quien conoce Superset, no quien
+      # tiene la carpeta. Alcance abierto solo para esa historia; C5 revisa por criticos.
+      - "vault/08_CICD_DevOps/Runbook_Rollback_Superset_Agente.md"
 
   monserrat-miranda:
     nombre: "Monserrat Xcaret Miranda Olivas"
@@ -436,6 +440,13 @@ comunes:
   # Infraestructura de la raíz, compartida por todo el repositorio.
   - ".gitignore"
   - ".gitattributes"
+  # Guía de ambiente local en la raíz. Reportada por Monserrat Miranda y ratificada por
+  # Christian Ruiz (2026-09-05): la carpeta no estaba en NINGÚN alcance —ni verde, ni
+  # amarillo, ni comunes—, así que el gate reprobaba a quien intentara ejecutar el
+  # `git rm --cached` de `configuracion.env`, que incumple `Secrets_Policy` por estar
+  # versionado. No se puede exigir que se cumpla una política y a la vez impedir que
+  # alguien la cumpla. Séptima aparición del mismo hueco — ver `vault/_Meta/Vault_Steward`.
+  - "guia-ambiente-local/**"
   # Registros de intake: `Definition_of_Filed` obliga a CUALQUIERA a dar de alta ahí el bug,
   # el riesgo, el bloqueo o el hallazgo que encuentre. Si el registro no está permitido para
   # quien reporta, la regla no se puede cumplir. Son append-only y sus dueños de área siguen

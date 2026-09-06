@@ -309,6 +309,7 @@
         "type": "object"
       },
       "ExplicacionSHAPOut": {
+        "description": "Contribución de cada driver al riesgo de una escuela.\n\n`contribuciones` admite `None` **a propósito**: es el `SIN_DATO` explícito de la regla de\ncobertura parcial del proyecto. Un driver sin dato NO es un driver que contribuyó cero -- D5\n(estrés hídrico) es regional y D6 (aire) cubre ~80 zonas urbanas, así que el hueco es el caso\nnormal, no la excepción. Devolver `0.0` ahí sería afirmar \"este driver no influyó\", que es una\nafirmación falsa y además incoherente con `indice_completitud_drivers` y con los cubos, que sí\nmarcan `SIN_DATO`.",
         "properties": {
           "cct": {
             "title": "Cct",
@@ -316,7 +317,14 @@
           },
           "contribuciones": {
             "additionalProperties": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "title": "Contribuciones",
             "type": "object"
@@ -1863,7 +1871,7 @@
     },
     "/api/v1/predicciones/{cct}/explicacion": {
       "get": {
-        "description": "Contribución de cada driver al riesgo (acceso: `require_lectura`, ver el módulo).\n\n**Esta ruta todavía NO devuelve valores SHAP.** Las `contribuciones` son los seis drivers de\n`mock_data`, no la salida de ningún modelo. No es un pendiente de C4 solamente: hoy **no existe\nfuente que leer**. `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma\nexacta de `ExplicacionSHAPOut`, pero **no la llama nadie** y `publicar_gold.py` solo escribe\n`gold.predicciones` y `gold.recomendaciones` -- ninguna guarda contribuciones.\n\nCalcularlo aquí, por petición, no es opción: `shap` vive en `requirements/celula-3.txt` (no en\nla imagen de la API) y `KernelExplainer` tarda segundos por fila, incompatible con el\n`statement_timeout` y la degradación 503 de US-416.\n\nOrden para cerrarlo: **C3 persiste las contribuciones en Gold → C4 cambia este cuerpo por una\nlectura del repositorio → prueba de contrato**. El primer paso no es de esta célula.",
+        "description": "Contribucion de cada driver al riesgo (acceso: `require_lectura`, ver el modulo).\n\nLee `gold.recomendaciones` (columnas `shap_d1..shap_d6`, que persiste `publicar_gold.py` desde\nML-02) a traves de `obtener_prediccion` -- la misma fila que sirve `/predicciones/{cct}`.\nReutilizarla en vez de hacer una consulta propia no es casualidad: hereda el cache TTL y la\ntraduccion a 503 de US-416, y hace **imposible** que la explicacion se desincronice del\n`driver_dominante` que dice explicar. Cierra BUG-053; antes devolvia `mock_data`.\n\n**`null` significa SIN_DATO, no cero.** Un driver sin contribucion calculable viaja como\n`null`; colapsarlo a `0.0` afirmaria que ese driver no contribuyo al riesgo, que es una\nafirmacion falsa sobre la causa (BUG-055). Las seis claves estan siempre presentes: el hueco\nse declara, no se omite.\n\n404 si el CCT no tiene fila para ese ciclo -- nunca una explicacion inventada.",
         "operationId": "explicacion_api_v1_predicciones__cct__explicacion_get",
         "parameters": [
           {
@@ -1872,6 +1880,16 @@
             "required": true,
             "schema": {
               "title": "Cct",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ciclo",
+            "required": false,
+            "schema": {
+              "default": "2024-2025",
+              "title": "Ciclo",
               "type": "string"
             }
           }

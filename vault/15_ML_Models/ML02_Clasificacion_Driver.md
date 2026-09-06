@@ -48,10 +48,15 @@ independiente. Por ello, F1 mide la capacidad de reproducir esa regla operativa 
 
 ## Explicabilidad
 
-`calcular_shap_kernel()` calcula contribuciones SHAP mediante `KernelExplainer` y
-`explicar_driver()` las transforma al contrato acordado para Célula 4. SHAP vive en
-`requirements/celula-3.txt`, fuera del camino crítico del CI base. El flujo se verificó localmente
-con una explicación real de seis contribuciones para una escuela.
+`calcular_shap_batch()` calcula contribuciones mediante `TreeExplainer` y `explicar_driver()` las
+transforma al contrato acordado para Célula 4. El benchmark local calculó 100 filas en 0.67 s;
+`KernelExplainer` no es viable para las 45 mil escuelas del ciclo vigente.
+
+El job `publicar_gold --con-shap` persiste `shap_d1`…`shap_d6` como columnas nullable de
+`gold.recomendaciones`. Un driver excluido por falta de cobertura queda en `NULL`, nunca en `0.0`:
+cero significa contribución nula, mientras `NULL` significa que no pudo calcularse. La migración de
+la tabla existente es idempotente. SHAP vive en `requirements/celula-3.txt`, fuera del camino
+crítico del CI base, y se calcula en batch; la API sólo lee los valores persistidos.
 
 ## Validación
 

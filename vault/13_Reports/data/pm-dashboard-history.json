@@ -249,11 +249,20 @@
   },
   {
     "date": "2026-09-05",
-    "remaining": 38,
-    "weighted_remaining": 19.9,
-    "done": 50,
-    "scope": 88,
-    "wip": 33,
+    "remaining": 37,
+    "weighted_remaining": 19.5,
+    "done": 52,
+    "scope": 89,
+    "wip": 32,
+    "blocked": 0
+  },
+  {
+    "date": "2026-09-06",
+    "remaining": 37,
+    "weighted_remaining": 19.5,
+    "done": 52,
+    "scope": 89,
+    "wip": 32,
     "blocked": 0
   }
 ]

@@ -113,8 +113,17 @@ def _metadatos() -> tuple[MetaData, Table, Table, Table, Table]:
         Column("mlflow_run_id", String),
     )
 
-    # gold.recomendaciones (Data_Model.md §4.5) — salida de ML-02. Hoy sin filas (ML-02 sin
-    # entregar, US-302/Andrés); el LEFT JOIN simplemente no encuentra nada, nunca se inventa.
+    # gold.recomendaciones (Data_Model.md §4.5) — salida de ML-02.
+    #
+    # `shap_d*` son la contribución de cada driver al riesgo, que alimenta
+    # `/predicciones/{cct}/explicacion` (BUG-053). Las escribe `publicar_gold.py` desde
+    # `entrenar_ml02.explicar_driver` (C3, commit 924c8b4).
+    #
+    # **Nullable a propósito**: `NULL` significa SIN_DATO ("no se pudo calcular"), que NO es lo
+    # mismo que `0.0` ("este driver no contribuyó"). Confundirlos fue BUG-055, y con datos reales
+    # es peor: la explicación responde *por qué* una escuela está en riesgo, así que un cero
+    # inventado ahí es una afirmación falsa sobre la causa. C3 escribe `NULL` (su validador
+    # convierte NaN/infinito), la API lo transporta como `null` y nadie lo colapsa por el camino.
     recomendaciones = Table(
         "recomendaciones",
         metadata,
@@ -123,6 +132,12 @@ def _metadatos() -> tuple[MetaData, Table, Table, Table, Table]:
         Column("driver_dominante", String),
         Column("recomendacion", String),
         Column("prioridad", String),
+        Column("shap_d1", Float, nullable=True),
+        Column("shap_d2", Float, nullable=True),
+        Column("shap_d3", Float, nullable=True),
+        Column("shap_d4", Float, nullable=True),
+        Column("shap_d5", Float, nullable=True),
+        Column("shap_d6", Float, nullable=True),
     )
 
     return metadata, dim_escuela, dim_municipio, fact_escuela_ciclo, predicciones, recomendaciones

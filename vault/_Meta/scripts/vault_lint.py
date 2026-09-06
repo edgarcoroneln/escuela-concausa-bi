@@ -112,6 +112,7 @@ def main(root="."):
 
     broken, no_fm, referenced = [], [], set()
     mojibake = []
+    conflictos = []
     ids = {}
 
     for p in md_files:
@@ -128,6 +129,13 @@ def main(root="."):
                 continue
             if es_mojibake(linea):
                 mojibake.append((p, n, linea.strip()[:70]))
+            # Marcadores de conflicto commiteados. Pasó el 2026-09-05: un `git add -A`
+            # sobre un merge a medias metió `<<<<<<<` en la matriz y llegó a `main` sin
+            # que nada lo detuviera -- ni el linter, ni las pruebas, ni el gate. El
+            # `git status | grep UU` tampoco lo ve, porque el add ya los había marcado
+            # como resueltos. Un marcador en `main` es corrupción visible del vault.
+            if linea.startswith(("<<<<<<< ", ">>>>>>> ")) or linea.rstrip() == "=======":
+                conflictos.append((p, n, linea.strip()[:70]))
         # IDs: se ignoran las plantillas (vault/_Templates/) porque son ejemplares con IDs placeholder
         if "/_Templates/" not in _norm(p):
             for m in ID_RE.finditer(text.split("---")[1] if "---" in text else ""):
@@ -170,6 +178,14 @@ def main(root="."):
         print("   Tu editor guardó texto UTF-8 como si fuera cp1252 (Windows).")
         print("   Recupera el archivo con `git checkout origin/main -- <ruta>` y vuelve a")
         print("   editarlo con el editor en UTF-8. Ver vault/_Meta/Vault_Rules.md.")
+    if conflictos:
+        problems += len(conflictos)
+        archivos = sorted({p for p, _, _ in conflictos})
+        print(f"\n❌ Marcadores de conflicto sin resolver ({len(conflictos)} en {len(archivos)} archivo(s)):")
+        for p, n, muestra in conflictos[:10]:
+            print(f"   {p}:{n} → {muestra}")
+        print("   Un merge quedó a medias y se commiteó. Resuelve el bloque a mano;")
+        print("   `git status` no los ve si ya pasaron por `git add`.")
     if orphans:
         print(f"\nℹ️  Posibles huérfanos ({len(orphans)}) — no referenciados por wikilinks:")
         for p in orphans:

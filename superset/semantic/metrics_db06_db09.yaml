@@ -214,12 +214,12 @@ datasets:
         "
       - nombre: recomendaciones_prioridad_alta
         etiqueta: "Recomendaciones de prioridad ALTA"
-        expresion: "SUM(CASE WHEN prioridad = 'ALTA' THEN 1 END)"
+        expresion: "SUM(CASE WHEN upper(prioridad) = 'ALTA' THEN 1 END)"
         formato: entero
         cobertura: cobertura_recomendacion
       - nombre: pct_escuelas_recomendadas
         etiqueta: "% escuelas con recomendación"
-        expresion: "SUM(recomendacion_emitida) / NULLIF(COUNT(DISTINCT cct), 0)"
+        expresion: "SUM(recomendacion_emitida)::numeric / NULLIF(COUNT(DISTINCT cct), 0)"
         formato: porcentaje_0
         denominador_visible: escuelas
       - nombre: indice_riesgo

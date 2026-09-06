@@ -25,6 +25,41 @@ tags: [index, moc]
 - `.github/copilot-instructions.md` — apuntador equivalente para **GitHub Copilot** (redirige a AGENTS.md; sin frontmatter porque no es `.md` del vault)
 - [[vault/00_Start_Here/Vault_Changelog]] — cambios del vault
 
+## 🌐 URLs públicas (demo del 9 de septiembre)
+
+> **Es lo primero que mira quien evalúa.** La rúbrica exige URL pública viva; sin ella el techo es 6.0.
+> Las dos rutas se re-verificaron el **2026-09-06**.
+
+| Servicio | URL | Acceso | Verificado 2026-09-06 |
+|---|---|---|---|
+| **API** · FastAPI | `https://faro-api-eanzfglvyq-uc.a.run.app` | **Login con Google obligatorio** desde `DEC-018` | `/api/v1/health` → **200** · `/api/v1/kpis` → **401 sin sesión** |
+| **Superset** · los 10 tableros | `https://faro-superset-eanzfglvyq-uc.a.run.app` | **Login con Google obligatorio** | `/health` → **200** · botón de Google presente en `/login/` |
+
+> **Corrección del 2026-09-06.** Esta tabla decía que la lectura de la API era **pública**, y dejó de
+> serlo el 5-sep al cerrar `SEC-006`: `DEC-018` puso `AUTH_LECTURA_PUBLICA=false` y **toda ruta de
+> datos exige sesión**. Sólo `/api/v1/health` responde sin token. Quien pruebe sin iniciar sesión verá
+> **401 en todo** y creerá que está roto: no lo está, es la postura vigente. Se revierte en segundos
+> con `AUTH_LECTURA_PUBLICA=true`, **sin rebuild**, si se decidiera reabrir la lectura para la demo.
+
+**Rutas útiles de la API** — todas cuelgan de `/api/v1`, **no de la raíz**:
+
+| Para ver | Ruta |
+|---|---|
+| Documentación interactiva (Swagger) | `/api/v1/docs` |
+| Documentación alterna (ReDoc) | `/api/v1/redoc` |
+| Contrato OpenAPI | `/api/v1/openapi.json` |
+| KPIs del proyecto | `/api/v1/kpis` |
+| Predicción de una escuela | `/api/v1/predicciones/{cct}` |
+
+> **Dos avisos que evitan un 404 en vivo.** La raíz de ambos dominios **no sirve nada**: `/` devuelve
+> 404 en la API y FARO Web aún no está desplegado. Y `/docs` **tampoco existe** en la raíz — la
+> documentación está en `/api/v1/docs`, porque `src/api/app.py` monta todo bajo ese prefijo.
+>
+> Superset **no admite acceso anónimo**: quien vaya a abrirlo debe tener su correo en la lista blanca
+> del SSO antes de la demo (`SUPERSET_SSO_ALLOWED_EMAILS`). Si no está, el login con Google funciona
+> y aun así lo rechaza. Detalle en [[vault/08_CICD_DevOps/Cloud_Run_Deploy]] §5.1 y en
+> [[vault/_DevLog/2026-09-05-luis-tellez-superset-sso-google]].
+
 ## 🧭 Ciclo de vida (carpetas)
 | # | Carpeta | Contenido |
 |---|---|---|

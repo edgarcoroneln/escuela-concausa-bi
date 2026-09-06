@@ -47,3 +47,32 @@ crosswalk `region_hidrologica → cve_mun`.
 El PR #197 ya resolvió la reproducción de Bronze DS-01/DS-02 y sus suites de calidad; el pendiente
 es ahora una corrida Bronze → Silver → Gold y la evidencia agregada de cobertura real. Secuencia y
 criterios: [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
+
+## Ejecución reproducible desde Gold
+
+## Evidencia real — 2026-09-05
+
+El dump `gold_bug048_final2_2026-09-05.sql` se restauró en la base local aislada
+`faro_gold_bug048_review_20260905_02`; no se copia al repositorio. El corte tiene 136,046
+observaciones, 46,547 escuelas, 3 ciclos y `cve_mun` disponible.
+
+| Driver | Observaciones sin dato | % sin dato | Escuelas afectadas |
+|---|---:|---:|---:|
+| D1 · pobreza | 0 | 0.00% | 0 |
+| D2 · inseguridad | 0 | 0.00% | 0 |
+| D3 · infraestructura | 21,769 | 16.00% | 8,022 |
+| D4 · conectividad | 21,654 | 15.92% | 7,984 |
+| D5 · agua | 136,046 | 100.00% | 46,547 |
+| D6 · aire | 134,272 | 98.70% | 45,952 |
+
+El hallazgo principal es que D5 está completamente ausente y D6 tiene cobertura residual. Esto
+impide interpretar clusters como perfiles completos del territorio y bloquea `casos_completos` de
+ML-03. La sección municipal sí está disponible para continuar el análisis de concentración; no se
+declara un umbral de sesgo ni se cambia el estado a `done` sin revisión humana.
+
+`python -m src.modelos.ejecutar_cierre_ml03` produce agregados por driver, entidad y municipio,
+incluida la dispersión municipal, sin exportar CCT individuales ni convertir `SIN_DATO` en cero.
+Cuando `cve_mun` falta o contiene nulos, el reporte marca la sección municipal como bloqueada.
+
+La prueba real permanece pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
+base Gold configurada; no se inventan cifras de cobertura ni se propone `status: done`.

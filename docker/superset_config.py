@@ -149,6 +149,23 @@ _SSO_ALLOWED_EMAILS = {
     for e in os.environ.get("SUPERSET_SSO_ALLOWED_EMAILS", "").split(",")
     if e.strip()
 }
+# Guarda de lista blanca vacía (fail-loud, mismo criterio que SECRET_KEY/SSO). Con SSO
+# activo en prod, una lista blanca vacía —o mal escrita— es el ÚNICO fallo de esta
+# configuración que no revienta y APARENTA funcionar: el contenedor arranca, /login/
+# muestra "Entrar con Google", cualquiera se autentica con Google y oauth_user_info lo
+# RECHAZA (puerta 2, fail-closed) por no estar en la lista ⇒ NADIE entra, ni el
+# profesor, como si el login sirviera. En prod eso es casi siempre un secreto no
+# inyectado o un typo, no una decisión: reventar el arranque lo vuelve evidente en vez
+# de descubrirlo el día de la demo. (Detectado por el PO, Edgar, tras el merge de #246.)
+if _IS_PROD and _SSO_ENABLED and not _SSO_ALLOWED_EMAILS:
+    raise RuntimeError(
+        "SSO activo en producción pero SUPERSET_SSO_ALLOWED_EMAILS está vacía o mal "
+        "escrita: la puerta de la lista blanca rechazaría a TODOS (fail-closed), pero "
+        "el contenedor arrancaría mostrando 'Entrar con Google' y aparentaría funcionar "
+        "mientras rechaza a cualquiera, incluido el profesor. Declara al menos un correo "
+        "autorizado. Para rollback al login nativo (AUTH_DB) quita las credenciales SSO "
+        "y declara SUPERSET_SSO_ROLLBACK=true."
+    )
 # Subconjunto que además recibe rol Admin (el resto entra como rol de lectura).
 _SSO_ADMIN_EMAILS = {
     e.strip().lower()
@@ -159,6 +176,23 @@ _SSO_ADMIN_EMAILS = {
 # afinado fino del rol de lectura se hace en el bootstrap (Bloque 2), igual que
 # el rol público.
 _SSO_VIEWER_ROLE = os.environ.get("SUPERSET_SSO_VIEWER_ROLE", "Gamma")
+
+# Guarda de colisión admin/SSO (fail-loud, mismo criterio que SECRET_KEY/SSO).
+# El admin de servicio (username="admin") se crea con SUPERSET_ADMIN_EMAIL. Si ese
+# correo está en la lista blanca SSO, el primer login SSO de esa persona chocaría
+# con el email del admin (constraint ab_user_email_key): FAB empareja por username,
+# no lo encuentra, e intenta INSERTAR por email —que ya ocupa el admin— y rebota al
+# login. El admin es una cuenta de SERVICIO: su correo NO debe ser el de una persona
+# que entra por SSO. (Bug cazado en el primer deploy SSO-ON; ver DevLog 2026-09-05.)
+_ADMIN_EMAIL = os.environ.get("SUPERSET_ADMIN_EMAIL", "").strip().lower()
+if _SSO_ENABLED and _ADMIN_EMAIL and _ADMIN_EMAIL in _SSO_ALLOWED_EMAILS:
+    raise RuntimeError(
+        f"SUPERSET_ADMIN_EMAIL ({_ADMIN_EMAIL}) está en la lista blanca SSO: el "
+        "admin de servicio (username='admin') colisionaría con el login SSO de "
+        "ese correo (constraint ab_user_email_key), porque FAB empareja por "
+        "username y luego inserta por email. Usa un correo de servicio que no "
+        "sea de una persona que entra por SSO (p. ej. admin@faro.local)."
+    )
 
 if _SSO_ENABLED:
     AUTH_TYPE = AUTH_OAUTH
@@ -199,7 +233,10 @@ if _SSO_ENABLED:
         def oauth_user_info(self, provider, response=None):
             if provider != "google":
                 return {}
-            me = self.appbuilder.sm.oauth_remotes[provider].get("userinfo").json()
+            # authlib resuelve el userinfo_endpoint desde el OIDC discovery
+            # (server_metadata_url). NO usar .get("userinfo"): trataría
+            # "userinfo" como URL relativa y revienta con "No scheme supplied".
+            me = self.appbuilder.sm.oauth_remotes[provider].userinfo()
             email = (me.get("email") or "").strip().lower()
             # Puerta 1: correo presente y verificado por Google.
             if not email or not me.get("email_verified", False):

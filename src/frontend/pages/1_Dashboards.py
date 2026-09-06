@@ -11,7 +11,7 @@ from __future__ import annotations
 import httpx
 import streamlit as st
 
-from auth import current_user
+from auth import encabezado
 from superset_client import (
     SupersetDeshabilitado,
     SupersetError,
@@ -33,7 +33,7 @@ def render() -> None:
     st.title("Dashboards")
     st.caption("Los 10 tableros de Superset, embebidos por guest token + RLS (US-206).")
 
-    user = current_user()
+    user = encabezado()  # sesión + botón de cerrar sesión (antes solo vivían en app.py)
     rol = (user or {}).get("role", "ciudadano")
 
     try:
