@@ -126,7 +126,8 @@ def obtener_kpis(
     """KPIs agregados del tablero (rol mínimo: ciudadano).
 
     Fórmulas tomadas literalmente de `vault/04_UX_Design/Screen_Specs.md` (KPI-02 variación ponderada,
-    KPI-04 escuelas en riesgo vía JOIN a `gold.predicciones` con umbral 0.6 ratificado, KPI-05
+    KPI-04 escuelas en riesgo vía JOIN a `gold.predicciones` con la línea de alerta de 0.50
+    (`DEC-019`, distinta del ancla 0.60 de la sigmoide -- ver `repositorio_gold.LINEA_DE_ALERTA`), KPI-05
     completitud promedio) — no son agregaciones inventadas para este endpoint.
     """
     datos = repo.obtener_kpis(cve_ent=cve_ent, cve_mun=cve_mun, ciclo=ciclo)
