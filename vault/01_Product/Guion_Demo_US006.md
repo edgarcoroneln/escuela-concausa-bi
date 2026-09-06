@@ -57,6 +57,7 @@ Tres cosas que se ven y que **conviene explicar nosotros**, no que las descubran
 
 | Si falla | Qué se hace | Preparado por |
 |---|---|---|
+| **FARO Web no alcanza a desplegarse** (`US-526`) | La demo corre sobre **Superset y la API por separado**: Luis muestra las dos URLs en el minuto 7 y Marina el panel desde el ambiente local. **Se les avisa a Manuel y a Marina el lunes**, no el miércoles | Edgar Coronel |
 | **La conexión de la sede** | Video de 3 min grabado el lunes con el recorrido completo, en el equipo local y en una memoria USB | Edgar Coronel |
 | **Superset no carga o el login rechaza** | Capturas de los 10 tableros en el vault (`04_UX_Design/capturas/`) y el recorrido se narra sobre ellas | Marina · Monserrat |
 | **La API responde 401 o 500** | Ambiente local levantado con [[vault/00_Start_Here/Runbook_Ambiente_Local]], corriendo **antes** de entrar a la sala | Edgar Coronel |

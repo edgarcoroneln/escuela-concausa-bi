@@ -249,10 +249,10 @@
   },
   {
     "date": "2026-09-05",
-    "remaining": 37,
-    "weighted_remaining": 19.2,
+    "remaining": 38,
+    "weighted_remaining": 20.1,
     "done": 51,
-    "scope": 88,
+    "scope": 89,
     "wip": 33,
     "blocked": 0
   },
