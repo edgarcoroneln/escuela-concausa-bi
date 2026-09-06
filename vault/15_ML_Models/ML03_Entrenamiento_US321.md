@@ -56,6 +56,19 @@ El plan y prompt de ejecución están en
 
 ## Ejecución reproducible desde Gold
 
+## Corrida sobre Gold local — 2026-09-05
+
+El dump post-BUG-048 se restauró en `faro_gold_bug048_review_20260905_02` y el punto de entrada
+`src.modelos.ejecutar_cierre_ml03` validó 136,046 filas, 46,547 escuelas, 3 ciclos y cero
+duplicados por `cct × id_ciclo`. Con la política vigente `casos_completos`, la corrida quedó
+`bloqueada`: D5 (`d5_agua`) está en `SIN_DATO` para el 100% de las observaciones y D6 (`d6_aire`)
+para el 98.70%.
+
+No se entrenó KMeans, no se seleccionó `k`, no se calculó Silhouette y no se registró MLflow. Esta
+salida es evidencia de cobertura y del bloqueo de la política, no una métrica negativa del modelo.
+Para continuar se requiere que Andrés y Edgar ratifiquen una política de ausencia; cualquier
+imputación o cambio de vector debe quedar documentado antes de repetir el entrenamiento.
+
 El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla real desde
 `DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y sólo registra en MLflow cuando
 se indica `--tracking-uri`. Si D5 u otro driver está totalmente ausente, `casos_completos` puede
