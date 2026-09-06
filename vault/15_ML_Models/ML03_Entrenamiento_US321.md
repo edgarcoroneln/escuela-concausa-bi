@@ -58,7 +58,10 @@ El plan y prompt de ejecución están en
 
 ## Corrida sobre Gold local — 2026-09-05
 
-El dump post-BUG-048 se restauró en `faro_gold_bug048_review_20260905_02` y el punto de entrada
+La fuente canónica es `gold_bug048_final1_2026-09-05 1.sql` (SHA-256
+`07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`), restaurado en
+`faro_gold_bug048_final1_review_20260905`. `final2` se comparó de forma independiente y produjo los
+mismos agregados; no se mezclan cortes. El punto de entrada
 `src.modelos.ejecutar_cierre_ml03` validó 136,046 filas, 46,547 escuelas, 3 ciclos y cero
 duplicados por `cct × id_ciclo`. Con la política vigente `casos_completos`, la corrida quedó
 `bloqueada`: D5 (`d5_agua`) está en `SIN_DATO` para el 100% de las observaciones y D6 (`d6_aire`)
@@ -74,5 +77,6 @@ El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla re
 se indica `--tracking-uri`. Si D5 u otro driver está totalmente ausente, `casos_completos` puede
 dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un modelo.
 
-La ejecución real sigue pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
-base Gold configurada. Esto no cambia el estado ni reemplaza la ratificación humana de la política.
+La primera ejecución del 4-sep no tuvo Docker ni Gold local; la evidencia de contrato y cobertura se
+obtuvo el 5-sep con el dump aislado. Sigue pendiente la ejecución de entrenamiento final, no la
+verificación de Gold; esto no reemplaza la ratificación humana de la política.

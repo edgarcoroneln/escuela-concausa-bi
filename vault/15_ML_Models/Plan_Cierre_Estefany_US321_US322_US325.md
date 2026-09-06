@@ -212,6 +212,10 @@ Se restauró `gold_bug048_final1_2026-09-05 1.sql` en la base aislada
 observaciones individuales. El contrato entregó 136,046 filas, 46,547 escuelas, 3 ciclos,
 `cve_mun` disponible y cero duplicados por `cct × id_ciclo`.
 
+`final1` es la fuente canónica de evidencia (SHA-256
+`07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`). `final2` sólo fue una
+comparación independiente: produjo los mismos agregados y no se mezcló con el corte canónico.
+
 La evidencia real ya está documentada para US-322 y US-325. ML-03 quedó bloqueado por la política
 `casos_completos`: D5 está 100% en `SIN_DATO` y D6 98.70% sin dato. No se entrenó, no se calculó
 Silhouette y no se registró MLflow. Las historias permanecen abiertas hasta ratificar la política
@@ -321,3 +325,28 @@ valor `0`, que es un cluster legítimo.
 No hay impedimento técnico irresoluble. El bloqueo real es de decisión y coordinación: la política
 de ausencia debe ser aprobada antes de alterar el vector, y los cambios de Gold/API deben hacerse por
 sus dueños en PRs separados. Este plan preserva el alcance de Estefany y las compuertas del vault.
+
+## 10. Plan de respuesta a la revisión técnica de Andrés — 6-sep-2026
+
+La revisión técnica confirma el enfoque y añade cinco condiciones de cierre. Se aceptan sin cambiar
+prematuramente el estado de las historias:
+
+| Observación | Acción de cierre | Estado |
+|---|---|---|
+| US-321 no está cerrada | Esperar la ratificación de Andrés y Edgar; aplicar el vector aprobado; ejecutar `k=2..6`, seleccionar `k`, reportar Silhouette y registrar un `run_id` real | Pendiente |
+| US-322 está cerca de cierre | Mantenerla independiente de ML-03; solicitar a Edgar aprobar la evidencia agregada ya completa y cambiar sólo entonces a `done` | Pendiente de Edgar |
+| US-325 está cerca de cierre | Conservar cobertura y limitación sin crear un umbral de sesgo; solicitar a Edgar decidir el cierre documental | Pendiente de Edgar |
+| Ambigüedad de dumps | Declarar `final1` como fuente canónica y `final2` sólo como comparación equivalente con checksum | Corregido en esta actualización |
+| Gold/API fuera del alcance C3 | Mantener `gold.ml03_asignaciones` y C4 como plan posterior; C1 y C4 lo implementan en PRs propios bajo regla 7 | Plan, no entregable de esta PR |
+
+### Próximos pasos ordenados
+
+1. Edgar aprueba o ajusta la política propuesta D1–D4 +
+   `indice_completitud_drivers`; Andrés confirma que el vector respeta el protocolo temporal.
+2. Cerrar US-322 y US-325 por revisión documental independiente, si Edgar lo aprueba; no esperar la
+   corrida de ML-03 ni cambiar sus conclusiones de cobertura.
+3. Sólo con la política aprobada, C3 modifica el vector de ML-03, ejecuta el entrenamiento real y
+   registra MLflow. Si no hay métrica válida o la interpretación no es defendible, US-321 sigue
+   abierta con el resultado reportado tal cual.
+4. Con una corrida trazable, C1 y C4 reciben el contrato de `gold.ml03_asignaciones` para sus PRs de
+   esquema y API. Ninguno de esos cambios se incluye en esta PR documental.

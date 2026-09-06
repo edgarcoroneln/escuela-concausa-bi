@@ -25,4 +25,14 @@ tags: [devlog, handoff, sync]
 - **Tests executed:** `git diff --check` correcto; `git ls-files -u` vacío; `git rev-list --left-right --count origin/main...HEAD` devuelve `0 0`. `.venv/Scripts/python.exe vault/_Meta/scripts/vault_lint.py .`: Vault limpio, siete avisos de posibles huérfanos preexistentes.
 - **Next recommended action:** obtener la decisión Andrés/Edgar sobre la política de ausencia; después implementar el productor C3 y solicitar a C1/C4 sus PRs de esquema y API.
 
+### Revisión técnica de Andrés — 2026-09-06
+
+- Andrés confirma el enfoque de no imputar D5/D6 y considera defendible D1–D4 +
+  `indice_completitud_drivers` como vector final, sujeto a ratificación de la política.
+- Se reconoce que US-321 sigue abierta hasta ejecutar la corrida temporal, seleccionar `k`, reportar
+  Silhouette y registrar MLflow con `run_id` real. US-322 y US-325 pueden revisarse para cierre de
+  manera independiente por Edgar; US-325 no crea un umbral de sesgo nuevo.
+- Se normalizó `final1` como fuente canónica de evidencia y `final2` como comparación independiente
+  equivalente. El diseño Gold/API queda como plan posterior de C1/C4, no como entregable de la PR #269.
+
 → [[vault/_DevLog/_index|Volver al índice]]
