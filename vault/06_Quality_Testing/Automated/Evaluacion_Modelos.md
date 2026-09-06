@@ -26,7 +26,7 @@ tags: [qa, ml, celula-3, metricas]
 |---|---|---|---|---|---|---|---|
 | ML-01 | regresión | MAE | 0.0150 | 0.0007 | 0.0291 | 0.4851 | 3 |
 | ML-02 | clasificación | F1 macro | 0.7731 | 0.0434 | 0.0534 | 13.8908 | 3 |
-| ML-03 | no supervisado | Silhouette (k=2) | 0.1086 | 0.0454 | nan | nan | 3 |
+| ML-03 | no supervisado | Silhouette (k=3) | 0.1512 | 0.0036 | nan | nan | 3 |
 
 Los tres optimizan cosas distintas —error absoluto, F1 y separación de grupos—, así que **sus
 métricas no se comparan entre sí**. Entre ML-01 y ML-02 lo comparable es `mejora`: cuánto aporta
@@ -50,9 +50,9 @@ la cifra se vuelve significativa cuando Gold publique la etiqueta real.
 | 1 | ML-02 | 2021-2022 | F1 macro | 0.7475 | 0.0612 | 11.2094 | 160 |
 | 2 | ML-02 | 2022-2023 | F1 macro | 0.7376 | 0.0556 | 12.2763 | 240 |
 | 3 | ML-02 | 2023-2024 | F1 macro | 0.8342 | 0.0435 | 18.1867 | 320 |
-| 1 | ML-03 | 2021-2022 | Silhouette | 0.0610 | nan | nan | 44 |
-| 2 | ML-03 | 2022-2023 | Silhouette | 0.0950 | nan | nan | 63 |
-| 3 | ML-03 | 2023-2024 | Silhouette | 0.1697 | nan | nan | 80 |
+| 1 | ML-03 | 2021-2022 | Silhouette | 0.1560 | nan | nan | 138 |
+| 2 | ML-03 | 2022-2023 | Silhouette | 0.1473 | nan | nan | 205 |
+| 3 | ML-03 | 2023-2024 | Silhouette | 0.1503 | nan | nan | 273 |
 
 Es la "curva" de la historia en forma de datos: permite ver si el modelo se degrada conforme
 predice ciclos más lejanos del inicio de la serie. Se emite como tabla y no como imagen porque un
@@ -139,9 +139,9 @@ RMSE < 0.05 (5 puntos porcentuales); ML-02 F1 macro ≥
 | ML-01 | MAE | 0.0150 | < 0.03 | ✅ sí |
 | ML-01 | RMSE | 0.0187 | < 0.05 | ✅ sí |
 | ML-02 | F1 macro | 0.7731 | ≥ 0.6 | ✅ sí |
-| ML-03 | Silhouette | 0.1086 | ≥ 0.3 | ❌ **no** |
+| ML-03 | Silhouette | 0.1512 | ≥ 0.3 | ❌ **no** |
 
-> [!warning] Umbral no alcanzado: ML-03 (Silhouette = 0.1086)
+> [!warning] Umbral no alcanzado: ML-03 (Silhouette = 0.1512)
 > Está evaluado y reporta su métrica —que es lo que exige AC-003.2— pero **no llega al umbral de aceptación** de `ML_Strategy` §5. Reportarlo es parte del entregable: un modelo que no alcanza su umbral sobre el fixture sintético no puede presentarse como si lo hiciera, y la cifra tiene que volver a mirarse contra los datos reales de US-104.
 
 ML-01 usa la misma unidad proporcional de `target_variacion_matricula`: `0.0141` equivale a un
@@ -155,6 +155,6 @@ provisionales hasta ejecutar la evaluación contra los datos reales de US-104.
 |---|---|
 | ML-01 · regresión | ✅ evaluado |
 | ML-02 · clasificación | ✅ evaluado (target `driver_dominante`) |
-| ML-03 · clustering | ✅ evaluado — `k=2`, Silhouette 0.1086 |
+| ML-03 · clustering | ✅ evaluado — `k=3`, Silhouette 0.1512 |
 
-**Los tres modelos reportan su métrica**, que es lo que AC-003.2 exige. ML-03 entrena sobre 107 de 400 filas: 293 quedan fuera por la política `casos_completos`, porque KMeans no admite ausencias y **no se imputan** — la misma regla de cobertura parcial que rige el resto del pipeline. Esa exclusión es parte del resultado, no una limpieza previa: los grupos describen a las escuelas con datos completos, no al universo.
+**Los tres modelos reportan su métrica**, que es lo que AC-003.2 exige. ML-03 entrena sobre 342 de 400 filas: 58 quedan fuera por la política `casos_completos`, porque KMeans no admite ausencias y **no se imputan** — la misma regla de cobertura parcial que rige el resto del pipeline. Esa exclusión es parte del resultado, no una limpieza previa: los grupos describen a las escuelas con datos completos, no al universo.

@@ -93,3 +93,4 @@ _local/
 /gold_cubos_l2_*.sql
 /dbt/gold_bug048*.sql
 *.patch
+/gold_dec019*.sql
