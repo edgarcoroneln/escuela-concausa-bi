@@ -26,3 +26,7 @@ tags: [devlog, handoff, ml, entorno]
 - **Next recommended action:** publicar esta actualización de PR, comprobar CI y revisión de Edgar; obtener/reconstruir Gold conforme al runbook y ejecutar evidencia US-322/325 antes de decidir el entrenamiento US-321.
 
 → [[vault/_DevLog/_index|Volver al índice]]
+
+### Corrección detectada por CI
+
+El primer push detectó dos fallos en tests/test_generate_pm_dashboard.py: el separador del wikilink de la nueva fila del índice requería escape. Corregido sin cambiar pruebas ni reglas; se repite validación tras la documentación final. La descripción del PR conserva los marcadores opcionales de la plantilla para no exigir casillas no aplicables.
