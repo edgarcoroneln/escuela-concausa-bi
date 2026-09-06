@@ -28,6 +28,13 @@ parcial que parezca completa sin indicarlo (misma regla SIN_DATO -- nunca degrad
 corre en su threadpool -- sí hay concurrencia real de hilos sobre la instancia singleton de
 `get_repositorio_modelos()` (`@lru_cache`, un cache por proceso). `cachetools.TTLCache` no es
 thread-safe por sí solo, así que todo acceso va protegido por un `threading.Lock`.
+
+Toda lectura del cache es **una sola** llamada (`.get(clave, _AUSENTE)`), nunca `in` seguido de
+`[]`. `TTLCache` consulta el reloj en cada una de esas operaciones por separado, así que el par
+`in`/`[]` tiene una ventana real -- microsegundos, pero real -- en la que la entrada expira entre
+ambas y el `[]` lanza `KeyError`, que subiría como 500. Sostener el `Lock` no lo evita: protege el
+estado compartido, no detiene el reloj. Cubierto por
+`tests/test_cache_predicciones.py::test_entrada_que_expira_entre_dos_lecturas_no_revienta`.
 """
 
 from __future__ import annotations
@@ -41,6 +48,11 @@ from cachetools import TTLCache
 from src.api.repositorio_modelos import RepositorioModelos
 
 _SIN_FILA = object()  # sentinel: "confirmado sin fila", nunca se expone al llamador
+# Sentinel de ausencia para `TTLCache.get`. Hace falta uno propio porque `None` es un valor
+# legitimo aqui, y porque `x in cache` seguido de `cache[x]` consulta el reloj DOS veces: una
+# entrada vigente en el `in` puede haber expirado en el `[]` y lanzar `KeyError` (comprobado en
+# cachetools 7.1.8). El `Lock` no protege de eso: guarda el estado, no detiene el tiempo.
+_AUSENTE = object()
 
 
 class RepositorioModelosCacheado:
@@ -60,9 +72,9 @@ class RepositorioModelosCacheado:
     def obtener_prediccion(self, cct: str, id_ciclo: str) -> dict | None:
         clave = (cct, id_ciclo)
         with self._lock:
-            if clave in self._cache:
-                valor = self._cache[clave]
-                return None if valor is _SIN_FILA else valor
+            valor = self._cache.get(clave, _AUSENTE)
+        if valor is not _AUSENTE:
+            return None if valor is _SIN_FILA else valor
 
         resultado = self._repo.obtener_prediccion(cct, id_ciclo)
 
@@ -78,13 +90,12 @@ class RepositorioModelosCacheado:
         faltantes: list[str] = []
         with self._lock:
             for cct in ccts:
-                clave = (cct, id_ciclo)
-                if clave in self._cache:
-                    valor = self._cache[clave]
-                    if valor is not _SIN_FILA:
-                        encontrados[cct] = valor
-                elif cct not in faltantes:
-                    faltantes.append(cct)
+                valor = self._cache.get((cct, id_ciclo), _AUSENTE)
+                if valor is _AUSENTE:
+                    if cct not in faltantes:  # `ccts` puede traer repetidos
+                        faltantes.append(cct)
+                elif valor is not _SIN_FILA:
+                    encontrados[cct] = valor
 
         if faltantes:
             # Propaga RepositorioModelosNoDisponible sin capturarla -- falla todo el batch,

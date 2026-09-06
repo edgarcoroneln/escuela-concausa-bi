@@ -1,8 +1,16 @@
 """Predicciones / inferencia ML: `/predicciones/*` (§3.4).
 
 `PrediccionOut` combina ML-01 (riesgo), ML-02 (driver + recomendación) y ML-03 (cluster, `None`
-hasta que exista -- ver BUG-010). La explicación SHAP completa y el batch son **solo analista**
-(RBAC de US-403, no forzado aún en este stub).
+hasta que exista -- ver BUG-010).
+
+**Acceso real de las tres rutas: `require_lectura`**, igual que `gold` y `agente` -- se aplica a
+nivel de router en `v1/__init__.py`, no aquí. Es decir: públicas cuando `AUTH_LECTURA_PUBLICA` está
+encendido y con sesión de **cualquier** rol cuando está apagado. **Ninguna ruta de predicciones
+exige `analista`.** Este docstring decía lo contrario ("solo analista, se forzará en US-403") desde
+antes de que US-403 cerrara; era documentación que prometía más restricción de la que el código
+aplica, que es la clase de desajuste que se descubre en una demo. Si algún día se quiere que la
+explicación sea solo de analista, el cambio va en `v1/__init__.py` con su propia dependencia, no en
+un comentario.
 
 `prediccion`/`prediccion_batch` leen `gold.predicciones` + `gold.recomendaciones` a través de
 `RepositorioModelos` (`src/api/repositorio_modelos.py`, US-412) -- cierra BUG-010, que detectó que
@@ -67,7 +75,7 @@ def prediccion_batch(
     body: PrediccionBatchIn,
     repo: RepositorioModelos = Depends(get_repositorio_modelos),
 ) -> Page[PrediccionOut]:
-    """Inferencia en lote (rol mínimo: **analista** — se forzará en US-403).
+    """Inferencia en lote (acceso: `require_lectura`, ver el docstring del módulo).
 
     Omite silenciosamente los CCT sin fila en `gold.predicciones` -- nunca inventa una
     predicción para un CCT fuera de alcance o sin modelo corrido.
@@ -84,7 +92,21 @@ def prediccion_batch(
 
 @router.get("/{cct}/explicacion", response_model=ExplicacionSHAPOut)
 def explicacion(cct: str) -> ExplicacionSHAPOut:
-    """Explicación SHAP completa (rol mínimo: **analista** — se forzará en US-403)."""
+    """Contribución de cada driver al riesgo (acceso: `require_lectura`, ver el módulo).
+
+    **Esta ruta todavía NO devuelve valores SHAP.** Las `contribuciones` son los seis drivers de
+    `mock_data`, no la salida de ningún modelo. No es un pendiente de C4 solamente: hoy **no existe
+    fuente que leer**. `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma
+    exacta de `ExplicacionSHAPOut`, pero **no la llama nadie** y `publicar_gold.py` solo escribe
+    `gold.predicciones` y `gold.recomendaciones` -- ninguna guarda contribuciones.
+
+    Calcularlo aquí, por petición, no es opción: `shap` vive en `requirements/celula-3.txt` (no en
+    la imagen de la API) y `KernelExplainer` tarda segundos por fila, incompatible con el
+    `statement_timeout` y la degradación 503 de US-416.
+
+    Orden para cerrarlo: **C3 persiste las contribuciones en Gold → C4 cambia este cuerpo por una
+    lectura del repositorio → prueba de contrato**. El primer paso no es de esta célula.
+    """
     escuela = _buscar_escuela(cct)
     contribuciones = {
         f"D{i}": (escuela.get(f"d{i}") or 0.0) for i in range(1, 7)

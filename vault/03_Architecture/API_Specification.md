@@ -100,10 +100,22 @@ con la política vigente. Sin `redirect`, `/auth/callback` sigue devolviendo el 
 | Lectura `/escuelas`, `/municipios`, `/kpis` | ✅ | ✅ |
 | `/predicciones/{cct}` (riesgo y driver por escuela) | ✅ (básica) | ✅ |
 | `/agente/consulta` | ✅ | ✅ |
-| `/predicciones/*` avanzada (batch, SHAP completo) | ❌ | ✅ |
+| `/predicciones/*` avanzada (batch, explicación) | ⚠️ ✅ **en el código** | ✅ |
 | `/admin/pipeline/run` (relanzar pipeline) | ❌ | ✅ |
 | `/admin/export` (datos en bruto) | ❌ | ✅ |
 | `/admin/metrics` (métricas internas) | ❌ | ✅ |
+
+> ⚠️ **Discrepancia conocida, resuelta a favor del código (2026-09-05, Christian Ruiz, TL C4).**
+> La fila marcada arriba describía una intención que **nunca se implementó**. El router de
+> predicciones se monta con `require_lectura` en `src/api/v1/__init__.py`, igual que `gold` y
+> `agente`: las tres rutas de `/predicciones/*` son públicas con `AUTH_LECTURA_PUBLICA` encendido y
+> aceptan **cualquier rol** con él apagado. **Ninguna exige `analista` ni devuelve 403.**
+>
+> Se documenta la realidad en vez de cambiar el enforcement a dos días del *code freeze*: restringir
+> ahora rompería a cualquier consumidor de C2/C3 que llame estas rutas como `ciudadano`, y es una
+> decisión de producto, no una corrección de documentación. Hacerlo después es una línea en
+> `v1/__init__.py`. El estado real quedó fijado por pruebas en `tests/test_explicacion_shap.py`
+> (`test_como_ciudadano_da_200` reprueba si alguien restringe sin actualizar este contrato).
 
 ### 2.3 Códigos: 401 vs 403
 - **401 Unauthorized** — no hay token, está mal formado, o expiró. *"No sé quién eres."*
@@ -181,12 +193,20 @@ C2/C3), no se retoma como pendiente de US-411.
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
 | GET | `/predicciones/{cct}` | ciudadano | path `cct`, `?ciclo` | `PrediccionOut` | 200, 401, 404, 503 |
-| POST | `/predicciones/batch` | analista | `PrediccionBatchIn` | `Page[PrediccionOut]` | 200, 401, 403, 422, 503 |
-| GET | `/predicciones/{cct}/explicacion` | analista | path `cct` | `ExplicacionSHAPOut` | 200, 401, 403, 404 |
+| POST | `/predicciones/batch` | ciudadano | `PrediccionBatchIn` | `Page[PrediccionOut]` | 200, 401, 422, 503 |
+| GET | `/predicciones/{cct}/explicacion` | ciudadano | path `cct` | `ExplicacionSHAPOut` | 200, 401, 404 |
 
 - `PrediccionOut` combina **ML-01** (`indice_riesgo`), **ML-02** (`driver_dominante` + recomendación)
-  y **ML-03** (`cluster`, `None` mientras ML-03 no exista -- US-321, BUG-010). La explicación SHAP
-  completa (ML-02) es solo `analista`.
+  y **ML-03** (`cluster`, `None` mientras ML-03 no exista -- US-321, BUG-010).
+- **`/predicciones/{cct}/explicacion` todavía NO devuelve valores SHAP.** Las `contribuciones` salen
+  de `mock_data`, no de ningún modelo. La causa no es el endpoint: **no hay fuente que leer**.
+  `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma exacta de
+  `ExplicacionSHAPOut`, pero no la invoca nadie y `publicar_gold.py` solo escribe
+  `gold.predicciones` y `gold.recomendaciones` -- ninguna guarda contribuciones. Calcularlo por
+  petición no es opción (`shap` no está en la imagen de la API y `KernelExplainer` tarda segundos
+  por fila, incompatible con el `statement_timeout` de US-416). Orden de cierre: **C3 persiste en
+  Gold → C4 lee del repositorio → prueba de contrato**; el contrato de respuesta ya está fijado por
+  `tests/test_explicacion_shap.py`, así que el cambio será del cuerpo, no de la forma.
 - `/predicciones/{cct}` y `/predicciones/batch` leen `gold.predicciones` + `gold.recomendaciones`
   (US-412, cierra BUG-010) vía `RepositorioModelos`; un CCT sin fila en `gold.predicciones` es
   `404`, nunca un valor inventado. `mlflow_run_id` conserva el enlace auditable a la corrida.

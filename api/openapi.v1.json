@@ -293,7 +293,7 @@
       },
       "ExchangeIn": {
         "additionalProperties": false,
-        "description": "Canje del codigo de un solo uso por la sesion (US-405). Ver ADR-009.",
+        "description": "Canje del codigo de un solo uso por la sesion (US-405). Ver ADR-010.",
         "properties": {
           "code": {
             "maxLength": 256,
@@ -1032,7 +1032,7 @@
     },
     "/api/v1/auth/callback": {
       "get": {
-        "description": "Callback de Google: valida el `state`, canjea el `code`, resuelve el rol y entrega la sesion.\n\nDos salidas, segun si `/auth/login` llevaba `redirect` (el `state` firmado lo recuerda):\n\n- **Con `redirect`** (FARO Web): **302** al front con `?code_faro=<codigo de un solo uso>`. Los\n  tokens NO viajan por la URL -- ver ADR-009 y `security/codigos_login.py`.\n- **Sin `redirect`**: el `TokenPair` como JSON, igual que antes (clientes no-navegador y pruebas).",
+        "description": "Callback de Google: valida el `state`, canjea el `code`, resuelve el rol y entrega la sesion.\n\nDos salidas, segun si `/auth/login` llevaba `redirect` (el `state` firmado lo recuerda):\n\n- **Con `redirect`** (FARO Web): **302** al front con `?code_faro=<codigo de un solo uso>`. Los\n  tokens NO viajan por la URL -- ver ADR-010 y `security/codigos_login.py`.\n- **Sin `redirect`**: el `TokenPair` como JSON, igual que antes (clientes no-navegador y pruebas).",
         "operationId": "callback_api_v1_auth_callback_get",
         "parameters": [
           {
@@ -1091,7 +1091,7 @@
     },
     "/api/v1/auth/exchange": {
       "post": {
-        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-009).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.",
+        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.",
         "operationId": "exchange_api_v1_auth_exchange_post",
         "requestBody": {
           "content": {
@@ -1758,7 +1758,7 @@
     },
     "/api/v1/predicciones/batch": {
       "post": {
-        "description": "Inferencia en lote (rol mínimo: **analista** — se forzará en US-403).\n\nOmite silenciosamente los CCT sin fila en `gold.predicciones` -- nunca inventa una\npredicción para un CCT fuera de alcance o sin modelo corrido.",
+        "description": "Inferencia en lote (acceso: `require_lectura`, ver el docstring del módulo).\n\nOmite silenciosamente los CCT sin fila en `gold.predicciones` -- nunca inventa una\npredicción para un CCT fuera de alcance o sin modelo corrido.",
         "operationId": "prediccion_batch_api_v1_predicciones_batch_post",
         "requestBody": {
           "content": {
@@ -1863,7 +1863,7 @@
     },
     "/api/v1/predicciones/{cct}/explicacion": {
       "get": {
-        "description": "Explicación SHAP completa (rol mínimo: **analista** — se forzará en US-403).",
+        "description": "Contribución de cada driver al riesgo (acceso: `require_lectura`, ver el módulo).\n\n**Esta ruta todavía NO devuelve valores SHAP.** Las `contribuciones` son los seis drivers de\n`mock_data`, no la salida de ningún modelo. No es un pendiente de C4 solamente: hoy **no existe\nfuente que leer**. `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma\nexacta de `ExplicacionSHAPOut`, pero **no la llama nadie** y `publicar_gold.py` solo escribe\n`gold.predicciones` y `gold.recomendaciones` -- ninguna guarda contribuciones.\n\nCalcularlo aquí, por petición, no es opción: `shap` vive en `requirements/celula-3.txt` (no en\nla imagen de la API) y `KernelExplainer` tarda segundos por fila, incompatible con el\n`statement_timeout` y la degradación 503 de US-416.\n\nOrden para cerrarlo: **C3 persiste las contribuciones en Gold → C4 cambia este cuerpo por una\nlectura del repositorio → prueba de contrato**. El primer paso no es de esta célula.",
         "operationId": "explicacion_api_v1_predicciones__cct__explicacion_get",
         "parameters": [
           {
