@@ -867,6 +867,19 @@ def _layout_tabs(
     tableros ya sincronizados (camino plano, sin tabs) siguen usando
     `_layout_grilla()` sin ningún cambio.
 
+    **Corregido en US-213 (2026-09-05).** Esta función ponía cada chart en su PROPIA
+    fila, que es exactamente el defecto que BUG-049 corrigió en `_layout_grilla()`
+    y que aquí nunca se aplicó: la corrección de BUG-049 se acotó al camino plano
+    porque en ese momento se creyó que DB-08 también pasaba por aquí. No es así —
+    DB-08 no declara `tabs:`, y **DB-05 es el único tablero con tabs**, así que fue
+    el único que quedó como una tira vertical mientras los otros nueve agrupaban.
+    Sus 6 tabs ya declaraban los anchos correctos (3,3,3,3 y 6,6, el mismo patrón
+    que DB-03); el `ancho` simplemente no lo leía nadie.
+
+    Ahora los charts se agrupan con `_agrupar_en_filas()`, la misma función que usa
+    el camino plano, así que las dos rutas comparten la regla de agrupación y no
+    pueden volver a divergir.
+
     `tabs` es una lista de (tab_id, tab_label, charts_con_layout, nota_opcional).
     `charts_con_layout` tiene el mismo formato tupla que ya usa `_layout_grilla()`.
     Si `nota_opcional` no es None, se agrega un nodo MARKDOWN estático (meta.code)
@@ -878,6 +891,7 @@ def _layout_tabs(
     position: dict[str, Any] = {"DASHBOARD_VERSION_KEY": "v2"}
     tab_node_ids: list[str] = []
     contador = 0
+    indice_chart = 0
     for tab_id, tab_label, charts_con_layout, nota in tabs:
         tab_node_id = f"TAB-{tab_id}"
         rows: list[str] = []
@@ -901,29 +915,33 @@ def _layout_tabs(
                 "meta": {"code": nota, "width": 12, "height": 8},
             }
 
-        for cid, nombre, width, height in charts_con_layout:
+        for fila in _agrupar_en_filas(charts_con_layout):
             row_id = f"ROW-{contador}"
-            comp_id = f"CHART-{contador}"
             contador += 1
+            hijos: list[str] = []
+            for cid, nombre, width, height in fila:
+                comp_id = f"CHART-{indice_chart}"
+                indice_chart += 1
+                hijos.append(comp_id)
+                position[comp_id] = {
+                    "type": "CHART",
+                    "id": comp_id,
+                    "parentId": row_id,
+                    "children": [],
+                    "meta": {
+                        "chartId": cid,
+                        "sliceName": nombre,
+                        "width": width,
+                        "height": height,
+                    },
+                }
             rows.append(row_id)
             position[row_id] = {
                 "type": "ROW",
                 "id": row_id,
                 "parentId": tab_node_id,
-                "children": [comp_id],
+                "children": hijos,
                 "meta": {"background": "BACKGROUND_TRANSPARENT"},
-            }
-            position[comp_id] = {
-                "type": "CHART",
-                "id": comp_id,
-                "parentId": row_id,
-                "children": [],
-                "meta": {
-                    "chartId": cid,
-                    "sliceName": nombre,
-                    "width": width,
-                    "height": height,
-                },
             }
         position[tab_node_id] = {
             "type": "TAB",
@@ -1105,14 +1123,29 @@ def _importar_bundle(token: str, csrf: str, files: dict[str, str]) -> None:
 
 
 def _position_con_uuid(position: dict, charts_con_uuid: list[tuple[int, str]]) -> dict:
-    """Inyecta meta.uuid en cada nodo CHART (el importador v1 remapea por ahí)."""
-    por_indice = [u for _, u in sorted(charts_con_uuid)]
-    i = 0
+    """Inyecta meta.uuid en cada nodo CHART (el importador v1 remapea por ahí).
+
+    El uuid se busca **por `meta.chartId`**, que es el id del chart que ese nodo ya
+    declara. Antes se emparejaba por posición —los uuid ordenados por id contra los
+    nodos CHART en orden de declaración—, lo que sólo acierta si los ids del tablero
+    van en orden ascendente según su orden en el YAML.
+
+    Deja de cumplirse en cuanto un chart se **renombra**: `ensure_chart()` identifica
+    por `slice_name`, así que un nombre nuevo crea un chart nuevo con un id alto. Si
+    ese chart va primero en el YAML, su id es el mayor y el emparejamiento por
+    posición le asigna el uuid de otro. El tablero se sincroniza en verde y **se rompe
+    al abrirlo**: las tarjetas salen vacías o intercambiadas, sin error en el sync ni
+    en la consola. Reproducido el 2026-09-05 al acortar un título de DB-05.
+
+    Buscar por `chartId` elimina el supuesto de orden: cuando los ids sí ascienden,
+    el resultado es idéntico al anterior.
+    """
+    por_id = {cid: cu for cid, cu in charts_con_uuid}
     for child in position.values():
         if isinstance(child, dict) and child.get("type") == "CHART":
-            if i < len(por_indice) and por_indice[i]:
-                child["meta"]["uuid"] = por_indice[i]
-            i += 1
+            uuid_chart = por_id.get(child["meta"].get("chartId"))
+            if uuid_chart:
+                child["meta"]["uuid"] = uuid_chart
     return position
 
 

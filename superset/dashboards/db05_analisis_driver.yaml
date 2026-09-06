@@ -45,7 +45,7 @@ dashboards:
         etiqueta: "D1 · Pobreza y rezago social"
         nota: "CONEVAL (DS-07) · medido a nivel municipio"
         charts:
-          - nombre: "D1 · KPI-07 · % escuelas por driver dominante"
+          - nombre: "D1 · KPI-07 · % driver dominante"
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: big_number_total
@@ -66,6 +66,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Escuelas con este driver"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D1", clause: WHERE}
@@ -76,7 +77,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
-            subheader: "Complemento a KPI-07 · SIN_DATO explícito (R2)"
+            subheader: "SIN_DATO explícito (R2)"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D1", clause: WHERE}
@@ -87,6 +88,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Denominador de KPI-07"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D1", clause: WHERE}
@@ -95,7 +97,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: echarts_timeseries_line
-            ancho: 6
+            ancho: 12
             alto: 60
             eje_x: ciclo
             params_extra:
@@ -106,7 +108,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: table
-            ancho: 6
+            ancho: 12
             alto: 60
             dimensiones: [nombre_entidad, nombre_municipio, nivel, total_escuelas, escuelas_con_recomendacion, cobertura_recomendacion, link_db08]
             row_limit: 100
@@ -119,7 +121,7 @@ dashboards:
         etiqueta: "D2 · Inseguridad del entorno"
         nota: "SESNSP (DS-04) · medido a nivel municipio"
         charts:
-          - nombre: "D2 · KPI-07 · % escuelas por driver dominante"
+          - nombre: "D2 · KPI-07 · % driver dominante"
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: big_number_total
@@ -136,6 +138,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Escuelas con este driver"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D2", clause: WHERE}
@@ -146,7 +149,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
-            subheader: "Complemento a KPI-07 · SIN_DATO explícito (R2)"
+            subheader: "SIN_DATO explícito (R2)"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D2", clause: WHERE}
@@ -157,6 +160,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Denominador de KPI-07"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D2", clause: WHERE}
@@ -165,7 +169,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: echarts_timeseries_line
-            ancho: 6
+            ancho: 12
             alto: 60
             eje_x: ciclo
             params_extra:
@@ -176,7 +180,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: table
-            ancho: 6
+            ancho: 12
             alto: 60
             dimensiones: [nombre_entidad, nombre_municipio, nivel, total_escuelas, escuelas_con_recomendacion, cobertura_recomendacion, link_db08]
             row_limit: 100
@@ -189,7 +193,7 @@ dashboards:
         etiqueta: "D3 · Infraestructura escolar"
         nota: "CEMABE (DS-03) · medido a nivel escuela"
         charts:
-          - nombre: "D3 · KPI-07 · % escuelas por driver dominante"
+          - nombre: "D3 · KPI-07 · % driver dominante"
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: big_number_total
@@ -206,6 +210,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Escuelas con este driver"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D3", clause: WHERE}
@@ -216,7 +221,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
-            subheader: "Complemento a KPI-07 · SIN_DATO explícito (R2)"
+            subheader: "SIN_DATO explícito (R2)"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D3", clause: WHERE}
@@ -227,6 +232,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Denominador de KPI-07"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D3", clause: WHERE}
@@ -235,7 +241,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: echarts_timeseries_line
-            ancho: 6
+            ancho: 12
             alto: 60
             eje_x: ciclo
             params_extra:
@@ -246,7 +252,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: table
-            ancho: 6
+            ancho: 12
             alto: 60
             dimensiones: [nombre_entidad, nombre_municipio, nivel, total_escuelas, escuelas_con_recomendacion, cobertura_recomendacion, link_db08]
             row_limit: 100
@@ -259,7 +265,7 @@ dashboards:
         etiqueta: "D4 · Conectividad digital"
         nota: "CEMABE (DS-03) · medido a nivel escuela"
         charts:
-          - nombre: "D4 · KPI-07 · % escuelas por driver dominante"
+          - nombre: "D4 · KPI-07 · % driver dominante"
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: big_number_total
@@ -276,6 +282,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Escuelas con este driver"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D4", clause: WHERE}
@@ -286,7 +293,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
-            subheader: "Complemento a KPI-07 · SIN_DATO explícito (R2)"
+            subheader: "SIN_DATO explícito (R2)"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D4", clause: WHERE}
@@ -297,6 +304,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Denominador de KPI-07"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D4", clause: WHERE}
@@ -305,7 +313,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: echarts_timeseries_line
-            ancho: 6
+            ancho: 12
             alto: 60
             eje_x: ciclo
             params_extra:
@@ -316,7 +324,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: table
-            ancho: 6
+            ancho: 12
             alto: 60
             dimensiones: [nombre_entidad, nombre_municipio, nivel, total_escuelas, escuelas_con_recomendacion, cobertura_recomendacion, link_db08]
             row_limit: 100
@@ -329,7 +337,7 @@ dashboards:
         etiqueta: "D5 · Estrés hídrico"
         nota: "CONAGUA SINA (DS-06) · SIN_DATO explícito -- fuente aún no ingerida (Cube_Specs §3.3)"
         charts:
-          - nombre: "D5 · KPI-07 · % escuelas por driver dominante"
+          - nombre: "D5 · KPI-07 · % driver dominante"
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: big_number_total
@@ -346,6 +354,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Escuelas con este driver"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D5", clause: WHERE}
@@ -356,7 +365,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
-            subheader: "Complemento a KPI-07 · SIN_DATO explícito (R2)"
+            subheader: "SIN_DATO explícito (R2)"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D5", clause: WHERE}
@@ -367,6 +376,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Denominador de KPI-07"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D5", clause: WHERE}
@@ -375,7 +385,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: echarts_timeseries_line
-            ancho: 6
+            ancho: 12
             alto: 60
             eje_x: ciclo
             params_extra:
@@ -386,7 +396,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: table
-            ancho: 6
+            ancho: 12
             alto: 60
             dimensiones: [nombre_entidad, nombre_municipio, nivel, total_escuelas, escuelas_con_recomendacion, cobertura_recomendacion, link_db08]
             row_limit: 100
@@ -399,7 +409,7 @@ dashboards:
         etiqueta: "D6 · Calidad del aire"
         nota: "SINAICA (DS-05) · medido a nivel escuela (IDW, radio 15km)"
         charts:
-          - nombre: "D6 · KPI-07 · % escuelas por driver dominante"
+          - nombre: "D6 · KPI-07 · % driver dominante"
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: big_number_total
@@ -416,6 +426,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Escuelas con este driver"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D6", clause: WHERE}
@@ -426,7 +437,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
-            subheader: "Complemento a KPI-07 · SIN_DATO explícito (R2)"
+            subheader: "SIN_DATO explícito (R2)"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D6", clause: WHERE}
@@ -437,6 +448,7 @@ dashboards:
             viz: big_number_total
             ancho: 3
             alto: 38
+            subheader: "Denominador de KPI-07"
             params_extra:
               adhoc_filters:
                 - {expressionType: SIMPLE, subject: id_driver, operator: "==", comparator: "D6", clause: WHERE}
@@ -445,7 +457,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: echarts_timeseries_line
-            ancho: 6
+            ancho: 12
             alto: 60
             eje_x: ciclo
             params_extra:
@@ -456,7 +468,7 @@ dashboards:
             dataset: db05_cubo_driver
             metrica: pct_escuelas_por_driver
             viz: table
-            ancho: 6
+            ancho: 12
             alto: 60
             dimensiones: [nombre_entidad, nombre_municipio, nivel, total_escuelas, escuelas_con_recomendacion, cobertura_recomendacion, link_db08]
             row_limit: 100
