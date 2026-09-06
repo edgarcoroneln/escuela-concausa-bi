@@ -4,12 +4,12 @@ date: "2026-09-05"
 author_human: "Luis Téllez Domínguez"
 agent: "Claude Code"
 model: "claude-opus-4-8"
-session_duration: "1 sesión — cierre documental de BUG-057 por decisión confirmada (OAuth en las dos capas), sin cambio técnico, con smoke de verificación en vivo"
-touches: ["BUG-057", "SEC-006", "US-403", "US-411", "REQ-004", "REQ-005"]
+session_duration: "1 sesión — cierre documental de BUG-057 reflejando decisión del PO (OAuth en las dos capas), sin cambio técnico, con smoke de verificación en vivo"
+touches: ["BUG-057", "SEC-006", "DEC-018", "US-403", "US-411", "REQ-004", "REQ-005"]
 tags: [devlog, celula-5, seguridad, rbac, oauth, decision, bug057, cloud-run]
 ---
 
-# DevLog — 2026-09-05 — Cierre de BUG-057 por decisión confirmada (OAuth en las dos capas)
+# DevLog — 2026-09-05 — Cierre de BUG-057 reflejando decisión del PO (OAuth en las dos capas)
 
 → [[vault/_DevLog/_index|Volver al índice]] · [[vault/06_Quality_Testing/Bug_Register|BUG-057]] ·
 [[vault/_DevLog/2026-09-05-luis-tellez-sec006-flip-auth-lectura-publica|SEC-006 (flip de lectura)]]
@@ -25,17 +25,21 @@ flip **`AUTH_LECTURA_PUBLICA=false`** que yo ejecuté en Cloud Run como **cierre
 `AUTH_LECTURA_PUBLICA=false`"*). El registro dejó el bug como **decisión del PO**: (a) sostener la postura
 —las dos superficies con login— o (b) reabrir la lectura durante la demo.
 
-**Decisión (Luis Téllez, C5, confirmada hoy):** postura **(a)**. Sostenemos **OAuth/login obligatorio en
-las dos capas** (API + Superset) para **incrementar la seguridad** y **demostrar RBAC real** en la demo.
-Este DevLog documenta el **cierre documental** del bug —no hubo cambio técnico: el estado ya estaba en
-producción desde SEC-006—.
+**Atribución de la decisión (corregida a petición del PO, 2026-09-05):** la **postura de acceso (a)**
+—sostener **OAuth/login obligatorio en las dos capas** (API + Superset), con la lectura cerrada— es
+**decisión del PO (Edgar Coronel)**, como el registro marcó el bug desde su alta; **el PO la asienta como
+DEC-018**. **Luis Téllez (C5) se inclinó por (a)** —una inclinación, no la decisión del proyecto— y
+**ejecutó** el flip técnico como **cierre de SEC-006** (esa ejecución sí es de C5: su condición de cierre
+estaba escrita desde el 2026-09-02). Este DevLog documenta el **cierre documental** del bug —no hubo
+cambio técnico: el estado ya estaba en producción desde SEC-006—.
 
 ## Qué se hizo (documental, sin código ni infra)
 
 - **`vault/06_Quality_Testing/Bug_Register.md`** (artefacto **común**): BUG-057 pasa de `open` a **`closed`**
   (convención del register: `open → in_progress → fixed → closed`; no es `fixed` porque no hubo cambio de
-  código, es cierre **por decisión confirmada**). Se reescribieron las columnas de resolución y verificación
-  para registrar la postura (a), la evidencia en vivo y el acceso del evaluador.
+  código, es cierre **reflejando la decisión del PO**). Se reescribieron las columnas de resolución y
+  verificación para registrar la postura (a) **como decisión del PO**, la evidencia en vivo, el acceso del
+  evaluador y la asimetría de acceso (DEC-018).
 - **Este DevLog** (regla 6).
 
 ## El hallazgo que resuelve el acceso del evaluador (sin tocar env de la API)
@@ -48,13 +52,22 @@ Se verificó en el código cómo la API asigna rol y quién puede entrar:
   obtiene **≥ ciudadano** y puede leer (con `AUTH_LECTURA_PUBLICA=false`). La única "lista" del flujo es
   `redirect_uri` (anti-*open-redirect*: URLs, no personas).
 
-**Consecuencia (decisión de la sesión):** el **profesor entra a la API como `ciudadano`** —lectura +
+**Consecuencia operativa (del hallazgo, no una decisión de C5):** el **profesor entra a la API como `ciudadano`** —lectura +
 tableros vía datos + agente— **sin ningún cambio de variable de entorno** (no hay que darlo de alta en
 `ANALISTA_EMAILS`; eso solo daría rol admin/analista, que no necesita para evaluar).
 
 La **única compuerta por persona** de todo el sistema es **Superset**, cuya whitelist
 `SUPERSET_SSO_ALLOWED_EMAILS` es **fail-closed** (solo entran los correos listados). El correo del profesor
 **ya está** en esa lista (rev `faro-superset-00006-68n`, alta hecha en otra sesión).
+
+## La asimetría de acceso que el hallazgo destapa (a asentar por el PO — DEC-018)
+
+El mismo hallazgo tiene una consecuencia que el PO quiere **explícita** —y no descubierta por alguien más el
+miércoles—: con la lectura cerrada, **cualquier** cuenta de Google —no solo el evaluador— obtiene rol
+`ciudadano` y puede **leer la API**. **Superset sí tiene lista blanca estricta (fail-closed); la API no.**
+Para datos **agregados** de escuela (privacidad por diseño: la unidad observada es la escuela, nunca el
+alumno) es **defendible**, pero es una **asimetría** entre las dos superficies que queda registrada. **El PO
+la asienta como DEC-018** con la consecuencia completa; este DevLog solo la deja trazada desde el bug.
 
 ## Verificación en vivo (smoke, 2026-09-05)
 
@@ -101,10 +114,11 @@ Sondeo HTTP sin credenciales contra la URL pública (solo lectura, sin gcloud):
 
 ## Avisos a otros owners
 
-- **PO (Edgar Coronel):** BUG-057 —que tú levantaste— queda **`closed` por decisión confirmada (postura a)**:
-  OAuth en las dos capas, deliberado, cierre de SEC-006. El evaluador entra a la API como **ciudadano** (sin
-  cambio de env) y ya está en la whitelist de Superset. Handoff con el detalle en
-  `_local/aviso_edgar_bug057_2026-09-05.md`.
+- **PO (Edgar Coronel):** BUG-057 —que tú levantaste— queda **`closed` reflejando tu decisión de postura (a)**:
+  OAuth en las dos capas, cierre de SEC-006. La **decisión de postura es tuya (PO)** —C5 se inclinó por (a) y
+  ejecutó el flip técnico—; **tú la asientas como DEC-018** con la asimetría de acceso (API sin whitelist de
+  login vs Superset fail-closed). El evaluador entra a la API como **ciudadano** (sin cambio de env) y ya está
+  en la whitelist de Superset. Handoff con el detalle en `_local/aviso_edgar_bug057_2026-09-05.md`.
 - **C4 (Christian Ruiz):** la postura ratifica el comportamiento de `require_lectura` que documentaste en
   US-416; no hay cambio en `src/api/**`.
 
