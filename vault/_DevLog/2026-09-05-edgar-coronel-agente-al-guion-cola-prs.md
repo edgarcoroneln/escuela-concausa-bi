@@ -42,8 +42,8 @@ amarra la demo a un entregable ya cerrado.
 
 - *"¿Qué porcentaje de las escuelas en riesgo son por estrés hídrico?"* → `escuelas_en_riesgo` = 0.
   Denominador cero en pantalla.
-- *"¿Cuál es el cct de la escuela con latitud más al norte?"* → **no existe `latitud` a nivel
-  escuela**; `grep` sobre `dbt/` y `src/` sólo la encuentra en `agua_region` y `aire_estacion`.
+- ~~*"¿Cuál es el cct de la escuela con latitud más al norte?"*~~ → **retirada el 2026-09-06: la
+  afirmación era falsa y el error fue mío.** Ver §6.
 
 Y una precisión que le ahorra el mal rato a quien presente: `test_preguntas_validas_recorrer_flujo_completo`
 **mockea** `generar_sql`, `ejecutar_sql` y `redactar_respuesta`. "Validada" ahí significa *en alcance
@@ -84,9 +84,50 @@ DevLog dice que la dueña y el PO lo autorizaron **sin traza en el PR**: cero re
 comentarios. Y cita `DEC-018`, que **no está en `main`** —el último es `DEC-017`—, contra `DEC-013`.
 Esa decisión es mía y está bloqueando a otros; sube de prioridad.
 
+> **Cerrado el mismo día, en este orden:** `DEC-018` se escribió (§5), y **Marina García y el PO
+> aprobaron el #263 en GitHub**, con lo cual la autorización dejó de ser una afirmación sin
+> respaldo. El PO decidió mergearlo con bypass de admin porque el gate compara rutas y no puede ver
+> una aprobación. **Al cierre de este DevLog el #263 sigue `OPEN`**: se mergea después del PR del
+> PM, que es el que trae `DEC-018`. La excepción queda asentada en [[vault/_Meta/Vault_Steward]].
+
 **#256**: `git merge-tree --write-tree` da limpio y el único archivo tocado por ambos lados es
 `vault/_DevLog/_index.md`, que lleva `merge=union`. Es el falso positivo conocido. No lo resuelvo
 todavía porque cada merge a `main` lo vuelve a ensuciar; se limpia justo antes de mergear.
+
+## 6. Dos errores míos que cazó Marina García al revisar el PR #264
+
+Los dos son de verificación, no de criterio, y los dos merecen quedar escritos porque el modo de
+falla se repite.
+
+**El primero: afirmé que `latitud` no existe a nivel escuela. Es falso.** El `grep` que lo
+respaldaba lo corrí con `head -6`, y las seis primeras líneas resultaron ser todas de
+`valid_agua_region.sql` y `valid_aire_estacion.sql`. Concluí de un resultado truncado. Sin el
+`head`, `latitud` aparece en `silver/escuela.sql`, `gold/dim_escuela.sql`,
+`gold/cubo_escuela_360.sql`, `features_escuela.sql`, `fact_escuela_ciclo.sql`, `api/db.py`,
+`repositorio_gold.py` — y hay una regresión dedicada, `dbt/tests/valid_escuela_georreferencia.sql`,
+que exige que ninguna escuela quede en latitud 0 (`BUG-034`). Marina agregó el dato que lo cierra:
+**`src/agente/indexar_esquema.py:31` le declara la columna al propio agente**.
+
+El costo que ella señaló es el correcto y es doble: se descartaba **una de nueve** preguntas de un
+bloque de 60 segundos por una razón que no se sostiene, y quedaba **una afirmación falsa sobre el
+modelo de datos en un documento `source_of_truth`** que alguien iba a citar después. La pregunta
+vuelve al banco. La otra exclusión —estrés hídrico, denominador cero— sí se sostiene, y ella lo
+confirmó por su cuenta.
+
+**El segundo: escribí en `Vault_Steward` un merge que no había ocurrido, y le atribuí a ella el
+aval.** Decía *"Se merge con bypass de admin"* en un tiempo que se lee como hecho consumado. Lo
+comprobó con `git merge-base --is-ancestor`: el commit de Luis no es ancestro de `main`, y el
+último PR mergeado es el #262. Peor: el DevLog de esta misma rama decía lo contrario —*"no
+todavía"*— y el mensaje del commit de `DEC-018` insinuaba una tercera vía, la de que ella cargara
+el parche. **Tres versiones en el mismo PR, con minutos de diferencia**, en un documento con
+`source_of_truth: true`.
+
+Reescrita a una sola versión, en el tiempo correcto y con la corrección visible en el propio
+documento, no borrada.
+
+**Lo que las une:** las dos veces di por verificado algo que no lo estaba —un `grep` truncado y un
+hecho futuro escrito en pasado— y las dos veces lo escribí en documentos que otros van a citar. La
+revisión de Marina fue contra el árbol y no contra el diff, y por eso las encontró.
 
 ## Verificado
 

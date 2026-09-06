@@ -36,26 +36,40 @@ lista de verificación una vez por sprint:
 
 Ninguno es culpa de quien lo escribió. Son **higiene**, y la higiene sin dueño no ocurre.
 
-### La octava vez, y la primera excepción concedida (2026-09-05)
+### La octava vez, y la excepción que se decidió conceder (2026-09-05, pendiente al 2026-09-06)
 
 El mismo patrón volvió con el **PR #263** de Luis Téllez: midió el universo completo de producción
 tras cerrar `BUG-048` y escribió el resultado en dos documentos de C2 —`Cube_Specs_DB03_DB04.md` y
 `Panel_ML_US207.md`—, que no están en su alcance. `quality-checks` en rojo, PR bloqueado.
 
-**Se merge con bypass de admin, y queda escrito como omisión consciente**, no como descuido:
+**Estado real al 2026-09-06: el #263 sigue `OPEN` y no se ha mergeado.** Lo que existe es la
+decisión del PO de mergearlo con bypass de admin, y esta entrada la asienta **por adelantado** para
+que el registro exista antes que el acto, no después.
 
-- **La autorización existe y está en el PR**, que es lo que faltaba: aprobaron **Marina García del
-  Buey** —dueña del contenido de `Panel_ML_US207.md` (US-207) y con `vault/04_UX_Design/**` en
-  verde— y el PO. El gate compara rutas y **no puede ver una aprobación**; las personas sí la
-  verificaron.
-- **Lo que se salta es el mecanismo, no el control.** `04_UX_Design/**` está en `criticos` a nombre
-  de Manuel Serranía, y ese renglón dice explícitamente *"aviso, no veto"*.
-- **El costo de la alternativa era real**: a un día del freeze, mover el contenido a otra rama son
-  dos ciclos de CI y un PR más, para llegar al mismo estado.
+> **Corrección de esta misma sección, 2026-09-06.** La primera redacción decía *"Se merge con bypass
+> de admin"* en un tiempo verbal que se lee como hecho consumado, y afirmaba que la aprobación de
+> Marina García del Buey respaldaba un merge que no había ocurrido. **Lo señaló ella al revisar el
+> PR #264**, comprobando con `git merge-base --is-ancestor` que el commit de Luis no es ancestro de
+> `main`. Tenía razón en las dos mitades: el tiempo verbal y la contradicción con el DevLog de la
+> misma rama, escritos con minutos de diferencia. Un documento con `source_of_truth: true` que
+> atribuye a alguien el aval de un bypass **no puede tener tres versiones**; ésta es la única.
+
+**Lo que sí es un hecho verificado**, y es lo que hace defendible la excepción:
+
+- **Las dos aprobaciones están en el PR #263**, en GitHub y con fecha: `marina-gdb` —dueña del
+  contenido de `Panel_ML_US207.md` (US-207) y con `vault/04_UX_Design/**` en verde— y
+  `edgarcoroneln`. `reviewDecision: APPROVED`. Eso es lo que faltaba cuando el DevLog original de
+  Luis afirmaba una autorización sin respaldo.
+- **El gate compara rutas y no puede ver una aprobación.** Lo que se saltará es el mecanismo, no el
+  control.
+- **`04_UX_Design/**` está en `criticos` a nombre de Manuel Serranía como *"aviso, no veto"***,
+  redacción que la propia Marina originó al revisar el PR #234.
+
+**Orden comprometido:** el #263 no se mergea antes que `DEC-018`, porque la cita. Primero entra el
+PR del PM.
 
 **Lo que esta excepción no autoriza:** repetirla sin la aprobación del dueño escrita en el PR
-**antes** del merge. Lo que hizo defendible este caso fue precisamente que la autorización se
-documentó; el DevLog original la afirmaba sin respaldo, y eso fue lo que se corrigió.
+**antes** del merge. Lo que la hace defendible es exactamente que la autorización se documentó.
 
 **Para el Steward que tome el turno:** ocho apariciones del mismo patrón en cuatro días es la señal
 de que `ownership.yml` no describe cómo trabaja el equipo — la gente escribe donde su trabajo lo

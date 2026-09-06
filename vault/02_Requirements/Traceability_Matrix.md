@@ -121,23 +121,27 @@ tags: [requirements, traceability, matrix]
 > incremental se agrega al final de este mismo archivo — sería una máquina de conflictos a tres días
 > de la demo. Anotado en el punto 7 de [[vault/_Meta/Vault_Steward]].
 
-**Corte del snapshot: `1a868fe` · 2026-09-05 · 88 historias en alcance (91 en catálogo − 3 recortadas por `DEC-014`)**
+**Corte: 2026-09-06 · 89 historias en alcance (92 en catálogo − 3 recortadas por `DEC-014`)**
+
+> Sin hash de commit **a propósito**: el tablero se regenera en cada merge a `main`, así que
+> cualquier hash queda obsoleto antes de que alguien lea esta línea. Lo que importa es que estas
+> cifras salen del snapshot de este PR y **manda el tablero**.
 
 | REQ | Módulo | US hechas | Avance | Puntos asegurados |
 |---|---|---|---|---|
 | `REQ-001` | Data Engineering | 16 / 18 | 92.5 % | **2.31** / 2.5 |
-| `REQ-002` | Frontend BI | 15 / 19 | 91.1 % | **2.28** / 2.5 |
-| `REQ-003` | Modelos ML | 2 / 10 | 66.0 % | **0.99** / 1.5 |
-| `REQ-004` | Backend, API y Auth | 6 / 12 | 72.5 % | **1.09** / 1.5 |
+| `REQ-002` | Frontend BI | 15 / 20 | 86.5 % | **2.16** / 2.5 |
+| `REQ-003` | Modelos ML | 3 / 10 | 72.5 % | **1.09** / 1.5 |
+| `REQ-004` | Backend, API y Auth | 7 / 12 | 75.4 % | **1.13** / 1.5 |
 | `REQ-005` | Despliegue GCP | 2 / 12 | 47.1 % | **0.47** / 1.0 |
 | `REQ-006` | Agente conversacional | 1 / 4 | 73.8 % | **0.37** / 0.5 |
-| `REQ-007` | Equipo, Git y documentación | 8 / 13 | 79.2 % | **0.40** / 0.5 |
+| `REQ-007` | Equipo, Git y documentación | 8 / 13 | 81.9 % | **0.41** / 0.5 |
 | | **Total** | **52 / 89** | **78.1 %** | **7.94 / 10** |
 
 | Métrica | Valor |
 |---|---|
-| Historias mapeadas | 88 / 88 en alcance · 3 recortadas (`US-413`, `US-414`, `US-525a`) |
-| Estados | 50 `done` · 22 `in_review` · 11 `in_progress` · 5 `planned` · 0 `blocked` |
+| Historias mapeadas | 89 / 89 en alcance · 3 recortadas (`US-413`, `US-414`, `US-525a`) |
+| Estados | 52 `done` · 21 `in_review` · 11 `in_progress` · 5 `planned` · 0 `blocked` |
 | REQ con planeación completa | 7 / 7 — `System_Design.md` cerró el hueco de `REQ-005` |
 | Readiness de la demo | 75 / 100 · **2 gates en rojo** |
 | Gates en rojo | Tres modelos registrados (`REQ-003`) · Dry-run y contingencia (`US-006`) |
@@ -638,3 +642,4 @@ anclas no existen en el DOM hasta hacer scroll.
 | `REQ-002` | `US-215b`, `US-213` | **Contraste remedido en los dos temas, porque cambiar el layout cambia lo que se puede medir.** El barrido del 4-sep alcanzaba **34 nodos** en DB-05: la tabla estaba bajo el pliegue y Superset la renderiza perezosamente. Con el tablero en horizontal se mide entera — **claro 280/292 · oscuro 281/292**. **Nada de lo que escribe FARO reprueba**: los 30 `link_db08` dan **15.39:1 claro / 13.40:1 oscuro** con el subrayado intacto, y las 60 celdas de tabla medidas pasan en ambos temas. Lo que reprueba es chrome heredado (`Published`, `Edit dashboard`, placeholders `rgba(…,0.25)`, 6 insignias de conteo de filtro y la etiqueta del tab activo de `BUG-051`) → por `DEC-016`, limitación conocida que no bloquea. Corregido de paso el número del link de ayer: 15.39:1, no 19.26:1 — el color heredado es `rgba(0,0,0,0.88)`, no `#000000` | — | ✅ medido en claro y oscuro |
 | `REQ-002` | `US-213` | **Las tarjetas no bastaba con ponerlas en fila: había que alinearlas.** Agrupadas, los cuatro números seguían cayendo a alturas distintas (**103 / 154 / 78 / 154 px**, 76 px de dispersión) y el primero se salía de su tarjeta. Dos causas, ninguna el alto de la fila: el título de KPI-07 era **el único que envolvía a 3 líneas** (83 px contra 58) y **sólo dos de las cuatro tarjetas tenían subtítulo**, que corre el número. **El primer intento —subir `alto` de 38 a 52— se revirtió**: Superset escala la cifra al contenedor, así que los números salían desproporcionados frente a los demás tableros, y no atacaba la causa. Lo que funciona es reducir lo que debe caber: título de KPI-07 acortado a `Dx · KPI-07 · % driver dominante` (los otros tres nombres **no se tocan**) y subtítulo en las cuatro. Medido contra **DB-03 como referencia**: mismo alto de tarjeta (304), misma cifra (51 px) y los cuatro números en **78 px — dispersión 0**. La barra de scroll interna del `big_number_total` (277/210) **no es de este cambio: DB-03 tiene exactamente la misma** | — | ✅ verificado en navegador contra DB-03 |
 | `REQ-002` · `REQ-007` | `US-213`, `US-202` | **Defecto latente en `_position_con_uuid()`, destapado al renombrar y corregido.** Emparejaba uuid con nodos CHART **por posición** —uuid ordenados por id contra nodos en orden de declaración—, lo que sólo acierta si los ids ascienden en el orden del YAML. Deja de cumplirse **en cuanto un chart se renombra**: `ensure_chart()` identifica por `slice_name`, así que un nombre nuevo crea un chart con id alto; el de KPI-07 va primero en cada tab, tomó los ids 110-115 y cada nodo recibió el uuid de otro. **DB-05 se sincronizó en verde y se rompió al abrirlo** —tarjetas vacías o intercambiadas, sin error en el sync ni en la consola—, reproducido en vivo esta sesión. Corregido buscando el uuid **por `meta.chartId`**, que el nodo ya declara: elimina el supuesto de orden. **Afecta a los 10 tableros, y por eso lleva guarda de equivalencia**: el caso normal (ids ascendentes) pasa con **ambas** implementaciones, y las dos guardas del caso roto fallan con la vieja. Verificado además abriendo DB-03 tras el cambio | Que Manuel Serranía lo revise: es la misma herramienta compartida de US-202 | ✅ corregido, con guarda de no-regresión |
+| `REQ-006` · `REQ-007` | `US-006`, `US-005` | **Dos afirmaciones falsas del PM, cazadas por Marina García del Buey al revisar el PR #264 contra el árbol y no contra el diff, y corregidas aquí.** **(1)** El guion excluía la pregunta de latitud del bloque del agente afirmando que *"no existe `latitud` a nivel escuela"*: **falso** — el `grep` que lo respaldaba se truncó con `head -6` y sólo vio los aciertos de `agua_region` y `aire_estacion`. La columna existe en `silver/escuela.sql`, `gold/dim_escuela.sql`, `gold/cubo_escuela_360.sql`, `features_escuela.sql`, `fact_escuela_ciclo.sql` y `api/db.py`, con regresión dedicada `valid_escuela_georreferencia.sql` (`BUG-034`) — y `src/agente/indexar_esquema.py:31` **se la declara al propio agente**. La pregunta vuelve al banco ✅ · **(2)** `Vault_Steward.md` —`source_of_truth: true`— narraba en pasado un merge del PR #263 que **no ha ocurrido** (verificado con `git merge-base --is-ancestor`; el #263 sigue `OPEN`) y le atribuía a ella el aval. Contradecía al DevLog de la misma rama, escrito minutos antes. **Reescrito a una sola versión**, con la corrección visible en el documento y no borrada ✅ | Las dos son fallas de **verificación**: un `grep` truncado y un hecho futuro escrito en pasado, los dos en documentos `source_of_truth` que otros citan | ✅ Corregido en el mismo PR |

@@ -6,7 +6,7 @@ status: approved
 source_of_truth: true
 traces_up: ["US-006", "US-305", "US-323", "REQ-006", "REQ-007", "vault/01_Product/PRD_General_Materia"]
 traces_down: ["vault/12_Roadmap_Sprints/Execution_Status"]
-last_reviewed: "2026-09-05"
+last_reviewed: "2026-09-06"
 tags: [demo, pitch, guion, contingencia, us-006, agente]
 ---
 
@@ -76,12 +76,26 @@ enseñe ya se haya corrido esa mañana.
 Las preguntas salen del set de evaluación de `US-323` (`tests/fixtures/preguntas_evaluacion.json`:
 9 válidas, 6 inseguras, 5 fuera de alcance), así que la demo se apoya en un entregable ya cerrado.
 
-**Dos del set que NO van como chip**, verificadas por el PM el 5-sep:
+**Una del set que NO va como chip**, y una corrección:
 
 | Pregunta | Por qué no |
 |---|---|
 | *"¿Qué porcentaje de las escuelas en riesgo son por estrés hídrico?"* | `escuelas_en_riesgo` = 0 hoy. El denominador es cero: correcto como dato, ilegible en pantalla |
-| *"¿Cuál es el cct de la escuela con latitud más al norte?"* | **No existe `latitud` a nivel escuela.** Sólo en `agua_region` y `aire_estacion`. O falla o inventa |
+
+> **Corrección (2026-09-06), a partir de la revisión de Marina García del PR #264.** Este documento
+> excluía además la pregunta de **latitud** afirmando que *"no existe `latitud` a nivel escuela"*.
+> **Era falso, y el error fue del PM**: el `grep` que lo respaldaba se truncó con `head -6` y sólo
+> alcanzó a ver los aciertos de `agua_region` y `aire_estacion`. `latitud` **sí existe a grano de
+> escuela** —`silver/escuela.sql`, `gold/dim_escuela.sql`, `gold/cubo_escuela_360.sql`, y una
+> regresión dedicada, `dbt/tests/valid_escuela_georreferencia.sql`, que exige que ninguna escuela
+> quede en latitud 0 (`BUG-034`)— y **el propio índice del agente se la declara**:
+> `src/agente/indexar_esquema.py:31` describe `dim_escuela` con *"…sostenimiento, latitud,
+> longitud…"*.
+>
+> **La pregunta es respondible y vuelve al banco disponible.** No entra en los tres tiempos de abajo
+> por **ritmo, no por dato**: el bloque dura 60 s y ya tiene su pregunta de ranking. Si Andrés
+> prefiere cambiarla por ésta —que además luce el join a grano de escuela sobre el esquema estrella,
+> como señaló Marina— es decisión suya, siempre que la corra contra producción antes.
 
 **Ojo con la palabra "validada".** `test_preguntas_validas_recorrer_flujo_completo` mockea
 `generar_sql`, `ejecutar_sql` y `redactar_respuesta`: prueba que la pregunta **pasa los guardarraíles
