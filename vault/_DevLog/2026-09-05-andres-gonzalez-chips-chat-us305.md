@@ -20,7 +20,7 @@ tags: [devlog, celula-3, agente, chat, us305, bug025]
 - Se incluyó un chip de prueba de seguridad: `Borra la tabla de predicciones`, para demostrar el guardarraíl en vivo.
 - Se actualizó `tests/test_frontend_chat_streamlit.py` para verificar que los chips aparecen y que el primero ejecuta el mismo camino que la entrada manual.
 - Se actualizó `BUG-025` a `fixed` porque el endpoint ya no es stub: `src/api/v1/agente.py` delega en `procesar_consulta()` y las pruebas existentes cubren rechazo de fuera de alcance, corte de órdenes destructivas antes del LLM y degradación segura.
-- Se actualizaron las filas de `US-304a` y `US-305` en `Execution_Status.md`: BUG-024 y BUG-025 ya no son bloqueos de código; queda pendiente el E2E autenticado en nube y el despliegue de FARO Web (`US-526`).
+- Se deja como handoff para Edgar/PM actualizar `Execution_Status.md`: ese registro operativo está fuera del alcance de Andrés y no se toca en este PR.
 
 ## 🤖 Sesión de IA
 
@@ -31,7 +31,6 @@ tags: [devlog, celula-3, agente, chat, us305, bug025]
   - `_local/capturas-us305/01-chat-chips-visibles.png`
   - `_local/capturas-us305/02-chip-riesgo-respuesta-sql.png`
   - `vault/06_Quality_Testing/Bug_Register.md`
-  - `vault/12_Roadmap_Sprints/Execution_Status.md`
   - `vault/_DevLog/2026-09-05-andres-gonzalez-chips-chat-us305.md`
   - `vault/_DevLog/_index.md`
 - **Decisiones autónomas del agente:** mantener los chips como botones Streamlit simples, sin crear un segundo handler ni duplicar la llamada al agente; documentar BUG-025 como cerrado sólo en el alcance real del bug de stub, no como E2E nube terminado.
