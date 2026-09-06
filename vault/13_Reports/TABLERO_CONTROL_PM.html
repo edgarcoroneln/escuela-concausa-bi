@@ -130,12 +130,12 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-09-06T08:18:23+00:00",
+    "generated_at": "2026-09-06T18:51:34+00:00",
     "generated_date": "2026-09-06",
-    "commit": "ed079bc",
-    "branch": "main",
-    "working_tree": "clean",
-    "source_fingerprint": "a9fd5c1b75b6",
+    "commit": "06065fd",
+    "branch": "dev/edgar-coronel",
+    "working_tree": "modified",
+    "source_fingerprint": "9e131e014ba7",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -2857,6 +2857,22 @@
         "US-204"
       ],
       "mitigation_date": "Post-freeze"
+    },
+    {
+      "id": "RISK-010",
+      "description": "El corte de riesgo está escrito a mano en ~11 sitios de cuatro células y no hay una sola fuente. DEC-019 lo bajó de 0.60 a 0.50 y eso obliga a tocar 5 modelos/pruebas de dbt (C1), src/api/repositorio_gold.py:325 y src/api/v1/gold.py:129 (C4), src/frontend/prediccion_client.py:26 y pages/2_Panel_ML.py:77 (C2/C4), y los docstrings de src/modelos/publicar_gold.py:180 y riesgo.py (C3) — mientras riesgo.py::RIESGO_UMBRAL debe quedarse en 0.60, porque ahí el número significa otra cosa (el ancla de la sigmoide, no la alerta). Nada impide que los sitios diverjan en silencio: no hay prueba que los ate.",
+      "probability": 4,
+      "impact": 4,
+      "score": 16,
+      "response": "Mitigar",
+      "mitigation": "Post-freeze: una sola fuente — var de dbt para la capa de datos y una constante importada para Python — más una prueba que falle si dos sitios discrepan. La propuesta original es de Christian Ruiz, respaldada por Marina García. Hoy no se hace: tocar 4 células el día del freeze cambia lo que la demo enseña.",
+      "trigger": "El disparador es el orden de merge, no el código: las tres capas están escritas (C1 dbt, C4 API, C2 frontend) pero en tres ramas distintas; si entra una sola, los tableros y /api/v1/kpis dirían números distintos sobre el mismo dato. La duplicación persiste tras DEC-019: LINEA_DE_ALERTA queda definida dos veces, en repositorio_gold.py y en prediccion_client.py, sin prueba que las ate",
+      "owner": "Edgar Coronel (PO)",
+      "status": "open",
+      "stories": [
+        "US-113"
+      ],
+      "mitigation_date": "2026-09-16"
     }
   ],
   "blockers": [
@@ -3776,10 +3792,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 38,
-        "devlogs": 49,
+        "devlogs": 50,
         "active_us": 6,
-        "activity": 93,
-        "signal": "38 PR · 49 DevLog · 6 US activas"
+        "activity": 94,
+        "signal": "38 PR · 50 DevLog · 6 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
