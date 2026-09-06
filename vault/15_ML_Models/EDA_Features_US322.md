@@ -47,3 +47,10 @@ Desde el PR #197, Bronze DS-01/DS-02 ya es reproducible y tiene suites de Great 
 cerrar la limitación conocida todavía se debe reconstruir Gold y ejecutar este diagnóstico sobre
 `gold.features_escuela`; ver
 [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
+
+## Ejecución reproducible desde Gold
+
+`python -m src.modelos.ejecutar_cierre_ml03` lee `gold.features_escuela` desde `DATABASE_URL` y
+emite EDA y correlaciones agregadas sin incluir CCT individuales ni mezclar el target con el vector
+de clustering. La prueba real permanece pendiente: el ambiente del 4-sep-2026 no tenía Docker ni
+una base Gold configurada, por lo que no se agregan cifras reales ni se cambia el estado.
