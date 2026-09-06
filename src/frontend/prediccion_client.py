@@ -20,10 +20,27 @@ from typing import Any
 
 import httpx
 
-#: Umbral de negocio de "escuela en riesgo" (DEC-006, ratificado el 2026-09-04).
-#: `indice_riesgo >= 0.60` equivale a proyectar una pérdida de >= 5 % de matrícula:
-#: la sigmoide de `src/modelos/riesgo.py` está fijada por esas dos anclas.
-UMBRAL_RIESGO = 0.60
+#: **Ancla de calibración** de la sigmoide (DEC-006). `indice_riesgo = 0.60` equivale a
+#: proyectar una pérdida de 5 % de matrícula, y `0.30` a matrícula estable: la sigmoide de
+#: `src/modelos/riesgo.py` está fijada por esas dos anclas. **No cambia** — es lo que hace
+#: interpretable el índice.
+ANCLA_SIGMOIDE = 0.60
+
+#: **Línea de alerta** del KPI (DEC-019, 2026-09-06). Es criterio de negocio, no de
+#: calibración, y por eso es un número **distinto** del ancla. Antes eran el mismo y la
+#: página los presentaba como uno solo; separarlos es lo que evita volver a confundirlos.
+#:
+#: Baja de 0.60 a 0.50 porque el 0.60 era inalcanzable por construcción: sobre el Gold real
+#: de producción (45,276 escuelas) el máximo que ML-01 predice es **0.5717 ≈ −4.53 %**, así
+#: que el conteo daba 0 no por un defecto sino porque el corte estaba por encima del techo
+#: del fenómeno. 0.50 ≈ perder **3.4 %**, justo por debajo del **3.7 %** de deserción real
+#: en secundaria — la alerta enciende **antes** de que la escuela alcance la norma nacional,
+#: que es lo que significa "temprana". Bajar más diluye: 0.40 marcaría el 26 % del universo
+#: y 0.35 el 55 %, y eso deja de ser una alerta.
+#:
+#: Con 0.50 son **7 escuelas de 45,276**: una lista de intervención accionable, que es la
+#: narrativa del guion — ranking prescriptivo, no conteo.
+LINEA_DE_ALERTA = 0.50
 
 
 @dataclass(frozen=True)
@@ -40,8 +57,8 @@ class Prediccion:
 
     @property
     def en_riesgo(self) -> bool:
-        """`True` si cruza el umbral de DEC-006."""
-        return self.indice_riesgo >= UMBRAL_RIESGO
+        """`True` si cruza la **línea de alerta** de DEC-019, no el ancla de la sigmoide."""
+        return self.indice_riesgo >= LINEA_DE_ALERTA
 
     @property
     def tiene_cluster(self) -> bool:
