@@ -176,9 +176,20 @@ class PrediccionBatchIn(EntradaEstricta):
 
 
 class ExplicacionSHAPOut(BaseModel):
+    """Contribución de cada driver al riesgo de una escuela.
+
+    `contribuciones` admite `None` **a propósito**: es el `SIN_DATO` explícito de la regla de
+    cobertura parcial del proyecto. Un driver sin dato NO es un driver que contribuyó cero -- D5
+    (estrés hídrico) es regional y D6 (aire) cubre ~80 zonas urbanas, así que el hueco es el caso
+    normal, no la excepción. Devolver `0.0` ahí sería afirmar "este driver no influyó", que es una
+    afirmación falsa y además incoherente con `indice_completitud_drivers` y con los cubos, que sí
+    marcan `SIN_DATO`.
+    """
+
     cct: StrictStr
     driver_dominante: StrictStr
-    contribuciones: dict[str, float]  # driver -> valor SHAP
+    # driver -> valor SHAP; `None` = SIN_DATO, nunca 0.0 de relleno
+    contribuciones: dict[str, float | None]
 
 
 # --------------------------------------------------------------------------- #

@@ -47,6 +47,10 @@ personas:
       # steward de contenido), pero vive en 04_UX_Design/, verde de C2. Path-scoped y
       # content-owner son cosas distintas; sin esto, el gate rechaza al dueño real del doc.
       - "vault/04_UX_Design/Accessibility.md"
+      # Mismo caso, hallado 2026-09-05 al desbloquear el caso 3.1 de US-215a de Marina:
+      # `UX_Guidelines.md` me declara owner en su frontmatter y ningun alcance lo cubria.
+      # Sexta aparicion del mismo hueco -- ver vault/_Meta/Vault_Steward.
+      - "vault/04_UX_Design/UX_Guidelines.md"
       - ".github/**"
 
   diana-alvarez:
@@ -432,6 +436,13 @@ comunes:
   # Infraestructura de la raíz, compartida por todo el repositorio.
   - ".gitignore"
   - ".gitattributes"
+  # Guía de ambiente local en la raíz. Reportada por Monserrat Miranda y ratificada por
+  # Christian Ruiz (2026-09-05): la carpeta no estaba en NINGÚN alcance —ni verde, ni
+  # amarillo, ni comunes—, así que el gate reprobaba a quien intentara ejecutar el
+  # `git rm --cached` de `configuracion.env`, que incumple `Secrets_Policy` por estar
+  # versionado. No se puede exigir que se cumpla una política y a la vez impedir que
+  # alguien la cumpla. Séptima aparición del mismo hueco — ver `vault/_Meta/Vault_Steward`.
+  - "guia-ambiente-local/**"
   # Registros de intake: `Definition_of_Filed` obliga a CUALQUIERA a dar de alta ahí el bug,
   # el riesgo, el bloqueo o el hallazgo que encuentre. Si el registro no está permitido para
   # quien reporta, la regla no se puede cumplir. Son append-only y sus dueños de área siguen
@@ -482,6 +493,12 @@ criticos:
   "src/frontend/**": manuel-serrania
   "vault/02_Requirements/Traceability_Matrix.md": edgar-coronel
   "vault/10_Risk_Governance/**": edgar-coronel
+  # Hallazgo de Marina Garcia al revisar el PR #234 (2026-09-05): el gate lo dejo
+  # pasar sin un solo aviso aunque el PR fija el criterio de aceptacion de US-215a y
+  # US-215b -- se auto-concedio la ruta en el mismo commit en que la uso, y
+  # 04_UX_Design no estaba en criticos. Aviso, no veto: quien escriba las reglas de
+  # UX desde fuera de C2 pide revision del TL de C2.
+  "vault/04_UX_Design/**": manuel-serrania
   # dags/** es verde de C1 (Diana/Deni/Luis García/Emilio); se abre en amarillo a
   # edgar-jimenez para los callbacks de alerta de US-524b (BUG hallado 2026-09-03:
   # el hueco anterior le reprobaba el gate por "fuera de alcance" antes de llegar

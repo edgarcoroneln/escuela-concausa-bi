@@ -130,26 +130,27 @@
   <script>
   window.PM_DATA = {
   "meta": {
-    "generated_at": "2026-09-05T03:46:12+00:00",
-    "generated_date": "2026-09-05",
-    "commit": "020cf7a",
+    "generated_at": "2026-09-06T00:53:45+00:00",
+    "generated_date": "2026-09-06",
+    "commit": "4e76211",
     "branch": "main",
     "working_tree": "clean",
-    "source_fingerprint": "f9b728f2c68a",
+    "source_fingerprint": "7f7bf4bedeb5",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
   },
   "summary": {
-    "total": 91,
-    "done": 50,
-    "planned": 9,
-    "in_progress": 13,
-    "in_review": 19,
+    "total": 89,
+    "done": 51,
+    "planned": 5,
+    "in_progress": 12,
+    "in_review": 21,
     "blocked": 0,
-    "wip": 32,
-    "progress": 73.5,
-    "days_to_demo": 4
+    "wip": 33,
+    "descoped": 3,
+    "progress": 77.4,
+    "days_to_demo": 3
   },
   "delivery": {
     "date": "2026-09-09",
@@ -174,7 +175,7 @@
       "updated": "2026-08-10",
       "objective": "Repo escuela-concausa-bi desde cero. Reemplazar los 93 placeholders, crear Secrets_Policy.md (4 links rotos) y dejar vault_lint.py en verde.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 35
+      "age_days": 36
     },
     {
       "id": "US-002",
@@ -192,7 +193,7 @@
       "updated": "2026-08-10",
       "objective": "Traducir los 7 modulos de la rubrica a REQ-### con criterios AC-### verificables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 35
+      "age_days": 36
     },
     {
       "id": "US-003",
@@ -210,7 +211,7 @@
       "updated": "2026-08-10",
       "objective": "Nombre canonico por persona + un vault/09_AI_Governance/Agent_Contexts/{nombre}.md para gobernar el uso de IA.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 34
+      "age_days": 35
     },
     {
       "id": "US-004",
@@ -224,11 +225,11 @@
       "status": "in_review",
       "started": "2026-08-03",
       "blocked_since": "—",
-      "evidence": "vault/02_Requirements/Traceability_Matrix · vault/13_Reports/PM_Dashboard_Spec · PR #112 · vault/13_Reports/US_Validation_Followup_2026-08-28. Reconciliación del 29-ago: 14 PRs mergeados en el día, 11 historias actualizadas, BUG-026 cerrado, BUG-027 superseded, BUG-028 registrado y plan de corrección del vault abierto con 5 hallazgos. Historia continua hasta el cierre del proyecto",
-      "updated": "2026-08-29",
+      "evidence": "vault/02_Requirements/Traceability_Matrix · vault/13_Reports/PM_Dashboard_Spec · PR #112 · vault/13_Reports/US_Validation_Followup_2026-08-28. Reconciliación del 29-ago: 14 PRs mergeados en el día, 11 historias actualizadas, BUG-026 cerrado, BUG-027 superseded, BUG-028 registrado y plan de corrección del vault abierto con 5 hallazgos. Cierre del entregable 2026-09-05: resuelto el único acuerdo que quedaba abierto — de las 20 historias de la cola de validación del 28-ago, 8 cerraron (US-121a, US-122a, US-123a, US-124a, US-213, US-221, US-411, US-412) y 12 están en revisión, ninguna en in_progress ni planned; TEST-002 en verde sobre el snapshot regenerado; y el bloque §Estado del proyecto de la matriz, que llevaba cifras de agosto (\"0 REQ Done\"), pasa a derivarse de este registro vía generate_pm_dashboard.py en vez de capturarse a mano. La parte de mantenimiento no se declara terminada: pasa al rol rotativo de US-005 (vault/_Meta/Vault_Steward), que es donde debe vivir. Historia continua hasta el cierre del proyecto",
+      "updated": "2026-09-05",
       "objective": "Una fila por REQ, actualizada en cada standup. Es el tablero de control del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 33
+      "age_days": 34
     },
     {
       "id": "US-005",
@@ -239,14 +240,14 @@
       "sprint": "S4",
       "req": "REQ-007",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "status": "planned",
-      "started": "—",
+      "status": "in_review",
+      "started": "2026-09-05",
       "blocked_since": "—",
-      "evidence": "Sin PR ni commit encontrado. Rotación del Vault Steward no ha arrancado — auditoría 2026-09-03",
-      "updated": "2026-09-03",
+      "evidence": "vault/_Meta/Vault_Steward approved: rol, lista de verificación de 8 puntos y turnos por sprint. Se registra que la rotación no operó en S1–S4 y se documenta el costo con la evidencia de esta semana — el hueco de ownership.yml parchado 5 veces, configuracion.env versionado contra Secrets_Policy, la fila corrida de BUG-018 que contaba como bug abierto, 3 documentos de ambiente local solapados contra la regla 1, y la colisión de BUG-049 entre dos personas el mismo día. Turnos asignados: S5 Edgar Coronel (PO), S6 Diana Alvarez (C1), elegida por tener su alcance cerrado al 100 %. Cierra la mitad faltante de la mitigación de RISK-006",
+      "updated": "2026-09-05",
       "objective": "Un responsable por sprint que corre el linter, revisa la matriz y caza documentos huerfanos.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 0
+      "age_days": 1
     },
     {
       "id": "US-006",
@@ -257,14 +258,14 @@
       "sprint": "S6",
       "req": "REQ-007",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "status": "planned",
-      "started": "—",
+      "status": "in_progress",
+      "started": "2026-09-05",
       "blocked_since": "—",
-      "evidence": "Sin artefacto de ensayo de pitch encontrado — auditoría 2026-09-03",
-      "updated": "2026-09-03",
+      "evidence": "vault/01_Product/Guion_Demo_US006 approved: guion de 10 minutos con reparto por persona, las tres cosas que decimos antes de que las pregunten (escuelas_en_riesgo = 0 como resultado y no falla, /explicacion sin SHAP, y la deuda de contraste medida), plan B por modo de falla y checklist de la mañana del 9. No pasa a done con el documento: el objetivo del plan dice *\"preparar y ensayar\"*, y el ensayo con cronómetro y pantallas reales queda comprometido para el lunes 7-sep. Es uno de los dos gates en rojo del readiness",
+      "updated": "2026-09-05",
       "objective": "Guion de 10 min, reparto de quien muestra que y plan B si falla la conexion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 0
+      "age_days": 1
     },
     {
       "id": "US-101",
@@ -282,7 +283,7 @@
       "updated": "2026-08-17",
       "objective": "Contrato de las 3 capas: Bronze (raw + metadatos), Silver (tipado, CCT homologado) y Gold (esquema estrella). Incluye el parametro SCOPE_ENTIDADES y la politica de cobertura parcial. Documentar en vault/03_Architecture/Data_Model.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 34
+      "age_days": 35
     },
     {
       "id": "US-102",
@@ -300,7 +301,7 @@
       "updated": "2026-08-17",
       "objective": "DAG con dependencias, reintentos, alertas y particionado por fecha. Debe manejar 8 fuentes con periodicidad distinta: horaria, diaria, mensual, anual y censal.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 25
+      "age_days": 26
     },
     {
       "id": "US-103",
@@ -318,7 +319,7 @@
       "updated": "2026-08-19",
       "objective": "fact_escuela_ciclo + dim_escuela, dim_municipio, dim_tiempo, dim_driver. Es la pieza de mayor peso en la rubrica: debe quedar impecable.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-104",
@@ -336,7 +337,7 @@
       "updated": "2026-08-19",
       "objective": "gold.features_escuela: los 6 drivers normalizados + banderas de cobertura. Contrato cerrado y versionado con la Celula 3.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-105",
@@ -354,7 +355,7 @@
       "updated": "2026-08-19",
       "objective": "Interpolacion IDW para SINAICA dentro de radio valido; fuera de radio, marcar SIN_DATO explicito (nunca cero ni nulo silencioso). Calcular indice_completitud_drivers por escuela.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 19
     },
     {
       "id": "US-106",
@@ -372,7 +373,7 @@
       "updated": "2026-09-04",
       "objective": "Diagrama fuente->bronze->silver->gold->feature->modelo->dashboard. Freeze el 6 de septiembre.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 13
+      "age_days": 14
     },
     {
       "id": "US-111",
@@ -390,7 +391,7 @@
       "updated": "2026-08-25",
       "objective": "Limpieza, tipado, deduplicacion y homologacion de catalogos (CCT y clave de municipio INEGI a 5 digitos).",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 24
+      "age_days": 25
     },
     {
       "id": "US-112",
@@ -408,7 +409,7 @@
       "updated": "2026-08-25",
       "objective": "Materializar hechos y dimensiones. Incluye tests nativos de dbt: unique, not_null, relationships, accepted_values.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 22
+      "age_days": 23
     },
     {
       "id": "US-113",
@@ -426,7 +427,7 @@
       "updated": "2026-09-04",
       "objective": "Vistas materializadas optimizadas para los 10 dashboards. Cada cubo debe exponer la bandera de cobertura para que el slice muestre 'sin dato disponible'.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-114",
@@ -462,7 +463,7 @@
       "updated": "2026-08-29",
       "objective": "SOLO tus fuentes DS-06 y DS-08: descargar fisicamente, abrir, contar registros, verificar esquema y llave (clave INEGI 5 digitos) y llenar la prueba en vault/14_Data_Sources/DS-06_CONAGUA_SINA.md y DS-08_CONAPO_Proyecciones.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 9
     },
     {
       "id": "US-122a",
@@ -480,7 +481,7 @@
       "updated": "2026-08-29",
       "objective": "Un extractor idempotente por fuente (DS-06 diaria, DS-08 anual) que deposite en Bronze como Parquet con _ingested_at, _source, _source_url.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 9
     },
     {
       "id": "US-123a",
@@ -498,7 +499,7 @@
       "updated": "2026-08-29",
       "objective": "Suite GE para las tablas de DS-06 y DS-08: nulos, duplicados, rangos fisicos, tipos y llave. Data Docs publicables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 9
     },
     {
       "id": "US-124a",
@@ -516,7 +517,7 @@
       "updated": "2026-08-29",
       "objective": "Muestra <=500 filas de DS-06 y DS-08 para que CI corra sin descargar datos reales.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 9
     },
     {
       "id": "US-121b",
@@ -534,7 +535,7 @@
       "updated": "2026-08-17",
       "objective": "SOLO tus fuentes DS-04 y DS-05: descargar/llamar la API, abrir, contar registros, verificar esquema y llave y llenar la prueba en vault/14_Data_Sources/DS-04_SESNSP_Incidencia_Delictiva.md y DS-05_SINAICA_Calidad_Aire.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 23
+      "age_days": 24
     },
     {
       "id": "US-122b",
@@ -552,7 +553,7 @@
       "updated": "2026-08-26",
       "objective": "Un extractor idempotente por fuente (DS-04 mensual, DS-05 API horaria) que deposite en Bronze como Parquet con _ingested_at, _source, _source_url.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 22
+      "age_days": 23
     },
     {
       "id": "US-123b",
@@ -570,7 +571,7 @@
       "updated": "2026-08-26",
       "objective": "Suite GE para las tablas de DS-04 y DS-05: nulos, duplicados, rangos fisicos, tipos y llave. Data Docs publicables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 19
     },
     {
       "id": "US-124b",
@@ -588,7 +589,7 @@
       "updated": "2026-08-26",
       "objective": "Muestra <=500 filas de DS-04 y DS-05 para que CI corra sin descargar datos reales.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 12
+      "age_days": 13
     },
     {
       "id": "US-201",
@@ -606,7 +607,7 @@
       "updated": "2026-08-25",
       "objective": "Arquitectura de informacion de los 10 tableros, arbol de navegacion y definicion formal de cada KPI con su formula SQL. Documentar en vault/04_UX_Design/Screen_Specs.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 29
+      "age_days": 30
     },
     {
       "id": "US-202",
@@ -624,7 +625,7 @@
       "updated": "2026-08-17",
       "objective": "Conectar a Gold, datasets virtuales, metricas y dimensiones reutilizables por todos los tableros.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-203",
@@ -642,7 +643,7 @@
       "updated": "2026-08-26",
       "objective": "Los dos tableros insignia del pitch. DB-02 es coropletico municipal con puntos de escuela.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 15
+      "age_days": 16
     },
     {
       "id": "US-204",
@@ -660,7 +661,7 @@
       "updated": "2026-08-28",
       "objective": "Panel interactivo de simulacion sobre los 3 modelos y el tablero que dice que intervencion toca a cada escuela. DB-09 es el diferenciador del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 9
+      "age_days": 10
     },
     {
       "id": "US-205",
@@ -678,7 +679,7 @@
       "updated": "2026-09-03",
       "objective": "Estilo unificado, navegacion cruzada, tiempos de respuesta aceptables y revision de consistencia de cifras entre tableros.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-211a",
@@ -696,7 +697,7 @@
       "updated": "2026-08-21",
       "objective": "Cubos y capa semantica que alimentan DB-03 (ficha de escuela) y DB-04 (comparador de municipios): metricas, jerarquias y granos.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-212",
@@ -714,7 +715,7 @@
       "updated": "2026-09-04",
       "objective": "Drill-down individual por CCT y benchmark lado a lado entre municipios.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 12
+      "age_days": 13
     },
     {
       "id": "US-214a",
@@ -732,7 +733,7 @@
       "updated": "2026-09-04",
       "objective": "Filtros globales (ciclo, entidad, nivel) y drill-down cruzado aplicados a DB-03 y DB-04.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 2
+      "age_days": 3
     },
     {
       "id": "US-215a",
@@ -750,7 +751,7 @@
       "updated": "2026-09-04",
       "objective": "Pruebas de usabilidad y accesibilidad sobre DB-03 y DB-04.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 1
+      "age_days": 2
     },
     {
       "id": "US-211b",
@@ -768,7 +769,7 @@
       "updated": "2026-08-25",
       "objective": "Cubos y capa semantica que alimentan DB-05 (analisis por driver) y DB-08 (explorador del cubo/pivot): metricas, jerarquias y granos.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 15
     },
     {
       "id": "US-213",
@@ -786,7 +787,7 @@
       "updated": "2026-08-29",
       "objective": "Un tab por driver D1-D6 y una tabla dinamica libre sobre Gold.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 9
     },
     {
       "id": "US-214b",
@@ -804,7 +805,7 @@
       "updated": "2026-09-03",
       "objective": "Filtros globales (ciclo, entidad, nivel) y drill-down cruzado aplicados a DB-05 y DB-08.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 6
+      "age_days": 7
     },
     {
       "id": "US-215b",
@@ -815,14 +816,14 @@
       "sprint": "S5",
       "req": "REQ-002",
       "cell": "Célula 2 · Analytics & Business Intelligence",
-      "status": "in_progress",
+      "status": "in_review",
       "started": "2026-08-30",
       "blocked_since": "—",
-      "evidence": "PR #162: plan de pruebas de usabilidad/accesibilidad de DB-05/DB-08 avanzado, 3 casos verificados en vivo. La propia autora lo deja explícito: \"el resto queda ⏳ pendiente para una siguiente pasada\" — vault/_DevLog/2026-08-30-monserrat-miranda-avance-us214b-us215b",
-      "updated": "2026-09-03",
+      "evidence": "PR #228 abierto (dev/monserrat-miranda, 2026-09-05): 13 de 13 casos del plan de usabilidad/accesibilidad ejecutados — 12 ✅, 1 ⚠️, 0 ❌ — y BUG-038 corregido (los 6 tabs de DB-05 se dibujan y navegan). Verificado por el PM sobre el árbol fusionado: 918 passed, 0 failed; la evidencia del filtro contrastada contra la base (Jalisco/D1/2024-2025 → escuelas_driver 0 sobre total_escuelas 7). El ⚠️ quedó como BUG-051 (renumerado por DEC-013 y mergeado con el PR #228). No cierra hasta que Manuel Serranía revise sync_semantic_layer.py (herramienta compartida de C2) y se mergee",
+      "updated": "2026-09-05",
       "objective": "Pruebas de usabilidad y accesibilidad sobre DB-05 y DB-08.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 6
+      "age_days": 7
     },
     {
       "id": "US-221",
@@ -840,7 +841,7 @@
       "updated": "2026-08-29",
       "objective": "Series de matricula, distribucion por nivel educativo y tarjetas de KPI reutilizables.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
+      "age_days": 9
     },
     {
       "id": "US-222",
@@ -858,7 +859,7 @@
       "updated": "2026-09-03",
       "objective": "Tablero de completitud por driver y mapa de vacios. Convierte una limitacion en un hallazgo de valor.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-223",
@@ -876,7 +877,7 @@
       "updated": "2026-09-04",
       "objective": "Estado de DAGs, frescura por fuente y ultima ingesta exitosa.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-224",
@@ -894,7 +895,7 @@
       "updated": "2026-09-04",
       "objective": "Guia con capturas para el pitch y el README.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-206",
@@ -912,7 +913,7 @@
       "updated": "2026-09-03",
       "objective": "Shell de la app Streamlit (src/frontend/) con navegación y los 10 dashboards de Superset embebidos por guest token con row-level security por rol.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 29
+      "age_days": 30
     },
     {
       "id": "US-207",
@@ -923,14 +924,14 @@
       "sprint": "S5",
       "req": "REQ-002",
       "cell": "Célula 2 · Analytics & Business Intelligence",
-      "status": "in_progress",
+      "status": "in_review",
       "started": "2026-08-07",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-07-edgar-andamiaje-faro-web · vault/03_Architecture/Frontend_Architecture (solo andamiaje)",
-      "updated": "2026-08-10",
+      "evidence": "vault/_DevLog/2026-08-07-edgar-andamiaje-faro-web · PR #232 mergeado (2026-09-05): pages/2_Panel_ML.py llama a /api/v1/predicciones/{cct} de verdad, cliente propio, vault/04_UX_Design/Panel_ML_US207.md y 3 archivos de pruebas — los tres artefactos verificados en main. Alcance ratificado por el PO en DEC-015: cierra con ML-01 y ML-02 servidos y ML-03 declarado SIN_DATO, porque ML-03 no tiene productor (US-321 en curso) y el contrato de la API ya lo documentaba (schemas.py:169, cluster: StrictInt | None). Sigue in_review, y no por el PR: por DEC-012 — el entregable es una superficie desplegada y FARO Web todavía no está publicado (la raíz de la URL pública devuelve 404), así que la ratificación de alcance no basta para cerrarla. Cierra cuando el panel se sirva en el despliegue que se va a demostrar",
+      "updated": "2026-09-05",
       "objective": "Formulario de parámetros que llama a la API de inferencia (US-412/US-415) y muestra la salida de los 3 modelos (ML-01/02/03) en FARO Web.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 29
+      "age_days": 30
     },
     {
       "id": "US-301",
@@ -948,7 +949,7 @@
       "updated": "2026-08-10",
       "objective": "Los 3 modelos, particion temporal (nunca aleatoria), protocolo de backtesting y manejo de cobertura parcial en features. Documentar como ADR.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 27
+      "age_days": 28
     },
     {
       "id": "US-302",
@@ -966,7 +967,7 @@
       "updated": "2026-08-28",
       "objective": "Multiclase: cual de los 6 drivers explica el riesgo de cada escuela. Con SHAP para explicabilidad. Es el corazon prescriptivo del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 20
+      "age_days": 21
     },
     {
       "id": "US-303",
@@ -984,7 +985,7 @@
       "updated": "2026-08-29",
       "objective": "Versionado, metricas, artefactos y contrato de inferencia batch y en tiempo real.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 20
+      "age_days": 21
     },
     {
       "id": "US-304a",
@@ -1002,7 +1003,7 @@
       "updated": "2026-08-28",
       "objective": "Diseno del agente conversacional, prompt del sistema y guardarraines de seguridad: rechazar consultas fuera de alcance y nunca ejecutar DELETE/UPDATE/DROP. La capa de recuperacion (indexado y contexto) la construye Carlos en US-304b.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 20
+      "age_days": 21
     },
     {
       "id": "US-311",
@@ -1020,7 +1021,7 @@
       "updated": "2026-08-25",
       "objective": "Predecir variacion de matricula por escuela para el siguiente ciclo. MAE/RMSE con backtesting temporal.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 28
+      "age_days": 29
     },
     {
       "id": "US-312",
@@ -1038,7 +1039,7 @@
       "updated": "2026-08-30",
       "objective": "Tabla comparativa, curvas y analisis de error por entidad. Va a vault/06_Quality_Testing/.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 19
     },
     {
       "id": "US-313",
@@ -1056,7 +1057,7 @@
       "updated": "2026-09-04",
       "objective": "Job batch que escribe gold.predicciones y gold.recomendaciones para DB-06 y DB-09.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 22
+      "age_days": 23
     },
     {
       "id": "US-321",
@@ -1074,7 +1075,7 @@
       "updated": "2026-09-03",
       "objective": "KMeans sobre el perfil de escuelas; validar con Silhouette y perfilar cada grupo con lenguaje de negocio.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-322",
@@ -1092,7 +1093,7 @@
       "updated": "2026-09-03",
       "objective": "EDA sobre features, correlaciones, y deteccion de fuga de informacion y de sesgo por cobertura.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-325",
@@ -1110,7 +1111,7 @@
       "updated": "2026-09-03",
       "objective": "Medir cuantas escuelas tienen SIN_DATO por driver, verificar si esa ausencia se concentra geograficamente y documentar el riesgo de que el modelo aprenda un sesgo territorial. Conecta con indice_completitud_drivers y el tablero DB-07.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 7
+      "age_days": 8
     },
     {
       "id": "US-304b",
@@ -1128,7 +1129,7 @@
       "updated": "2026-08-28",
       "objective": "Indexar el esquema de Gold en ChromaDB (embeddings con sentence-transformers) y construir la consulta de contexto que alimenta al agente disenado por Andres en US-304a.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 20
+      "age_days": 21
     },
     {
       "id": "US-323",
@@ -1146,7 +1147,7 @@
       "updated": "2026-08-28",
       "objective": "20 preguntas de negocio con su respuesta esperada, para probar el agente de forma objetiva.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 9
+      "age_days": 10
     },
     {
       "id": "US-324",
@@ -1164,7 +1165,7 @@
       "updated": "2026-08-28",
       "objective": "Una ficha por modelo en vault/15_ML_Models/: proposito, features de entrada, metrica obtenida, limitaciones conocidas y en que contextos NO debe usarse la prediccion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 9
+      "age_days": 10
     },
     {
       "id": "US-305",
@@ -1182,7 +1183,7 @@
       "updated": "2026-08-28",
       "objective": "Widget de chat conectado a la API del agente RAG (US-304/US-323), integrado en FARO Web.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 10
+      "age_days": 11
     },
     {
       "id": "US-401",
@@ -1200,7 +1201,7 @@
       "updated": "2026-08-11",
       "objective": "Especificacion de TODOS los endpoints ANTES de construir, para que las Celulas 2 y 3 trabajen en paralelo con mocks. Va a vault/03_Architecture/API_Specification.md.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 33
+      "age_days": 34
     },
     {
       "id": "US-402",
@@ -1218,7 +1219,7 @@
       "updated": "2026-09-04",
       "objective": "Login con Google y manejo seguro de tokens. Es el requisito mas delicado del PRD.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-403",
@@ -1236,7 +1237,7 @@
       "updated": "2026-08-28",
       "objective": "Rol ciudadano (dashboards + agente) y analista (pipelines, export bruto, ML avanzado), como dependencias reutilizables de FastAPI.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-404",
@@ -1254,7 +1255,7 @@
       "updated": "2026-08-18",
       "objective": "Rate limiting, CORS, validacion estricta con Pydantic y errores sin fuga de informacion interna.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 21
+      "age_days": 22
     },
     {
       "id": "US-411",
@@ -1272,7 +1273,7 @@
       "updated": "2026-09-04",
       "objective": "Rutas de lectura parametrizadas: escuelas, municipios, KPIs y series. Con paginacion, filtros y ordenamiento.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 16
+      "age_days": 17
     },
     {
       "id": "US-412",
@@ -1290,43 +1291,7 @@
       "updated": "2026-09-02",
       "objective": "Rutas que sirven las predicciones de los 3 modelos, leyendo gold.predicciones y gold.recomendaciones por SQL. Modo unitario y batch, con validación de entrada. Cierra BUG-010.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 10
-    },
-    {
-      "id": "US-413",
-      "title": "Endpoints administrativos protegidos",
-      "owner": "Karla Alejandra Monter Benitez",
-      "owner_short": "Karla M.",
-      "level": "Medio",
-      "sprint": "S5",
-      "req": "REQ-004",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "Sin PR ni commit de endpoints administrativos protegidos (Karla Monter) — auditoría 2026-09-03",
-      "updated": "2026-09-03",
-      "objective": "Relanzar pipeline, exportar datos brutos y ver metricas internas. Solo rol analista.",
-      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 0
-    },
-    {
-      "id": "US-414",
-      "title": "Documentar la API en OpenAPI y publicar la colección",
-      "owner": "Karla Alejandra Monter Benitez",
-      "owner_short": "Karla M.",
-      "level": "Medio",
-      "sprint": "S5",
-      "req": "REQ-004",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "Sin PR ni commit de documentación OpenAPI/colección publicada (Karla Monter) — auditoría 2026-09-03",
-      "updated": "2026-09-03",
-      "objective": "Descripciones, ejemplos de request/response y coleccion importable para que las otras celulas prueben.",
-      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 0
+      "age_days": 11
     },
     {
       "id": "US-415",
@@ -1344,7 +1309,7 @@
       "updated": "2026-08-28",
       "objective": "Esquemas Pydantic de entrada/salida por modelo, alineados al contrato de gold.features_escuela. Es la pieza que conecta Celula 3 y Celula 4.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 10
+      "age_days": 11
     },
     {
       "id": "US-416",
@@ -1355,14 +1320,14 @@
       "sprint": "S5",
       "req": "REQ-004",
       "cell": "Célula 4 · Backend, API & Seguridad",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-27",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-27-juan-macias-us416-cache-timeouts · PR #101 mergeado: cache TTL por fila, cache negativo, timeout SQL y error 503. Última pieza cerrada el 2-sep: RepositorioModelosPostgres._con_timeout traduce SQLAlchemyError a RepositorioModelosNoDisponible → 503 (antes un esquema gold ausente escapaba como 500) — vault/_DevLog/2026-09-02-juan-macias-cierre-us412-us416, suite 778 passed. Único pendiente: Christian Ruiz (TL C4) no ha ratificado el diseño (cache/endurecimiento) ni confirmado que la prueba con Postgres real corresponde a US-422",
-      "updated": "2026-09-02",
+      "evidence": "vault/_DevLog/2026-08-27-juan-macias-us416-cache-timeouts · PR #101 mergeado: cache TTL por fila, cache negativo, timeout SQL y error 503. Última pieza cerrada el 2-sep: RepositorioModelosPostgres._con_timeout traduce SQLAlchemyError a RepositorioModelosNoDisponible → 503, con el endurecimiento aplicado. Ratificada por Christian Ruiz (TL C4) el 2026-09-05 en el PR #240, leyendo el código y no el reporte: 🟢 al diseño —destaca el SET LOCAL en vez de SET, que muere con la transacción y no deja el statement_timeout pegado en conexiones que vuelven al pool compartido con RepositorioGold— y 🟢 al endurecimiento a SQLAlchemyError. Confirmado desde el padrón, no de memoria: el E2E con Postgres real es US-422 (Eloisa González, C4), no parte de esta historia. La condición de cierre que la propia fila pedía queda cumplida",
+      "updated": "2026-09-05",
       "objective": "Cache de predicciones batch, timeouts, y respuesta degradada cuando falta el dato.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 9
+      "age_days": 10
     },
     {
       "id": "US-421",
@@ -1380,7 +1345,7 @@
       "updated": "2026-08-26",
       "objective": "Estructura del proyecto, /health, configuracion por variables de entorno y documentacion automatica.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 27
+      "age_days": 28
     },
     {
       "id": "US-422",
@@ -1398,7 +1363,7 @@
       "updated": "2026-09-03",
       "objective": "pytest + httpx sobre los endpoints; cobertura minima segun Definition_of_Done.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 6
+      "age_days": 7
     },
     {
       "id": "US-423",
@@ -1416,7 +1381,7 @@
       "updated": "2026-09-03",
       "objective": "Expiracion de token, acceso denegado por rol, rutas protegidas. Hallazgos como SEC-###.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 3
+      "age_days": 4
     },
     {
       "id": "US-405",
@@ -1434,7 +1399,7 @@
       "updated": "2026-08-10",
       "objective": "Login/logout con Google (OAuth2/JWT de US-402/US-403) en el frontend y vistas protegidas por rol ciudadano/analista.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 29
+      "age_days": 30
     },
     {
       "id": "US-501",
@@ -1452,7 +1417,7 @@
       "updated": "2026-08-10",
       "objective": "CRITICO: elimina el riesgo del techo de 6.0 desde la semana 1. Cloud Run con URL accesible. Se hace en pareja con Manuel Serrania (Tech Lead de BI) como apoyo de arranque.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 27
+      "age_days": 28
     },
     {
       "id": "US-502",
@@ -1470,7 +1435,7 @@
       "updated": "2026-08-17",
       "objective": "Airflow, dbt, Postgres, Superset, MLflow, FastAPI y agente. Healthchecks, volumenes y red interna. Con apoyo de Manuel Serrania.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 23
+      "age_days": 24
     },
     {
       "id": "US-503",
@@ -1488,7 +1453,7 @@
       "updated": "2026-08-17",
       "objective": "Lint, pruebas y ejecucion de vault_lint.py en cada PR. Sin esto el vault se degrada con 21 personas.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 22
+      "age_days": 23
     },
     {
       "id": "US-504",
@@ -1506,7 +1471,7 @@
       "updated": "2026-08-17",
       "objective": "Base administrada, red, Secret Manager y registro de imagenes.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 20
+      "age_days": 21
     },
     {
       "id": "US-505",
@@ -1524,7 +1489,25 @@
       "updated": "2026-08-17",
       "objective": "Todo el ecosistema en GCP, estable, con la URL publica verificada para la demo del 9 de septiembre.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 20
+      "age_days": 21
+    },
+    {
+      "id": "US-526",
+      "title": "Contenerizar y desplegar FARO Web en Cloud Run",
+      "owner": "Luis Téllez Domínguez",
+      "owner_short": "Luis T.",
+      "level": "Medio",
+      "sprint": "S6",
+      "req": "REQ-002",
+      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
+      "status": "planned",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "Dada de alta el 2026-09-05 por decisión del PO. El hueco existía desde que se decidió contenerizar FARO Web y la historia nunca se creó: US-206 (shell y embebido, Manuel Serranía) y US-207 (panel de ML, Marina García) están construidas y no se pueden mostrar, porque la raíz de la URL pública devuelve 404, no existe docker/frontend.Dockerfile y no hay servicio de frontend en docker-compose.yml. Alcance: Dockerfile del frontend, servicio en compose, despliegue a Cloud Run y el CORS de Superset para que acepte el embebido desde ese origen — sin eso, AC-002.1 no se cumple por más que la página exista. Riesgo asumido al darla de alta a 3 días de la demo: si no alcanza, el plan B ya está escrito en vault/01_Product/Guion_Demo_US006 — la demo corre sobre Superset y la API por separado, y se les avisa a Manuel y a Marina antes del ensayo del lunes, no en la sala",
+      "updated": "2026-09-05",
+      "objective": "Que FARO Web se vea en la URL pública. Hoy la raíz devuelve 404.",
+      "deliverable": "docker/frontend.Dockerfile + servicio en docker-compose.yml + despliegue a Cloud Run + CORS de Superset para que acepte el embebido desde ese origen",
+      "age_days": 0
     },
     {
       "id": "US-521a",
@@ -1542,7 +1525,7 @@
       "updated": "2026-08-17",
       "objective": "Documentar el setup local reproducible de FastAPI (API) y Postgres/Cloud SQL: variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 24
+      "age_days": 25
     },
     {
       "id": "US-522a",
@@ -1560,7 +1543,7 @@
       "updated": "2026-08-28",
       "objective": "Dockerfile y servicio en docker-compose para FastAPI y Postgres, con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 24
+      "age_days": 25
     },
     {
       "id": "US-523a",
@@ -1578,7 +1561,7 @@
       "updated": "2026-08-28",
       "objective": "Configurar la proteccion de main: PR obligatorio, required reviews y prohibicion de push directo.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 24
+      "age_days": 25
     },
     {
       "id": "US-524a",
@@ -1596,25 +1579,7 @@
       "updated": "2026-08-28",
       "objective": "Metricas, logs y alertas para FastAPI y Postgres.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 8
-    },
-    {
-      "id": "US-525a",
-      "title": "Runbook de rollback de API y Postgres",
-      "owner": "Alejandro Velázquez Mendoza",
-      "owner_short": "Alejandro V.",
-      "level": "Bajo",
-      "sprint": "S6",
-      "req": "REQ-005",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "Sin PR ni commit de runbook de rollback de API/Postgres (Alejandro Velázquez) — auditoría 2026-09-03",
-      "updated": "2026-09-03",
-      "objective": "Procedimiento probado de rollback para FastAPI y Postgres.",
-      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 0
+      "age_days": 9
     },
     {
       "id": "US-521b",
@@ -1632,7 +1597,7 @@
       "updated": "2026-08-17",
       "objective": "Documentar el setup local de Airflow y los jobs de ML (MLflow): variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 27
+      "age_days": 28
     },
     {
       "id": "US-522b",
@@ -1650,7 +1615,7 @@
       "updated": "2026-08-28",
       "objective": "Dockerfile y servicios en docker-compose para Airflow y los jobs de ML/MLflow, con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 11
+      "age_days": 12
     },
     {
       "id": "US-523b",
@@ -1668,7 +1633,7 @@
       "updated": "2026-09-03",
       "objective": "Configurar el gate de CI que corre lint y pytest; bloquea el merge si falla.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 4
+      "age_days": 5
     },
     {
       "id": "US-524b",
@@ -1686,7 +1651,7 @@
       "updated": "2026-09-03",
       "objective": "Metricas, logs y alertas para Airflow y los jobs de ML.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 5
+      "age_days": 6
     },
     {
       "id": "US-525b",
@@ -1722,7 +1687,7 @@
       "updated": "2026-08-28",
       "objective": "Documentar el setup local de Superset y el agente (RAG/ChromaDB): variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 24
+      "age_days": 25
     },
     {
       "id": "US-522c",
@@ -1740,7 +1705,7 @@
       "updated": "2026-08-28",
       "objective": "Dockerfile y servicios en docker-compose para Superset y el agente (RAG/ChromaDB), con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 18
+      "age_days": 19
     },
     {
       "id": "US-523c",
@@ -1758,7 +1723,7 @@
       "updated": "2026-08-25",
       "objective": "Configurar el gate que corre vault_lint.py y verifica la plantilla de PR completa.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
-      "age_days": 14
+      "age_days": 15
     },
     {
       "id": "US-524c",
@@ -1797,6 +1762,62 @@
       "age_days": 0
     }
   ],
+  "descoped": [
+    {
+      "id": "US-413",
+      "title": "Endpoints administrativos protegidos",
+      "owner": "Karla Alejandra Monter Benitez",
+      "owner_short": "Karla M.",
+      "level": "Medio",
+      "sprint": "S5",
+      "req": "REQ-004",
+      "cell": "Célula 4 · Backend, API & Seguridad",
+      "status": "descoped",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "Recortada del alcance por el PO el 2026-09-03 (DEC-014), al reasignar la semana de Karla Monter a cerrar US-411. No se entregó y no se cuenta como entregada: sale del denominador del tablero. Registro del corte en vault/_DevLog/2026-09-03-karla-monter-us411-validacion-bug044. Auditoría previa: sin PR ni commit de endpoints administrativos protegidos",
+      "updated": "2026-09-05",
+      "objective": "Relanzar pipeline, exportar datos brutos y ver metricas internas. Solo rol analista.",
+      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    },
+    {
+      "id": "US-414",
+      "title": "Documentar la API en OpenAPI y publicar la colección",
+      "owner": "Karla Alejandra Monter Benitez",
+      "owner_short": "Karla M.",
+      "level": "Medio",
+      "sprint": "S5",
+      "req": "REQ-004",
+      "cell": "Célula 4 · Backend, API & Seguridad",
+      "status": "descoped",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "Recortada del alcance por el PO el 2026-09-03 (DEC-014), misma reasignación que US-413. Riesgo aceptado: la API queda sin colección importable publicada; FastAPI sigue exponiendo /docs autogenerado, que cubre la demostración. Registro del corte en vault/_DevLog/2026-09-03-karla-monter-us411-validacion-bug044",
+      "updated": "2026-09-05",
+      "objective": "Descripciones, ejemplos de request/response y coleccion importable para que las otras celulas prueben.",
+      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    },
+    {
+      "id": "US-525a",
+      "title": "Runbook de rollback de API y Postgres",
+      "owner": "Alejandro Velázquez Mendoza",
+      "owner_short": "Alejandro V.",
+      "level": "Bajo",
+      "sprint": "S6",
+      "req": "REQ-005",
+      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
+      "status": "descoped",
+      "started": "—",
+      "blocked_since": "—",
+      "evidence": "Recortada del alcance por el PO el 2026-09-03 (DEC-014). Sin documentación previa; el corte quedó asentado por Alejandro Velázquez en su tabla de sprint y en vault/_DevLog/2026-09-03-alejandro-velazquez-cierre-us522a-us524a. Riesgo aceptado: no hay runbook de rollback escrito de API/Postgres para la ventana de demo",
+      "updated": "2026-09-05",
+      "objective": "Procedimiento probado de rollback para FastAPI y Postgres.",
+      "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
+      "age_days": 0
+    }
+  ],
   "people": [
     {
       "name": "Alejandro Velázquez Mendoza",
@@ -1817,17 +1838,16 @@
         "US-521a",
         "US-522a",
         "US-523a",
-        "US-524a",
-        "US-525a"
+        "US-524a"
       ],
       "pr_count": 5,
       "pr_open": 0,
       "pr_merged": 5,
-      "stories": 5,
+      "stories": 4,
       "done": 2,
       "wip": 2,
       "blocked": 0,
-      "progress": 66.0
+      "progress": 82.5
     },
     {
       "name": "Andrés González Habib",
@@ -1851,9 +1871,9 @@
         "US-304a",
         "US-305"
       ],
-      "pr_count": 20,
+      "pr_count": 23,
       "pr_open": 0,
-      "pr_merged": 19,
+      "pr_merged": 22,
       "stories": 5,
       "done": 1,
       "wip": 4,
@@ -1911,9 +1931,9 @@
         "US-404",
         "US-405"
       ],
-      "pr_count": 9,
+      "pr_count": 11,
       "pr_open": 0,
-      "pr_merged": 9,
+      "pr_merged": 11,
       "stories": 5,
       "done": 2,
       "wip": 3,
@@ -1941,8 +1961,8 @@
         "US-113",
         "US-114"
       ],
-      "pr_count": 8,
-      "pr_open": 0,
+      "pr_count": 9,
+      "pr_open": 1,
       "pr_merged": 8,
       "stories": 4,
       "done": 2,
@@ -1973,9 +1993,9 @@
         "US-105",
         "US-106"
       ],
-      "pr_count": 27,
+      "pr_count": 28,
       "pr_open": 0,
-      "pr_merged": 26,
+      "pr_merged": 27,
       "stories": 6,
       "done": 6,
       "wip": 0,
@@ -2005,14 +2025,14 @@
         "US-005",
         "US-006"
       ],
-      "pr_count": 36,
+      "pr_count": 40,
       "pr_open": 0,
-      "pr_merged": 33,
+      "pr_merged": 37,
       "stories": 6,
       "done": 3,
-      "wip": 1,
+      "wip": 3,
       "blocked": 0,
-      "progress": 60.8
+      "progress": 77.5
     },
     {
       "name": "Edgar Ulises Jiménez López",
@@ -2126,9 +2146,9 @@
         "US-123a",
         "US-124a"
       ],
-      "pr_count": 1,
+      "pr_count": 3,
       "pr_open": 0,
-      "pr_merged": 1,
+      "pr_merged": 2,
       "stories": 4,
       "done": 4,
       "wip": 0,
@@ -2155,8 +2175,8 @@
         "US-322",
         "US-325"
       ],
-      "pr_count": 3,
-      "pr_open": 0,
+      "pr_count": 4,
+      "pr_open": 1,
       "pr_merged": 3,
       "stories": 3,
       "done": 0,
@@ -2205,22 +2225,22 @@
       "reviewer": "Edgar Edmundo Coronel Navarrete (PM) — compuerta única (DEC-003). Christian Imanol Ruiz Hurtado (Tech Lead) revisa como apoyo, no bloquea",
       "delivery": "Rama fija dev/juan-macias (sincronizada con main) → PR con plantilla y título estándar → 1 aprobación (PM) → merge a main",
       "plan_path": "vault/12_Roadmap_Sprints/Sprints/4-juan-carlos-macias-mayen.md",
-      "github_user": "juanmmayen98",
-      "github_status": "Usuario confirmado; nivel por conciliar",
-      "github_profile": "https://github.com/juanmmayen98",
+      "github_user": "juanmmayen98-pixel",
+      "github_status": "Confirmado. Corregido el 2026-09-05: decía juanmmayen98, handle que no existe en GitHub, y el tablero lee esta tabla —no ownership.yml— para contar PRs, así que le marcaba 0 teniendo 3 mergeados (#95, #101, #191)",
+      "github_profile": "https://github.com/juanmmayen98-pixel",
       "assigned_story_ids": [
         "US-412",
         "US-415",
         "US-416"
       ],
-      "pr_count": 0,
+      "pr_count": 3,
       "pr_open": 0,
-      "pr_merged": 0,
+      "pr_merged": 3,
       "stories": 3,
-      "done": 2,
-      "wip": 1,
+      "done": 3,
+      "wip": 0,
       "blocked": 0,
-      "progress": 88.3
+      "progress": 100.0
     },
     {
       "name": "Karla Alejandra Monter Benitez",
@@ -2238,18 +2258,16 @@
       "github_status": "Confirmado",
       "github_profile": "https://github.com/marlakonter",
       "assigned_story_ids": [
-        "US-411",
-        "US-413",
-        "US-414"
+        "US-411"
       ],
-      "pr_count": 2,
+      "pr_count": 3,
       "pr_open": 0,
-      "pr_merged": 2,
-      "stories": 3,
+      "pr_merged": 3,
+      "stories": 1,
       "done": 1,
       "wip": 0,
       "blocked": 0,
-      "progress": 33.3
+      "progress": 100.0
     },
     {
       "name": "Luis Enrique García Vázquez",
@@ -2301,16 +2319,17 @@
         "US-502",
         "US-503",
         "US-504",
-        "US-505"
+        "US-505",
+        "US-526"
       ],
-      "pr_count": 38,
+      "pr_count": 45,
       "pr_open": 0,
-      "pr_merged": 37,
-      "stories": 5,
+      "pr_merged": 44,
+      "stories": 6,
       "done": 3,
       "wip": 2,
       "blocked": 0,
-      "progress": 74.0
+      "progress": 61.7
     },
     {
       "name": "Manuel Alejandro Serranía Reinada",
@@ -2366,14 +2385,14 @@
         "US-214a",
         "US-215a"
       ],
-      "pr_count": 10,
+      "pr_count": 13,
       "pr_open": 0,
-      "pr_merged": 10,
+      "pr_merged": 13,
       "stories": 5,
       "done": 3,
       "wip": 2,
       "blocked": 0,
-      "progress": 74.0
+      "progress": 80.0
     },
     {
       "name": "Monserrat Xcaret Miranda Olivas",
@@ -2396,14 +2415,14 @@
         "US-214b",
         "US-215b"
       ],
-      "pr_count": 5,
-      "pr_open": 1,
-      "pr_merged": 4,
+      "pr_count": 6,
+      "pr_open": 0,
+      "pr_merged": 6,
       "stories": 4,
       "done": 3,
       "wip": 1,
       "blocked": 0,
-      "progress": 83.8
+      "progress": 91.2
     },
     {
       "name": "Oscar Antonio Quiroz Lázaro",
@@ -2444,9 +2463,9 @@
       ],
       "stories": 6,
       "done": 3,
-      "wip": 1,
+      "wip": 3,
       "blocked": 0,
-      "progress": 60.8
+      "progress": 77.5
     },
     {
       "name": "Célula 1 · Data Engineering & Quality",
@@ -2474,7 +2493,7 @@
       "done": 15,
       "wip": 4,
       "blocked": 0,
-      "progress": 87.9
+      "progress": 91.1
     },
     {
       "name": "Célula 3 · Machine Learning & Agente IA",
@@ -2498,11 +2517,11 @@
         "Juan Carlos Macías Mayen",
         "Karla Alejandra Monter Benitez"
       ],
-      "stories": 14,
-      "done": 6,
-      "wip": 6,
+      "stories": 12,
+      "done": 7,
+      "wip": 5,
       "blocked": 0,
-      "progress": 62.1
+      "progress": 75.4
     },
     {
       "name": "Célula 5 · Cloud Infrastructure & DevOps",
@@ -2534,10 +2553,10 @@
       "req": "REQ-002",
       "name": "Analytics & BI",
       "points": 2.5,
-      "stories": 19,
+      "stories": 20,
       "done": 15,
-      "progress": 87.9,
-      "secured_points": 2.2,
+      "progress": 86.5,
+      "secured_points": 2.16,
       "band": "green"
     },
     {
@@ -2554,20 +2573,20 @@
       "req": "REQ-004",
       "name": "Backend/API/Auth",
       "points": 1.5,
-      "stories": 14,
-      "done": 6,
-      "progress": 62.1,
-      "secured_points": 0.93,
+      "stories": 12,
+      "done": 7,
+      "progress": 75.4,
+      "secured_points": 1.13,
       "band": "green"
     },
     {
       "req": "REQ-005",
       "name": "Deploy GCP",
       "points": 1.0,
-      "stories": 13,
+      "stories": 12,
       "done": 2,
-      "progress": 43.5,
-      "secured_points": 0.43,
+      "progress": 47.1,
+      "secured_points": 0.47,
       "band": "green"
     },
     {
@@ -2586,8 +2605,8 @@
       "points": 0.5,
       "stories": 13,
       "done": 8,
-      "progress": 74.2,
-      "secured_points": 0.37,
+      "progress": 81.9,
+      "secured_points": 0.41,
       "band": "green"
     }
   ],
@@ -2779,7 +2798,7 @@
       "impact": 4,
       "score": 12,
       "response": "mitigar",
-      "mitigation": "linter, steward, matriz y generador validado",
+      "mitigation": "linter, steward, matriz y generador validado — las cuatro operativas desde 2026-09-05: el steward existía sólo en el plan hasta que US-005 creó vault/_Meta/Vault_Steward con lista de verificación y turnos; los hallazgos de S5 están en ese documento",
       "trigger": "link roto, ID duplicado o artefacto huérfano",
       "owner": "Edgar Edmundo Coronel Navarrete",
       "status": "mitigando",
@@ -2821,6 +2840,22 @@
         "US-111"
       ],
       "mitigation_date": "2026-09-06 (freeze)"
+    },
+    {
+      "id": "RISK-009",
+      "description": "Las métricas con división de la capa semántica están a salvo por coincidencia de tipos, no por diseño. Hay 33 métricas con división en 5 archivos; hoy sólo una devuelve entero (BUG-054) y las 32 restantes se salvan, pero no todas por la misma razón: unas porque su columna ya es bigint y SUM(bigint) promueve a numeric; matricula_por_escuela sólo porque su denominador es bigint aunque el numerador sea integer; y variacion_ponderada_pct porque lleva un * 1.0 explícito, que es el arreglo de BUG-031. El detonante latente: matricula_total tiene tipo distinto según el cubo — integer en cubo_escuela_360, cubo_pivot y cubo_recomendaciones; bigint en cubo_matricula, cubo_comparador_municipio y cubo_riesgo_territorial; numeric en matricula_municipio_nivel —, y la misma métrica variacion_ponderada_pct existe en 5 copias, 2 con * 1.0 y 3 sin él. Cuál variante es segura depende de contra qué cubo corre. Copiar la variante sin * 1.0 a un cubo con matricula_total integer reproduce el acantilado de BUG-054, y también en silencio",
+      "probability": 3,
+      "impact": 4,
+      "score": 12,
+      "response": "mitigar",
+      "mitigation": "Guarda propuesta, no implementada (post-freeze, para no tocar 33 métricas de C2 a un día del cierre). Dos opciones, la segunda es más fuerte: (a) prueba que consulte pg_typeof de cada métrica con división y reprueba si alguna devuelve bigint/integer — la que sugiere Marina García, exige base viva; (b) guarda estática: exigir que toda métrica con división lleve cast explícito o * 1.0, con lo que la seguridad pasa a ser propiedad de la expresión y no de los datos, y corre en CI sin Postgres",
+      "trigger": "una métrica de porcentaje o razón que empiece a mostrar sólo 0 % o 100 %, o un variacion_* que salte a −100 %",
+      "owner": "Manuel Alejandro Serranía Reinada",
+      "status": "abierto",
+      "stories": [
+        "US-204"
+      ],
+      "mitigation_date": "Post-freeze"
     }
   ],
   "blockers": [
@@ -2873,8 +2908,8 @@
         "name": "Diana Aracely Alvarez Varela",
         "cell": "Célula 1",
         "engagement": 100.0,
-        "commits": 101,
-        "prs_merged": 26,
+        "commits": 105,
+        "prs_merged": 27,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -2914,8 +2949,8 @@
         "name": "Emilio Galnares Ruiz",
         "cell": "Célula 1",
         "engagement": 100.0,
-        "commits": 16,
-        "prs_merged": 1,
+        "commits": 20,
+        "prs_merged": 2,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -2938,6 +2973,88 @@
             "n": 1,
             "done": 1,
             "state": "done"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Juan Carlos Macías Mayen",
+        "cell": "Célula 4",
+        "engagement": 100.0,
+        "commits": 8,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Karla Alejandra Monter Benitez",
+        "cell": "Célula 4",
+        "engagement": 100.0,
+        "commits": 3,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
           },
           "S5": {
             "n": 0,
@@ -3075,11 +3192,11 @@
         }
       },
       {
-        "name": "Juan Carlos Macías Mayen",
-        "cell": "Célula 4",
-        "engagement": 88.3,
-        "commits": 0,
-        "prs_merged": 0,
+        "name": "Monserrat Xcaret Miranda Olivas",
+        "cell": "Célula 2",
+        "engagement": 91.2,
+        "commits": 30,
+        "prs_merged": 6,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -3094,14 +3211,55 @@
             "state": "idle"
           },
           "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 2,
+            "done": 1,
+            "state": "wip"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Alejandro Velázquez Mendoza",
+        "cell": "Célula 5",
+        "engagement": 82.5,
+        "commits": 26,
+        "prs_merged": 5,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
             "n": 0,
             "done": 0,
             "state": "idle"
           },
-          "S4": {
+          "S3": {
             "n": 2,
-            "done": 2,
-            "state": "done"
+            "done": 1,
+            "state": "wip"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
           },
           "S5": {
             "n": 1,
@@ -3116,12 +3274,12 @@
         }
       },
       {
-        "name": "Monserrat Xcaret Miranda Olivas",
+        "name": "Marina García del Buey",
         "cell": "Célula 2",
-        "engagement": 83.8,
-        "commits": 15,
-        "prs_merged": 4,
-        "prs_open": 1,
+        "engagement": 80.0,
+        "commits": 42,
+        "prs_merged": 13,
+        "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
@@ -3145,7 +3303,7 @@
             "state": "done"
           },
           "S5": {
-            "n": 2,
+            "n": 3,
             "done": 1,
             "state": "wip"
           },
@@ -3153,6 +3311,47 @@
             "n": 0,
             "done": 0,
             "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Edgar Edmundo Coronel Navarrete",
+        "cell": "PO",
+        "engagement": 77.5,
+        "commits": 521,
+        "prs_merged": 37,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S2": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
           }
         }
       },
@@ -3198,93 +3397,11 @@
         }
       },
       {
-        "name": "Luis Téllez Domínguez",
-        "cell": "Célula 5",
-        "engagement": 74.0,
-        "commits": 97,
-        "prs_merged": 37,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          }
-        }
-      },
-      {
-        "name": "Marina García del Buey",
-        "cell": "Célula 2",
-        "engagement": 74.0,
-        "commits": 29,
-        "prs_merged": 10,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 3,
-            "done": 1,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
         "name": "Andrés González Habib",
         "cell": "Célula 3",
         "engagement": 72.0,
-        "commits": 1,
-        "prs_merged": 19,
+        "commits": 2,
+        "prs_merged": 22,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -3324,8 +3441,8 @@
         "name": "Christian Imanol Ruiz Hurtado",
         "cell": "Célula 4",
         "engagement": 67.0,
-        "commits": 14,
-        "prs_merged": 9,
+        "commits": 21,
+        "prs_merged": 11,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -3408,7 +3525,7 @@
         "engagement": 66.2,
         "commits": 40,
         "prs_merged": 8,
-        "prs_open": 0,
+        "prs_open": 1,
         "risk": "retraso",
         "by_sprint": {
           "S1": {
@@ -3444,11 +3561,11 @@
         }
       },
       {
-        "name": "Alejandro Velázquez Mendoza",
+        "name": "Luis Téllez Domínguez",
         "cell": "Célula 5",
-        "engagement": 66.0,
-        "commits": 26,
-        "prs_merged": 5,
+        "engagement": 61.7,
+        "commits": 110,
+        "prs_merged": 44,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -3458,51 +3575,10 @@
             "state": "done"
           },
           "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
             "n": 2,
-            "done": 1,
-            "state": "wip"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 1,
-            "done": 0,
-            "state": "planned"
-          }
-        }
-      },
-      {
-        "name": "Edgar Edmundo Coronel Navarrete",
-        "cell": "PO",
-        "engagement": 60.8,
-        "commits": 450,
-        "prs_merged": 33,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 3,
-            "done": 3,
+            "done": 2,
             "state": "done"
           },
-          "S2": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
           "S3": {
             "n": 0,
             "done": 0,
@@ -3511,7 +3587,7 @@
           "S4": {
             "n": 1,
             "done": 0,
-            "state": "risk"
+            "state": "wip"
           },
           "S5": {
             "n": 0,
@@ -3519,9 +3595,9 @@
             "state": "idle"
           },
           "S6": {
-            "n": 1,
+            "n": 2,
             "done": 0,
-            "state": "planned"
+            "state": "wip"
           }
         }
       },
@@ -3572,7 +3648,7 @@
         "engagement": 55.0,
         "commits": 11,
         "prs_merged": 3,
-        "prs_open": 0,
+        "prs_open": 1,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
@@ -3688,47 +3764,6 @@
             "state": "planned"
           }
         }
-      },
-      {
-        "name": "Karla Alejandra Monter Benitez",
-        "cell": "Célula 4",
-        "engagement": 33.3,
-        "commits": 1,
-        "prs_merged": 2,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 2,
-            "done": 0,
-            "state": "risk"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
       }
     ]
   },
@@ -3739,33 +3774,33 @@
         "cell": "PO",
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
-        "prs_merged": 33,
-        "devlogs": 45,
-        "active_us": 4,
-        "activity": 82,
-        "signal": "33 PR · 45 DevLog · 4 US activas"
+        "prs_merged": 37,
+        "devlogs": 48,
+        "active_us": 6,
+        "activity": 91,
+        "signal": "37 PR · 48 DevLog · 6 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
         "cell": "Célula 5",
         "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
         "active": true,
-        "prs_merged": 37,
-        "devlogs": 28,
+        "prs_merged": 44,
+        "devlogs": 32,
         "active_us": 5,
-        "activity": 70,
-        "signal": "37 PR · 28 DevLog · 5 US activas"
+        "activity": 81,
+        "signal": "44 PR · 32 DevLog · 5 US activas"
       },
       {
         "name": "Diana Aracely Alvarez Varela",
         "cell": "Célula 1",
         "cell_group": "Célula 1 · Data Engineering & Quality",
         "active": true,
-        "prs_merged": 26,
-        "devlogs": 22,
+        "prs_merged": 27,
+        "devlogs": 23,
         "active_us": 6,
-        "activity": 54,
-        "signal": "26 PR · 22 DevLog · 6 US activas"
+        "activity": 56,
+        "signal": "27 PR · 23 DevLog · 6 US activas"
       },
       {
         "name": "Héctor Rafael Morales Marbán",
@@ -3783,11 +3818,11 @@
         "cell": "Célula 3",
         "cell_group": "Célula 3 · Machine Learning & Agente IA",
         "active": true,
-        "prs_merged": 19,
-        "devlogs": 20,
+        "prs_merged": 22,
+        "devlogs": 22,
         "active_us": 5,
-        "activity": 44,
-        "signal": "19 PR · 20 DevLog · 5 US activas"
+        "activity": 49,
+        "signal": "22 PR · 22 DevLog · 5 US activas"
       },
       {
         "name": "Manuel Alejandro Serranía Reinada",
@@ -3801,6 +3836,17 @@
         "signal": "12 PR · 14 DevLog · 6 US activas"
       },
       {
+        "name": "Marina García del Buey",
+        "cell": "Célula 2",
+        "cell_group": "Célula 2 · Analytics & Business Intelligence",
+        "active": true,
+        "prs_merged": 13,
+        "devlogs": 14,
+        "active_us": 5,
+        "activity": 32,
+        "signal": "13 PR · 14 DevLog · 5 US activas"
+      },
+      {
         "name": "Deni Garrido Fragoso",
         "cell": "Célula 1",
         "cell_group": "Célula 1 · Data Engineering & Quality",
@@ -3812,15 +3858,15 @@
         "signal": "8 PR · 18 DevLog · 3 US activas"
       },
       {
-        "name": "Marina García del Buey",
-        "cell": "Célula 2",
-        "cell_group": "Célula 2 · Analytics & Business Intelligence",
+        "name": "Christian Imanol Ruiz Hurtado",
+        "cell": "Célula 4",
+        "cell_group": "Célula 4 · Backend, API & Seguridad",
         "active": true,
-        "prs_merged": 10,
+        "prs_merged": 11,
         "devlogs": 12,
         "active_us": 5,
-        "activity": 27,
-        "signal": "10 PR · 12 DevLog · 5 US activas"
+        "activity": 28,
+        "signal": "11 PR · 12 DevLog · 5 US activas"
       },
       {
         "name": "Oscar Antonio Quiroz Lázaro",
@@ -3834,15 +3880,15 @@
         "signal": "9 PR · 13 DevLog · 4 US activas"
       },
       {
-        "name": "Christian Imanol Ruiz Hurtado",
-        "cell": "Célula 4",
-        "cell_group": "Célula 4 · Backend, API & Seguridad",
+        "name": "Monserrat Xcaret Miranda Olivas",
+        "cell": "Célula 2",
+        "cell_group": "Célula 2 · Analytics & Business Intelligence",
         "active": true,
-        "prs_merged": 9,
-        "devlogs": 10,
-        "active_us": 5,
-        "activity": 24,
-        "signal": "9 PR · 10 DevLog · 5 US activas"
+        "prs_merged": 6,
+        "devlogs": 7,
+        "active_us": 4,
+        "activity": 17,
+        "signal": "6 PR · 7 DevLog · 4 US activas"
       },
       {
         "name": "Edgar Ulises Jiménez López",
@@ -3878,15 +3924,15 @@
         "signal": "5 PR · 4 DevLog · 4 US activas"
       },
       {
-        "name": "Monserrat Xcaret Miranda Olivas",
-        "cell": "Célula 2",
-        "cell_group": "Célula 2 · Analytics & Business Intelligence",
+        "name": "Juan Carlos Macías Mayen",
+        "cell": "Célula 4",
+        "cell_group": "Célula 4 · Backend, API & Seguridad",
         "active": true,
-        "prs_merged": 4,
-        "devlogs": 5,
-        "active_us": 4,
-        "activity": 13,
-        "signal": "4 PR · 5 DevLog · 4 US activas"
+        "prs_merged": 3,
+        "devlogs": 4,
+        "active_us": 3,
+        "activity": 10,
+        "signal": "3 PR · 4 DevLog · 3 US activas"
       },
       {
         "name": "Estefany Lucero Hernández Loredo",
@@ -3922,6 +3968,17 @@
         "signal": "2 PR · 3 DevLog · 3 US activas"
       },
       {
+        "name": "Emilio Galnares Ruiz",
+        "cell": "Célula 1",
+        "cell_group": "Célula 1 · Data Engineering & Quality",
+        "active": true,
+        "prs_merged": 2,
+        "devlogs": 2,
+        "active_us": 4,
+        "activity": 8,
+        "signal": "2 PR · 2 DevLog · 4 US activas"
+      },
+      {
         "name": "Edward Ulysses Ruiz Bustillos",
         "cell": "Célula 5",
         "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
@@ -3933,37 +3990,15 @@
         "signal": "3 PR · 1 DevLog · 3 US activas"
       },
       {
-        "name": "Juan Carlos Macías Mayen",
-        "cell": "Célula 4",
-        "cell_group": "Célula 4 · Backend, API & Seguridad",
-        "active": true,
-        "prs_merged": 0,
-        "devlogs": 4,
-        "active_us": 3,
-        "activity": 7,
-        "signal": "4 DevLog · 3 US activas"
-      },
-      {
-        "name": "Emilio Galnares Ruiz",
-        "cell": "Célula 1",
-        "cell_group": "Célula 1 · Data Engineering & Quality",
-        "active": true,
-        "prs_merged": 1,
-        "devlogs": 1,
-        "active_us": 4,
-        "activity": 6,
-        "signal": "1 PR · 1 DevLog · 4 US activas"
-      },
-      {
         "name": "Karla Alejandra Monter Benitez",
         "cell": "Célula 4",
         "cell_group": "Célula 4 · Backend, API & Seguridad",
         "active": true,
-        "prs_merged": 2,
-        "devlogs": 2,
+        "prs_merged": 3,
+        "devlogs": 3,
         "active_us": 1,
-        "activity": 5,
-        "signal": "2 PR · 2 DevLog · 1 US activas"
+        "activity": 7,
+        "signal": "3 PR · 3 DevLog · 1 US activas"
       }
     ],
     "active": 21,
@@ -4040,8 +4075,8 @@
       "owner": "Edgar Edmundo Coronel Navarrete",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
       "sprint": "S4",
-      "status": "planned",
-      "su_turno": true
+      "status": "in_review",
+      "su_turno": false
     },
     {
       "id": "US-204",
@@ -4152,24 +4187,6 @@
       "su_turno": true
     },
     {
-      "id": "US-413",
-      "objective": "Relanzar pipeline, exportar datos brutos y ver metricas internas. Solo rol analista.",
-      "owner": "Karla Alejandra Monter Benitez",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S5",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-414",
-      "objective": "Descripciones, ejemplos de request/response y coleccion importable para que las otras celulas prueben.",
-      "owner": "Karla Alejandra Monter Benitez",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S5",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-524c",
       "objective": "Metricas, logs y alertas para Superset y el agente.",
       "owner": "Edward Ulysses Ruiz Bustillos",
@@ -4184,7 +4201,7 @@
       "owner": "Marina García del Buey",
       "cell": "Célula 2 · Analytics & Business Intelligence",
       "sprint": "S5",
-      "status": "in_progress",
+      "status": "in_review",
       "su_turno": false
     },
     {
@@ -4202,7 +4219,7 @@
       "owner": "Monserrat Xcaret Miranda Olivas",
       "cell": "Célula 2 · Analytics & Business Intelligence",
       "sprint": "S5",
-      "status": "in_progress",
+      "status": "in_review",
       "su_turno": false
     },
     {
@@ -4260,15 +4277,6 @@
       "su_turno": false
     },
     {
-      "id": "US-416",
-      "objective": "Cache de predicciones batch, timeouts, y respuesta degradada cuando falta el dato.",
-      "owner": "Juan Carlos Macías Mayen",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
       "id": "US-423",
       "objective": "Expiracion de token, acceso denegado por rol, rutas protegidas. Hallazgos como SEC-###.",
       "owner": "Eloisa González Rubio",
@@ -4301,7 +4309,7 @@
       "owner": "Edgar Edmundo Coronel Navarrete",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
       "sprint": "S6",
-      "status": "planned",
+      "status": "in_progress",
       "su_turno": false
     },
     {
@@ -4311,15 +4319,6 @@
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
       "sprint": "S6",
       "status": "in_progress",
-      "su_turno": false
-    },
-    {
-      "id": "US-525a",
-      "objective": "Procedimiento probado de rollback para FastAPI y Postgres.",
-      "owner": "Alejandro Velázquez Mendoza",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S6",
-      "status": "planned",
       "su_turno": false
     },
     {
@@ -4335,6 +4334,15 @@
       "id": "US-525c",
       "objective": "Procedimiento probado de rollback para Superset y el agente.",
       "owner": "Edward Ulysses Ruiz Bustillos",
+      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
+      "sprint": "S6",
+      "status": "planned",
+      "su_turno": false
+    },
+    {
+      "id": "US-526",
+      "objective": "Que FARO Web se vea en la URL pública. Hoy la raíz devuelve 404.",
+      "owner": "Luis Téllez Domínguez",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
       "sprint": "S6",
       "status": "planned",
@@ -4360,7 +4368,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 87.9
+      "progress": 86.5
     },
     {
       "criterion": "3 · Tres modelos ML vía API",
@@ -4380,7 +4388,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 62.1
+      "progress": 75.4
     },
     {
       "criterion": "5 · Deploy GCP + Docker + URL",
@@ -4390,7 +4398,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "URL pública viva",
-      "progress": 43.5
+      "progress": 47.1
     },
     {
       "criterion": "6 · Agente conversacional",
@@ -4410,7 +4418,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 74.2
+      "progress": 81.9
     }
   ],
   "current_sprint": "S5",
@@ -4561,9 +4569,389 @@
   "git_activity": {
     "available": true,
     "repository": "edgarcoroneln/escuela-concausa-bi",
-    "generated_at": "2026-09-05T03:46:12+00:00",
+    "generated_at": "2026-09-06T00:53:45+00:00",
     "scope": "Todos los PR del repositorio, hasta 2,000 por ejecución",
     "prs": [
+      {
+        "number": 254,
+        "title": "[Edgar Coronel] - Guion de la demo (US-006), BUG-057 y cierre de US-416 (US-006, US-416) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "edgarcoroneln",
+        "created_at": "2026-09-06T00:00:47Z",
+        "merged_at": "2026-09-06T00:52:55Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/254",
+        "story_ids": [
+          "US-001",
+          "US-006",
+          "US-403",
+          "US-411",
+          "US-412",
+          "US-416",
+          "US-422",
+          "US-501"
+        ]
+      },
+      {
+        "number": 255,
+        "title": "[Luis Téllez] - SEC-006 resuelto: flip AUTH_LECTURA_PUBLICA=false en prod (SEC-006) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-06T00:11:45Z",
+        "merged_at": "2026-09-06T00:25:22Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/255",
+        "story_ids": [
+          "US-412"
+        ]
+      },
+      {
+        "number": 256,
+        "title": "[Deni Garrido] - Alinear universo Gold de features (US-113) - [sync|CI|DoF|DevLog]",
+        "state": "open",
+        "author": "dgdeni",
+        "created_at": "2026-09-06T00:18:03Z",
+        "merged_at": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/256",
+        "story_ids": [
+          "US-104",
+          "US-112",
+          "US-113",
+          "US-311",
+          "US-313"
+        ]
+      },
+      {
+        "number": 253,
+        "title": "[Edgar Coronel] - BUG-048 cerrado en vivo, el par de demo que dejo de existir y RISK-009 (US-505, US-207) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "edgarcoroneln",
+        "created_at": "2026-09-05T23:24:28Z",
+        "merged_at": "2026-09-05T23:40:05Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/253",
+        "story_ids": [
+          "US-113",
+          "US-204",
+          "US-207",
+          "US-214a",
+          "US-412",
+          "US-505"
+        ]
+      },
+      {
+        "number": 252,
+        "title": "[Monserrat Miranda] - Contraste del link de DB-05 y §3 de accesibilidad sobre DB-08 (US-215b) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "monserratxmiranda",
+        "created_at": "2026-09-05T22:23:25Z",
+        "merged_at": "2026-09-05T23:06:03Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/252",
+        "story_ids": [
+          "US-214b",
+          "US-215a",
+          "US-215b"
+        ]
+      },
+      {
+        "number": 249,
+        "title": "[Marina García] - Corrige el hallazgo sobre el CI de accesibilidad, que citaba una version vieja (US-215a) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "marina-gdb",
+        "created_at": "2026-09-05T20:46:38Z",
+        "merged_at": "2026-09-05T22:59:18Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/249",
+        "story_ids": [
+          "US-207",
+          "US-215a"
+        ]
+      },
+      {
+        "number": 250,
+        "title": "[Andres Gonzalez] - Persiste SHAP batch nullable en Gold (BUG-053) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "Agh28",
+        "created_at": "2026-09-05T20:52:42Z",
+        "merged_at": "2026-09-05T22:56:23Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/250",
+        "story_ids": [
+          "US-302",
+          "US-313",
+          "US-412"
+        ]
+      },
+      {
+        "number": 251,
+        "title": "[Luis Téllez] - Cierre BUG-048: refresco del Gold en prod (BUG-048) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-05T22:07:55Z",
+        "merged_at": "2026-09-05T22:52:59Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/251",
+        "story_ids": []
+      },
+      {
+        "number": 248,
+        "title": "[Luis Téllez] - Guarda fail-loud de lista blanca SSO vacía + URL de Superset en el vault (US-502) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-05T20:42:15Z",
+        "merged_at": "2026-09-05T21:22:06Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/248",
+        "story_ids": [
+          "US-502"
+        ]
+      },
+      {
+        "number": 245,
+        "title": "[Christian Ruiz] - SIN_DATO en la explicacion, deja de fabricar ceros (BUG-053, US-412) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "ImanolRuiz00",
+        "created_at": "2026-09-05T19:53:34Z",
+        "merged_at": "2026-09-05T20:36:16Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/245",
+        "story_ids": [
+          "US-412"
+        ]
+      },
+      {
+        "number": 247,
+        "title": "[Marina García] - Contraste de los links de drill-down y cierre del caso 3.1 (US-215a, BUG-050) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "marina-gdb",
+        "created_at": "2026-09-05T20:08:38Z",
+        "merged_at": "2026-09-05T20:25:19Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/247",
+        "story_ids": [
+          "US-207",
+          "US-214a",
+          "US-215a",
+          "US-215b"
+        ]
+      },
+      {
+        "number": 246,
+        "title": "[Luis Téllez] - Superset SSO Cloud Run: guarda colisión admin/SSO + DevLog (US-502) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-05T20:02:28Z",
+        "merged_at": "2026-09-05T20:18:19Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/246",
+        "story_ids": [
+          "US-502"
+        ]
+      },
+      {
+        "number": 244,
+        "title": "[Edgar Coronel] - Septimo hueco de propiedad, DEC-017 y BUG-053 desde los hallazgos de C4 (US-416, US-412) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "edgarcoroneln",
+        "created_at": "2026-09-05T19:26:03Z",
+        "merged_at": "2026-09-05T20:10:23Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/244",
+        "story_ids": [
+          "US-302",
+          "US-403",
+          "US-412",
+          "US-416",
+          "US-422"
+        ]
+      },
+      {
+        "number": 239,
+        "title": "[Emilio Galnares] - Actualizar fichas DS-06 y DS-08 a estado confirmado (DS-06) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "Starcrossedboy",
+        "created_at": "2026-09-05T18:02:24Z",
+        "merged_at": "2026-09-05T19:58:59Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/239",
+        "story_ids": [
+          "US-113",
+          "US-121a"
+        ]
+      },
+      {
+        "number": 243,
+        "title": "[Karla Monter] - Cachea ciclo mas reciente y documenta default global (BUG-044) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "marlakonter",
+        "created_at": "2026-09-05T19:21:26Z",
+        "merged_at": "2026-09-05T19:50:15Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/243",
+        "story_ids": [
+          "US-411"
+        ]
+      },
+      {
+        "number": 241,
+        "title": "[Andres Gonzalez] - Valida rerun definitivo con CONAPO real (BUG-048) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "Agh28",
+        "created_at": "2026-09-05T18:53:40Z",
+        "merged_at": "2026-09-05T19:16:32Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/241",
+        "story_ids": [
+          "US-302",
+          "US-311",
+          "US-313"
+        ]
+      },
+      {
+        "number": 242,
+        "title": "[Diana Alvarez] - CONAPO y SESNSP reales, cierra BUG-048 de lado de C1 (US-113) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "DianaVarela96",
+        "created_at": "2026-09-05T18:56:21Z",
+        "merged_at": "2026-09-05T19:13:35Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/242",
+        "story_ids": [
+          "US-113",
+          "US-122b"
+        ]
+      },
+      {
+        "number": 240,
+        "title": "[Christian Ruiz] - Ratificacion de US-416, ventana de KeyError en el cache y contrato de /predicciones (US-416, US-412, US-422) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "ImanolRuiz00",
+        "created_at": "2026-09-05T18:49:57Z",
+        "merged_at": "2026-09-05T19:03:01Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/240",
+        "story_ids": [
+          "US-403",
+          "US-412",
+          "US-416",
+          "US-422"
+        ]
+      },
+      {
+        "number": 237,
+        "title": "[Andres Gonzalez] - Rerun ML y dump final post-BUG-045 (BUG-048) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "Agh28",
+        "created_at": "2026-09-05T17:30:08Z",
+        "merged_at": "2026-09-05T18:11:20Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/237",
+        "story_ids": [
+          "US-302",
+          "US-311",
+          "US-313"
+        ]
+      },
+      {
+        "number": 238,
+        "title": "Dev/emilio galnares [Emilio Galnares] - Actualizar fichas DS-06 y DS-08 a estado confirmado (DoF|DevLog)",
+        "state": "closed",
+        "author": "Starcrossedboy",
+        "created_at": "2026-09-05T17:50:35Z",
+        "merged_at": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/238",
+        "story_ids": [
+          "US-113",
+          "US-121a"
+        ]
+      },
+      {
+        "number": 234,
+        "title": "[Edgar Coronel] - Alcance recortado, cierre de US-004/US-005 y estandar de contraste (US-004, US-005) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "edgarcoroneln",
+        "created_at": "2026-09-05T16:33:53Z",
+        "merged_at": "2026-09-05T17:54:38Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/234",
+        "story_ids": [
+          "US-004",
+          "US-005",
+          "US-006",
+          "US-206",
+          "US-207",
+          "US-215a",
+          "US-321",
+          "US-413",
+          "US-414",
+          "US-525a"
+        ]
+      },
+      {
+        "number": 236,
+        "title": "[Luis Téllez] - SSO fail-loud en Superset producción (US-502) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-05T17:19:43Z",
+        "merged_at": "2026-09-05T17:30:55Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/236",
+        "story_ids": [
+          "US-502"
+        ]
+      },
+      {
+        "number": 235,
+        "title": "[Luis Téllez] - Google SSO obligatorio en Superset (US-502) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-05T16:42:40Z",
+        "merged_at": "2026-09-05T17:10:21Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/235",
+        "story_ids": [
+          "US-502"
+        ]
+      },
+      {
+        "number": 228,
+        "title": "[Monserrat Miranda] - Cierre de US-215b y correccion de BUG-038 en los tabs de DB-05 (US-215b) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "monserratxmiranda",
+        "created_at": "2026-09-05T02:32:05Z",
+        "merged_at": "2026-09-05T16:05:49Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/228",
+        "story_ids": [
+          "US-202",
+          "US-213",
+          "US-214b",
+          "US-215a",
+          "US-215b",
+          "US-521b"
+        ]
+      },
+      {
+        "number": 232,
+        "title": "[Marina Garcia] - Panel de ML y agrupado de filas del layout (US-207, US-215a) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "marina-gdb",
+        "created_at": "2026-09-05T06:04:04Z",
+        "merged_at": "2026-09-05T15:56:15Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/232",
+        "story_ids": [
+          "US-207",
+          "US-214a",
+          "US-215a",
+          "US-321",
+          "US-412"
+        ]
+      },
+      {
+        "number": 233,
+        "title": "[Luis Téllez] - Superset listo para producción, Bloque 0 Fase 2 (US-502) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-05T14:49:46Z",
+        "merged_at": "2026-09-05T15:37:44Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/233",
+        "story_ids": [
+          "US-502"
+        ]
+      },
+      {
+        "number": 231,
+        "title": "[Estefany Hernandez] - Ejecutar cierre ML desde Gold (US-321) - [sync|CI|DoF|DevLog]",
+        "state": "open",
+        "author": "stephi-coder",
+        "created_at": "2026-09-05T04:27:33Z",
+        "merged_at": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/231",
+        "story_ids": [
+          "US-321",
+          "US-322",
+          "US-325"
+        ]
+      },
       {
         "number": 229,
         "title": "[Marina Garcia] - Drill-down completo en DB-03/DB-04 y pruebas de usabilidad (US-214a, US-215a) - [sync|CI|DoF|DevLog]",
@@ -4587,23 +4975,6 @@
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/230",
         "story_ids": [
           "US-302"
-        ]
-      },
-      {
-        "number": 228,
-        "title": "[Monserrat Miranda] - Cierre de US-215b y correccion de BUG-038 en los tabs de DB-05 (US-215b) - [sync|CI|DoF|DevLog]",
-        "state": "open",
-        "author": "monserratxmiranda",
-        "created_at": "2026-09-05T02:32:05Z",
-        "merged_at": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/228",
-        "story_ids": [
-          "US-202",
-          "US-213",
-          "US-214b",
-          "US-215a",
-          "US-215b",
-          "US-521b"
         ]
       },
       {
@@ -7724,23 +8095,23 @@
     "commits": [
       {
         "author": "edgarcoroneln",
-        "count": 450,
-        "last_at": "2026-09-05T03:45:23Z"
+        "count": 521,
+        "last_at": "2026-09-06T00:52:55Z"
       },
       {
         "author": "github-actions[bot]",
-        "count": 190,
-        "last_at": "2026-09-05T03:41:49Z"
-      },
-      {
-        "author": "DianaVarela96",
-        "count": 101,
-        "last_at": "2026-09-04T17:19:30Z"
+        "count": 214,
+        "last_at": "2026-09-06T00:26:10Z"
       },
       {
         "author": "LuisTellez03",
-        "count": 97,
-        "last_at": "2026-09-04T20:52:09Z"
+        "count": 110,
+        "last_at": "2026-09-06T00:08:02Z"
+      },
+      {
+        "author": "DianaVarela96",
+        "count": 105,
+        "last_at": "2026-09-05T18:40:37Z"
       },
       {
         "author": "hector677-mm",
@@ -7748,19 +8119,24 @@
         "last_at": "2026-08-30T05:06:06Z"
       },
       {
+        "author": "marina-gdb",
+        "count": 42,
+        "last_at": "2026-09-05T21:04:23Z"
+      },
+      {
+        "author": "andreshabib10",
+        "count": 40,
+        "last_at": "2026-09-05T20:50:19Z"
+      },
+      {
         "author": "dgdeni",
         "count": 40,
         "last_at": "2026-09-04T00:18:05Z"
       },
       {
-        "author": "andreshabib10",
-        "count": 31,
-        "last_at": "2026-09-05T02:36:42Z"
-      },
-      {
-        "author": "marina-gdb",
-        "count": 29,
-        "last_at": "2026-09-05T02:43:24Z"
+        "author": "monserratxmiranda",
+        "count": 30,
+        "last_at": "2026-09-05T22:37:14Z"
       },
       {
         "author": "oscarqlazaro-lab",
@@ -7778,19 +8154,14 @@
         "last_at": "2026-09-04T01:22:19Z"
       },
       {
-        "author": "Starcrossedboy",
-        "count": 16,
-        "last_at": "2026-08-29T02:38:25Z"
-      },
-      {
-        "author": "monserratxmiranda",
-        "count": 15,
-        "last_at": "2026-08-31T03:49:55Z"
-      },
-      {
         "author": "ImanolRuiz00",
-        "count": 14,
-        "last_at": "2026-09-04T19:39:51Z"
+        "count": 21,
+        "last_at": "2026-09-05T20:03:20Z"
+      },
+      {
+        "author": "Starcrossedboy",
+        "count": 20,
+        "last_at": "2026-09-05T19:37:07Z"
       },
       {
         "author": "EJ-by-Me",
@@ -7828,14 +8199,14 @@
         "last_at": "2026-08-22T04:09:42Z"
       },
       {
-        "author": "Agh28",
-        "count": 1,
-        "last_at": "2026-09-05T03:01:37Z"
+        "author": "marlakonter",
+        "count": 3,
+        "last_at": "2026-09-05T19:17:34Z"
       },
       {
-        "author": "marlakonter",
-        "count": 1,
-        "last_at": "2026-09-04T01:02:31Z"
+        "author": "Agh28",
+        "count": 2,
+        "last_at": "2026-09-05T17:31:56Z"
       }
     ],
     "ci": [
@@ -7843,121 +8214,121 @@
         "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942733035"
-      },
-      {
-        "name": "Refresh PM Dashboard",
-        "status": "in_progress",
-        "conclusion": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942733019"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34002441814"
       },
       {
         "name": "CI",
         "status": "in_progress",
         "conclusion": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942733018"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34002441743"
       },
       {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942637270"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942637260"
+        "name": "Refresh PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34002441715"
       },
       {
         "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942637258"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34001541688"
       },
       {
         "name": "CI",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942524683"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34001541672"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34001541671"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34001240144"
       },
       {
         "name": "Refresh PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33942524602"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940707989"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940707951"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34001240142"
       },
       {
         "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940707938"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34001240141"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000924638"
       },
       {
         "name": "PR Quality Gate",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940620731"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000924618"
       },
       {
         "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940399565"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940399530"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000924614"
       },
       {
         "name": "PR Quality Gate",
         "status": "completed",
-        "conclusion": "failure",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940399524"
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000649723"
       },
       {
         "name": "CI",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940296138"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000649712"
       },
       {
         "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940296119"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000649702"
       },
       {
         "name": "PR Quality Gate",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940296112"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000161650"
       },
       {
         "name": "CI",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940068243"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000161639"
       },
       {
-        "name": "PR Quality Gate",
+        "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33940068193"
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34000161637"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33999279128"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/33999279080"
       }
     ],
     "note": "Actividad agregada; no determina Done ni se usa como ranking individual."
@@ -8204,20 +8575,29 @@
     },
     {
       "date": "2026-09-04",
-      "remaining": 41,
-      "weighted_remaining": 24.1,
+      "remaining": 38,
+      "weighted_remaining": 20.2,
       "done": 50,
-      "scope": 91,
-      "wip": 32,
+      "scope": 88,
+      "wip": 33,
       "blocked": 0
     },
     {
       "date": "2026-09-05",
-      "remaining": 41,
-      "weighted_remaining": 24.1,
-      "done": 50,
-      "scope": 91,
-      "wip": 32,
+      "remaining": 38,
+      "weighted_remaining": 20.1,
+      "done": 51,
+      "scope": 89,
+      "wip": 33,
+      "blocked": 0
+    },
+    {
+      "date": "2026-09-06",
+      "remaining": 38,
+      "weighted_remaining": 20.1,
+      "done": 51,
+      "scope": 89,
+      "wip": 33,
       "blocked": 0
     }
   ]

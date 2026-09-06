@@ -17,6 +17,7 @@ import pytest
 from src.modelos.contrato import DRIVERS
 from src.modelos.entrenar_ml01 import (
     COLUMNA_TARGET,
+    HIPERPARAMETROS,
     MetricasVentana,
     _matriz,
     cargar_features,
@@ -58,6 +59,10 @@ def resultado(features: pd.DataFrame):
 
 def test_genera_las_ventanas_pedidas(resultado) -> None:
     assert len(resultado.ventanas) == 3
+
+
+def test_la_perdida_default_es_robusta_a_outliers() -> None:
+    assert HIPERPARAMETROS["loss"] == "absolute_error"
 
 
 def test_ninguna_ventana_tiene_fuga_temporal(resultado) -> None:

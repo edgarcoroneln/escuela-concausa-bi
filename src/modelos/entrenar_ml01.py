@@ -19,6 +19,10 @@ Si el modelo no le gana a predecir la media, no hay modelo.
 
 **Métrica agregada = promedio ± desviación de las ventanas**, conforme a ADR-003 (Andrés).
 
+**Pérdida absoluta.** Los targets reales contienen una cola pequeña de altas administrativas y
+escuelas de matrícula previa muy baja. `absolute_error` evita que esos outliers dominen el ajuste;
+la evaluación sigue reportando MAE/RMSE y se compara contra el mismo baseline temporal.
+
 ## Uso
 
     python -m src.modelos.entrenar_ml01                      # contra el fixture simulado
@@ -68,6 +72,7 @@ FEATURES_POR_DEFECTO = Path("tests/fixtures/features_escuela_mock.csv")
 
 #: Hiperparámetros. Modestos a propósito: afinarlos contra datos sintéticos no aporta nada.
 HIPERPARAMETROS: dict[str, object] = {
+    "loss": "absolute_error",
     "max_iter": 200,
     "learning_rate": 0.05,
     "max_depth": 4,

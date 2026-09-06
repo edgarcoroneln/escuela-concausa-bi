@@ -332,7 +332,8 @@ def test_cada_metrica_de_valor_declara_su_cobertura(metricas: dict) -> None:
 # DB-05 pide "un tab por driver D1-D6" (US-213), algo que el layout plano de
 # _layout_grilla() (ROOT_ID→GRID_ID→ROW→CHART) no soporta. _layout_tabs() es
 # la función hermana, aditiva, revisada por Manuel Serranía antes de escribir
-# los 6 tabs reales: ROOT_ID(TABS)→TAB-<id>→GRID-<id>→ROW→CHART. Estas
+# los 6 tabs reales: ROOT_ID(ROOT)→TABS-ROOT→TAB-<id>→ROW→CHART (árbol
+# corregido en BUG-038: sin GRID intermedio). Estas
 # pruebas validan la forma del árbol con datos sintéticos, sin Superset ni
 # red -- la validación contra el schema real de Superset es el siguiente paso
 # (un chart manual, antes de generar los 6 juegos).
@@ -363,35 +364,54 @@ def tabs_sinteticos() -> list[tuple[str, str, list[tuple[int, str, int, int]], s
     ]
 
 
-def test_layout_tabs_arma_root_de_tipo_tabs(sync, tabs_sinteticos) -> None:
-    """ROOT_ID cambia de tipo GRID (camino plano) a TABS cuando hay tabs."""
+def test_layout_tabs_root_es_root_y_cuelga_del_contenedor_de_tabs(sync, tabs_sinteticos) -> None:
+    """ROOT_ID es `ROOT` con un único hijo `TABS`, no un `TABS` él mismo (BUG-038).
+
+    Guarda de regresión del defecto 1: cuando ROOT_ID se declaraba `type: "TABS"`
+    con los TAB colgando directo, Superset no dibujaba la barra de navegación y
+    D2-D6 quedaban inalcanzables. El sync seguía en verde: sólo se veía en el
+    navegador.
+    """
     position = sync._layout_tabs(tabs_sinteticos)
-    assert position["ROOT_ID"]["type"] == "TABS"
-    assert position["ROOT_ID"]["children"] == ["TAB-D1", "TAB-D2"]
+    assert position["ROOT_ID"]["type"] == "ROOT"
+    assert position["ROOT_ID"]["children"] == [sync.TABS_NODE_ID]
+
+    tabs_node = position[sync.TABS_NODE_ID]
+    assert tabs_node["type"] == "TABS"
+    assert tabs_node["parentId"] == "ROOT_ID"
+    assert tabs_node["children"] == ["TAB-D1", "TAB-D2"]
 
 
-def test_layout_tabs_cada_tab_cuelga_de_root_y_tiene_un_grid(sync, tabs_sinteticos) -> None:
+def test_layout_tabs_cada_tab_cuelga_del_contenedor_y_no_de_root(sync, tabs_sinteticos) -> None:
     position = sync._layout_tabs(tabs_sinteticos)
     for tab_id in ("D1", "D2"):
         tab_node = position[f"TAB-{tab_id}"]
         assert tab_node["type"] == "TAB"
-        assert tab_node["parentId"] == "ROOT_ID"
-        assert tab_node["children"] == [f"GRID-{tab_id}"]
+        assert tab_node["parentId"] == sync.TABS_NODE_ID
         assert tab_node["meta"]["text"]  # etiqueta visible del tab
-
-        grid_node = position[f"GRID-{tab_id}"]
-        assert grid_node["type"] == "GRID"
-        assert grid_node["parentId"] == f"TAB-{tab_id}"
+        # Las filas cuelgan DIRECTO del tab: sin GRID intermedio (BUG-038, defecto 2).
+        assert all(position[hijo]["type"] == "ROW" for hijo in tab_node["children"])
 
 
-def test_layout_tabs_cada_chart_cuelga_de_una_fila_dentro_de_su_grid(sync, tabs_sinteticos) -> None:
+def test_layout_tabs_sin_grid_intermedio_entre_tab_y_filas(sync, tabs_sinteticos) -> None:
+    """Guarda de regresión del defecto 2 de BUG-038.
+
+    Con un `GRID-<id>` entre el TAB y sus ROW, Superset dibujaba la barra de tabs
+    pero dejaba el contenido de todos ellos en blanco. Ningún nodo GRID debe
+    existir en el árbol con tabs — el GRID sólo vive en el camino plano.
+    """
     position = sync._layout_tabs(tabs_sinteticos)
-    grid_d1_children = set(position["GRID-D1"]["children"])
+    grids = [k for k, v in position.items() if isinstance(v, dict) and v.get("type") == "GRID"]
+    assert grids == [], f"el árbol con tabs no debe tener nodos GRID, encontrados: {grids}"
+
+
+def test_layout_tabs_cada_chart_cuelga_de_una_fila_dentro_de_su_tab(sync, tabs_sinteticos) -> None:
+    position = sync._layout_tabs(tabs_sinteticos)
     tipos_encontrados: list[str] = []
-    for row_id in grid_d1_children:
+    for row_id in position["TAB-D1"]["children"]:
         row_node = position[row_id]
         assert row_node["type"] == "ROW"
-        assert row_node["parentId"] == "GRID-D1"
+        assert row_node["parentId"] == "TAB-D1"
         for comp_id in row_node["children"]:
             comp_node = position[comp_id]
             assert comp_node["parentId"] == row_id
@@ -403,9 +423,9 @@ def test_layout_tabs_cada_chart_cuelga_de_una_fila_dentro_de_su_grid(sync, tabs_
 
 def test_layout_tabs_nota_es_markdown_estatico_en_la_primera_fila(sync, tabs_sinteticos) -> None:
     """Aprobado por Manuel junto con los tabs: id estable MD-{tab}-0, colgado
-    del ROW, primera fila del GRID (antes que los charts)."""
+    del ROW, primera fila del TAB (antes que los charts)."""
     position = sync._layout_tabs(tabs_sinteticos)
-    primer_row_id = position["GRID-D1"]["children"][0]
+    primer_row_id = position["TAB-D1"]["children"][0]
     primer_row = position[primer_row_id]
     assert primer_row["children"] == ["MD-D1-0"]
 
@@ -416,10 +436,10 @@ def test_layout_tabs_nota_es_markdown_estatico_en_la_primera_fila(sync, tabs_sin
 
 
 def test_layout_tabs_sin_nota_no_genera_nodo_markdown(sync, tabs_sinteticos) -> None:
-    """D2 en tabs_sinteticos no trae nota: su GRID no debe tener ningún MARKDOWN."""
+    """D2 en tabs_sinteticos no trae nota: su TAB no debe tener ningún MARKDOWN."""
     position = sync._layout_tabs(tabs_sinteticos)
     assert "MD-D2-0" not in position
-    for row_id in position["GRID-D2"]["children"]:
+    for row_id in position["TAB-D2"]["children"]:
         for comp_id in position[row_id]["children"]:
             assert position[comp_id]["type"] != "MARKDOWN"
 
@@ -558,7 +578,10 @@ def test_el_dashboard_db05_se_traduce_a_un_arbol_valido_via_layout_tabs(sync, da
         tabs_layout.append((tab["id"], tab.get("etiqueta", tab["id"]), layout_tab, tab.get("nota")))
 
     position = sync._layout_tabs(tabs_layout)
-    assert position["ROOT_ID"]["children"] == [f"TAB-{t['id']}" for t in dashboard_db05["tabs"]]
+    assert position["ROOT_ID"]["children"] == [sync.TABS_NODE_ID]
+    assert position[sync.TABS_NODE_ID]["children"] == [
+        f"TAB-{t['id']}" for t in dashboard_db05["tabs"]
+    ]
     for tab in dashboard_db05["tabs"]:
         if tab.get("nota"):
             assert f"MD-{tab['id']}-0" in position
@@ -638,3 +661,47 @@ def test_pivote_de_db08_agrupa_por_id_driver_en_columnas(dashboard_db08: dict) -
         assert "id_driver" in extra.get("groupbyColumns", []) + extra.get("groupbyRows", []), (
             f"{ch['nombre']}: el pivote debe agrupar por id_driver (filas o columnas) por defecto."
         )
+
+# --------------------------------------------------------- contraste del link (DEC-016)
+
+
+def _bloque_del_link(sql: str, columna_link: str) -> str:
+    """Devuelve solo el fragmento de SQL que construye `columna_link`.
+
+    Mismo helper que `tests/test_drill_down_db03_db04.py:72` (Marina García): un
+    `.sql` puede definir varios links, y validar contra el archivo completo
+    mezclaría el bloque de uno con el de otro.
+    """
+    fin = sql.index(f"AS {columna_link}")
+    ini = sql.rindex("<a href=", 0, fin)
+    return sql[ini:fin]
+
+
+def test_el_link_db08_no_depende_del_color_del_tema(db05: str) -> None:
+    """El `<a>` de DB-05 lo escribe FARO, así que FARO responde por su contraste (DEC-016).
+
+    Reportado por Marina García el 2026-09-05 tras encontrar el mismo defecto en
+    sus cuatro links de DB-03/DB-04: sin estilo propio el ancla hereda el azul de
+    acento de Superset, que **pasa en tema oscuro y reprueba en claro** sobre el
+    fondo de la celda de tabla. El barrido de contraste del 4-sep (§3.1 del plan
+    de usabilidad) no lo cazó por dos razones que conviene dejar escritas: se
+    midió el tema oscuro primero, y la tabla que contiene el link queda **debajo
+    del pliegue**, fuera del viewport que se recorrió.
+
+    **No se arregla eligiendo otro azul**, y es aritmética: para pasar 4.5:1
+    contra el gris claro de la celda hace falta luminancia baja, y contra el
+    fondo oscuro hace falta alta; los dos rangos no se cruzan, así que ningún
+    color único sirve para ambos temas. La salida es heredar el color del texto
+    de la celda —que ya pasa en los dos— y marcar el link con subrayado en vez
+    de con tono, lo que además cumple WCAG 1.4.1.
+
+    Gemela de `test_drill_down_db03_db04.py::test_el_link_no_depende_del_color_del_tema`.
+    """
+    bloque = _bloque_del_link(db05, "link_db08")
+
+    assert "color:inherit" in bloque, (
+        "link_db08 deja que el ancla tome el color de acento del tema; en claro reprueba AA"
+    )
+    assert "text-decoration:underline" in bloque, (
+        "link_db08 se reconocería sólo por color: falta el subrayado (WCAG 1.4.1)"
+    )

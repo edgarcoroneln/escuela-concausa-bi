@@ -25,6 +25,7 @@ tags: [ml, celula-3, ml-01, entrenamiento]
 | | |
 |---|---|
 | Estimador | `HistGradientBoostingRegressor` (scikit-learn 1.9.0) |
+| Pérdida | `absolute_error` — robusta a outliers del target real |
 | Objetivo | `target_variacion_matricula` — variación de matrícula al siguiente ciclo |
 | Entradas | los 6 drivers normalizados de `gold.features_escuela` |
 | Métrica | MAE / RMSE (AC-003.2) |
@@ -59,17 +60,43 @@ dice nada**: un MAE de 0.015 puede ser excelente o ridículo según la escala de
 
 | Ventana | MAE | RMSE | MAE baseline | Mejora |
 |---|---|---|---|---|
-| entrena 2019-2021 → prueba 2021-2022 | 0.0128 | 0.0168 | 0.0294 | **56.5 %** |
-| entrena 2019-2022 → prueba 2022-2023 | 0.0138 | 0.0175 | 0.0283 | **51.3 %** |
-| entrena 2019-2023 → prueba 2023-2024 | 0.0157 | 0.0187 | 0.0295 | **46.8 %** |
+| entrena 2019-2021 → prueba 2021-2022 | 0.0145 | 0.0186 | 0.0294 | **50.8 %** |
+| entrena 2019-2022 → prueba 2022-2023 | 0.0145 | 0.0183 | 0.0283 | **48.8 %** |
+| entrena 2019-2023 → prueba 2023-2024 | 0.0160 | 0.0192 | 0.0295 | **45.9 %** |
 
-**MAE 0.0141 ± 0.0012 · RMSE 0.0177 ± 0.0008** (1.41 y 1.77 puntos porcentuales,
+**MAE 0.0150 ± 0.0007 · RMSE 0.0187 ± 0.0004** (1.50 y 1.87 puntos porcentuales,
 respectivamente; promedio ± desviación de las ventanas, ADR-003). Ambos cumplen los umbrales
 provisionales de 3 y 5 puntos porcentuales.
 
-El modelo reduce el error a la mitad frente al baseline en las tres ventanas. La degradación
-progresiva (56 % → 47 %) es esperable: las ventanas tardías predicen ciclos más lejanos del inicio
+El modelo reduce el error entre 46 % y 51 % frente al baseline en las tres ventanas. La degradación
+progresiva (51 % → 46 %) es esperable: las ventanas tardías predicen ciclos más lejanos del inicio
 de la serie.
+
+### Resultados sobre Gold real · BUG-048 · 2026-09-05
+
+Se reentrenó con partición temporal sobre el dump post-BUG-045 de Diana Alvarez: 136,046 filas,
+46,547 escuelas y tres ciclos (`2022-2023`…`2024-2025`). D5 quedó excluido de forma explícita por
+ausencia total; los otros cinco drivers entraron al modelo.
+
+La pérdida cuadrática vigente no aportaba frente al baseline: MAE 0.159148 contra 0.159223 y
+predicciones exclusivamente positivas, por lo que ninguna escuela superaba el umbral de riesgo.
+Con `loss="absolute_error"`, en la misma ventana temporal y sin ajustar el umbral, el dump
+definitivo con CONAPO real produce:
+
+| Métrica | Resultado |
+|---|---:|
+| MAE | 0.141458 |
+| RMSE | 0.436326 |
+| MAE baseline | 0.159223 |
+| Mejora sobre baseline | 11.04 % |
+| Riesgo mínimo / mediana / máximo | 0.0292 / 0.3533 / 0.5717 |
+| Escuelas con `indice_riesgo >= 0.6` | 0 (0 %) |
+
+No se movieron las anclas de negocio ni se optimizó un porcentaje objetivo. El cambio se aceptó
+porque mejora el holdout temporal frente al baseline. El 0 % definitivo es consistente con la
+calibración ratificada: la mayor caída predicha es 4.53 %, menor que el umbral de 5 %. La publicación
+local produjo 45,276 predicciones y 45,276 recomendaciones para 2024-2025; ML-02 obtuvo F1 macro
+0.8333 y cinco drivers dominantes.
 
 ### Error por entidad (ventana de producción)
 
@@ -78,10 +105,10 @@ dos primeros caracteres del CCT.
 
 | Entidad | Escuelas | MAE |
 |---|---|---|
-| 14 · Jalisco | 20 | 0.0200 |
-| 19 · Nuevo León | 20 | 0.0159 |
-| 09 · CDMX | 20 | 0.0155 |
-| 15 · Edomex | 20 | 0.0113 |
+| 14 · Jalisco | 20 | 0.0183 |
+| 19 · Nuevo León | 20 | 0.0171 |
+| 09 · CDMX | 20 | 0.0167 |
+| 15 · Edomex | 20 | 0.0118 |
 
 ## 4. Registro en MLflow
 

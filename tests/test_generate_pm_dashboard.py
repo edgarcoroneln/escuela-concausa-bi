@@ -77,9 +77,22 @@ def test_la_evidencia_no_queda_truncada(ejecucion):
 
 
 def test_us004_conserva_su_evidencia_completa(ejecucion):
-    """La fila que destapó el defecto: su texto llega hasta el final."""
-    assert ejecucion["US-004"]["updated"] == "2026-08-29"
-    assert ejecucion["US-004"]["evidence"].endswith("hasta el cierre del proyecto")
+    r"""La fila que destapó el defecto: su texto llega hasta el final.
+
+    La guarda vigila que el parser cruce los pipes escapados sin cortar la celda, no
+    un contenido congelado: US-004 es una historia continua y su fila se actualiza en
+    cada reconciliación. Fijar aquí la fecha del 29-ago hacía que la prueba reprobara
+    ante una actualización legítima (pasó el 2026-09-05 al cerrar el entregable), y una
+    guarda que falla cuando el cambio es correcto acaba relajándose. Se comprueba la
+    ESTRUCTURA: que la última columna llegó -- prueba de que la fila no se truncó -- y
+    que el wikilink con `\|` que destapó BUG-040 sigue del otro lado del corte.
+    """
+    fila = ejecucion["US-004"]
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", fila["updated"]), fila["updated"]
+    # El alias del wikilink con `\|` sobrevive resuelto a su texto visible: si el pipe
+    # escapado hubiera cortado la celda, este fragmento y todo lo que sigue faltarían.
+    assert "plan de corrección del vault" in fila["evidence"]
+    assert fila["evidence"].endswith("hasta el cierre del proyecto")
 
 
 # ── El índice de DevLog alimenta las métricas por persona ────────────────────

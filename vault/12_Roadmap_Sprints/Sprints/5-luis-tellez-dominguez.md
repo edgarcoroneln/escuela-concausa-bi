@@ -5,7 +5,7 @@ owner: "Luis Téllez Domínguez"
 status: approved
 version: "1.0"
 traces_up: ["vault/01_Product/PRD", "vault/02_Requirements/User_Stories"]
-traces_down: ["US-501", "US-502", "US-503", "US-504", "US-505"]
+traces_down: ["US-501", "US-502", "US-503", "US-504", "US-505", "US-526"]
 last_reviewed: "2026-07-31"
 tags: [sprint, plan, celula-5, nivel-medio]
 ---
@@ -95,6 +95,28 @@ Tienes historias de **complejidad intermedia con autonomía**. Implementas pieza
 ## 4. Ambiente local — hazlo ANTES del primer standup
 
 Todos trabajamos con el mismo ambiente para evitar el clásico "en mi máquina sí corre".
+
+### `US-526` · Contenerizar y desplegar FARO Web en Cloud Run
+
+| | |
+|---|---|
+| **Sprint** | S6 — asignada el 5-sep por decisión del PO |
+| **Objetivo** | Que FARO Web se vea en la URL pública. Hoy la raíz devuelve `404`. |
+| **Entregable** | `docker/frontend.Dockerfile` + servicio en `docker-compose.yml` + despliegue a Cloud Run + **CORS de Superset** para que acepte el embebido desde ese origen |
+| **Cómo se entrega** | Rama fija `dev/luis-tellez` → PR con plantilla → 1 aprobación del PM → merge a `main` |
+
+**Por qué existe esta historia y por qué llega tarde.** Se decidió contenerizar FARO Web y **la historia
+nunca se dio de alta**. `US-206` (shell y embebido de los 10 tableros, Manuel Serranía) y `US-207` (panel de
+ML, Marina García) están **construidas y no se pueden mostrar**: existen en el repositorio, no en la URL
+pública. El hueco no era de ejecución, era de planeación, y es del PO.
+
+**El CORS de Superset no es opcional.** El embebido de `US-206` va por *guest token* contra Superset; si
+Superset no acepta el origen de FARO Web, la página carga y los diez tableros salen en blanco. Sin eso,
+`AC-002.1` no se cumple aunque el despliegue funcione.
+
+**Si no alcanza para el 9.** El plan B ya está escrito en [[vault/01_Product/Guion_Demo_US006]]: la demo
+corre sobre Superset y la API por separado, y **se avisa a Manuel y a Marina antes del ensayo del lunes**.
+Que su trabajo no salga en pantalla es una decisión del PO, no una sorpresa que descubran en la sala.
 
 ### 4.1 Requisitos previos
 - **Python 3.11** (`python3 --version`)
@@ -319,6 +341,7 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 | `US-503` | Configurar el pipeline de CI en GitHub Act | ⬜ Por iniciar | 0% | — | Dom 16 ago |
 | `US-504` | Aprovisionar Cloud SQL, Artifact Registry  | ⬜ Por iniciar | 0% | — | Dom 30 ago |
 | `US-505` | Despliegue final productivo y verificacion | ⬜ Por iniciar | 0% | — | Mar 8 sep |
+| `US-526` | Contenerizar y desplegar FARO Web en Cloud Run | ⬜ Por iniciar | 0% | Asignada 5-sep · CORS de Superset incluido | Lun 7 sep |
 
 **Estados válidos:** ⬜ Por iniciar · 🟡 En curso · 🔵 En revisión (PR abierto) · ✅ Terminado · 🔴 Bloqueado
 
