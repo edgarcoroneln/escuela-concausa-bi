@@ -49,7 +49,7 @@ select
     p.indice_riesgo,
     case
         when p.indice_riesgo is null then null
-        else (p.indice_riesgo >= 0.6)
+        else (p.indice_riesgo >= 0.5)
     end as en_riesgo,
     p.valor as variacion_proyectada,
     p.probabilidad,
