@@ -5,16 +5,21 @@ author_human: "Christian Imanol Ruiz Hurtado"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "1 sesión — P0 del PO: la sesión de FARO Web no sobrevivía a la demo"
-touches: ["BUG-058", "US-405", "US-207", "US-305", "REQ-004"]
-tags: [devlog, celula-4, frontend, sesion, oauth2, refresh, bug058]
+touches: ["BUG-059", "US-405", "US-207", "US-305", "REQ-004"]
+tags: [devlog, celula-4, frontend, sesion, oauth2, refresh, bug059]
 ---
 
-# DevLog — 2026-09-06 — La sesión de FARO Web no sobrevivía a la demo (BUG-058)
+# DevLog — 2026-09-06 — La sesión de FARO Web no sobrevivía a la demo (BUG-059)
 
-→ [[vault/_DevLog/_index|Volver al índice]] · [[vault/06_Quality_Testing/Bug_Register|BUG-058]] ·
+→ [[vault/_DevLog/_index|Volver al índice]] · [[vault/06_Quality_Testing/Bug_Register|BUG-059]] ·
 [[vault/03_Architecture/ADRs/ADR-010-puente-oauth-frontend|ADR-010]]
 
 ## Contexto
+
+> **Nota de ID:** se registró como `BUG-058` en la rama y se **renumeró a `BUG-059`**
+> al mergear (`DEC-013`): ese ID ya lo ocupaba el umbral estructural del KPI-04, que entró a `main`
+> antes. Tercera colisión de la semana; el patrón es el mismo de siempre — dos ramas partiendo del
+> mismo commit base.
 
 El PO reportó tres defectos en `src/frontend/auth.py` y los llamó P0 con razón: *"este es el que
 puede tumbar la demo, no el que se ve peor"*. Verifiqué los tres antes de tocar nada. **Los tres
