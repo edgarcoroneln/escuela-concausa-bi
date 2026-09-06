@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-06T02:22:59+00:00",
+    "generated_at": "2026-09-06T02:35:08+00:00",
     "generated_date": "2026-09-06",
-    "commit": "42f2a7b",
+    "commit": "7b3af48",
     "branch": "main",
     "working_tree": "clean",
-    "source_fingerprint": "0eb4cdb02913",
+    "source_fingerprint": "b42fb2769432",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -2046,8 +2046,8 @@
         "US-325"
       ],
       "pr_count": 4,
-      "pr_open": 1,
-      "pr_merged": 3,
+      "pr_open": 0,
+      "pr_merged": 4,
       "stories": 3,
       "done": 0,
       "wip": 3,
@@ -3188,7 +3188,7 @@
         "name": "Edgar Edmundo Coronel Navarrete",
         "cell": "PO",
         "engagement": 77.5,
-        "commits": 529,
+        "commits": 531,
         "prs_merged": 37,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3516,9 +3516,9 @@
         "name": "Estefany Lucero Hernández Loredo",
         "cell": "Célula 3",
         "engagement": 55.0,
-        "commits": 11,
-        "prs_merged": 3,
-        "prs_open": 1,
+        "commits": 15,
+        "prs_merged": 4,
+        "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
@@ -3794,6 +3794,17 @@
         "signal": "5 PR · 4 DevLog · 4 US activas"
       },
       {
+        "name": "Estefany Lucero Hernández Loredo",
+        "cell": "Célula 3",
+        "cell_group": "Célula 3 · Machine Learning & Agente IA",
+        "active": true,
+        "prs_merged": 4,
+        "devlogs": 5,
+        "active_us": 3,
+        "activity": 12,
+        "signal": "4 PR · 5 DevLog · 3 US activas"
+      },
+      {
         "name": "Juan Carlos Macías Mayen",
         "cell": "Célula 4",
         "cell_group": "Célula 4 · Backend, API & Seguridad",
@@ -3803,17 +3814,6 @@
         "active_us": 3,
         "activity": 10,
         "signal": "3 PR · 4 DevLog · 3 US activas"
-      },
-      {
-        "name": "Estefany Lucero Hernández Loredo",
-        "cell": "Célula 3",
-        "cell_group": "Célula 3 · Machine Learning & Agente IA",
-        "active": true,
-        "prs_merged": 3,
-        "devlogs": 3,
-        "active_us": 3,
-        "activity": 9,
-        "signal": "3 PR · 3 DevLog · 3 US activas"
       },
       {
         "name": "Carlos Guillermo Mayorga Tapia",
@@ -4439,9 +4439,36 @@
   "git_activity": {
     "available": true,
     "repository": "edgarcoroneln/escuela-concausa-bi",
-    "generated_at": "2026-09-06T02:22:59+00:00",
+    "generated_at": "2026-09-06T02:35:08+00:00",
     "scope": "Todos los PR del repositorio, hasta 2,000 por ejecución",
     "prs": [
+      {
+        "number": 261,
+        "title": "[Luis Téllez] - Cierre de BUG-057 reflejando decisión del PO (BUG-057) - [sync|CI|DoF|DevLog]",
+        "state": "open",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-06T02:22:03Z",
+        "merged_at": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/261",
+        "story_ids": [
+          "US-403",
+          "US-411"
+        ]
+      },
+      {
+        "number": 231,
+        "title": "[Estefany Hernandez] - Ejecutar cierre ML desde Gold (US-321) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "stephi-coder",
+        "created_at": "2026-09-05T04:27:33Z",
+        "merged_at": "2026-09-06T02:34:16Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/231",
+        "story_ids": [
+          "US-321",
+          "US-322",
+          "US-325"
+        ]
+      },
       {
         "number": 260,
         "title": "[Christian Ruiz] - /explicacion sirve SHAP real desde Gold (BUG-053, US-412) - [sync|CI|DoF|DevLog]",
@@ -4453,19 +4480,6 @@
         "story_ids": [
           "US-412",
           "US-416"
-        ]
-      },
-      {
-        "number": 261,
-        "title": "[Luis Téllez] - Cierre de BUG-057 por decisión confirmada (BUG-057) - [sync|CI|DoF|DevLog]",
-        "state": "open",
-        "author": "LuisTellez03",
-        "created_at": "2026-09-06T02:22:03Z",
-        "merged_at": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/261",
-        "story_ids": [
-          "US-403",
-          "US-411"
         ]
       },
       {
@@ -4506,20 +4520,6 @@
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/259",
         "story_ids": [
           "US-502"
-        ]
-      },
-      {
-        "number": 231,
-        "title": "[Estefany Hernandez] - Ejecutar cierre ML desde Gold (US-321) - [sync|CI|DoF|DevLog]",
-        "state": "open",
-        "author": "stephi-coder",
-        "created_at": "2026-09-05T04:27:33Z",
-        "merged_at": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/231",
-        "story_ids": [
-          "US-321",
-          "US-322",
-          "US-325"
         ]
       },
       {
@@ -8031,13 +8031,13 @@
     "commits": [
       {
         "author": "edgarcoroneln",
-        "count": 529,
-        "last_at": "2026-09-06T02:22:11Z"
+        "count": 531,
+        "last_at": "2026-09-06T02:34:16Z"
       },
       {
         "author": "github-actions[bot]",
-        "count": 218,
-        "last_at": "2026-09-06T02:17:58Z"
+        "count": 219,
+        "last_at": "2026-09-06T02:22:59Z"
       },
       {
         "author": "LuisTellez03",
@@ -8100,6 +8100,11 @@
         "last_at": "2026-09-05T19:37:07Z"
       },
       {
+        "author": "stephi-coder",
+        "count": 15,
+        "last_at": "2026-09-06T01:19:07Z"
+      },
+      {
         "author": "EJ-by-Me",
         "count": 14,
         "last_at": "2026-09-04T19:30:50Z"
@@ -8108,11 +8113,6 @@
         "author": "EloisaGonzalezRubio",
         "count": 13,
         "last_at": "2026-08-30T01:19:03Z"
-      },
-      {
-        "author": "stephi-coder",
-        "count": 11,
-        "last_at": "2026-09-04T22:32:37Z"
       },
       {
         "author": "LuisEGarciaV",
@@ -8147,15 +8147,99 @@
     ],
     "ci": [
       {
-        "name": "Refresh PM Dashboard",
-        "status": "in_progress",
-        "conclusion": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006306388"
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006835714"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006824322"
       },
       {
         "name": "CI",
         "status": "in_progress",
         "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006824219"
+      },
+      {
+        "name": "Refresh PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006824177"
+      },
+      {
+        "name": "Update Project Graph",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006824168"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006813840"
+      },
+      {
+        "name": "CI",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006813836"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006813835"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006675311"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006675308"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006675302"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006448412"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006448395"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006448390"
+      },
+      {
+        "name": "Refresh PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006306388"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006306385"
       },
       {
@@ -8181,90 +8265,6 @@
         "status": "completed",
         "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006236656"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006164777"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006164732"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006164727"
-      },
-      {
-        "name": "Refresh PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006083679"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006083678"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006083666"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006008833"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006008808"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34006008777"
-      },
-      {
-        "name": "Refresh PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34005924487"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34005924428"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34005924304"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34005837714"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34005837671"
       }
     ],
     "note": "Actividad agregada; no determina Done ni se usa como ranking individual."

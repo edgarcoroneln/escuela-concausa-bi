@@ -47,3 +47,12 @@ crosswalk `region_hidrologica → cve_mun`.
 El PR #197 ya resolvió la reproducción de Bronze DS-01/DS-02 y sus suites de calidad; el pendiente
 es ahora una corrida Bronze → Silver → Gold y la evidencia agregada de cobertura real. Secuencia y
 criterios: [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
+
+## Ejecución reproducible desde Gold
+
+`python -m src.modelos.ejecutar_cierre_ml03` produce agregados por driver, entidad y municipio,
+incluida la dispersión municipal, sin exportar CCT individuales ni convertir `SIN_DATO` en cero.
+Cuando `cve_mun` falta o contiene nulos, el reporte marca la sección municipal como bloqueada.
+
+La prueba real permanece pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
+base Gold configurada; no se inventan cifras de cobertura ni se propone `status: done`.
