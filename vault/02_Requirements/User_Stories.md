@@ -151,6 +151,7 @@ requisito de "3 modelos integrados vía API" (REQ-003).
 | US-503 | Configurar el pipeline de CI en GitHub Actions | Luis Téllez Domínguez | Medio | S2 | REQ-007 ᵇ |
 | US-504 | Aprovisionar Cloud SQL, Artifact Registry y secretos | Luis Téllez Domínguez | Medio | S4 | REQ-005 |
 | US-505 | Despliegue final productivo y verificación | Luis Téllez Domínguez | Medio | S6 | REQ-005 |
+| US-526 | Contenerizar y desplegar FARO Web en Cloud Run | Luis Téllez Domínguez | Medio | S6 | REQ-002 |
 | US-521a | Guía de ambiente local reproducible — API y Postgres | Alejandro Velázquez Mendoza | Bajo | S1 | REQ-007 ᵇ |
 | US-522a | Contenerizar API (FastAPI) y Postgres | Alejandro Velázquez Mendoza | Bajo | S3 | REQ-005 |
 | US-523a | Branch protection y required reviews en GitHub | Alejandro Velázquez Mendoza | Bajo | S3 | REQ-007 ᵇ |
@@ -227,7 +228,7 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Christian Imanol Ruiz Hurtado | C4 | Alto | 5 | US-401, US-402, US-403, US-404, US-405 |
 | Juan Carlos Macías Mayen | C4 | Medio | 3 | US-412, US-415, US-416 |
 | Oscar Antonio Quiroz Lázaro | C2 | Bajo | 4 | US-221, US-222, US-223, US-224 |
-| Luis Téllez Domínguez | C5 | Medio | 5 | US-501…US-505 |
+| Luis Téllez Domínguez | C5 | Medio | 6 | US-501…US-505, US-526 |
 | Alejandro Velázquez Mendoza | C5 | Bajo | 5 | US-521a, US-522a, US-523a, US-524a, US-525a |
 | Edgar Ulises Jiménez López | C5 | Bajo | 5 | US-521b, US-522b, US-523b, US-524b, US-525b |
 | Edward Ulysses Ruiz Bustillos | C5 | Bajo | 5 | US-521c, US-522c, US-523c, US-524c, US-525c |

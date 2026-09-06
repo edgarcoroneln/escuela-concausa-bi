@@ -33,6 +33,11 @@ STATE_WEIGHT = {
     "descoped": 0.0,
 }
 VALID_STATES = set(STATE_WEIGHT)
+#: Historias del catálogo (`vault/02_Requirements/User_Stories.md`), en alcance o recortadas.
+#: Guarda deliberada: si el conteo cambia sin que alguien toque esta línea, es un error de parseo
+#: o una US que se coló/desapareció, no un cambio de alcance. 2026-09-05: 91 -> 92 al dar de alta
+#: US-526 (contenerizar y desplegar FARO Web), que faltaba desde que se decidió hacerlo.
+CATALOGO_US = 92
 SPRINT_DATES = {
     "S1": ("2026-08-03", "2026-08-09"),
     "S2": ("2026-08-10", "2026-08-16"),
@@ -182,8 +187,12 @@ def parse_stories(root: Path) -> list[dict[str, Any]]:
                     "cell": cell,
                 }
             )
-    if len(stories) != 91:
-        raise ValueError(f"Se esperaban 91 historias y se encontraron {len(stories)}")
+    if len(stories) != CATALOGO_US:
+        raise ValueError(
+            f"Se esperaban {CATALOGO_US} historias en el catálogo y se encontraron {len(stories)}. "
+            "Si diste de alta o retiraste una US, actualiza CATALOGO_US aquí y en "
+            "validate_pm_dashboard.py -- la guarda existe para que el número no cambie por accidente."
+        )
     return stories
 
 
