@@ -5,6 +5,8 @@ Entrada de lenguaje natural -> API del agente RAG (US-304/US-323) -> respuesta c
 import os
 
 import streamlit as st
+
+from auth import encabezado, token_de_acceso
 from agente_client import consultar_agente
 
 API_BASE_URL = os.environ.get("FARO_API_BASE_URL", "http://localhost:8000")
@@ -31,7 +33,10 @@ PREGUNTAS_SUGERIDAS = [
 st.title("Agente FARO")
 st.caption("Pregunta en lenguaje natural sobre los datos del proyecto.")
 
-access_token = st.session_state.get("access_token")
+encabezado()  # sesion + boton de cerrar sesion (antes solo vivian en app.py)
+# `token_de_acceso()` refresca si esta por expirar; leer la clave directo devolvia
+# el token guardado aunque ya hubiera vencido (dura 15 min, menos que una demo).
+access_token = token_de_acceso()
 mensajes = st.session_state.setdefault("mensajes_agente", [])
 for mensaje in mensajes:
 	with st.chat_message(mensaje["rol"]):

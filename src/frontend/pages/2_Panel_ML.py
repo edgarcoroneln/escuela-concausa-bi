@@ -22,7 +22,7 @@ import os
 
 import streamlit as st
 
-from auth import current_user
+from auth import encabezado, token_de_acceso
 from prediccion_client import (
     UMBRAL_RIESGO,
     EscuelaNoEncontrada,
@@ -114,7 +114,7 @@ def render() -> None:
         "Lee la misma API que alimenta los tableros y FARO Web."
     )
 
-    user = current_user()
+    user = encabezado()  # sesión + botón de cerrar sesión (antes solo vivían en app.py)
     if user is None:
         st.info("Puedes consultar predicciones sin iniciar sesión: la lectura es pública.")
 
@@ -139,7 +139,10 @@ def render() -> None:
     try:
         with st.spinner(f"Consultando la predicción de {cct}…"):
             pred = obtener_prediccion(
-                API_BASE_URL, cct, access_token=(user or {}).get("access_token")
+                # `user` NUNCA tuvo `access_token`: /auth/me devuelve sub/email/name/role,
+                # asi que esto mandaba None siempre. Hoy no se nota porque la lectura es
+                # publica; el dia que deje de serlo, la pagina daria 401 con sesion iniciada.
+                API_BASE_URL, cct, access_token=token_de_acceso()
             )
     except EscuelaNoEncontrada as exc:
         st.warning(str(exc))
