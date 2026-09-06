@@ -200,6 +200,11 @@ def test_db09_expone_la_prioridad_de_ml02(db09_rec: str, datasets_por_nombre: di
     cubo = datasets_por_nombre["db09_cubo_recomendaciones"]
     metrica = {m["nombre"]: m for m in cubo["metricas"]}["recomendaciones_prioridad_alta"]
     assert "prioridad" in metrica["expresion"]
+    # BUG-054: el cubo guarda la prioridad en minúsculas (`alta`/`media`/`baja`), así
+    # que comparar mayúsculas sin normalizar dejaba la tarjeta en "No data" (0 empates).
+    assert "upper(prioridad) = 'ALTA'" in metrica["expresion"], (
+        "recomendaciones_prioridad_alta: debe comparar prioridad sin depender de mayúsculas (BUG-054)."
+    )
 
 
 def test_las_filas_municipio_nivel_no_se_reparten(db06_cubo: str) -> None:
@@ -385,6 +390,11 @@ def test_el_porcentaje_de_recomendadas_usa_el_total_de_escuelas(datasets_por_nom
     metrica = next(m for m in db09["metricas"] if m["nombre"] == "pct_escuelas_recomendadas")
     assert "recomendacion_emitida" in metrica["expresion"]
     assert metrica.get("denominador_visible") == "escuelas"
+    # BUG-054: SUM(smallint) es bigint y bigint/bigint es división entera en Postgres —
+    # 54/55 mostraba 0 %, no 98.2 %. El cast a numeric del numerador es la guarda.
+    assert "::numeric" in metrica["expresion"], (
+        "pct_escuelas_recomendadas: la división debe ser numérica, no entera (BUG-054)."
+    )
 
 
 def test_los_kpis_ratificados_estan_trazados(datasets_por_nombre: dict[str, dict]) -> None:
