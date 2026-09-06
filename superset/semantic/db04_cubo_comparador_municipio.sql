@@ -78,6 +78,6 @@ SELECT
         'NATIVE_FILTER-US203-4:(extraFormData:(filters:!((col:cve_mun,op:IN,val:!(%27' || c.cve_mun || '%27)))),' ||
         'filterState:(label:cve_mun,validateStatus:!f,value:!(%27' || c.cve_mun || '%27)),' ||
         'id:NATIVE_FILTER-US203-4,ownState:()))' ||
-        '" target="_blank">Ver sus escuelas →</a>' AS link_db03
+        '" target="_blank" style="color:inherit;text-decoration:underline">Ver sus escuelas →</a>' AS link_db03
 
 FROM gold.cubo_comparador_municipio c

@@ -113,6 +113,58 @@ def test_obtener_prediccion_expira_por_ttl() -> None:
     assert espia.llamadas_obtener == 2
 
 
+class _RelojQueCorre:
+    """Reloj que avanza en **cada** consulta.
+
+    Un `_RelojFalso` normal se queda quieto entre llamadas, así que nunca reproduce la ventana en
+    la que una entrada caduca *entre* dos lecturas seguidas del mismo cache. Este sí: cada vez que
+    `TTLCache` mira la hora, el tiempo ya avanzó -- que es lo que hace un reloj de verdad.
+    """
+
+    def __init__(self, paso: float) -> None:
+        self._ahora = 0.0
+        self._paso = paso
+
+    def __call__(self) -> float:
+        self._ahora += self._paso
+        return self._ahora
+
+
+def test_entrada_que_expira_entre_dos_lecturas_no_revienta() -> None:
+    """Regresión: leer el cache con `in` + `[]` consulta el reloj DOS veces y puede dar `KeyError`.
+
+    Con `ttl=10` y un reloj que avanza 6 por consulta, la entrada se escribe en t=6 (caduca en 16).
+    En la lectura siguiente, un `clave in cache` mira la hora en t=12 (vigente, dice `True`) y el
+    `cache[clave]` de la línea de abajo la mira otra vez en t=18 -- ya caducada -- y lanza
+    `KeyError`, que subiría al handler genérico como un **500**. Sostener el `Lock` no lo evita:
+    protege el estado compartido, no detiene el reloj.
+
+    Por eso el cache se lee con **una sola** llamada, `.get(clave, _AUSENTE)`. Esta prueba falla si
+    alguien vuelve al patrón `in` + `[]`.
+    """
+    reloj = _RelojQueCorre(paso=6.0)
+    espia = _RepositorioEspia(RepositorioModelosFake())
+    cache = RepositorioModelosCacheado(espia, ttl_segundos=10, max_entradas=10, timer=reloj)
+
+    esperado = cache.obtener_prediccion(CCT_CON_FILA, CICLO)
+    assert esperado is not None
+
+    # No debe lanzar: o el valor sigue vigente, o es un miss limpio que reconsulta al repo.
+    assert cache.obtener_prediccion(CCT_CON_FILA, CICLO) == esperado
+
+
+def test_listar_predicciones_con_entrada_al_filo_del_ttl_no_revienta() -> None:
+    """La misma ventana existe en el camino del batch (`listar_predicciones`)."""
+    reloj = _RelojQueCorre(paso=6.0)
+    espia = _RepositorioEspia(RepositorioModelosFake())
+    cache = RepositorioModelosCacheado(espia, ttl_segundos=10, max_entradas=10, timer=reloj)
+
+    cache.obtener_prediccion(CCT_CON_FILA, CICLO)
+    filas = cache.listar_predicciones([CCT_CON_FILA, CCT_CON_FILA_2], CICLO)
+
+    assert [f["cct"] for f in filas] == [CCT_CON_FILA, CCT_CON_FILA_2]
+
+
 def test_cache_negativo_no_repite_consulta_por_cct_sin_fila() -> None:
     """Un CCT confirmado sin predicción no vuelve a golpear el repo dentro del TTL."""
     espia = _RepositorioEspia(RepositorioModelosFake())

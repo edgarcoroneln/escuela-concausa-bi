@@ -296,3 +296,42 @@ def test_cve_mun_es_el_ultimo_filtro(nombre_tablero: str, tableros: dict[str, di
         f"{nombre_tablero}: `cve_mun` dejo de ser el ultimo filtro. Si se agrego otro "
         "despues, revisa que ningun link haya quedado apuntando al indice equivocado."
     )
+
+
+# --------------------------------------------------------- contraste del link (DEC-016)
+
+LINKS_POR_CUBO = {
+    "db03": ("link_db04", "link_db06", "link_db09"),
+    "db04": ("link_db03",),
+}
+
+
+@pytest.mark.parametrize(
+    "cubo, columna",
+    [(c, col) for c, cols in LINKS_POR_CUBO.items() for col in cols],
+)
+def test_el_link_no_depende_del_color_del_tema(cubo: str, columna: str) -> None:
+    """El `<a>` lo escribe FARO, asi que FARO responde por su contraste (DEC-016).
+
+    Medido en la instancia local el 2026-09-05 sobre color y fondo **efectivos**:
+    sin estilo propio, el link hereda el azul de acento de Superset `#2893B3` y da
+    **5.91 : 1** en tema oscuro pero **3.26 : 1** en claro, sobre el `#F5F5F5` de la
+    celda de tabla. Reprueba el 4.5 : 1 de WCAG 2.1 AA que declara
+    `vault/04_UX_Design/UX_Guidelines.md`.
+
+    **No se arregla eligiendo otro azul.** Ningun color unico pasa 4.5 : 1 contra
+    `#F5F5F5` y contra `#000000` a la vez: el primero exige luminancia <= 0.164 y el
+    segundo >= 0.175, y los rangos no se cruzan. La salida es heredar el color del
+    texto de la celda —que ya pasa en los dos temas, 21 : 1 y 18.4 : 1— y marcar el
+    link con subrayado en vez de con tono. De paso cumple WCAG 1.4.1: el color deja de
+    ser el unico medio para reconocer que es un link.
+    """
+    sql = sin_comentarios(leer(SQL_POR_CUBO[cubo]))
+    bloque = _bloque_del_link(sql, columna)
+
+    assert "color:inherit" in bloque, (
+        f"{columna} deja que el link tome el color de acento del tema; en claro da 3.26:1"
+    )
+    assert "text-decoration:underline" in bloque, (
+        f"{columna} se reconoceria solo por color: falta el subrayado (WCAG 1.4.1)"
+    )

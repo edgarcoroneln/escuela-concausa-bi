@@ -28,7 +28,7 @@ sources:
         description: "DS-03 · SEP/INEGI CEMABE 2013. Infraestructura escolar nacional a nivel CCT."
 
       - name: sesnsp
-        identifier: "{{ var('bronze_sesnsp_identifier', 'sesnsp_test') }}"
+        identifier: "{{ var('bronze_sesnsp_identifier', 'sesnsp') }}"
         description: "DS-04 · SESNSP Incidencia Delictiva Municipal. Serie mensual nacional a nivel municipio."
 
       - name: sinaica_observaciones
@@ -63,5 +63,5 @@ sources:
           DS-07 · CONEVAL Medición de Pobreza Municipal, concentrado oficial 2010-2020.
           Bronze real nacional; Silver selecciona explícitamente Pobreza | Porcentaje 2020.
       - name: conapo
-        identifier: "{{ var('bronze_conapo_identifier', 'conapo_sample') }}"
+        identifier: "{{ var('bronze_conapo_identifier', 'conapo') }}"
         description: "DS-08 · CONAPO Proyecciones de Población. Serie anual nacional por municipio y grupo de edad."

@@ -74,8 +74,35 @@ echo "✅ Superset inicializado"
 # ═══════════════════════════════════════════════════════════════════════
 # 4. ARRANCAR SERVIDOR
 # ═══════════════════════════════════════════════════════════════════════
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ Superset listo — escuchando en puerto 8088"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-exec superset run -h 0.0.0.0 -p 8088 --with-threads --reload
+# Dos modos según ENVIRONMENT:
+#   • production/prod → gunicorn (servidor de producción) en $PORT (Cloud Run
+#     inyecta PORT; default 8088 si no está). Un worker con varios threads
+#     mantiene la caché de /tmp consistente mientras no haya Redis.
+#   • local (default) → `superset run --reload` (servidor de desarrollo, igual
+#     que hasta hoy; no cambia el flujo de docker-compose).
+if [ "${ENVIRONMENT:-local}" = "production" ] || [ "${ENVIRONMENT:-local}" = "prod" ]; then
+    PORT="${PORT:-8088}"
+    WORKERS="${SERVER_WORKER_AMOUNT:-1}"
+    THREADS="${SERVER_THREADS_AMOUNT:-20}"
+    TIMEOUT="${GUNICORN_TIMEOUT:-120}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🏭 Superset en PRODUCCIÓN — gunicorn en :${PORT} (workers=${WORKERS}, threads=${THREADS})"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    exec gunicorn \
+        --bind "0.0.0.0:${PORT}" \
+        --workers "${WORKERS}" \
+        --worker-class gthread \
+        --threads "${THREADS}" \
+        --timeout "${TIMEOUT}" \
+        --keep-alive 65 \
+        --limit-request-line 0 \
+        --limit-request-field_size 0 \
+        --access-logfile - \
+        --error-logfile - \
+        "superset.app:create_app()"
+else
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "✅ Superset listo (desarrollo) — escuchando en puerto 8088"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    exec superset run -h 0.0.0.0 -p 8088 --with-threads --reload
+fi

@@ -93,7 +93,16 @@ empíricamente**, no solo por lectura del código de C3.
 
 En producción sigue en cero (`escuelas_en_riesgo: 0`, esos CCT allá tienen riesgo 0.129 y
 0.098): los fixtures son sintéticos y su distribución no representa a las ~132 000 escuelas
-reales. **El número de la demo será el de producción.**
+reales.
+
+> **CORRECCIÓN (2026-09-05, señalada por Edgar Coronel).** Aquí escribí *"el número de la
+> demo será el de producción"*, y está mal — es el mismo error que este DevLog corrige, una
+> capa más abajo. **Producción sirve el Gold anterior al fix de BUG-045, con D1 vacío**:
+> misma contaminación que volvió no representativa mi medición de −4.37 %. Verificado el
+> 2026-09-05: `indice_completitud_drivers` 0.1966 en producción contra 0.6485 en local.
+> Los 0.129 y 0.098 salen de ese mismo Gold empobrecido, así que **no sabemos qué dará
+> `escuelas_en_riesgo` allá después del refresco**. Registrado como BUG-048, va con
+> BLOCK-005. Detalle en [[vault/04_UX_Design/Cube_Specs_DB03_DB04]] §8.quinquies.3.bis.
 
 Esto **mejora el argumento** en vez de debilitarlo: ya no hay que decir *"nadie cruza,
 confíen en que está calibrado"*; se puede mostrar un caso donde sí dispara, a −7.60 %.

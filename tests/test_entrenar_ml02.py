@@ -169,7 +169,7 @@ def test_explicacion_shap_cumple_contrato_api(
         for _ in range(len(filas))
     ]
     monkeypatch.setattr(
-        "src.modelos.entrenar_ml02.calcular_shap_kernel",
+        "src.modelos.entrenar_ml02.calcular_shap_batch",
         lambda *args, **kwargs: contribuciones,
     )
 
@@ -179,3 +179,21 @@ def test_explicacion_shap_cumple_contrato_api(
     assert set(explicaciones[0]) == {"cct", "driver_dominante", "contribuciones"}
     assert set(explicaciones[0]["contribuciones"]) == set(CLASES_DRIVER)
     assert explicaciones[0]["cct"] == filas.iloc[0]["cct"]
+
+
+def test_explicacion_shap_marca_driver_excluido_como_sin_dato(
+    resultado_ml02,
+    features: pd.DataFrame,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    filas = features.head(1)
+    contribuciones = [{driver: 0.1 for driver in DRIVERS if driver != "d5_agua"}]
+    monkeypatch.setattr(
+        "src.modelos.entrenar_ml02.calcular_shap_batch",
+        lambda *args, **kwargs: contribuciones,
+    )
+
+    explicacion = explicar_driver(resultado_ml02.modelo, features, filas)[0]
+
+    assert set(explicacion["contribuciones"]) == set(CLASES_DRIVER)
+    assert explicacion["contribuciones"]["D5"] is None

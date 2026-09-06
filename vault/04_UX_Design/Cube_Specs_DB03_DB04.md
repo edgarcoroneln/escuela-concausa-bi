@@ -587,11 +587,38 @@ Ambas proyectan perder **más del 5 %**, que es exactamente lo que DEC-006 defin
 sigmoide dispara cuando debe y no dispara cuando no debe: **la calibración queda
 verificada empíricamente**, no solo por lectura del código.
 
-**En producción sigue en cero.** Consultado el 2026-09-04:
-`/api/v1/kpis` → `escuelas_en_riesgo: 0`, y esos dos CCT allá tienen riesgo 0.129 y 0.098.
+**En producción sigue en cero**, pero ese cero **tampoco es confiable todavía.**
+
+Consultado el 2026-09-04: `/api/v1/kpis` → `escuelas_en_riesgo: 0`, y esos dos CCT allá
+tienen riesgo 0.129 y 0.098.
+
+> **CORRECCIÓN (2026-09-05, señalada por Edgar Coronel).** La primera redacción de este
+> párrafo concluía *"para la demo, el número que se verá es el de producción"*, dando a
+> entender que el cero de producción sí era el dato bueno. **Es el mismo error que este
+> apartado corrige**, una capa más abajo.
+>
+> Producción sirve el snapshot de Gold **anterior al fix de BUG-045**, o sea **con D1
+> vacío** — exactamente la contaminación que volvió no representativa la medición original
+> de −4.37 %. Verificado el 2026-09-05: `indice_completitud_drivers` vale **0.1966** en
+> producción contra **0.6485** en local con el pipeline completo. Está registrado como
+> **BUG-048** y va junto con **BLOCK-005**.
+>
+> Entonces: los 0.129 y 0.098 de producción salen del mismo Gold empobrecido, y **no
+> sabemos qué dará `escuelas_en_riesgo` allá después del refresco**. Puede seguir en cero
+> o no.
+
+**Lo que sí se puede afirmar el 9 de septiembre, y lo que no:**
+
+| Afirmación | ¿Se sostiene? |
+|---|---|
+| El umbral 0.6 significa "proyecta perder ≥ 5 %" y está calibrado contra DEC-006 | **Sí** — verificado en el código y en datos |
+| La sigmoide dispara cuando debe y no dispara cuando no debe | **Sí** — 0.7423→−7.60 % y 0.6692→−6.19 % cruzan; 0.5384→−4.00 % no |
+| El conteo que se vea en producción es el número real del país | **No, hasta que se refresque Gold** (BUG-048 / BLOCK-005) |
+
 Los fixtures son sintéticos (12 municipios CONEVAL, generación determinista), así que su
-distribución no representa a las ~132 000 escuelas reales. **Para la demo, el número que
-se verá es el de producción.**
+distribución tampoco representa a las ~132 000 escuelas reales. **Ninguno de los dos
+entornos da hoy una cifra defendible de cuántas escuelas están en riesgo**; lo defendible
+es que el mecanismo funciona y es auditable.
 
 Qué cambia en la práctica: nada de la recomendación, y **mejora el argumento**. Ya no hay
 que decir *"nadie cruza el umbral, confíen en que está bien calibrado"*; ahora se puede

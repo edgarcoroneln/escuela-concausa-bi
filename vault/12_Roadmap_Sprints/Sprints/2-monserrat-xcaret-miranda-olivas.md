@@ -308,8 +308,8 @@ Actualiza esta tabla **antes de cada standup**. El PM la revisa para el tablero 
 |---|---|---|---|---|---|
 | `US-211b` | Cubos y metricas de DB-05 y DB-08 | ✅ Terminado | 100% | — | Cerrada 25 ago |
 | `US-213` | Construir DB-05 Analisis por driver y DB-0 | ✅ Terminado | 100% | — | Cerrada 29 ago |
-| `US-214b` | Filtros y drill-down en DB-05 y DB-08 | 🟡 En curso | 90% | — | Dom 6 sep |
-| `US-215b` | Usabilidad/accesibilidad DB-05 y DB-08 | 🟡 En curso | 50% | — | Dom 6 sep |
+| `US-214b` | Filtros y drill-down en DB-05 y DB-08 | ✅ Terminado | 100% | — | Cerrada 30 ago (PR #162) |
+| `US-215b` | Usabilidad/accesibilidad DB-05 y DB-08 | 🔵 En revisión | 100% | — | 13/13 casos ejecutados 4 sep |
 
 **Estados válidos:** ⬜ Por iniciar · 🟡 En curso · 🔵 En revisión (PR abierto) · ✅ Terminado · 🔴 Bloqueado
 

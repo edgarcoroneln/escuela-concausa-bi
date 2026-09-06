@@ -26,8 +26,18 @@ STATE_WEIGHT = {
     "in_review": 0.65,
     "blocked": 0.35,
     "done": 1.0,
+    # `descoped` = recortada del alcance por decisión del PO. No se entregó, así que
+    # NO puede pesar como `done`; pero tampoco es trabajo pendiente, así que sale del
+    # denominador en vez de arrastrar el avance hacia abajo. Se reporta aparte, con su
+    # decisión y su fecha, para que el recorte quede visible y no se lea como entrega.
+    "descoped": 0.0,
 }
 VALID_STATES = set(STATE_WEIGHT)
+#: Historias del catálogo (`vault/02_Requirements/User_Stories.md`), en alcance o recortadas.
+#: Guarda deliberada: si el conteo cambia sin que alguien toque esta línea, es un error de parseo
+#: o una US que se coló/desapareció, no un cambio de alcance. 2026-09-05: 91 -> 92 al dar de alta
+#: US-526 (contenerizar y desplegar FARO Web), que faltaba desde que se decidió hacerlo.
+CATALOGO_US = 92
 SPRINT_DATES = {
     "S1": ("2026-08-03", "2026-08-09"),
     "S2": ("2026-08-10", "2026-08-16"),
@@ -177,8 +187,12 @@ def parse_stories(root: Path) -> list[dict[str, Any]]:
                     "cell": cell,
                 }
             )
-    if len(stories) != 91:
-        raise ValueError(f"Se esperaban 91 historias y se encontraron {len(stories)}")
+    if len(stories) != CATALOGO_US:
+        raise ValueError(
+            f"Se esperaban {CATALOGO_US} historias en el catálogo y se encontraron {len(stories)}. "
+            "Si diste de alta o retiraste una US, actualiza CATALOGO_US aquí y en "
+            "validate_pm_dashboard.py -- la guarda existe para que el número no cambie por accidente."
+        )
     return stories
 
 
@@ -738,6 +752,14 @@ def build_snapshot(root: Path) -> dict[str, Any]:
         except ValueError:
             story["age_days"] = 0
 
+    # Las historias recortadas salen del alcance ANTES de cualquier conteo, para que
+    # ni el avance, ni las células, ni la rúbrica, ni el readiness las cuenten como
+    # trabajo por hacer. Viajan aparte en `descoped`.
+    descoped = [story for story in stories if story["status"] == "descoped"]
+    stories = [story for story in stories if story["status"] != "descoped"]
+    if not stories:
+        raise ValueError("Todas las historias quedaron fuera de alcance; revisa Execution_Status.md.")
+
     counts = Counter(story["status"] for story in stories)
     progress = sum(STATE_WEIGHT[story["status"]] for story in stories) / len(stories)
     summary = {
@@ -748,6 +770,7 @@ def build_snapshot(root: Path) -> dict[str, Any]:
         "in_review": counts["in_review"],
         "blocked": counts["blocked"],
         "wip": counts["in_progress"] + counts["in_review"] + counts["blocked"],
+        "descoped": len(descoped),
         "progress": round(progress * 100, 1),
         "days_to_demo": max(0, (delivery_date - today).days),
     }
@@ -869,6 +892,7 @@ def build_snapshot(root: Path) -> dict[str, Any]:
         "summary": summary,
         "delivery": delivery,
         "stories": stories,
+        "descoped": descoped,
         "people": people,
         "cells": cells,
         "rubric": rubric,

@@ -518,14 +518,25 @@ def sync():
 
 
 def test_el_layout_genera_estructura_v2(sync) -> None:
-    """position_json v2: ROOT_ID → filas → componentes CHART con chartId."""
+    """position_json v2: ROOT_ID → filas → componentes CHART con chartId.
+
+    ACTUALIZADO en BUG-049 (Marina García, 2026-09-05) — cambio acotado sobre una prueba
+    de Manuel Serranía, avisado en el PR. La intención original de esta prueba es el
+    ÁRBOL v2, y esa se conserva entera. Lo que cambió es una aserción incidental: antes
+    exigía `["ROW-0", "ROW-1"]` para dos charts de ancho 3 y 6, es decir codificaba que
+    cada chart iba en su propia fila — que es justamente el defecto de BUG-049. Suman 9
+    de 12, así que ahora comparten fila y el `ancho` declarado por fin significa algo.
+    El agrupado tiene su propia suite en `tests/test_layout_filas_bug049.py`.
+    """
     position = sync._layout_grilla([(11, "Tile A", 3, 38), (22, "Gráfico B", 6, 60)])
     assert position["DASHBOARD_VERSION_KEY"] == "v2"
     # árbol v2 correcto: ROOT → GRID → filas → charts, con parentId en cada nodo
     assert position["ROOT_ID"]["children"] == ["GRID_ID"]
-    assert position["GRID_ID"]["children"] == ["ROW-0", "ROW-1"]
+    assert position["GRID_ID"]["children"] == ["ROW-0"]  # 3 + 6 = 9 <= 12: misma fila
     assert position["ROW-0"]["parentId"] == "GRID_ID"
+    assert position["ROW-0"]["children"] == ["CHART-0", "CHART-1"]
     assert position["CHART-0"]["parentId"] == "ROW-0"
+    assert position["CHART-1"]["parentId"] == "ROW-0"
     assert position["CHART-0"]["meta"]["chartId"] == 11
     assert position["CHART-1"]["meta"]["width"] == 6
 
