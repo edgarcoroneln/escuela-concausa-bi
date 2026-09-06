@@ -30,14 +30,20 @@ que cambie la política de imputación y ocultaría qué aprobación desbloquea 
 
 ## Política provisional de ausencia
 
-El pipeline sólo acepta `casos_completos`. Las filas con cualquier driver ausente se contabilizan
-y excluyen; nunca se rellenan con cero. Esta política permite verificar KMeans, Silhouette,
-partición temporal y perfiles sin inventar el fallback que aún deben ratificar Célula 1 y el Tech
-Lead de ML.
+El vector operativo ratificado por C3 para la corrida final es **D1-D4 +
+`indice_completitud_drivers`**. D5 (`d5_agua`) y D6 (`d6_aire`) se conservan en el diagnóstico de
+cobertura, pero no entran al vector de KMeans: D5 está 100 % `SIN_DATO` en el Gold real post-BUG-048
+y D6 tiene cobertura residual, por lo que incluirlos bloquearía `casos_completos` o empujaría una
+imputación no aprobada.
 
-No es la política final: puede concentrar el entrenamiento en territorios con mayor cobertura. Por
-eso registrar una versión no autoriza promoverla como modelo productivo ni interpretarla sobre
-escuelas reales.
+La política sigue siendo `casos_completos` sobre el **vector operativo**: las filas con D1-D4 o
+completitud ausentes se contabilizan y excluyen; D5/D6 ausentes no excluyen una escuela ni se
+rellenan con cero. Esta política permite verificar KMeans, Silhouette, partición temporal y perfiles
+sin inventar señal en los drivers de cobertura parcial.
+
+Registrar una versión no autoriza promoverla como modelo productivo ni interpretarla fuera del
+alcance de esa cobertura. Cualquier futura reincorporación de D5/D6 al vector requiere nueva
+evidencia de cobertura y revisión humana.
 
 ## Criterio pendiente para cierre
 
