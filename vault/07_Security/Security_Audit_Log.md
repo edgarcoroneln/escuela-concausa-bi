@@ -30,5 +30,10 @@ open → mitigating → resolved (o accepted_risk con firma del owner).
 > `SEC-002`…`SEC-009` los levantó y firmó Christian Ruiz (dueño de `vault/07_Security/**`) en
 > [[vault/07_Security/Security_Review_US402_US403_US404]] — revisión humana explícita de la regla 7
 > para el cierre de US-402, US-403 y US-404. El Anexo A de ese mismo documento (2026-09-04) es la
-> revisión de regla 7 sobre el parche de `BUG-046`, que C5 diagnosticó y el PO mergeó como excepción
+> El **Anexo C** (2026-09-06) valida `SEC-006` como `resolved`: la condicion de cierre que este
+> registro fijo era *"apagar la lectura publica cuando el login e2e este validado"*, y se cumplio
+> **en ese orden** -- el login e2e real se ejecuto el 2026-09-04 y el flip vino despues. Ahi mismo
+> quedan corregidas tres afirmaciones que C4 sostuvo y eran falsas (el e2e SI se habia ejecutado,
+> `AC-004.5` SI estaba cerrada y `SEC-007` SI se habia buscado en los logs), y consta `DEC-018`.
+> El Anexo A es la revisión de regla 7 sobre el parche de `BUG-046`, que C5 diagnosticó y el PO mergeó como excepción
 > de propiedad sobre `src/api/security/**`; de ahí sale `SEC-009`.
