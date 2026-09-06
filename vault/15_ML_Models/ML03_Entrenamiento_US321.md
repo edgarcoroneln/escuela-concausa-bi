@@ -30,14 +30,20 @@ que cambie la política de imputación y ocultaría qué aprobación desbloquea 
 
 ## Política provisional de ausencia
 
-El pipeline sólo acepta `casos_completos`. Las filas con cualquier driver ausente se contabilizan
-y excluyen; nunca se rellenan con cero. Esta política permite verificar KMeans, Silhouette,
-partición temporal y perfiles sin inventar el fallback que aún deben ratificar Célula 1 y el Tech
-Lead de ML.
+El vector operativo ratificado por C3 para la corrida final es **D1-D4 +
+`indice_completitud_drivers`**. D5 (`d5_agua`) y D6 (`d6_aire`) se conservan en el diagnóstico de
+cobertura, pero no entran al vector de KMeans: D5 está 100 % `SIN_DATO` en el Gold real post-BUG-048
+y D6 tiene cobertura residual, por lo que incluirlos bloquearía `casos_completos` o empujaría una
+imputación no aprobada.
 
-No es la política final: puede concentrar el entrenamiento en territorios con mayor cobertura. Por
-eso registrar una versión no autoriza promoverla como modelo productivo ni interpretarla sobre
-escuelas reales.
+La política sigue siendo `casos_completos` sobre el **vector operativo**: las filas con D1-D4 o
+completitud ausentes se contabilizan y excluyen; D5/D6 ausentes no excluyen una escuela ni se
+rellenan con cero. Esta política permite verificar KMeans, Silhouette, partición temporal y perfiles
+sin inventar señal en los drivers de cobertura parcial.
+
+Registrar una versión no autoriza promoverla como modelo productivo ni interpretarla fuera del
+alcance de esa cobertura. Cualquier futura reincorporación de D5/D6 al vector requiere nueva
+evidencia de cobertura y revisión humana.
 
 ## Criterio pendiente para cierre
 
@@ -60,19 +66,20 @@ El plan y prompt de ejecución están en
 
 El dump post-BUG-048 se restauró en `faro_gold_bug048_review_20260905_02` y el punto de entrada
 `src.modelos.ejecutar_cierre_ml03` validó 136,046 filas, 46,547 escuelas, 3 ciclos y cero
-duplicados por `cct × id_ciclo`. Con la política vigente `casos_completos`, la corrida quedó
+duplicados por `cct × id_ciclo`. Esa corrida se hizo antes de ratificar el vector operativo y quedó
 `bloqueada`: D5 (`d5_agua`) está en `SIN_DATO` para el 100% de las observaciones y D6 (`d6_aire`)
 para el 98.70%.
 
 No se entrenó KMeans, no se seleccionó `k`, no se calculó Silhouette y no se registró MLflow. Esta
 salida es evidencia de cobertura y del bloqueo de la política, no una métrica negativa del modelo.
-Para continuar se requiere que Andrés y Edgar ratifiquen una política de ausencia; cualquier
-imputación o cambio de vector debe quedar documentado antes de repetir el entrenamiento.
+Tras la ratificación de C3, esta evidencia debe repetirse con D1-D4 + completitud; cualquier
+imputación futura o reincorporación de D5/D6 al vector requeriría nueva evidencia de cobertura.
 
 El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla real desde
 `DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y sólo registra en MLflow cuando
-se indica `--tracking-uri`. Si D5 u otro driver está totalmente ausente, `casos_completos` puede
-dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un modelo.
+se indica `--tracking-uri`. Si un driver operativo queda totalmente ausente, `casos_completos`
+puede dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un
+modelo.
 
 La ejecución real sigue pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
 base Gold configurada. Esto no cambia el estado ni reemplaza la ratificación humana de la política.
