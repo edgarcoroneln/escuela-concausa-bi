@@ -165,6 +165,7 @@ def test_el_sql_lee_el_cubo_que_declara(datasets_con_cubo_futuro: list[dict]) ->
 
 SQL_KEYWORDS = {
     "sum", "count", "avg", "nullif", "coalesce", "case", "when", "then", "else",
+    "upper", "numeric",
     "end", "distinct", "filter", "where", "true", "false", "if", "and", "or",
     "not", "in", "is", "null", "as",
 }
