@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-06T05:37:42+00:00",
+    "generated_at": "2026-09-06T05:49:55+00:00",
     "generated_date": "2026-09-05",
-    "commit": "c7f0f54",
+    "commit": "47a0c70",
     "branch": "dev/edgar-coronel",
     "working_tree": "modified",
-    "source_fingerprint": "1c25930df36a",
+    "source_fingerprint": "2e69402aca61",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"

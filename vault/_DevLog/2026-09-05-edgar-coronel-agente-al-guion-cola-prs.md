@@ -98,14 +98,34 @@ todavía porque cada merge a `main` lo vuelve a ensuciar; se limpia justo antes 
 
 ## IDs tocados
 
-`US-006`, `US-305`, `US-323`, `US-304a`, `US-304b`, `BUG-025`, `REQ-006`, `REQ-007`
+`US-006`, `US-305`, `US-323`, `US-304a`, `US-304b`, `BUG-025`, `DEC-018`, `SEC-006`, `BUG-057`, `US-403`, `US-405`, `REQ-004`, `REQ-006`, `REQ-007`
 
-## Pendiente propio, anotado
+## 5. `DEC-018` escrita — la postura de acceso deja de ser provisional
 
-`DEC-018` sigue sin escribirse y ya bloquea el PR de Luis. Es lo siguiente.
+La escribí en la misma sesión, porque bloqueaba a dos personas. Cierra lo que
+`src/api/config.py:72` marcaba literalmente como *"PROVISIONAL; la definitiva la decide Edgar/PO"*
+y que `SEC-006` dejó como decisión de producto: **OAuth de Google en las dos capas**,
+`AUTH_LECTURA_PUBLICA=false` en producción, reversible sin rebuild.
+
+**Lo que la hace valer la pena no es la postura, es la asimetría que documenta.** Las dos capas
+exigen sesión, pero no filtran igual:
+
+| Capa | Filtro de acceso |
+|---|---|
+| **Superset** | Lista blanca estricta (`SUPERSET_SSO_ALLOWED_EMAILS`), con guarda fail-loud si queda vacía |
+| **API** | **Ninguna.** `resolve_role` devuelve `ciudadano` a cualquier correo que Google autentique |
+
+O sea: **cualquiera con cuenta de Google puede leer la API; nadie fuera de la lista puede abrir
+Superset.** Se acepta a propósito —lo que se protege es escritura y admin, y todo el dato es
+agregado a nivel escuela, nunca alumno— pero el punto de asentarla es que **no se descubra el
+miércoles**.
+
+Y deja escrito el modo de falla que más caro sale: si el correo del evaluador no está en la lista
+blanca de Superset, **entra correctamente con Google y lo rechazamos**, sin que nada reviente y sin
+un mensaje que lo explique. Darlo de alta antes del 9 es mío.
 
 ## Próximos pasos
 
 - Andrés deja los chips y verifica `BUG-025` autenticado.
-- Escribir `DEC-018` y destrabar #263.
+- Marina carga los dos bloques de C2 de Luis; `DEC-018` ya está publicada y su cita es válida.
 - Ensayo del guion completo el **lunes 7-sep**, ahora con 8 bloques.
