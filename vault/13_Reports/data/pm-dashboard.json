@@ -1,8 +1,8 @@
 {
   "meta": {
-    "generated_at": "2026-09-06T22:29:24+00:00",
+    "generated_at": "2026-09-06T23:10:03+00:00",
     "generated_date": "2026-09-06",
-    "commit": "ad43ed6",
+    "commit": "e90294b",
     "branch": "main",
     "working_tree": "clean",
     "source_fingerprint": "9cda11ec541a",
@@ -2191,9 +2191,9 @@
         "US-505",
         "US-526"
       ],
-      "pr_count": 49,
+      "pr_count": 50,
       "pr_open": 0,
-      "pr_merged": 48,
+      "pr_merged": 49,
       "stories": 6,
       "done": 3,
       "wip": 2,
@@ -3246,7 +3246,7 @@
         "name": "Edgar Edmundo Coronel Navarrete",
         "cell": "PO",
         "engagement": 77.5,
-        "commits": 562,
+        "commits": 563,
         "prs_merged": 39,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3451,8 +3451,8 @@
         "name": "Luis Téllez Domínguez",
         "cell": "Célula 5",
         "engagement": 61.7,
-        "commits": 123,
-        "prs_merged": 48,
+        "commits": 126,
+        "prs_merged": 49,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
@@ -3672,11 +3672,11 @@
         "cell": "Célula 5",
         "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
         "active": true,
-        "prs_merged": 48,
-        "devlogs": 37,
+        "prs_merged": 49,
+        "devlogs": 38,
         "active_us": 5,
-        "activity": 90,
-        "signal": "48 PR · 37 DevLog · 5 US activas"
+        "activity": 92,
+        "signal": "49 PR · 38 DevLog · 5 US activas"
       },
       {
         "name": "Diana Aracely Alvarez Varela",
@@ -4447,9 +4447,21 @@
   "git_activity": {
     "available": true,
     "repository": "edgarcoroneln/escuela-concausa-bi",
-    "generated_at": "2026-09-06T22:29:24+00:00",
+    "generated_at": "2026-09-06T23:10:03+00:00",
     "scope": "Todos los PR del repositorio, hasta 2,000 por ejecución",
     "prs": [
+      {
+        "number": 274,
+        "title": "[Luis Téllez] - Imagen combinada del frontend: Dockerfile versionado y bitácora del redeploy (US-526) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "LuisTellez03",
+        "created_at": "2026-09-06T22:50:51Z",
+        "merged_at": "2026-09-06T23:09:09Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/274",
+        "story_ids": [
+          "US-526"
+        ]
+      },
       {
         "number": 268,
         "title": "[Marina García] - Ficha de escuela y busqueda por filtros en el panel de ML (US-207, BUG-058) - [sync|CI|DoF|DevLog]",
@@ -8198,18 +8210,18 @@
     "commits": [
       {
         "author": "edgarcoroneln",
-        "count": 562,
-        "last_at": "2026-09-06T22:28:28Z"
+        "count": 563,
+        "last_at": "2026-09-06T23:09:09Z"
       },
       {
         "author": "github-actions[bot]",
-        "count": 232,
-        "last_at": "2026-09-06T22:25:06Z"
+        "count": 233,
+        "last_at": "2026-09-06T22:29:25Z"
       },
       {
         "author": "LuisTellez03",
-        "count": 123,
-        "last_at": "2026-09-06T07:38:25Z"
+        "count": 126,
+        "last_at": "2026-09-06T22:56:41Z"
       },
       {
         "author": "DianaVarela96",
@@ -8314,9 +8326,39 @@
     ],
     "ci": [
       {
+        "name": "Refresh PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34066066965"
+      },
+      {
         "name": "CI",
         "status": "in_progress",
         "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34066066853"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34065504461"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34065504459"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34065504450"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34064122596"
       },
       {
@@ -8327,8 +8369,8 @@
       },
       {
         "name": "Refresh PM Dashboard",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34064122553"
       },
       {
@@ -8402,36 +8444,6 @@
         "status": "completed",
         "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34063342002"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34063341992"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34063341987"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34062308778"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34062308757"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34062308756"
       }
     ],
     "note": "Actividad agregada; no determina Done ni se usa como ranking individual."
