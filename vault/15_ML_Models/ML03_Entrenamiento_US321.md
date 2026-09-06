@@ -53,3 +53,13 @@ El plan y prompt de ejecución están en
   Gold descarta el primer ciclo al construir el target, esto requiere al menos cuatro en Bronze
   (BUG-026).
 - Ejecutar la corrida final en MLflow y actualizar la ficha ML-03 con el Silhouette real.
+
+## Ejecución reproducible desde Gold
+
+El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla real desde
+`DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y sólo registra en MLflow cuando
+se indica `--tracking-uri`. Si D5 u otro driver está totalmente ausente, `casos_completos` puede
+dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un modelo.
+
+La ejecución real sigue pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
+base Gold configurada. Esto no cambia el estado ni reemplaza la ratificación humana de la política.
