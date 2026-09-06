@@ -80,6 +80,14 @@ rúbrica es una URL pública funcionando y porque el ensayo del martes la usa.
 
 `/version` sigue devolviendo `33fcbbb`, por detrás de `main`, como ya anotó Edgar.
 
+**Respondido al sincronizar, antes de abrir el PR:** el 401 **es intencional**. C5 cerró `SEC-006`
+apagando `AUTH_LECTURA_PUBLICA` en Cloud Run (revisión `faro-api-00012-pq5`, cambio de variable de
+entorno, sin rebuild — por eso `/version` no se movió). Era la condición de cierre que esperaba a que
+el login e2e quedara validado con `BUG-046`. Mi medición no descubrió un defecto: **confirma el flip
+desde fuera**, de forma independiente y sin conocerlo. Queda una consecuencia real para el 9: quien
+abra la URL pública sin sesión ya no ve KPIs ni predicciones, y el guion de la demo tiene que
+contemplar el login.
+
 ## 4. Lo único mío que sigue vivo
 
 De las dos sesiones, el hallazgo que **nadie más documentó** es la duplicación ×2 de Bronze
