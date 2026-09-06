@@ -180,8 +180,8 @@ tocar el de otro.
 
 ## Qué hacer con lo que se encuentre
 
-**1. Se levanta el bug en `vault/06_Quality_Testing/Bug_Register.md`.** El último ID en `main` es
-**`BUG-059`**, así que el siguiente libre es `BUG-060`. Por `DEC-013`, **un ID no está reservado
+**1. Se levanta el bug en `vault/06_Quality_Testing/Bug_Register.md`.** `BUG-060` ya está tomado
+(el KPI-04 con dos umbrales entre el camino mock y el real), así que **el siguiente libre es `BUG-061`**. Por `DEC-013`, **un ID no está reservado
 hasta que está escrito en `main`** — si dos personas registran a la vez, quien llegue segundo
 renumera. Anúncialo en el canal antes de escribirlo.
 
