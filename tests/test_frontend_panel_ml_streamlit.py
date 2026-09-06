@@ -146,3 +146,72 @@ def test_el_cliente_es_el_unico_que_habla_con_la_api(_ruta_frontend) -> None:
     assert not any("/api/v1/predicciones" in s for s in en_codigo), (
         "la página construye la ruta a mano; debe pedírsela a prediccion_client"
     )
+
+
+# --------------------------------------------------------- P0 2026-09-06: ficha y búsqueda
+
+
+def test_la_pagina_sigue_teniendo_un_solo_campo_y_un_solo_boton(_ruta_frontend) -> None:
+    """Guarda de las guardas: protege a las dos pruebas que direccionan por índice.
+
+    `test_un_cct_de_longitud_invalida_no_llama_a_la_api` hace `app.text_input[0]` y
+    `app.button[0]`. Hoy funciona porque hay exactamente uno de cada, pero eso es un
+    accidente afortunado, no un invariante declarado — y al añadir la búsqueda del P0 fue
+    justo lo que hubo que cuidar. Sin esta prueba, el día que alguien meta un `st.button`
+    de "Limpiar" arriba, aquella prueba **pasa a pulsar el botón equivocado** y falla por
+    una razón que no tiene nada que ver con lo que dice medir.
+
+    Por eso la búsqueda se construyó **solo con `st.selectbox`**: no entra en ninguna de
+    las dos listas.
+    """
+    app = _app()
+    assert len(app.text_input) == 1, (
+        "hay más de un campo de texto: `app.text_input[0]` deja de ser el CCT"
+    )
+    assert len(app.button) == 1, (
+        "hay más de un botón: `app.button[0]` deja de ser el submit del formulario"
+    )
+    assert len(app.title) == 1, "`app.title[0]` deja de ser el título de la página"
+
+
+def test_ofrece_busqueda_por_filtros(_ruta_frontend) -> None:
+    """El P0 pide llegar al CCT sin escribirlo: entidad -> municipio -> nivel -> plantel."""
+    app = _app()
+    assert app.selectbox, "no hay ningún selector de búsqueda"
+    etiquetas = [s.label for s in app.selectbox]
+    assert any("Entidad" in e for e in etiquetas), f"falta el selector de entidad: {etiquetas}"
+
+
+def test_la_busqueda_no_llama_a_la_api_antes_de_elegir_entidad(_ruta_frontend) -> None:
+    """Cargar la página no debe disparar la cascada.
+
+    La API limita a 120 peticiones por minuto y por ruta; una cascada que consulta en cada
+    rerun aunque no se haya elegido nada agota ese margen sola. El selector arranca en su
+    centinela y `_buscador` sale antes de tocar la red.
+    """
+    app = _app()
+    assert not app.exception, app.exception
+    assert any("Elige una entidad" in c.value for c in app.caption), (
+        "la página debería pedir elegir entidad antes de consultar nada"
+    )
+
+
+def test_la_ficha_se_renderiza_antes_del_indice(_ruta_frontend) -> None:
+    """El P0 es que el panel diga **de qué escuela** habla antes de dar el número.
+
+    Se comprueba sobre el orden del código, no sobre una corrida: renderizar la ficha exige
+    una predicción real, y estas pruebas no levantan API.
+    """
+    fuente = PAGINA.read_text(encoding="utf-8")
+    assert "_render_ficha" in fuente, "no existe la ficha del plantel"
+    assert fuente.index("_render_ficha(ficha") < fuente.index("_render_ml01(pred)\n"), (
+        "la ficha se pinta después del índice: el P0 pide lo contrario"
+    )
+
+
+def test_la_ficha_muestra_lo_que_pidio_el_p0(_ruta_frontend) -> None:
+    """Nombre, nivel, municipio, sostenimiento, matrícula y completitud de drivers."""
+    fuente = PAGINA.read_text(encoding="utf-8")
+    for campo in ("ficha.nombre", "ficha.nivel", "nombre_municipio", "ficha.sostenimiento",
+                  "ficha.matricula_total", "ficha.indice_completitud_drivers"):
+        assert campo in fuente, f"la ficha no muestra {campo}"

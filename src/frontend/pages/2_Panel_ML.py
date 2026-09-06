@@ -23,6 +23,15 @@ import os
 import streamlit as st
 
 from auth import encabezado, token_de_acceso
+from catalogo_client import (
+    ENTIDADES,
+    NIVELES,
+    FichaEscuela,
+    RecursoNoEncontrado,
+    listar_escuelas,
+    listar_municipios,
+    obtener_ficha,
+)
 from prediccion_client import (
     UMBRAL_RIESGO,
     EscuelaNoEncontrada,
@@ -47,6 +56,125 @@ NOMBRE_DRIVER = {
 #: Se eligen dos con **driver dominante distinto**, que es justo lo que la historia
 #: quiere demostrar.
 EJEMPLOS = ("15DJN0049A", "09DSN0042A")
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _municipios(api_base_url: str, cve_ent: str, _token: str | None) -> dict[str, str]:
+    """Mapa `cve_mun -> nombre` de una entidad, cacheado 5 min.
+
+    El guion bajo `_token` **no es un descuido**: Streamlit excluye del hash los argumentos
+    que empiezan con `_`, así que el caché se indexa por (URL, entidad) y no por el token
+    —que rota cada 15 minutos y ensuciaría el caché con una entrada por refresco.
+    """
+    return listar_municipios(api_base_url, cve_ent, access_token=_token)
+
+
+def _buscador(token: str | None) -> str | None:
+    """Cascada entidad -> municipio -> nivel -> escuela. Devuelve el CCT elegido, o `None`.
+
+    **Solo `st.selectbox`, ningún campo de texto ni botón nuevo.** Las pruebas de la página
+    direccionan `app.text_input[0]` y `app.button[0]` por índice, así que insertar
+    cualquiera de esos dos antes del formulario las rompería silenciosamente. Los selectbox
+    disparan rerun por sí solos, con lo que la cascada no necesita botón.
+
+    No sustituye al campo de CCT: lo alimenta. Quien ya sabe la clave la teclea.
+    """
+    st.markdown("**Buscar por filtros** — para llegar a una escuela sin teclear su clave.")
+
+    col_ent, col_mun, col_niv = st.columns(3)
+    with col_ent:
+        etiquetas_ent = ["Elige entidad"] + [f"{c} · {n}" for c, n in ENTIDADES.items()]
+        elegida = st.selectbox("Entidad", etiquetas_ent, index=0)
+    if elegida == etiquetas_ent[0]:
+        st.caption("Elige una entidad para empezar la búsqueda.")
+        return None
+    cve_ent = elegida.split(" · ")[0]
+
+    try:
+        municipios = _municipios(API_BASE_URL, cve_ent, token)
+    except (ConnectionError, ValueError) as exc:
+        st.warning(f"No se pudo cargar el catálogo de municipios: {exc}")
+        return None
+
+    with col_mun:
+        etiquetas_mun = ["Todos los municipios"] + [
+            f"{c} · {n}" for c, n in sorted(municipios.items(), key=lambda kv: kv[1])
+        ]
+        elegido_mun = st.selectbox("Municipio", etiquetas_mun, index=0)
+    cve_mun = None if elegido_mun == etiquetas_mun[0] else elegido_mun.split(" · ")[0]
+
+    with col_niv:
+        elegido_niv = st.selectbox("Nivel", ["Todos los niveles", *NIVELES], index=0)
+    nivel = None if elegido_niv.startswith("Todos") else elegido_niv
+
+    try:
+        escuelas, total = listar_escuelas(
+            API_BASE_URL, cve_ent=cve_ent, cve_mun=cve_mun, nivel=nivel, access_token=token
+        )
+    except (ConnectionError, ValueError) as exc:
+        st.warning(f"No se pudo consultar el catálogo de escuelas: {exc}")
+        return None
+
+    if not escuelas:
+        st.info("Ningún plantel cumple esos filtros en el ciclo vigente.")
+        return None
+
+    if total > len(escuelas):
+        st.caption(
+            f"Se muestran las **{len(escuelas)}** de mayor riesgo, de **{total}** que cumplen "
+            "los filtros. Acota por municipio o nivel para ver el resto."
+        )
+
+    def _fila(e) -> str:
+        riesgo = "sin predicción" if e.indice_riesgo is None else f"riesgo {e.indice_riesgo:.3f}"
+        driver = f" · {e.driver_dominante}" if e.driver_dominante else ""
+        return f"{e.cct} · {e.nombre} · {e.nivel} · {riesgo}{driver}"
+
+    opciones = ["Elige un plantel"] + [_fila(e) for e in escuelas]
+    elegida_escuela = st.selectbox(
+        f"Plantel ({len(escuelas)} ordenados por riesgo descendente)", opciones, index=0
+    )
+    if elegida_escuela == opciones[0]:
+        return None
+    return elegida_escuela.split(" · ")[0]
+
+
+def _render_ficha(ficha: FichaEscuela, nombre_municipio: str, pred: Prediccion) -> None:
+    """Quién es la escuela, **antes** del índice de riesgo.
+
+    Es el arreglo del P0: hasta hoy el panel devolvía un índice sin decir de qué plantel
+    hablaba, lo que en vivo obliga a teclear una clave de memoria delante del evaluador.
+
+    Compacta a propósito. La instrucción de Edgar fue explícita: *"si la ficha se come esa
+    historia, la ficha se recorta, no la historia"* — el diferenciador es ML-01 + ML-02, y
+    la ficha existe para dar contexto, no para desplazarlos fuera de pantalla.
+    """
+    st.subheader(ficha.nombre)
+    st.caption(
+        f"`{ficha.cct}` · {ficha.nivel} · {nombre_municipio}, {ficha.nombre_entidad} · "
+        f"sostenimiento {ficha.sostenimiento}"
+    )
+
+    izq, centro, der = st.columns(3)
+    izq.metric("Matrícula", f"{ficha.matricula_total:,}".replace(",", " "))
+    centro.metric(
+        "Completitud de drivers",
+        f"{ficha.indice_completitud_drivers:.0%}",
+        delta=f"{ficha.drivers_observados} de 6 observados",
+        delta_color="off",
+    )
+    der.metric("Ciclo de la predicción", pred.id_ciclo)
+
+    # `EscuelaDetalleOut` no trae `id_ciclo`: la ficha resuelve el ciclo más reciente de
+    # `gold.fact_escuela_ciclo` y la predicción puede venir de otro. Si divergen, la
+    # matrícula de arriba y el riesgo de abajo serían de ciclos distintos — se dice, en vez
+    # de pintar los dos números juntos como si fueran del mismo corte.
+    if not ficha.tiene_prediccion:
+        st.warning(
+            "El catálogo no registra predicción para este plantel en su ciclo más reciente, "
+            f"pero ML-01 sí devolvió una para **{pred.id_ciclo}**. Los datos de arriba y el "
+            "índice de abajo **pueden ser de ciclos distintos**."
+        )
 
 
 def _render_ml01(pred: Prediccion) -> None:
@@ -118,6 +246,10 @@ def render() -> None:
     if user is None:
         st.info("Puedes consultar predicciones sin iniciar sesión: la lectura es pública.")
 
+    token = token_de_acceso()
+    cct_elegido = _buscador(token)
+    st.divider()
+
     with st.form("form_prediccion"):
         cct = st.text_input(
             "CCT de la escuela",
@@ -132,8 +264,14 @@ def render() -> None:
     if not enviado:
         return
 
+    # El campo manual gana sobre la busqueda: quien ya sabe la clave la teclea. La cascada
+    # no sustituye al formulario, lo alimenta.
+    cct = cct or (cct_elegido or "")
+
     if len(cct) != 10:
-        st.error("El CCT debe tener exactamente 10 caracteres.")
+        st.error(
+            "Elige un plantel en la búsqueda de arriba o teclea un CCT de 10 caracteres."
+        )
         return
 
     try:
@@ -158,7 +296,24 @@ def render() -> None:
         st.error(str(exc))
         return
 
-    st.success(f"Predicción de **{pred.cct}** · ciclo **{pred.id_ciclo}**")
+    # La ficha va ANTES del indice: el P0 es justamente que el panel diga de que escuela
+    # habla. Si el catalogo falla, se sigue mostrando la prediccion -- degradar la ficha es
+    # aceptable, perder el diferenciador no.
+    try:
+        ficha = obtener_ficha(API_BASE_URL, cct, access_token=token)
+        nombre_municipio = _municipios(API_BASE_URL, ficha.cve_ent, token).get(
+            ficha.cve_mun, ficha.cve_mun
+        )
+        _render_ficha(ficha, nombre_municipio, pred)
+        st.divider()
+    except RecursoNoEncontrado:
+        st.caption(
+            f"`{cct}` tiene predicción pero no aparece en el catálogo de escuelas del ciclo "
+            "vigente. Se muestra la inferencia sin la ficha."
+        )
+    except (ConnectionError, ValueError) as exc:
+        st.caption(f"No se pudo cargar la ficha del plantel: {exc}")
+
     _render_ml01(pred)
     st.divider()
     _render_ml02(pred)
