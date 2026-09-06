@@ -66,19 +66,20 @@ El plan y prompt de ejecución están en
 
 El dump post-BUG-048 se restauró en `faro_gold_bug048_review_20260905_02` y el punto de entrada
 `src.modelos.ejecutar_cierre_ml03` validó 136,046 filas, 46,547 escuelas, 3 ciclos y cero
-duplicados por `cct × id_ciclo`. Con la política vigente `casos_completos`, la corrida quedó
+duplicados por `cct × id_ciclo`. Esa corrida se hizo antes de ratificar el vector operativo y quedó
 `bloqueada`: D5 (`d5_agua`) está en `SIN_DATO` para el 100% de las observaciones y D6 (`d6_aire`)
 para el 98.70%.
 
 No se entrenó KMeans, no se seleccionó `k`, no se calculó Silhouette y no se registró MLflow. Esta
 salida es evidencia de cobertura y del bloqueo de la política, no una métrica negativa del modelo.
-Para continuar se requiere que Andrés y Edgar ratifiquen una política de ausencia; cualquier
-imputación o cambio de vector debe quedar documentado antes de repetir el entrenamiento.
+Tras la ratificación de C3, esta evidencia debe repetirse con D1-D4 + completitud; cualquier
+imputación futura o reincorporación de D5/D6 al vector requeriría nueva evidencia de cobertura.
 
 El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla real desde
 `DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y sólo registra en MLflow cuando
-se indica `--tracking-uri`. Si D5 u otro driver está totalmente ausente, `casos_completos` puede
-dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un modelo.
+se indica `--tracking-uri`. Si un driver operativo queda totalmente ausente, `casos_completos`
+puede dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un
+modelo.
 
 La ejecución real sigue pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
 base Gold configurada. Esto no cambia el estado ni reemplaza la ratificación humana de la política.
