@@ -512,6 +512,12 @@ Luis Téllez lo marcó el 2026-09-04 como **H1** al liberar la URL pública: *"o
 que ajustar umbral o narrativa antes de la demo"*. Afecta `KPI-04` (DB-04) y `KPI-17`
 (DB-03), que son de esta historia.
 
+> **Actualización (2026-09-05):** ese "0.401" es la cifra histórica del 2026-09-02 (Gold
+> pre-BUG-045, con D1 vacío). La medición vigente sobre el **universo completo de
+> producción** —tras cerrar BUG-048— está en **§8.quinquies.3.ter**: máximo real
+> **0.5717**, `escuelas_en_riesgo` = **0**, con Gold ya refrescado (completitud
+> 0.197 → 0.619). La cifra cambió tres veces; el resultado visible (cero) nunca cruzó 0.6.
+
 ### 8.quinquies.2 No es un defecto: el cero es correcto
 
 `src/modelos/riesgo.py` (C3) define el `indice_riesgo` como una sigmoide fijada por **dos
@@ -624,6 +630,66 @@ Qué cambia en la práctica: nada de la recomendación, y **mejora el argumento*
 que decir *"nadie cruza el umbral, confíen en que está bien calibrado"*; ahora se puede
 mostrar un caso donde **sí dispara, a −7.60 %**. Eso responde por adelantado la pregunta
 obvia de cualquiera que vea un KPI en cero: *"¿y cómo sé que no está roto?"*
+
+### 8.quinquies.3.ter ACTUALIZACIÓN (2026-09-05) — universo completo de producción, BUG-048 cerrado
+
+> **Cierra la pregunta que este apartado dejó abierta, sin mover DEC-006.** El
+> §8.quinquies.3.bis y su tabla concluyen que *"no sabemos qué dará `escuelas_en_riesgo` en
+> producción después del refresco… puede seguir en cero o no"* y marcan *"el conteo real del
+> país: No, hasta que se refresque Gold (BUG-048 / BLOCK-005)"*. **Ese refresco ya ocurrió:
+> BUG-048 quedó cerrado el 2026-09-05** (dump `final2` importado a Cloud SQL, Célula 5).
+> Medido en vivo contra producción, aquí está la respuesta.
+
+Medición read-only contra el `gold` de **producción** (universo completo, ciclo 2024-2025), no
+sobre una muestra ni sobre fixtures sintéticos:
+
+- **`indice_completitud_drivers`: 0.197 → 0.619** (×3). Ya no es el Gold empobrecido con D1
+  vacío que volvía "no confiable" el cero; es el Gold refrescado que el .3.bis esperaba.
+
+**Distribución real del universo (45 276 escuelas con predicción):**
+
+| Estadístico | `indice_riesgo` |
+|---|---|
+| Mínimo | 0.0292 |
+| Promedio | 0.3510 |
+| Mediana | 0.3533 |
+| p90 | 0.4425 |
+| p95 | 0.4526 |
+| **Máximo** | **0.5717** |
+
+**Conteo por umbral (universo 45 276):**
+
+| Umbral `indice_riesgo ≥` | Escuelas | % del universo |
+|---|---|---|
+| **0.60** (DEC-006 vigente) | **0** | **0 %** |
+| 0.50 | 7 | 0.015 % |
+| 0.40 | 11 775 | 26.0 % |
+| 0.35 | 24 951 | 55.1 % |
+
+**La respuesta: sigue en cero, y ahora el cero sí es confiable.** El máximo real del universo
+(**0.5717**, que proyecta perder ≈ 4.5 %) no alcanza 0.60 (perder ≥ 5 %), así que
+`escuelas_en_riesgo = 0` — pero a diferencia del cero pre-refresco, éste sale del Gold completo
+(completitud 0.619), no del contaminado. La fila *"el conteo de producción es el número real
+del país"* de la tabla anterior ya se lee **Sí — Gold refrescado el 2026-09-05**.
+
+**No contradice el §8.quinquies.3.bis; lo completa.** Aquél probó, con **fixtures sintéticos**
+(145 escuelas, 12 municipios CONEVAL deterministas), que **la sigmoide dispara cuando debe**
+(0.7423 → −7.60 %) — sigue siendo el argumento de calibración, intacto. Este apartado mide el
+**universo real** de las 4 entidades: ahí la escuela de mayor riesgo llega a 0.5717. Que los
+fixtures alcancen 0.7423 y el universo real 0.5717 no se contradice —son poblaciones distintas
+(sintética de prueba vs. real), como el propio .3.bis advierte—. También explica por qué la
+muestra de 55 de §8.quinquies.3 daba 9.1 % ≥ 0.50 y el universo da 0.015 %: aquella muestra
+sobre-representaba la cola alta (p95 = 0.515 contra 0.4526 del universo).
+
+**Nada de la recomendación de §8.quinquies.4 cambia.** No se mueve DEC-006: el cero es
+verdadero y ahora además confiable. El diferenciador sigue siendo **ordenar, no contar** —el
+ranking por driver dominante— que ya funciona sobre este mismo universo (317 municipios,
+45 276 predicciones, diferenciador vivo en producción).
+
+*Fuente:* medición read-only server-side contra Cloud SQL `faro-postgres` (Célula 5),
+2026-09-05; trazada en el DevLog de este parche y en BUG-048 (`closed`, PR #251). Célula 5
+aporta la cifra del universo que Célula 2 no podía calcular con su muestra de 55; **la decisión
+sobre DEC-006 sigue siendo de Célula 2**.
 
 ### 8.quinquies.4 Recomendación de Célula 2
 
