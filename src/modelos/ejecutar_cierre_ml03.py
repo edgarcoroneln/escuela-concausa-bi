@@ -71,6 +71,20 @@ def _resumen_ml03(df: pd.DataFrame) -> tuple[dict[str, Any], Any | None]:
     )
 
 
+def _registro_mlflow_confirmado(
+    tracking_uri: str | None, confirmar_registro: bool
+) -> bool:
+    """Evita registrar una corrida antes de revisar su evidencia agregada."""
+    if tracking_uri and not confirmar_registro:
+        raise ValueError(
+            "--tracking-uri requiere --confirmar-registro; primero revisa k, "
+            "Silhouette y perfiles agregados."
+        )
+    if confirmar_registro and not tracking_uri:
+        raise ValueError("--confirmar-registro requiere --tracking-uri.")
+    return bool(tracking_uri)
+
+
 def generar_evidencia(df: pd.DataFrame) -> tuple[dict[str, Any], Any | None]:
     """Genera evidencia agregada sin incluir llaves de escuelas individuales."""
     eda = resumen_eda(df)
@@ -123,15 +137,26 @@ def main() -> int:
         "--tracking-uri",
         help="registra la corrida sólo si ML-03 se ejecutó y esta opción fue indicada",
     )
+    parser.add_argument(
+        "--confirmar-registro",
+        action="store_true",
+        help="confirma que la evidencia agregada de la corrida fue revisada antes de MLflow",
+    )
     args = parser.parse_args()
     if not args.url:
         parser.error("define DATABASE_URL o usa --url para leer gold.features_escuela")
+    try:
+        registrar_mlflow = _registro_mlflow_confirmado(
+            args.tracking_uri, args.confirmar_registro
+        )
+    except ValueError as error:
+        parser.error(str(error))
 
     engine = create_engine(args.url)
     features = cargar_features_desde_gold(engine, esquema=args.esquema)
     evidencia, resultado = generar_evidencia(features)
 
-    if args.tracking_uri:
+    if registrar_mlflow:
         if resultado is None:
             evidencia["mlflow"] = {
                 "estado": "no_registrado",

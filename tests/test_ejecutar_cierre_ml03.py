@@ -3,8 +3,24 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
-from src.modelos.ejecutar_cierre_ml03 import generar_evidencia
+from src.modelos.ejecutar_cierre_ml03 import (
+    _registro_mlflow_confirmado,
+    generar_evidencia,
+)
+
+
+def test_registro_mlflow_requiere_confirmacion_explicita() -> None:
+    with pytest.raises(ValueError, match="--confirmar-registro"):
+        _registro_mlflow_confirmado("http://127.0.0.1:5001", False)
+
+    assert _registro_mlflow_confirmado("http://127.0.0.1:5001", True)
+
+
+def test_confirmacion_sin_tracking_uri_es_invalida() -> None:
+    with pytest.raises(ValueError, match="--tracking-uri"):
+        _registro_mlflow_confirmado(None, True)
 
 
 def test_evidencia_no_expone_cct_y_conserva_agregados(features: pd.DataFrame) -> None:

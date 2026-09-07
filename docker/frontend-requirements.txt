@@ -1,0 +1,14 @@
+# FARO Web (frontend Streamlit) — dependencias del contenedor · US-526
+# Owner: Luis Téllez Domínguez (Célula 5 · Cloud & DevOps)
+#
+# El shell (src/frontend/, propiedad de la Célula 2) solo importa streamlit + httpx;
+# el resto de sus imports son librería estándar. Se conserva la MISMA versión de
+# streamlit que requirements.txt raíz (1.62.0, la que Christian Ruiz validó en las
+# pruebas de frontend) para que el contenedor sea consistente con lo que valida el CI.
+# httpx se fija a 0.28.1, igual que en requirements/celula-*.txt (determinista).
+#
+# Se mantiene aparte del requirements.txt raíz a propósito: ese arrastra pandas,
+# fastapi, great-expectations, sqlalchemy… — todo innecesario para un contenedor que
+# solo sirve Streamlit. Aquí van únicamente las 2 dependencias reales del shell.
+streamlit==1.62.0
+httpx==0.28.1
