@@ -17,6 +17,10 @@ tags: [ml, celula-3, ml-01, contrato]
 > listaba ya están cerradas por hechos, no por opinión: `DEC-006` ratificó el umbral de −5 % el
 > 13-ago, y `ADR-007` ratificó el 29-ago que el target se expresa en **fracción**, que es la unidad
 > sobre la que esta sigmoide está calibrada.
+>
+> **Desde `DEC-019` (6-sep) este documento define el ancla, no el corte de los tableros.** Eran el
+> mismo número —`0.60`— haciendo dos trabajos; ahora la **línea de alerta** es `0.50` y vive en la
+> capa de consulta. Ver §4.4.
 > → [[vault/15_ML_Models/_index]] · [[vault/15_ML_Models/ML_Strategy]] · [[vault/03_Architecture/Data_Model]]
 
 ## 1. El hueco que cierra
@@ -124,6 +128,38 @@ Implementado en `src/modelos/publicar_gold.py` y documentado en `Data_Model` §4
 > La línea 181 (§4.5) describe correctamente las dos columnas, pero la nota de la **línea 313** dice
 > que `indice_riesgo` vive *"en la columna `valor`"*. Quien lea §5.3 consultaría `valor` esperando un
 > `[0,1]` y recibiría la variación cruda. Es archivo de Célula 1; reportado, no corregido aquí.
+
+### 4.4 Cerrado — el ancla y la línea de alerta se separan (`DEC-019`, 6-sep)
+
+Hasta el 6 de septiembre **`0.60` hacía dos trabajos distintos**, y este documento los trataba como
+uno solo: era el ancla que calibra la sigmoide (`−0.05 ↦ 0.60`, §4.2) **y** el corte con el que los
+tableros contaban escuelas en riesgo. `DEC-019` los separó:
+
+| | Valor | Qué es | Quién lo define |
+|---|---|---|---|
+| **Ancla de la sigmoide** | `0.60` | calibración: `DEC-006`, "pierde 5 % de su matrícula" | este documento · `src/modelos/riesgo.py::ANCLA_SIGMOIDE` |
+| **Línea de alerta** | `0.50` | corte de negocio para *contar* escuelas en riesgo | `DEC-019` · `src/api/repositorio_gold.py::LINEA_DE_ALERTA` (C4) |
+
+**El ancla no se mueve.** `DEC-019` cambia el criterio de alerta, no la calibración: no se
+recalibra, no se re-entrena y no cambia un solo `indice_riesgo` publicado.
+
+**El `0.50` sale de la aritmética de este documento.** §4.1 ya decía que *"un riesgo de `0.50`
+equivale a perder **3.4 %** de la matrícula"*, y ése es exactamente el argumento con el que `DEC-019`
+lo eligió: 3.4 % queda **justo por debajo** del 3.7 % de deserción real en secundaria, así que la
+alerta enciende antes de que la escuela alcance la norma nacional. Reverificado al aplicar este
+cambio: `variacion_equivalente(0.50) = −0.03382`.
+
+**Por qué la línea de alerta no se define aquí ni en `riesgo.py`.** `RISK-010` está abierto porque
+`0.50` ya está escrito **dos veces** —C4 y C2— sin una prueba que las ate. Añadir una tercera
+definición en la capa de modelos agravaría justo lo que ese riesgo señala. La fuente única (una
+`var` de dbt para la capa de datos y una constante importada para Python) es trabajo **post-freeze**.
+
+> [!question] Abierto — ¿`prioridad` debe seguir la línea de alerta?
+> `publicar_gold.py::prioridad_de_riesgo()` marca `ALTA` a partir del **ancla** (`0.60`), no de la
+> línea (`0.50`). Se dejó **sin cambiar a propósito**: moverla reescribiría la columna `prioridad`
+> de las 45,276 filas ya publicadas en `gold.recomendaciones`, y `DEC-019` dice explícitamente que
+> no cambia un solo valor publicado. Es un juicio de negocio para el **PO** y el **TL de C3**, no
+> una decisión de implementación, y menos en día de freeze.
 
 ## 5. Pruebas
 
