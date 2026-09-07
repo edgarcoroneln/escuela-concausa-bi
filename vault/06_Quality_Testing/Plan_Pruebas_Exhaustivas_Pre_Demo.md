@@ -77,16 +77,30 @@ se puede: se encuentran más cosas mirando código ajeno.
 > **Actualizado el 2026-09-07.** La primera versión repartía cinco superficies y dejaba fuera **el
 > chat del agente y el Panel de ML** — que son, respectivamente, el minuto 6:30 y el minuto 3:00–5:00
 > del guion, y 0.5 y 1.5 puntos de rúbrica. Se agregan con dueño.
+>
+> **Replanteo del mismo día, tras revisar qué se probó de verdad.** Dos superficies ya tienen
+> evidencia y no se vuelven a recorrer desde cero:
+>
+> - **El chat ya está diagnosticado** — por el recorrido del PO, que es de donde salió el error
+>   *«La sesión no es válida o expiró»*. **No hay que confirmarlo otra vez.** Andrés pasa de *probar*
+>   a *arreglar y endurecer* en su ambiente.
+> - **La disponibilidad del Panel de ML y el logout ya están verificados en producción** por Luis
+>   Téllez (PR #280, gate e2e): el panel ya no da 503 con CCT en riesgo y sanos, y «Cerrar sesión»
+>   aparece y funciona en las tres páginas internas. Eso cubre **que responda**, no **qué responde**.
+>
+> Con eso, Estefany suelta el recorrido de disponibilidad, Karla suelta la verificación del logout, y
+> la capacidad liberada se reasigna: **DB-03 Ficha de escuela pasa de Monserrat a Estefany**, porque
+> es el tablero del minuto 3:00–5:00 y Monserrat tenía los diez sola.
 
 | Persona | Célula | Superficie | Por qué esta persona |
 |---|---|---|---|
 | **Eloisa González Rubio** | C4 | **API completa**: todas las rutas, estados de auth, contrato contra Swagger | Su rol es pruebas de API |
-| **Karla Monter Benitez** | C4 | **Flujos de sesión**: login Google, refresco de token, logout, RBAC 200/401/403 | Construyó endpoints y RBAC: sabe qué debe romperse |
-| **Monserrat Miranda** | C2 | **Los 10 tableros**: carga, datos, tabs, filtros cruzados, enlaces de drill-down | Es la dueña del modelado semántico |
+| **Karla Monter Benitez** | C4 | **Flujos de sesión**: login Google, **refresco de token a los 16 min**, RBAC 200/401/403. *(El logout ya lo verificó Luis en el PR #280 — no lo repitas.)* | Construyó endpoints y RBAC: sabe qué debe romperse |
+| **Monserrat Miranda** | C2 | **Nueve tableros**: carga, datos, tabs, filtros cruzados, enlaces de drill-down. *(DB-03 pasa a Estefany.)* | Es la dueña del modelado semántico |
 | **Oscar Quiroz** | C2 | **Corrección visual**: gráficos, mapas, tarjetas vacías, valores de KPI, contraste | Su rol es gráficos, mapas y KPIs |
 | **Diana Alvarez** | C1 | **Coherencia del dato de punta a punta**: que el mismo número diga lo mismo en API, tablero y panel | Es quien conoce Gold |
-| **Andrés González Habib** | C3 | **El chat del agente en producción** — `/Chat`. Prioridad máxima: hoy **no funciona bien** | Es su historia (`US-305`) **y su minuto 6:30 en la demo**: aquí la regla de "prueba lo que no construiste" cede, porque el guion exige que él mismo lo corra contra producción ese día |
-| **Estefany Hernández Loredo** | C3 | **El Panel de ML** — `/Panel_ML`. Con foco en **por qué ML-03 sale `SIN_DATO`** | No lo construyó (es de C2), y el hallazgo que hay que perseguir es de su historia `US-321` |
+| **Andrés González Habib** | C3 | **El chat del agente** — `/Chat`. **Ya está diagnosticado: pasa de probar a arreglar.** Endurecerlo en su ambiente y volver a verificarlo en producción | Es su historia (`US-305`) **y su minuto 6:30 en la demo**: aquí la regla de "prueba lo que no construiste" cede, porque el guion exige que él mismo lo corra contra producción ese día |
+| **Estefany Hernández Loredo** | C3 | **Contenido del Panel de ML** (ficha, búsqueda, valores de ML-01/ML-02) + **por qué ML-03 sale `SIN_DATO`** + **DB-03 Ficha de escuela** | No los construyó, el hallazgo de ML-03 es de su `US-321`, y DB-03 es la otra cara del mismo dato en el minuto del diferenciador |
 
 ## Qué prueba cada quien
 
@@ -147,11 +161,15 @@ Es la prueba más valiosa del plan y la única que nadie más puede hacer.
 - **Total de matrícula** por entidad: API contra tablero.
 - El **par de demostración** que elija C2: que responda en producción con los valores del guion.
 
-### Andrés — el chat del agente, y es la prioridad de hoy
+### Andrés — el chat del agente: ya no es probarlo, es arreglarlo
 
-**Entramos sabiendo que no funciona.** En el recorrido del PO, el chat en producción respondió
-*«No se pudo consultar el agente: La sesión no es válida o expiró; inicia sesión nuevamente»* a un
-`hola`. No hay que confirmarlo: hay que **explicarlo y cerrarlo**.
+**La superficie ya está diagnosticada y el diagnóstico es del PO.** En su recorrido, el chat en
+producción respondió *«No se pudo consultar el agente: La sesión no es válida o expiró; inicia sesión
+nuevamente»* a un `hola`. **Esa prueba ya está hecha y no se repite.** Lo que sigue es explicarlo,
+cerrarlo y endurecerlo — trabajo de ambiente propio, no de recorrido.
+
+**Tu bitácora de QA no documenta un recorrido: documenta el cierre.** Por cada una de las cuatro
+hipótesis de abajo, escribe cuál descartaste, con qué evidencia, y qué cambiaste si algo cambió.
 
 Sospecha principal y por dónde empezar: la página se abrió en **pestaña propia**, y por el punto 2 de
 arriba eso significa sesión nueva sin token → la API responde **401** y el cliente lo traduce a ese
@@ -178,9 +196,18 @@ vivo, ese minuto se cae.
 
 ### Estefany — el Panel de ML, y la pregunta de ML-03
 
+**Que el panel responda ya está verificado** — Luis lo confirmó en producción en el PR #280 con CCT
+en riesgo y sanos, después de arreglar el 503. **No repitas eso.** Lo tuyo es **qué** responde, no
+**si** responde.
+
 Recorre `/Panel_ML` con los CCT del par de demostración —`15DPR0920D` y `15DPR2254O`— y con los dos
 ejemplos de la página. Que la ficha diga **de qué escuela habla** antes del índice, que la búsqueda
-por filtros llegue al CCT sin teclearlo, y que ML-01 y ML-02 den números.
+por filtros llegue al CCT sin teclearlo, y que ML-01 y ML-02 den números **que cuadren con el
+tablero**: los dos CCT del par deben dar `0.4774` idéntico y driver distinto (D4 contra D2).
+
+**Y te sumo DB-03 «Ficha de escuela»**, que salía de la carga de Monserrat. Es la otra cara del mismo
+dato: el panel y el tablero deben decir lo mismo de la misma escuela. Si divergen, ése es el hallazgo
+más caro del día, porque es el minuto 3:00–5:00 del guion.
 
 **Y luego lo que de verdad te toca:** el panel imprime
 
@@ -273,12 +300,12 @@ streamlit run src/frontend/app.py
 | Persona | Añade a tu prompt |
 |---|---|
 | **Eloisa** | *"Levanta sólo `db` y `api`. Cuando estén sanas, abre `http://localhost:8000/api/v1/docs` y hazme un inventario de todas las rutas con su método y sus códigos documentados, para contrastarlo contra producción."* |
-| **Karla** | *"Levanta `db` y `api`. Confírmame el valor de `AUTH_LECTURA_PUBLICA` en mi `.env` y recuérdame que producción corre en `false`. Muéstrame `src/frontend/auth.py::token_de_acceso()` y explícame en qué momento exacto dispara el refresco."* |
-| **Monserrat** | *"Levanta `db`, `api` y `superset`. NO ejecutes `superset/sync_semantic_layer.py` bajo ninguna circunstancia — está congelado hasta después del 9-sep. Sólo abre Superset en `http://localhost:8088` y déjalo listo."* |
+| **Karla** | *"Levanta `db` y `api`. Confírmame el valor de `AUTH_LECTURA_PUBLICA` en mi `.env` y recuérdame que producción corre en `false`. Muéstrame `src/frontend/auth.py::token_de_acceso()` y y `_refrescar()`, y explícame en qué momento exacto dispara el refresco y qué pasa si la API rechaza el refresh token. El logout ya está verificado en producción por Luis (PR #280): no lo revises."* |
+| **Monserrat** | *"Levanta `db`, `api` y `superset`. NO ejecutes `superset/sync_semantic_layer.py` bajo ninguna circunstancia — está congelado hasta después del 9-sep. Sólo abre Superset en `http://localhost:8088` y déjalo listo. Mi alcance son **nueve** tableros: DB-03 lo cubre Estefany."* |
 | **Oscar** | *"Levanta `db`, `api` y `superset`. NO ejecutes `superset/sync_semantic_layer.py`, está congelado. Además, léeme los `alto:` y `ancho:` de `superset/dashboards/db01_ejecutivo.yaml` para contrastarlos con lo que veo en pantalla."* |
 | **Diana** | *"Levanta `db` y `api`. Conéctate a Postgres local y dime cuántas filas hay en `gold.predicciones`, `gold.recomendaciones` y `gold.features_escuela`, y cuál es el `max(indice_riesgo)`. Quiero contrastarlo contra producción."* |
-| **Andrés** | *"Levanta `db`, `api` y `chromadb`. Necesito el stack del agente completo: confírmame que `limits`, `slowapi`, `chromadb` y `sentence_transformers` quedaron instalados, porque en mi entorno anterior no colectaban `tests/test_agente_endpoint.py` ni `tests/test_agente_wiring_llm.py`. Corre esos dos archivos y enséñame la salida. Después dime si `src/api/app.py` cablea el LLM en mi `.env` local o si degrada por falta de configuración — es exactamente lo que tengo que distinguir en producción."* |
-| **Estefany** | *"Levanta `db` y `api`. Luego traza para mí, leyendo el código y sin cambiar nada: (1) qué escribe `src/modelos/entrenar_ml03.py` y dónde lo deja; (2) por qué `src/modelos/publicar_gold.py` no tiene ninguna referencia a `cluster`; (3) por qué `src/api/repositorio_modelos.py:115` asigna `datos[\"cluster\"] = None` en vez de consultar una columna. Quiero saber cuál de los dos cables falta primero y cuánto costaría cada uno. NO modifiques nada: sólo el diagnóstico."* |
+| **Andrés** | *"Levanta `db`, `api` y `chromadb`. Necesito el stack del agente completo: confírmame que `limits`, `slowapi`, `chromadb` y `sentence_transformers` quedaron instalados, porque en mi entorno anterior no colectaban `tests/test_agente_endpoint.py` ni `tests/test_agente_wiring_llm.py`. Corre esos dos archivos y enséñame la salida. Después dime si `src/api/app.py` cablea el LLM en mi `.env` local o si degrada por falta de configuración — es exactamente lo que tengo que distinguir en producción, así que **enséñame cómo se ve la respuesta en cada uno de los dos casos**. Por último, corre las cinco preguntas de `PREGUNTAS_SUGERIDAS` de `src/frontend/pages/3_Chat.py` contra mi agente local, incluida la destructiva, y enséñame el texto **literal** de cada respuesta."* |
+| **Estefany** | *"Levanta `db` y `api`. Luego traza para mí, leyendo el código y sin cambiar nada: (1) qué escribe `src/modelos/entrenar_ml03.py` y dónde lo deja; (2) por qué `src/modelos/publicar_gold.py` no tiene ninguna referencia a `cluster`; (3) por qué `src/api/repositorio_modelos.py:115` asigna `datos[\"cluster\"] = None` en vez de consultar una columna. Quiero saber cuál de los dos cables falta primero y cuánto costaría cada uno. NO modifiques nada: sólo el diagnóstico. Además, muéstrame de dónde saca DB-03 su ficha de escuela (`superset/semantic/db03_cubo_escuela_360.sql`) y contra qué endpoint la arma el Panel de ML, para comparar si dicen lo mismo de la misma escuela."* |
 
 ## Cómo probar: Playwright
 
