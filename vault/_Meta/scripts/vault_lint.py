@@ -178,6 +178,28 @@ def main(root="."):
         print("   Tu editor guardó texto UTF-8 como si fuera cp1252 (Windows).")
         print("   Recupera el archivo con `git checkout origin/main -- <ruta>` y vuelve a")
         print("   editarlo con el editor en UTF-8. Ver vault/_Meta/Vault_Rules.md.")
+    # Los artefactos GENERADOS del tablero no son .md, así que el barrido de arriba no los
+    # miraba. El 2026-09-06 volví a commitear marcadores exactamente ahí -- un `git add -A`
+    # sobre el merge de `main`, con el conflicto en `TABLERO_CONTROL_PM.html` y
+    # `pm-dashboard.json` -- y el linter dijo "Vault limpio". Una guarda que sólo cubre la
+    # extensión donde ya falló una vez no sirve: el barrido va sobre todo el vault.
+    for dirpath, dirs, files in os.walk(os.path.join(root, "vault")):
+        dirs[:] = [d for d in dirs if not d.startswith(".")]
+        if any(d in _norm(dirpath) for d in EXCLUDED_DIRS):
+            continue
+        for f in files:
+            if f.endswith(".md") or f.startswith("."):
+                continue
+            ruta = os.path.join(dirpath, f)
+            try:
+                with open(ruta, encoding="utf-8", errors="strict") as fh:
+                    contenido = fh.read()
+            except (UnicodeDecodeError, OSError):
+                continue  # binario o ilegible: no aplica
+            for n, linea in enumerate(contenido.splitlines(), start=1):
+                if linea.startswith(("<<<<<<< ", ">>>>>>> ")) or linea.rstrip() == "=======":
+                    conflictos.append((ruta, n, linea.strip()[:70]))
+
     if conflictos:
         problems += len(conflictos)
         archivos = sorted({p for p, _, _ in conflictos})
