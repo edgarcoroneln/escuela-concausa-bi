@@ -52,9 +52,11 @@ cerrar la limitación conocida todavía se debe reconstruir Gold y ejecutar este
 
 ## Evidencia real — 2026-09-05
 
-Se restauró el dump local `gold_bug048_final2_2026-09-05.sql` en la base aislada
-`faro_gold_bug048_review_20260905_02`. El archivo no se versiona. Su SHA-256 es
-`B8A3FC50A636A2943EB0BC25CBE495ED49914429A76838346E7EBCF6AAA5B32A`.
+La fuente canónica de evidencia es el dump local `gold_bug048_final1_2026-09-05 1.sql`,
+restaurado en la base aislada `faro_gold_bug048_final1_review_20260905`. El archivo no se
+versiona; su SHA-256 es `07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`.
+El dump `final2` se usó sólo como comparación independiente y produjo los mismos agregados; no se
+mezclan observaciones ni conclusiones entre cortes.
 
 El ejecutor produjo únicamente agregados: 136,046 observaciones, 46,547 escuelas, 3 ciclos
 (`2022-2023` a `2024-2025`) y cero duplicados en `cct × id_ciclo`. `cve_mun` estuvo disponible
@@ -78,8 +80,8 @@ estadística sobre este corte; no se imputó ni se convirtió `SIN_DATO` en cero
 
 `python -m src.modelos.ejecutar_cierre_ml03` lee `gold.features_escuela` desde `DATABASE_URL` y
 emite EDA y correlaciones agregadas sin incluir CCT individuales ni mezclar el target con el vector
-de clustering. La ejecución real quedó verificada sobre dos dumps Gold equivalentes (`final1` y
-`final2`) en bases locales aisladas; ambos produjeron las mismas cifras agregadas.
+de clustering. La ejecución real usa `final1` como fuente canónica; `final2` sólo confirma por
+comparación independiente las mismas cifras agregadas.
 
 ## Efecto de D5 y D6 en US-322
 

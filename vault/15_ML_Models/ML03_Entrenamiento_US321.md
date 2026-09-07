@@ -64,7 +64,10 @@ El plan y prompt de ejecución están en
 
 ## Corrida sobre Gold local — 2026-09-05
 
-El dump post-BUG-048 se restauró en `faro_gold_bug048_review_20260905_02` y el punto de entrada
+La fuente canónica es `gold_bug048_final1_2026-09-05 1.sql` (SHA-256
+`07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`), restaurado en
+`faro_gold_bug048_final1_review_20260905`. `final2` se comparó de forma independiente y produjo los
+mismos agregados; no se mezclan cortes. El punto de entrada
 `src.modelos.ejecutar_cierre_ml03` validó 136,046 filas, 46,547 escuelas, 3 ciclos y cero
 duplicados por `cct × id_ciclo`. Esa corrida se hizo antes de ratificar el vector operativo y quedó
 `bloqueada`: D5 (`d5_agua`) está en `SIN_DATO` para el 100% de las observaciones y D6 (`d6_aire`)
@@ -76,10 +79,25 @@ Tras la ratificación de C3, esta evidencia debe repetirse con D1-D4 + completit
 imputación futura o reincorporación de D5/D6 al vector requeriría nueva evidencia de cobertura.
 
 El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla real desde
-`DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y sólo registra en MLflow cuando
-se indica `--tracking-uri`. Si un driver operativo queda totalmente ausente, `casos_completos`
-puede dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un
-modelo.
+`DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y exige dos fases para MLflow:
+primero se genera y revisa la evidencia agregada; después, y sólo tras esa revisión, se indica
+`--tracking-uri --confirmar-registro`. Si un driver operativo queda totalmente ausente,
+`casos_completos` puede dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias
+ni registra un modelo.
 
-La ejecución real sigue pendiente porque el ambiente usado el 4-sep-2026 no tenía Docker ni una
-base Gold configurada. Esto no cambia el estado ni reemplaza la ratificación humana de la política.
+La secuencia segura es:
+
+```powershell
+# Fase de evidencia: no registra ni promociona un modelo.
+& ./.venv/Scripts/python.exe -c "from dotenv import load_dotenv; load_dotenv('.env'); from src.modelos.ejecutar_cierre_ml03 import main; raise SystemExit(main())" --salida $env:TEMP/ml03-evidencia.json
+
+# Sólo tras revisión técnica: registra una corrida ya validada y devuelve su run_id.
+& ./.venv/Scripts/python.exe -c "from dotenv import load_dotenv; load_dotenv('.env'); from src.modelos.ejecutar_cierre_ml03 import main; raise SystemExit(main())" --tracking-uri http://127.0.0.1:5001 --confirmar-registro --salida $env:TEMP/ml03-registro.json
+```
+
+Los JSON quedan fuera del repositorio y no contienen CCT individuales; se documentan únicamente sus
+agregados, checksum del dump, `run_id`, versión y commit.
+
+La primera ejecución del 4-sep no tuvo Docker ni Gold local; la evidencia de contrato y cobertura se
+obtuvo el 5-sep con el dump aislado. Sigue pendiente la ejecución de entrenamiento final, no la
+verificación de Gold; esto no reemplaza la ratificación humana de la política.
