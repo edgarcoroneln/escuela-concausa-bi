@@ -23,9 +23,17 @@ El código está en verde: **1064 pruebas unitarias pasando**. Eso no es lo que 
 Lo que califica es **la aplicación funcionando en la URL pública**, y eso nadie lo ha recorrido
 completo con un navegador.
 
-**La URL que se prueba, la única:**
+**Las URLs. Se prueba aquí, no en local.**
 
-> **https://faro-frontend-526490367142.us-central1.run.app/**
+| Qué | URL |
+|---|---|
+| **FARO Web** (portada) | https://faro-frontend-526490367142.us-central1.run.app/ |
+| Dashboards | …`/Dashboards` |
+| Panel de ML | …`/Panel_ML` |
+| Chat del agente | …`/Chat` |
+| **API** | https://faro-api-eanzfglvyq-uc.a.run.app |
+| Swagger de la API | …`/api/v1/docs` |
+| Salud de la API (única ruta sin token) | …`/api/v1/health` |
 
 **Regla que ordena todo el plan: se prueba contra producción, no contra local.** Si algo sólo
 funciona en local, para efectos de la demo no funciona.
@@ -116,6 +124,11 @@ se puede: se encuentran más cosas mirando código ajeno.
   `main`**. Si va por detrás, es hallazgo.
 - Tiempos de respuesta. Cualquier ruta que tarde más de 3 s en la demo es un riesgo.
 
+**Esto cubre casi entera tu `US-423`** (smoke de seguridad contra la URL desplegada: `/auth/login`
+302 con `state` firmado, `/auth/me` sin token 401, callback sin `state` 401, `/admin/*` con rol
+ciudadano 403). Si lo documentas bien en tu bitácora, **cierras historia y prueba en el mismo
+movimiento**.
+
 ### Karla — la sesión, que es lo que más caro sale si falla
 
 - **Login con Google de punta a punta** en producción, con al menos dos cuentas: una en
@@ -123,14 +136,20 @@ se puede: se encuentran más cosas mirando código ajeno.
 - **`BUG-059`, el caso de la demo**: iniciar sesión, **esperar más de 15 minutos**, y volver a usar
   la aplicación. El access token dura 15 min y el refresco es nuevo. **Este es el escenario real del
   miércoles.**
-- Cerrar sesión y confirmar que **no queda token vivo**: recargar y ver que pide login.
+- ~~Cerrar sesión y confirmar que no queda token vivo.~~ **Ya verificado por Luis Téllez en
+  producción (PR #280): «Cerrar sesión» aparece y funciona en las tres páginas internas. No lo
+  repitas.** Lo que sí queda: que tras cerrar sesión, **recargar pida login** y no muestre un error
+  crudo.
 - **403 en vivo con cuenta de ciudadano** sobre una ruta de analista. Es punto de rúbrica.
 - Qué pasa si se abre una página interna **sin haber pasado por el login**.
 
-### Monserrat — los 10 tableros
+### Monserrat — nueve tableros
 
-- Que **los 10 carguen** y que **ninguno salga vacío**. Un tablero vacío en la demo es peor que uno
-  ausente.
+> **DB-03 «Ficha de escuela» pasa a Estefany** (replanteo del 7-sep): es el tablero del minuto
+> 3:00–5:00 y es la otra cara del dato que ella ya mira en el Panel de ML. Tú tenías los diez sola.
+
+- Que **los nueve carguen** y que **ninguno salga vacío**. Un tablero vacío en la demo es peor que
+  uno ausente.
 - **DB-05**, que es el único con tabs: los 6 tabs, que agrupen en horizontal (`US-213`) y que la
   nota de fuente esté arriba.
 - **Filtros cruzados y drill-down**: los enlaces `link_db08`, que lleven al destino correcto y con
@@ -149,17 +168,35 @@ se puede: se encuentran más cosas mirando código ajeno.
   elemento que escriba FARO sí debe pasar 4.5:1**.
 - Ventana angosta (proyector) y ventana ancha. **Que nada desborde en horizontal.**
 
+**Dos que ya sabemos y no hace falta que reportes:** la tarjeta de prioridad ALTA de DB-09 en 0
+(`BUG-063`, con causa registrada) y el contraste del tema de fábrica (`DEC-016`, deuda medida y
+declarada).
+
+**Tu tarea de subir el `alto` de los tiles de DB-01 sigue CONGELADA.** Sólo surte efecto corriendo
+`sync_semantic_layer.py`, y el sync está prohibido hasta después del 9. Si ves el scroll interno en
+los KPIs, anótalo como hallazgo visual y lo dejamos declarado.
+
 ### Diana — que el mismo número diga lo mismo en todas partes
 
 Es la prueba más valiosa del plan y la única que nadie más puede hacer.
 
 - **`escuelas_en_riesgo`**: comparar `/api/v1/kpis`, el tablero DB-04 y el panel de ML **en el mismo
-  minuto**. Con `DEC-019` a medio mergear, es donde va a aparecer la inconsistencia.
+  minuto**. **Debe decir 7, no 0.** La cadena de `DEC-019` ya está completa en `main` —dbt con
+  `>= 0.5` en los cubos, API y frontend con `LINEA_DE_ALERTA = 0.50`, modelos con `ANCLA_SIGMOIDE`
+  separado—, así que lo que queda por verificar es si el **Gold desplegado** se rematerializó. Si el
+  tablero dice 0 y la API dice 7 sobre el mismo dato, **ése es el hallazgo**, con la hora exacta.
 - **`indice_completitud_drivers`**: debe rondar **0.62**. Si dice 0.197, el Gold desplegado es viejo.
 - **`SIN_DATO` nunca cuenta como 0**: verificar en al menos un driver con cobertura parcial (D3 o
   D4) y en uno completo (**D5 está 100 % en SIN_DATO**, es el caso extremo).
-- **Total de matrícula** por entidad: API contra tablero.
-- El **par de demostración** que elija C2: que responda en producción con los valores del guion.
+- **Total de matrícula** por entidad: API contra tablero. **El total del ciclo 2024-2025 debe dar
+  `6,704,229`** — es el número que muestra el KPI-01 y el que responde el chip del agente; si los
+  tres no coinciden, es hallazgo.
+- El **par de demostración**, ya elegido: `15DPR0920D` y `15DPR2254O`. Las dos deben dar
+  `indice_riesgo` **`0.4774` idéntico** con driver dominante **distinto** (D4 conectividad contra D2
+  inseguridad), y responder en producción con sesión iniciada.
+- **Los ceros sin explicación.** `escuelas_en_riesgo` y la prioridad `ALTA` ya tienen causa
+  estructural registrada (`BUG-058`, `BUG-063`); lo que busco es si hay **otros** ceros que nadie
+  haya explicado todavía.
 
 ### Andrés — el chat del agente: ya no es probarlo, es arreglarlo
 
@@ -391,6 +428,9 @@ identidad y llénala. Trae el frontmatter, las columnas y las tres reglas de có
 
 `vault/06_Quality_Testing/**` es **carpeta común**: cualquiera puede escribir su propio log sin
 tocar el de otro.
+
+> **Al 2026-09-07 la carpeta está vacía: nadie ha registrado una sola bitácora.** Lo que no queda
+> escrito no existe — ni para el evaluador, ni para quien tenga que arreglarlo mañana.
 
 ## Qué hacer con lo que se encuentre
 
