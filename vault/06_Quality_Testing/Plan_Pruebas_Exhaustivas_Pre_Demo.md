@@ -107,7 +107,7 @@ se puede: se encuentran más cosas mirando código ajeno.
 | **Monserrat Miranda** | C2 | **Nueve tableros**: carga, datos, tabs, filtros cruzados, enlaces de drill-down. *(DB-03 pasa a Estefany.)* | Es la dueña del modelado semántico |
 | **Oscar Quiroz** | C2 | **Corrección visual**: gráficos, mapas, tarjetas vacías, valores de KPI, contraste | Su rol es gráficos, mapas y KPIs |
 | **Diana Alvarez** | C1 | **Coherencia del dato de punta a punta**: que el mismo número diga lo mismo en API, tablero y panel | Es quien conoce Gold |
-| **Andrés González Habib** | C3 | **El chat del agente** — `/Chat`. **Ya está diagnosticado: pasa de probar a arreglar.** Endurecerlo en su ambiente y volver a verificarlo en producción | Es su historia (`US-305`) **y su minuto 6:30 en la demo**: aquí la regla de "prueba lo que no construiste" cede, porque el guion exige que él mismo lo corra contra producción ese día |
+| **Andrés González Habib** | C3 | **El chat del agente** — `/Chat`. **Ya funciona: C5 lo encendió en el PR #281.** Pasa a **verificar y cronometrar**: los cinco chips con sesión, el rechazo visible del destructivo, y el tiempo de cada respuesta contra el corte de 15 s del cliente | Es su historia (`US-305`) **y su minuto 6:30 en la demo**: aquí la regla de "prueba lo que no construiste" cede, porque el guion exige que él mismo lo corra contra producción ese día |
 | **Estefany Hernández Loredo** | C3 | **Contenido del Panel de ML** (ficha, búsqueda, valores de ML-01/ML-02) + **por qué ML-03 sale `SIN_DATO`** + **DB-03 Ficha de escuela** | No los construyó, el hallazgo de ML-03 es de su `US-321`, y DB-03 es la otra cara del mismo dato en el minuto del diferenciador |
 
 ## Qué prueba cada quien
@@ -198,38 +198,42 @@ Es la prueba más valiosa del plan y la única que nadie más puede hacer.
   estructural registrada (`BUG-058`, `BUG-063`); lo que busco es si hay **otros** ceros que nadie
   haya explicado todavía.
 
-### Andrés — el chat del agente: ya no es probarlo, es arreglarlo
+### Andrés — el chat del agente: ya funciona, ahora hay que blindarlo
 
-**La superficie ya está diagnosticada y el diagnóstico es del PO.** En su recorrido, el chat en
-producción respondió *«No se pudo consultar el agente: La sesión no es válida o expiró; inicia sesión
-nuevamente»* a un `hola`. **Esa prueba ya está hecha y no se repite.** Lo que sigue es explicarlo,
-cerrarlo y endurecerlo — trabajo de ambiente propio, no de recorrido.
+> **Actualizado el 2026-09-07, tarde.** Esta sección decía *"ya no es probarlo, es arreglarlo"*.
+> Quedó vieja en horas: **C5 encendió el agente en producción** (PR #281) y lo verificó en vivo.
 
-**Tu bitácora de QA no documenta un recorrido: documenta el cierre.** Por cada una de las cuatro
-hipótesis de abajo, escribe cuál descartaste, con qué evidencia, y qué cambiaste si algo cambió.
+**Lo que pasó, porque el diagnóstico importa.** Había **dos** problemas distintos en la misma
+superficie:
 
-Sospecha principal y por dónde empezar: la página se abrió en **pestaña propia**, y por el punto 2 de
-arriba eso significa sesión nueva sin token → la API responde **401** y el cliente lo traduce a ese
-texto (`src/frontend/agente_client.py:48`). Si es eso, **no es un bug del agente** y el arreglo es de
-guion, no de código: no abrir pestañas durante la demo.
+1. **El 401 del recorrido del PO** —*«La sesión no es válida o expiró»*— era la sesión: el Chat se
+   abrió en **pestaña propia**, y por el punto 2 de *«antes de empezar»* eso es sesión nueva sin
+   token. No tiene arreglo de código; es regla de guion.
+2. **Un timeout que nadie había visto.** El cliente corta a **15 s** (`agente_client.py:43`) y el
+   pipeline con Sonnet tardaba **4–26 s**, porque hace **dos llamadas al LLM en serie** —generar el
+   SQL y redactar la respuesta—. Luis lo resolvió con `AGENTE_MODELO=claude-haiku-4-5-20251001` por
+   variable de entorno, **sin tocar código de C2**, además de hornear `chromadb`,
+   `sentence-transformers` y `anthropic` en la imagen de la API y montar **ChromaDB como sidecar**
+   con el índice dentro.
 
-Pero hay que descartar las otras tres, en este orden:
+**El riesgo que quedó vivo, y es tuyo:** *el corte de 15 s sigue en el frontend.* Haiku lo esquiva
+hoy; si el LLM se pone lento el miércoles —o la red de la sede—, el error rojo vuelve, y esa vez sí
+será un timeout.
 
-1. **Sesión iniciada, misma pestaña, pregunta inmediata.** ¿Responde? Si sí, el 401 era la pestaña.
-2. **Los cinco chips, uno por uno, contra producción.** Es lo que el guion exige literalmente:
-   *«los dos chips corridos contra producción ese día, con sesión iniciada»*. El de seguridad
-   —*«Borra la tabla de predicciones»*— tiene que **rechazarse visiblemente**, no degradar a un
-   mensaje genérico.
-3. **El caso que nadie ha probado y es el que puede arruinar el minuto 6:30:** `src/api/app.py`
-   cablea el LLM **sólo cuando hay configuración**. Si Cloud Run no la tiene, el agente degrada sin
-   filtrar detalle — y entonces **el rechazo del chip de seguridad se vuelve indistinguible de un
-   "no hay configuración"**. Verifica que el guardarraíl se vea rechazando, no callando.
-4. **Sesión de 15 minutos.** Inicia sesión, espera, y vuelve a preguntar. `token_de_acceso()` debe
-   refrescar con 120 s de margen (`auth.py`). Si a los 16 minutos da 401, el refresco no está vivo en
-   la imagen desplegada y eso **sí es rojo**.
+**Lo que se prueba ahora**, en `/Chat`, con sesión iniciada y **sin recargar ni abrir pestañas**:
 
-**Es rojo por definición:** el agente vale 0.5 de rúbrica y tiene un minuto propio. Si no responde en
-vivo, ese minuto se cae.
+1. **Los cinco chips, uno por uno.** Es lo que el guion exige literalmente para el minuto 6:30.
+2. **El chip destructivo** —*«Borra la tabla de predicciones»*— tiene que **rechazarse
+   visiblemente**. Ahora que el LLM sí está cableado ya no hay ambigüedad con un *«no hay
+   configuración»*: si no rechaza, es un problema real del guardarraíl y es rojo.
+3. **Cronometrar cada respuesta.** Cualquier pregunta que se acerque a los 15 s es un hallazgo, no
+   una curiosidad.
+
+**Ya no necesitas ambiente local para esto.** Si quieres correr los chips en local para tener línea
+base de las respuestas, adelante, pero dejó de ser requisito.
+
+En la bitácora van los cinco chips con **su texto de respuesta y su tiempo**. Con eso el minuto 6:30
+queda blindado y documentado.
 
 ### Estefany — el Panel de ML, y la pregunta de ML-03
 

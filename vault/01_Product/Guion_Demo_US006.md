@@ -173,11 +173,20 @@ Cuatro cosas que se ven y que **conviene explicar nosotros**, no que las descubr
    quién atender primero—; la recomendación es *prescriptiva* y se deriva del driver dominante, que
    existe para toda escuela con cobertura, esté o no en alerta. La tesis es **mismo riesgo,
    distinta recomendación**, no *"están en alerta"*.
-2. **`/explicacion` ya devuelve SHAP real** — `BUG-053` quedó **`fixed`** el 2026-09-05 (Christian
-   Ruiz, C4): el endpoint lee `gold.recomendaciones.shap_d1..shap_d6` a través de
-   `RepositorioModelos`, no `mock_data`. Se decía como deuda declarada y **dejó de serlo**; si sale
-   la pregunta, se enseña. Lo que sigue abierto es `ML-03` (clustering, `US-321`), y el panel lo
-   pinta como `SIN_DATO` explícito en vez de esconderlo.
+2. **`/explicacion` lee SHAP real, pero todavía devuelve `SIN_DATO` — y las dos cosas son ciertas.**
+   `BUG-053` está **`fixed`** desde el 2026-09-05 (Christian Ruiz, C4): el endpoint dejó `mock_data` y
+   lee `gold.recomendaciones.shap_d1..shap_d6` a través de `RepositorioModelos`. **El código está;
+   el dato no.** Las seis columnas existen en producción desde el `ALTER` de C5 del 2026-09-07, pero
+   están en **`NULL`** hasta que C3 republique el Gold con `publicar_gold.py`. Así que se dice como
+   deuda declarada, no como logro: *"el desglose por driver ya se lee del modelo, no de un mock; lo
+   que falta es repoblar la tabla"*. Lo mismo con `ML-03` (clustering, `US-321`), que el panel pinta
+   como `SIN_DATO` explícito en vez de esconderlo.
+
+   > **Corrección del PO (2026-09-07).** La redacción anterior de este punto afirmaba que
+   > `/explicacion` *"ya devuelve SHAP real… si sale la pregunta, se enseña"*. Era falso en
+   > producción y el error fue mío: leí el estado del **registro de bugs** y no el del **dato
+   > desplegado**. Es el mismo modo de falla que ya me señalaron con `latitud` y con `UMBRAL_RIESGO`
+   > — dar por verificado lo que sólo se comprobó de un lado.
 3. **Las etiquetas de los tableros todavía dicen «Índice ≥ 0.6».** El **conteo es correcto** —los
    cubos ya cuentan con la línea de 0.50 y por eso dicen **7**—, pero el texto del `subheader` sólo se
    actualiza corriendo `sync_semantic_layer.py`, y **`DEC-020` lo prohíbe** porque ese run borraría la
