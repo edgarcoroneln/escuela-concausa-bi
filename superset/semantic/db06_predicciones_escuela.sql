@@ -16,7 +16,7 @@
 --
 -- PEQUEÑA DESVIACION A R3 (ratificada 2026-08-19): en_riesgo es una DERIVADA
 --   del cubo, no una salida cruda de ML; el cubo la calcula con las mismas
---   cotas del contrato (>= 0.6) y aqui se re-etiqueta solo la columna. La
+--   cotas del contrato (>= 0.5, DEC-019) y aqui se re-etiqueta solo la columna. La
 --   columna cruda indice_riesgo continua intacta. (La razon 'en_riesgo' de
 --   metrics_db06_db09.yaml la recalcula el motor por KPI-03.)
 --

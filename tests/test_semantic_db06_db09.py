@@ -16,8 +16,9 @@ ahora para el par prescriptivo: el tablero de **Predicciones** (DB-06) y el de
 * **Grano dual (DEC-010): solo se lee el grano `escuela`** de
   `gold.predicciones` (`(p.grano IS NULL OR p.grano = 'escuela')`); la
   proyección de `municipio × nivel` jamás se reparte entre escuelas.
-* **El umbral de riesgo es >= 0.6** (R3, ratificado 2026-08-13): en db09 vive
-  en el SQL y en db06 en el YAML de métricas (`umbral: 0.6`).
+* **El umbral de riesgo es 0.50** (línea de alerta DEC-019; el 0.60 quedó como ancla
+  de calibración, DEC-006): en db09 vive en el SQL y en db06 en el YAML de métricas
+  (`umbral: 0.5`).
 * **Componentes aditivos** (DEC-008/DEC-009): la razón vive en
   `metrics_db06_db09.yaml`, nunca es un promedio precalculado en el SQL.
 * **El mock es aditivo**: declara `grano` con ADD COLUMN IF NOT EXISTS, sin
@@ -51,7 +52,7 @@ YAML_METRICAS = SEMANTIC / "metrics_db06_db09.yaml"
 YAML_DB06 = DASHBOARDS / "db06_predicciones.yaml"
 YAML_DB09 = DASHBOARDS / "db09_recomendaciones.yaml"
 
-UMBRAL_RIESGO = "0.6"
+UMBRAL_RIESGO = "0.5"
 
 # Salidas de ML: viven en gold.predicciones / gold.recomendaciones, jamás en el hecho.
 SALIDAS_ML = ("indice_riesgo", "driver_dominante", "recomendacion", "prioridad")
@@ -219,23 +220,23 @@ def test_las_filas_municipio_nivel_no_se_reparten(db06_cubo: str) -> None:
     )
 
 
-# --------------------------------------------------------------------------- R3: umbral de negocio
+# --------------------------------------------------------------------------- DEC-019: linea de alerta
 
 
-def test_el_umbral_de_riesgo_es_el_ratificado_donde_dice_umbral(
+def test_el_umbral_de_riesgo_es_la_linea_de_alerta(
     db09_rec: str, datasets_por_nombre: dict[str, dict]
 ) -> None:
-    """0.6 = perder ~5% de matrícula, ratificado el 2026-08-13 (Indice_Riesgo_ML01).
+    """0.5 = línea de alerta DEC-019 (antes 0.6, ancla de calibración DEC-006).
     En db09 (el único que une gold.predicciones) vive en el SQL; en db06 vive en el
-    YAML de métricas (`umbral: 0.6`), porque C1 ya lo aplicó dentro de los cubos."""
+    YAML de métricas (`umbral: 0.5`), porque C1 ya lo aplicó dentro de los cubos (BUG-060)."""
     assert re.search(rf"p\.indice_riesgo\s*>=\s*{UMBRAL_RIESGO}", db09_rec), (
-        "db09: el umbral de 'escuela en riesgo' debe ser >= 0.6 (R3)."
+        "db09: el umbral de 'escuela en riesgo' debe ser >= 0.5 (DEC-019)."
     )
     for nombre in ("db06_cubo_predicciones", "db06_predicciones_escuela"):
         ds = datasets_por_nombre[nombre]
         metricas = {m["nombre"]: m for m in ds["metricas"]}
         assert metricas["escuelas_en_riesgo"].get("umbral") == float(UMBRAL_RIESGO), (
-            f"{nombre}: debe ratificar el umbral 0.6 como R3 en el YAML."
+            f"{nombre}: debe ratificar el umbral 0.5 (DEC-019) en el YAML."
         )
 
 

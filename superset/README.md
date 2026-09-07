@@ -53,7 +53,8 @@
    `cct-id_ciclo`, `modelo='ML-01'`) para el ranking de urgencia (AC-010.0).
 3. **`SIN_DATO` explícito: nunca cero, nunca nulo silencioso.** Prohibido `COALESCE(<driver>, 0)`.
    Cada métrica viaja con su bandera de cobertura y muestra "sin dato disponible".
-4. **Umbral de riesgo `>= 0.6`** (≈ perder ~5% de matrícula), ratificado el 2026-08-13.
+4. **Línea de alerta `>= 0.5`** (DEC-019); el ancla de calibración de la sigmoide
+   se mantiene en `0.60` (≈ perder ~5% de matrícula, DEC-006).
 5. **Razones como componentes aditivos:** numerador y denominador por separado
    (`suma_*` / `escuelas_con_*`), para que se reagreguen bien con cualquier combinación de filtros.
 6. Toda división se protege con `NULLIF(denominador, 0)`.

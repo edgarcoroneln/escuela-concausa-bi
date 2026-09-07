@@ -9,7 +9,7 @@
 --   hecho ni une a gold.predicciones; consume gold.cubo_riesgo_territorial
 --   (Grano DEC-009, C1), donde C1 ya resolvio la salida de ML-01 por LEFT JOIN
 --   con la llave completa (cct, id_ciclo), el filtro de modelo 'ML-01' y el
---   umbral R3 (>= 0.6). La capa semantica solo anade el enrich del nombre
+--   umbral DEC-019 (>= 0.5). La capa semantica solo anade el enrich del nombre
 --   oficial INEGI del municipio.
 --
 -- Los componentes de riesgo (suma_indice_riesgo, escuelas_con_prediccion,

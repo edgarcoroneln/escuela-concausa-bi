@@ -664,6 +664,38 @@ def _params_chart(
     return base
 
 
+def _query_context_timeseries(eje_x: str) -> dict:
+    """query_context de Superset 6.1 para charts echarts_timeseries embebidos.
+
+    El front de Superset envuelve el eje X en un adhoc `BASE_AXIS` (dict, no un
+    string) aunque la columna sea física y no haya time grain. La guardia
+    anti-manipulación de los guests (`query_context` de buildQuery) exige que lo
+    guardado en el chart sea *superconjunto* de lo que pide el render; sin este
+    query_context, un re-sync de los YAML borra la metadata que C5 aplicó a mano
+    y el chart embebido vuelve al 403 "Guest user cannot modify chart payload"
+    (BUG-058, DevLog luis-tellez-superset-charts-timeseries-guest 2026-09-06).
+
+    Se replica el dict BASE_AXIS en `columns`, `groupby` y ambas direcciones de
+    `orderby`, exactamente como lo verificó C5 en producción: ensanchar el
+    conjunto guardado es monotónico — solo puede convertir un 403 en 200, nunca
+    romper un chart que ya pintaba.
+    """
+    eje = {
+        "columnType": "BASE_AXIS",
+        "expressionType": "SQL",
+        "isColumnReference": True,
+        "label": eje_x,
+        "sqlExpression": eje_x,
+    }
+    return {
+        "queries": [{
+            "columns": [eje],
+            "groupby": [eje],
+            "orderby": [[eje, True], [eje, False]],
+        }]
+    }
+
+
 def ensure_chart(token: str, csrf: str, chart_cfg: dict, datasets_by_name: dict[str, int], yaml_datasets: list[dict]) -> tuple[int, str]:
     """Crea o actualiza un chart. Retorna (id, uuid)."""
     nombre = chart_cfg["nombre"]
@@ -704,13 +736,14 @@ def ensure_chart(token: str, csrf: str, chart_cfg: dict, datasets_by_name: dict[
         "viz_type": chart_cfg["viz"],
         "params": json.dumps(params),
     }
+    if chart_cfg["viz"] in ("echarts_timeseries_bar", "echarts_timeseries_line"):
+        # BUG-058: persiste el eje X como adhoc BASE_AXIS para que un re-sync no
+        # reintroduzca el 403 de los guests embebidos (ver _query_context_timeseries).
+        body["query_context"] = _query_context_timeseries(chart_cfg.get("eje_x", "ciclo"))
+        body["query_context_generation"] = True
     if existente:
         chart_id = existente["id"]
-        _request("PUT", f"/api/v1/chart/{chart_id}", token=token, csrf_token=csrf, body={
-            "slice_name": nombre,
-            "viz_type": chart_cfg["viz"],
-            "params": json.dumps(params),
-        })
+        _request("PUT", f"/api/v1/chart/{chart_id}", token=token, csrf_token=csrf, body=body)
         print(f"    ✔ Chart '{nombre}' actualizado (id={chart_id})")
     else:
         if homonimos:

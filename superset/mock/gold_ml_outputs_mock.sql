@@ -130,7 +130,7 @@ SELECT
         ELSE 'Sin recomendacion disponible'
     END,
     CASE
-        WHEN b.riesgo_mock >= 0.6 THEN 'ALTA'
+        WHEN b.riesgo_mock >= 0.5 THEN 'ALTA'
         WHEN b.riesgo_mock >= 0.4 THEN 'MEDIA'
         ELSE 'BAJA'
     END

@@ -43,7 +43,7 @@ dashboards:
         viz: big_number_total
         ancho: 3
         alto: 38
-        subheader: "Índice ≥ 0.6 (umbral R3)"
+        subheader: "Índice ≥ 0.5 (umbral DEC-019)"
 
       - nombre: "% de escuelas en riesgo"
         dataset: db02_cubo_riesgo_territorial

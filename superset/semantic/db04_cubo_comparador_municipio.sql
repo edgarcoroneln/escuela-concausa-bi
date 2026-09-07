@@ -17,7 +17,7 @@
 --   yaml). Esto permite reagregar con cualquier combinacion de filtros (AC-002.2).
 --   R1: riesgo ML-01 por LEFT JOIN (C1), modelo 'ML-01'. R2: SIN_DATO nunca se
 --   convierte en cero: cada driver publica cobertura_d# y el riesgo cobertura_
---   riesgo. R3: escuelas_en_riesgo acotado al umbral 0.6. R5: Gold acotado.
+--   riesgo. R3: escuelas_en_riesgo acotado al umbral 0.5 (DEC-019). R5: Gold acotado.
 -- =============================================================================
 
 SELECT
