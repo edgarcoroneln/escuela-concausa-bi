@@ -205,6 +205,81 @@ declara como deuda, y `DEC-015` ya dejó abierta esa puerta.
 **No lo arregles sin avisarme.** Publicar a Gold a dos días toca las 45 276 filas y hay dos decisiones
 (`DEC-019`, `BUG-063`) que dependen de que nada publicado se mueva.
 
+## Cómo levantar tu ambiente local
+
+**Producción da el veredicto; local es el banco de trabajo.** La regla de arriba no cambia: lo que
+califica el miércoles es la URL pública. Pero un hallazgo sin ambiente local es un hallazgo que no
+puedes diagnosticar ni arreglar — por eso todos levantan el suyo hoy.
+
+### Dos cosas en las que local NO es producción
+
+Léelas o vas a sacar conclusiones falsas:
+
+1. **La postura de auth está invertida.** `.env.example` trae `AUTH_LECTURA_PUBLICA=true`; producción
+   corre en `false` desde `SEC-006`/`DEC-018`. En local la lectura es pública y **no vas a ver los
+   401 que sí da producción**.
+2. **El login con Google no funciona en local.** `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` vienen
+   **vacíos** en `.env.example` y no se reparten credenciales. Todo lo que dependa de una sesión real
+   —RBAC por rol, refresco de token, el chat autenticado— **sólo se puede verificar contra
+   producción**. En local se prueba la lógica, no la sesión.
+
+Cualquier cosa que sólo reproduzcas en local y no en producción, dilo así en tu bitácora.
+
+### El prompt base — lo corre todo el mundo
+
+Ábrelo en Claude Code, **parado en la raíz del repositorio**, y pega esto:
+
+```
+Levanta mi ambiente local de FARO para hacer pruebas. Antes de ejecutar nada, lee:
+- CLAUDE.md en la raíz
+- vault/_Meta/US-521b-guia-ambiente-local.md (la guía oficial)
+- vault/06_Quality_Testing/Plan_Pruebas_Exhaustivas_Pre_Demo.md, sección "Antes de empezar"
+
+Luego, en este orden, y enseñándome la salida real de cada paso:
+
+1. Verifica que Docker Desktop esté corriendo y que exista .env (si no existe, cópialo de
+   .env.example y dime qué variables quedaron vacías; NO inventes valores ni credenciales).
+2. Crea/activa el venv e instala requirements.txt.
+3. Levanta la infraestructura: docker compose up -d db api
+   (agrega superset y chromadb sólo si mi superficie los necesita; te lo digo abajo).
+4. Espera a que los healthchecks estén sanos y compruébalo con docker compose ps.
+5. Verifica la API: curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/v1/health
+   Debe dar 200. Si no, enséñame docker compose logs api --tail 50 y diagnostica.
+6. Corre la suite: pytest tests/ -q. Debe dar 1064 passed.
+
+Reglas que no puedes romper:
+- Trabajo en mi rama fija dev/{mi-identidad}. No crees ramas, no hagas rebase, nunca commits a main.
+- No inventes rutas, comandos, endpoints ni variables de entorno: verifícalos leyendo el archivo.
+- No escribas credenciales en ningún archivo ni las imprimas en pantalla.
+- Si un paso falla, PÁRATE y enséñame el error. No sigas al siguiente.
+
+Cuando termine, dime en una línea qué quedó arriba y qué no.
+```
+
+Puertos, para que sepas a dónde apuntar (todos atados a `127.0.0.1`): **API 8000** · **Postgres 5432**
+· **Superset 8088** · **MLflow 5001** · **ChromaDB 8001** · **Airflow 8080**.
+
+**El frontend no tiene servicio en `docker-compose.yml`** — existe `docker/frontend.Dockerfile` pero
+no está en el compose. Se levanta a mano:
+
+```bash
+FARO_API_BASE_URL=http://localhost:8000 \
+FARO_FRONTEND_URL=http://localhost:8501 \
+streamlit run src/frontend/app.py
+```
+
+### Lo que cada quien agrega al prompt base
+
+| Persona | Añade a tu prompt |
+|---|---|
+| **Eloisa** | *"Levanta sólo `db` y `api`. Cuando estén sanas, abre `http://localhost:8000/api/v1/docs` y hazme un inventario de todas las rutas con su método y sus códigos documentados, para contrastarlo contra producción."* |
+| **Karla** | *"Levanta `db` y `api`. Confírmame el valor de `AUTH_LECTURA_PUBLICA` en mi `.env` y recuérdame que producción corre en `false`. Muéstrame `src/frontend/auth.py::token_de_acceso()` y explícame en qué momento exacto dispara el refresco."* |
+| **Monserrat** | *"Levanta `db`, `api` y `superset`. NO ejecutes `superset/sync_semantic_layer.py` bajo ninguna circunstancia — está congelado hasta después del 9-sep. Sólo abre Superset en `http://localhost:8088` y déjalo listo."* |
+| **Oscar** | *"Levanta `db`, `api` y `superset`. NO ejecutes `superset/sync_semantic_layer.py`, está congelado. Además, léeme los `alto:` y `ancho:` de `superset/dashboards/db01_ejecutivo.yaml` para contrastarlos con lo que veo en pantalla."* |
+| **Diana** | *"Levanta `db` y `api`. Conéctate a Postgres local y dime cuántas filas hay en `gold.predicciones`, `gold.recomendaciones` y `gold.features_escuela`, y cuál es el `max(indice_riesgo)`. Quiero contrastarlo contra producción."* |
+| **Andrés** | *"Levanta `db`, `api` y `chromadb`. Necesito el stack del agente completo: confírmame que `limits`, `slowapi`, `chromadb` y `sentence_transformers` quedaron instalados, porque en mi entorno anterior no colectaban `tests/test_agente_endpoint.py` ni `tests/test_agente_wiring_llm.py`. Corre esos dos archivos y enséñame la salida. Después dime si `src/api/app.py` cablea el LLM en mi `.env` local o si degrada por falta de configuración — es exactamente lo que tengo que distinguir en producción."* |
+| **Estefany** | *"Levanta `db` y `api`. Luego traza para mí, leyendo el código y sin cambiar nada: (1) qué escribe `src/modelos/entrenar_ml03.py` y dónde lo deja; (2) por qué `src/modelos/publicar_gold.py` no tiene ninguna referencia a `cluster`; (3) por qué `src/api/repositorio_modelos.py:115` asigna `datos[\"cluster\"] = None` en vez de consultar una columna. Quiero saber cuál de los dos cables falta primero y cuánto costaría cada uno. NO modifiques nada: sólo el diagnóstico."* |
+
 ## Cómo probar: Playwright
 
 No está en el repo todavía. Se instala **fuera del árbol** para no tocar `requirements/` el día del
