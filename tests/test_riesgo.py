@@ -13,6 +13,7 @@ import pytest
 
 from src.api.schemas import PrediccionOut
 from src.modelos.riesgo import (
+    ANCLA_SIGMOIDE,
     CALIBRACION,
     RIESGO_ESTABLE,
     RIESGO_UMBRAL,
@@ -32,8 +33,34 @@ def test_reproduce_el_ancla_de_escuela_estable() -> None:
 
 
 def test_reproduce_el_ancla_del_umbral_de_negocio() -> None:
-    """Perder 5 % de matrícula cae exactamente en el 0.60 que usan los tableros."""
-    assert indice_riesgo(VARIACION_EN_RIESGO) == pytest.approx(RIESGO_UMBRAL)
+    """Perder 5 % de matrícula cae exactamente en el ancla alta de DEC-006."""
+    assert indice_riesgo(VARIACION_EN_RIESGO) == pytest.approx(ANCLA_SIGMOIDE)
+
+
+def test_el_alias_historico_sigue_apuntando_al_ancla() -> None:
+    """`RIESGO_UMBRAL` se conserva por compatibilidad; DEC-019 lo renombró, no lo movió."""
+    assert RIESGO_UMBRAL == ANCLA_SIGMOIDE
+
+
+def test_dec019_no_recalibra_la_sigmoide() -> None:
+    """El ancla se queda en 0.60 aunque la línea de alerta haya bajado a 0.50.
+
+    `DEC-019` separó dos números que eran uno: cambió el criterio de alerta, no la calibración.
+    Si alguien "actualiza" el ancla a 0.50 creyendo que es el mismo cambio, recalibra la sigmoide
+    y mueve **todos** los `indice_riesgo` publicados — justo lo que la decisión prohíbe.
+    """
+    assert ANCLA_SIGMOIDE == 0.60
+
+
+def test_la_linea_de_alerta_equivale_al_menos_34_por_ciento() -> None:
+    """El 0.50 de DEC-019 se eligió porque equivale a proyectar −3.4 %.
+
+    Es el argumento de negocio de la decisión: 3.4 % queda justo por debajo del 3.7 % de deserción
+    real en secundaria, así que la alerta enciende antes de alcanzar la norma nacional. Si alguien
+    recalibra la sigmoide, esa equivalencia deja de ser cierta y la decisión pierde su fundamento
+    sin que nadie se entere. Esta prueba lo convierte en un fallo visible.
+    """
+    assert float(variacion_equivalente(0.50)) == pytest.approx(-0.0338, abs=5e-4)
 
 
 # --------------------------------------------------------------------------- propiedades
