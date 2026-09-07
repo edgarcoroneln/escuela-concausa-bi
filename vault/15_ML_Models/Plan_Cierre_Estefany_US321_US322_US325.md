@@ -351,3 +351,34 @@ prematuramente el estado de las historias:
    abierta con el resultado reportado tal cual.
 4. Con una corrida trazable, C1 y C4 reciben el contrato de `gold.ml03_asignaciones` para sus PRs de
    esquema y API. Ninguno de esos cambios se incluye en esta PR documental.
+
+## 11. Coordinación de la corrida MLflow real — US-321
+
+Esta coordinación separa la evidencia de C3 del entorno de C5. No se comparten `.env`, contraseñas,
+dump ni artefactos por Git, y ninguna persona modifica el alcance de otra.
+
+| Momento | Responsable | Acción verificable | Entrega al siguiente responsable |
+|---|---|---|---|
+| T0 · preflight | Estefany (C3) | Verifica el SHA-256 canónico de `final1`, restaura sólo en base aislada y ejecuta ML-03 **sin** `--tracking-uri` | Agregados: filas, ciclos, exclusiones, `k=2..6`, Silhouette y perfiles; nunca CCT individuales |
+| T1 · entorno | Luis (C5) | Confirma una ventana de MLflow accesible, su healthcheck y el URI autorizado; no comparte secretos | Confirmación de disponibilidad o error operativo exacto para el DevLog |
+| T2 · revisión | Andrés (C3 TL) | Revisa vector D1-D4 + completitud, tabla temporal, perfiles y lectura honesta de Silhouette | `OK` técnico o ajustes concretos; no es promoción del modelo |
+| T3 · registro | Estefany (C3) | Repite la misma corrida con `--tracking-uri --confirmar-registro` sólo después del OK técnico | `run_id`, versión, parámetros, métricas y commit, recuperables desde MLflow |
+| T4 · decisión | Edgar (PM) | Decide el cierre de US-321 o conserva la historia abierta si la métrica/interpretación no es defendible | Aprobación de PR y estado de la historia |
+| T5 · aterrizaje posterior | Diana (C1) y C4 | Reciben exclusivamente el contrato ya trazable para sus PRs de Gold/API | C1 aplica regla 7 al esquema; C4 hace el `LEFT JOIN`; no bloquean la corrida C3 |
+
+### Protocolo operativo C3 + C5
+
+1. Estefany pide a Luis una ventana y el URI de tracking por el canal interno; nunca lo coloca en un
+   commit, comentario de PR ni DevLog. Luis confirma salud del servicio, no credenciales.
+2. Estefany corre T0 localmente contra la base aislada y comparte sólo el JSON agregado o su resumen.
+   Si no hay filas elegibles, ciclos suficientes o Silhouette válida, detiene aquí y registra el
+   bloqueo; no solicita un `run_id` de relleno.
+3. Andrés revisa T0. Con su visto bueno, Estefany ejecuta T3 con la confirmación explícita del CLI.
+   Un fallo de registro se conserva como error trazable y se devuelve a Luis; no se reintenta contra
+   otro URI ni se promociona un modelo.
+4. Estefany consulta MLflow para recuperar el `run_id` y versión, repite la prueba de lectura y añade
+   a la ficha únicamente identificadores y métricas agregadas. Después ejecuta Ruff, pruebas C3 y
+   `vault_lint.py`, redacta DevLog y abre PR para Edgar.
+
+El resultado máximo de esta PR de prueba es una corrida C3 reproducible y protegida contra registros
+prematuros. La persistencia Gold y exposición API permanecen explícitamente fuera de alcance.

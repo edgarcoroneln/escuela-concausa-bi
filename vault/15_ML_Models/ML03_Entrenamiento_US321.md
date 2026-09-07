@@ -79,10 +79,24 @@ Tras la ratificación de C3, esta evidencia debe repetirse con D1-D4 + completit
 imputación futura o reincorporación de D5/D6 al vector requeriría nueva evidencia de cobertura.
 
 El punto de entrada `python -m src.modelos.ejecutar_cierre_ml03` lee la tabla real desde
-`DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y sólo registra en MLflow cuando
-se indica `--tracking-uri`. Si un driver operativo queda totalmente ausente, `casos_completos`
-puede dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias ni registra un
-modelo.
+`DATABASE_URL`, conserva la comparación walk-forward de `k=2..6` y exige dos fases para MLflow:
+primero se genera y revisa la evidencia agregada; después, y sólo tras esa revisión, se indica
+`--tracking-uri --confirmar-registro`. Si un driver operativo queda totalmente ausente,
+`casos_completos` puede dejar cero filas: el comando lo reporta como bloqueo y no sustituye ausencias
+ni registra un modelo.
+
+La secuencia segura es:
+
+```powershell
+# Fase de evidencia: no registra ni promociona un modelo.
+& ./.venv/Scripts/python.exe -c "from dotenv import load_dotenv; load_dotenv('.env'); from src.modelos.ejecutar_cierre_ml03 import main; raise SystemExit(main())" --salida $env:TEMP/ml03-evidencia.json
+
+# Sólo tras revisión técnica: registra una corrida ya validada y devuelve su run_id.
+& ./.venv/Scripts/python.exe -c "from dotenv import load_dotenv; load_dotenv('.env'); from src.modelos.ejecutar_cierre_ml03 import main; raise SystemExit(main())" --tracking-uri http://127.0.0.1:5001 --confirmar-registro --salida $env:TEMP/ml03-registro.json
+```
+
+Los JSON quedan fuera del repositorio y no contienen CCT individuales; se documentan únicamente sus
+agregados, checksum del dump, `run_id`, versión y commit.
 
 La primera ejecución del 4-sep no tuvo Docker ni Gold local; la evidencia de contrato y cobertura se
 obtuvo el 5-sep con el dump aislado. Sigue pendiente la ejecución de entrenamiento final, no la
