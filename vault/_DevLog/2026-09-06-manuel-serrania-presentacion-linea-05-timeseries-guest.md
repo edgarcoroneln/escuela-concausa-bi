@@ -76,3 +76,44 @@ tags: [devlog, umbral, dec-019, guest, superset, sync]
      reconfirmar DB-07 (8 382), DB-09 y KPI-04 ≥ 1 en el navegador.
   3. BUG-052 (replicar purga `cache_resource` en el test de frontend) y BUG-037
      (dueño Monserrat, Manuel reviewer) quedan **post-freeze**, ya registrados.
+---
+
+## Segunda ronda (PR #275) — barrido de umbrales residuales, respuesta al PM
+
+El PM (Edgar) corrió la rama completa (1070 passed, 4 skipped, ruff y vault_lint
+limpios, 4 checks verdes) y detectó **3 sitios residuales en 0.6** que la guarda
+original (4 archivos) no alcanzaba a ver:
+
+1. `superset/semantic/db09_cubo_recomendaciones.sql:62` — `WHEN p.indice_riesgo >= 0.6
+   THEN TRUE` (corte ejecutable, DB-09 cuenta con 0.6). → `>= 0.5`,
+   comentario `-- DEC-019: linea de alerta`.
+2. `superset/semantic/metrics_db06_db09.yaml` — `umbral: 0.6` ×3 (escuelas_en_riesgo
+   de db06_cubo_predicciones y db06_predicciones_escuela y db09_cubo_recomendaciones)
+   y `metrics_db03_db04.yaml` ×2, todos → 0.5.
+3. `superset/dashboards/db03_ficha_escuela.yaml:87` — subheader del KPI-17
+   «en riesgo desde 0.60 (DEC-006)» → «desde 0.50 (DEC-019)». **Anula la decisión
+   previa de no tocar DB-03 KPI-17**: la etiqueta visible describe la línea de
+   alerta, no el ancla. El ancla `ANCLA_SIGMOIDE = 0.60` sigue viva solo en Python
+   y en la documentación de calibración.
+
+**Además (consistencia con el barrido):** comentarios de cabecera de
+db02/db03/db04/db06 (SQL), READMEs (superset/ y superset/semantic/), y la banda
+ALTA `riesgo_mock >= 0.6` del mock. El bucket de distribución `rango_riesgo` de
+db06 (`indice_riesgo < 0.6`, rotulado "0.40 - 0.59") **no es la línea de alerta** y
+se conserva; queda documentado en la guarda.
+
+**Guarda ensanchada** (`tests/test_umbral_alineado.py`): ya no escanea 4 archivos;
+hace **barrido total de `superset/semantic/**` y `superset/dashboards/**`** y falle
+ante cualquier 0.6/0.60 asociado a riesgo salvo contexto de ancla. Se añadió además
+un barrido de subheaders sobre todos los tableros (soporta `charts` y `tabs`).
+Tests de contrato `test_semantic_db03_db04.py` / `test_semantic_db06_db09.py` y el
+test del mock ALTA pasan de ratificar 0.6 a ratificar **0.5 (DEC-019)**.
+
+- **Tests executed (2.ª ronda):** suite completa → **899 passed**, 21 fallos
+  pre-existentes idénticos (validaciones great-expectations, docker superset,
+  agente/rbac/oauth por deps ausentes), 4 skipped, 13 errores de colección
+  pre-existentes, **0 introducidos**. `ruff check` limpio. `vault_lint` → 3
+  bloqueantes conocidos (untracked de raíz, nunca se commitean).
+- **Next recommended action:** `repo-security-audit` + commit "Sweep de umbrales
+  residuales (PR #275)" + push a `dev/manuel-serrania` (el PR #275 recoge el
+  segundo commit) + avisar al PM para merge inmediato.

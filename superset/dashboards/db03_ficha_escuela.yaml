@@ -23,7 +23,7 @@ dashboards:
     slug: db03-ficha-escuela
     descripcion: >
       Drill-down por CCT: perfil del plantel, los seis drivers con su bandera de
-      cobertura (KPI-16), la prediccion de ML-01 con el umbral de 0.6 (KPI-17) y
+      cobertura (KPI-16), la prediccion de ML-01 con el umbral de 0.5 (KPI-17, DEC-019) y
       la recomendacion prescriptiva segun el driver dominante (KPI-18).
       Donde no hay dato se muestra "sin dato disponible", nunca un cero.
     filtros_globales:
@@ -84,7 +84,7 @@ dashboards:
         viz: big_number_total
         ancho: 3
         alto: 38
-        subheader: "ML-01 · en riesgo desde 0.60 (DEC-006). Vacío = sin dato disponible"
+        subheader: "ML-01 · en riesgo desde 0.50 (DEC-019). Vacío = sin dato disponible"
 
       - nombre: "KPI-05 · Completitud de la escuela"
         dataset: db03_cubo_escuela_360

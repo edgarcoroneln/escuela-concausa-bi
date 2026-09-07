@@ -37,7 +37,8 @@ Convención canónica: [`../README.md`](../README.md) (US-202).
   urgencia AC-010.0).
 - **`SIN_DATO` explícito: nunca cero, nunca nulo silencioso.** No hay un solo `COALESCE(<driver>, 0)`.
   Cada métrica viaja con su bandera de cobertura y el tablero muestra *"sin dato disponible"*.
-- **Umbral de riesgo `>= 0.6`** (≈ perder ~5% de matrícula), ratificado el 2026-08-13.
+- **Línea de alerta `>= 0.5`** (DEC-019); el ancla de calibración de la sigmoide
+  se mantiene en `0.60` (≈ perder ~5% de matrícula, DEC-006).
 - Las razones se guardan como **numerador y denominador por separado**, para que se puedan reagregar
   con cualquier combinación de los filtros globales (ciclo, entidad, nivel).
 

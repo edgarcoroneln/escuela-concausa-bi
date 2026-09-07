@@ -500,8 +500,8 @@ def test_el_mock_ejercita_el_caso_sin_dato(mock_sql: str) -> None:
 
 
 def test_el_mock_respeta_el_umbral_r3(mock_sql: str) -> None:
-    """La prioridad ALTA del mock usa el mismo umbral 0.6 que el negocio."""
-    assert re.search(r">=\s*0\.6\s+then\s+'ALTA'", mock_sql, re.IGNORECASE)
+    """La prioridad ALTA del mock usa la misma línea de alerta 0.5 que el negocio (DEC-019)."""
+    assert re.search(r">=\s*0\.5\s+then\s+'ALTA'", mock_sql, re.IGNORECASE)
 
 
 # --------------------------------------------------------------------------- script de sincronización
