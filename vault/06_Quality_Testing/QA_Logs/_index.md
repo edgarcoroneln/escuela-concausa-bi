@@ -13,3 +13,4 @@ tags: [moc, qa, logs]
 
 | Fecha | Alcance | Responsable | Resultado | Bugs |
 |---|---|---|---|---|
+| — | **Plantilla** — cópiala para tu bitácora | [[vault/06_Quality_Testing/QA_Logs/PLANTILLA-qa-log\|PLANTILLA-qa-log]] | — | — |
