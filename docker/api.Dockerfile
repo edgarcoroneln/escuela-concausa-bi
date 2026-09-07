@@ -21,6 +21,13 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
       sentence-transformers==5.7.0 \
       "anthropic>=0.116"
 
+# Hornea el modelo de embeddings del agente (all-MiniLM-L6-v2, ~90 MB) en la imagen: así la 1.ª
+# consulta RAG no depende de HuggingFace en runtime. Cloud Run usa instancias efímeras; sin esto,
+# cada arranque en frío re-descargaría el modelo (lento y con dependencia de red). Se cachea en
+# /root/.cache/huggingface y en runtime se sirve OFFLINE (ver HF_HUB_OFFLINE abajo). Va antes de
+# COPY src/ para no depender del código y quedar cacheado.
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
 # Copiar código fuente
 COPY src/ ./src/
 
@@ -31,6 +38,11 @@ COPY docker/log_config.json ./log_config.json
 ENV PORT=8080
 ENV ENVIRONMENT=production
 ENV PYTHONUNBUFFERED=1
+
+# El modelo de embeddings ya está horneado (capa de arriba): en runtime se sirve SIEMPRE desde la
+# cache local, sin tocar la red (Cloud Run egress = private-ranges-only).
+ENV HF_HUB_OFFLINE=1
+ENV TRANSFORMERS_OFFLINE=1
 
 # Sello de la imagen: el SHA del commit con el que se construyó.
 # Se pasa con `--build-arg GIT_SHA=$(git rev-parse HEAD)` y lo lee /api/v1/version
