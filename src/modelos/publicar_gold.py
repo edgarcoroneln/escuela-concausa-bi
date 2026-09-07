@@ -79,8 +79,8 @@ from src.modelos.particion_temporal import (
 )
 from src.modelos.recomendaciones import CODIGOS_DRIVER, RECOMENDACION_POR_DRIVER
 from src.modelos.riesgo import (
+    ANCLA_SIGMOIDE,
     RIESGO_ESTABLE,
-    RIESGO_UMBRAL,
     indice_riesgo,
     verificar_escala_variacion,
 )
@@ -177,9 +177,15 @@ def prioridad_de_riesgo(riesgo: float) -> Prioridad:
     """Traduce el `indice_riesgo` a urgencia de intervención.
 
     **No inventa umbrales nuevos**: reutiliza las dos anclas ya ratificadas de
-    `DOC-INDICE-RIESGO` — 0.60 es el umbral de "escuela en riesgo" que usan los tableros
-    (confirmado por Manuel Serranía en el PR #27) y 0.30 corresponde a una escuela con matrícula
-    estable.
+    `DOC-INDICE-RIESGO` — 0.60 es el ancla alta de la sigmoide (`DEC-006`: la escuela pierde 5 %
+    de su matrícula) y 0.30 corresponde a una escuela con matrícula estable.
+
+    **Corte deliberadamente sin cambiar tras `DEC-019` (2026-09-06).** Esa decisión bajó a 0.50 la
+    **línea de alerta** con la que los tableros *cuentan* escuelas, pero dejó el ancla en 0.60. Esta
+    función usa el **ancla**, no la línea: mover `ALTA` a 0.50 reescribiría la columna `prioridad`
+    de las 45,276 filas ya publicadas en `gold.recomendaciones`, y `DEC-019` dice explícitamente
+    que no cambia un solo valor publicado. **Queda como pregunta abierta para el PO y el TL de C3**
+    —¿debe `prioridad` seguir la línea de alerta?—; no se decide desde aquí y menos en freeze.
 
     >>> prioridad_de_riesgo(0.85).value
     'alta'
@@ -188,7 +194,7 @@ def prioridad_de_riesgo(riesgo: float) -> Prioridad:
     >>> prioridad_de_riesgo(0.10).value
     'baja'
     """
-    if riesgo >= RIESGO_UMBRAL:
+    if riesgo >= ANCLA_SIGMOIDE:
         return Prioridad.ALTA
     if riesgo >= RIESGO_ESTABLE:
         return Prioridad.MEDIA
