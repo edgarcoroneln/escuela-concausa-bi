@@ -49,11 +49,28 @@ tags: [requirements, detailed, rubrica]
 
 ### REQ-002 — Frontend BI interactivo
 - **Módulo de rúbrica:** 2 · **Peso:** 2.5 pts · **Tipo:** funcional · **Prioridad:** Must
-- **Qué pide el profesor:** dashboard dinámico, intuitivo y estético, con visualización avanzada de
-  KPIs, tendencias, componentes interactivos y filtros que consolidan las fuentes.
+- **Qué pide el profesor:** el §3.5 del PRD no pide sólo un dashboard: enumera **cinco componentes**
+  del *Frontend & Business Intelligence Interactivo*, y **los cinco cargan sobre estos 2.5 puntos**.
+  La redacción anterior de este requisito sólo describía el primero y el segundo, así que dos
+  entregables reales del proyecto —el panel de ML y el chat— no tenían criterio de aceptación aquí
+  aunque `US-207` y `US-305` ya trazaban a `REQ-002`. Ampliado el **2026-09-07**:
+
+  | # | Componente que pide §3.5 | Dónde vive en FARO |
+  |---|---|---|
+  | 1 | KPIs globales en tiempo real | `AC-002.5` · KPI-01…KPI-18 en Superset y `/api/v1/kpis` |
+  | 2 | Gráficos interactivos (series, distribución, **mapas si aplica**) | `AC-002.2`…`AC-002.4`, `AC-002.6` |
+  | 3 | **Panel de Machine Learning** — *"el usuario ingresa parámetros y recibe predicciones de los 3 modelos"* | **`AC-002.7`** · `US-207` |
+  | 4 | **Widget del Agente Conversacional** — *"ventana de chat flotante o dedicada"* | **`AC-002.8`** · `US-305` |
+  | 5 | Módulo de Gestión de Usuarios/Auth — login, logout y vistas por rol | **`AC-002.9`** · `US-405` |
+
+  **El §3.2 lo refuerza desde el otro lado:** los modelos deben estar *"expuestos vía API… integrándose
+  en el Frontend/BI"*. El panel de ML **es** esa integración, así que sirve de evidencia a `REQ-002` y
+  a `REQ-003` a la vez — no se cuenta dos veces en la rúbrica, pero se demuestra una sola vez.
 - **Cómo lo resuelve FARO:** **10 dashboards DB-01 a DB-10 en Apache Superset** (no Power BI) sobre la
   capa Gold acotada a las 4 entidades, incluyendo el mapa de riesgo (DB-02), la ficha de escuela
-  (DB-03), recomendaciones prescriptivas (DB-09) y el mapa de vacíos de datos (DB-07).
+  (DB-03), recomendaciones prescriptivas (DB-09) y el mapa de vacíos de datos (DB-07). **Más FARO Web**
+  (`https://faro-frontend-eanzfglvyq-uc.a.run.app`, `US-526`), el shell de Streamlit que hospeda los
+  tableros embebidos, el panel de ML y el chat del agente bajo una sola URL con sesión de Google.
 - **Criterios de aceptación:**
   - **AC-002.1** — Existen los 10 dashboards DB-01…DB-10 desplegados en Superset y accesibles desde la
     URL pública.
@@ -65,7 +82,24 @@ tags: [requirements, detailed, rubrica]
     predicción y recomendación.
   - **AC-002.5** — Los dashboards muestran KPIs globales y al menos una serie de tiempo de matrícula.
   - **AC-002.6** — DB-07 visualiza `indice_completitud_drivers` y los territorios `SIN_DATO`.
-- **User Stories:** US-201, US-202, US-203, US-204, US-205, US-211, US-212, US-213, US-214, US-221, US-222, US-223
+  - **AC-002.7** — **Panel de ML interactivo**: el usuario elige una escuela por CCT —con búsqueda por
+    filtros, no tecleando la clave— y recibe **predicción, driver dominante y recomendación** sin salir
+    de la página. **Brecha declarada contra la letra del §3.5**, que pide *"los 3 modelos"*: el panel
+    sirve **ML-01** (riesgo) y **ML-02** (driver dominante y recomendación) con datos reales; **ML-03
+    no se sirve** porque su corrida quedó `bloqueada` con la política `casos_completos` —**D5 al 100 %
+    `SIN_DATO` y D6 al 98.7 %**—, y entregar un clustering entrenado sobre dos columnas vacías sería
+    inventar un resultado. Está registrado, medido y se dice en la demo antes de que lo pregunten;
+    **no se maquilla como cumplido**. Ver `US-321`, `US-324` y el guion de `US-006`.
+  - **AC-002.8** — **Widget del agente conversacional**: página de chat dedicada dentro de FARO Web que
+    consulta `/api/v1/agente/consulta` con la sesión del usuario, **muestra el SQL generado** —la
+    respuesta es auditable, no una opinión— y **rechaza** las preguntas fuera de alcance y las
+    destructivas con los guardarraíles reales. Ver `US-305`, `US-304a/b`, `US-323` y `REQ-006`, donde
+    vive el peso propio del agente.
+  - **AC-002.9** — **Gestión de usuarios y vistas por rol**: login y logout con Google en las cuatro
+    páginas de FARO Web, sesión que **sobrevive a la recarga** y refresco automático del access token
+    antes de que expire (`BUG-059`), con **403 demostrable en vivo** para una cuenta `ciudadano` sobre
+    una ruta de `analista`. Ver `US-405`, `US-403` y `AC-004.5`.
+- **User Stories:** US-201, US-202, US-203, US-204, US-205, US-207, US-211, US-212, US-213, US-214, US-221, US-222, US-223, US-305, US-405, US-526
 - **Estado:** in_review
 
 ---

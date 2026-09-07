@@ -1,25 +1,25 @@
 {
   "meta": {
-    "generated_at": "2026-09-07T16:58:05+00:00",
+    "generated_at": "2026-09-07T17:18:14+00:00",
     "generated_date": "2026-09-07",
-    "commit": "e0a61d4",
-    "branch": "main",
-    "working_tree": "clean",
-    "source_fingerprint": "a159445f791f",
+    "commit": "04c140b",
+    "branch": "dev/edgar-coronel",
+    "working_tree": "modified",
+    "source_fingerprint": "2dbb60abc00d",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
   },
   "summary": {
     "total": 89,
-    "done": 52,
-    "planned": 5,
-    "in_progress": 11,
-    "in_review": 21,
+    "done": 75,
+    "planned": 4,
+    "in_progress": 9,
+    "in_review": 1,
     "blocked": 0,
-    "wip": 32,
+    "wip": 10,
     "descoped": 3,
-    "progress": 78.1,
+    "progress": 88.5,
     "days_to_demo": 2
   },
   "delivery": {
@@ -92,11 +92,11 @@
       "sprint": "S2",
       "req": "REQ-007",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-03",
       "blocked_since": "—",
-      "evidence": "vault/02_Requirements/Traceability_Matrix · vault/13_Reports/PM_Dashboard_Spec · PR #112 · vault/13_Reports/US_Validation_Followup_2026-08-28. Reconciliación del 29-ago: 14 PRs mergeados en el día, 11 historias actualizadas, BUG-026 cerrado, BUG-027 superseded, BUG-028 registrado y plan de corrección del vault abierto con 5 hallazgos. Cierre del entregable 2026-09-05: resuelto el único acuerdo que quedaba abierto — de las 20 historias de la cola de validación del 28-ago, 8 cerraron (US-121a, US-122a, US-123a, US-124a, US-213, US-221, US-411, US-412) y 12 están en revisión, ninguna en in_progress ni planned; TEST-002 en verde sobre el snapshot regenerado; y el bloque §Estado del proyecto de la matriz, que llevaba cifras de agosto (\"0 REQ Done\"), pasa a derivarse de este registro vía generate_pm_dashboard.py en vez de capturarse a mano. La parte de mantenimiento no se declara terminada: pasa al rol rotativo de US-005 (vault/_Meta/Vault_Steward), que es donde debe vivir. Historia continua hasta el cierre del proyecto",
-      "updated": "2026-09-05",
+      "evidence": "vault/02_Requirements/Traceability_Matrix · vault/13_Reports/PM_Dashboard_Spec · PR #112 · vault/13_Reports/US_Validation_Followup_2026-08-28. Reconciliación del 29-ago: 14 PRs mergeados en el día, 11 historias actualizadas, BUG-026 cerrado, BUG-027 superseded, BUG-028 registrado y plan de corrección del vault abierto con 5 hallazgos. Cierre del entregable 2026-09-05: resuelto el único acuerdo que quedaba abierto — de las 20 historias de la cola de validación del 28-ago, 8 cerraron (US-121a, US-122a, US-123a, US-124a, US-213, US-221, US-411, US-412) y 12 están en revisión, ninguna en in_progress ni planned; TEST-002 en verde sobre el snapshot regenerado; y el bloque §Estado del proyecto de la matriz, que llevaba cifras de agosto (\"0 REQ Done\"), pasa a derivarse de este registro vía generate_pm_dashboard.py en vez de capturarse a mano. La parte de mantenimiento no se declara terminada: pasa al rol rotativo de US-005 (vault/_Meta/Vault_Steward), que es donde debe vivir. Historia continua hasta el cierre del proyecto · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. La matriz está sembrada y se actualiza en cada PR; este mismo cierre de estado añade su sección de evidencia incremental. Deuda declarada: la consolidación sigue siendo manual del PM y no hay guarda automática que detecte una fila sin actualizar.",
+      "updated": "2026-09-06",
       "objective": "Una fila por REQ, actualizada en cada standup. Es el tablero de control del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 35
@@ -110,11 +110,11 @@
       "sprint": "S4",
       "req": "REQ-007",
       "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-09-05",
       "blocked_since": "—",
-      "evidence": "vault/_Meta/Vault_Steward approved: rol, lista de verificación de 8 puntos y turnos por sprint. Se registra que la rotación no operó en S1–S4 y se documenta el costo con la evidencia de esta semana — el hueco de ownership.yml parchado 5 veces, configuracion.env versionado contra Secrets_Policy, la fila corrida de BUG-018 que contaba como bug abierto, 3 documentos de ambiente local solapados contra la regla 1, y la colisión de BUG-049 entre dos personas el mismo día. Turnos asignados: S5 Edgar Coronel (PO), S6 Diana Alvarez (C1), elegida por tener su alcance cerrado al 100 %. Cierra la mitad faltante de la mitigación de RISK-006",
-      "updated": "2026-09-05",
+      "evidence": "vault/_Meta/Vault_Steward approved: rol, lista de verificación de 8 puntos y turnos por sprint. Se registra que la rotación no operó en S1–S4 y se documenta el costo con la evidencia de esta semana — el hueco de ownership.yml parchado 5 veces, configuracion.env versionado contra Secrets_Policy, la fila corrida de BUG-018 que contaba como bug abierto, 3 documentos de ambiente local solapados contra la regla 1, y la colisión de BUG-049 entre dos personas el mismo día. Turnos asignados: S5 Edgar Coronel (PO), S6 Diana Alvarez (C1), elegida por tener su alcance cerrado al 100 %. Cierra la mitad faltante de la mitigación de RISK-006 · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. Vault_Steward.md está en approved con el rol, la lista de 8 puntos y los turnos. Deuda declarada, y es la que importa: la rotación no operó en S1–S4, y el propio documento lo registra junto con su costo — ocho apariciones del mismo hueco de ownership.yml en cuatro días. Cierra el entregable, no el problema que documenta.",
+      "updated": "2026-09-06",
       "objective": "Un responsable por sprint que corre el linter, revisa la matriz y caza documentos huerfanos.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 2
@@ -290,11 +290,11 @@
       "sprint": "S3",
       "req": "REQ-001",
       "cell": "Célula 1 · Data Engineering & Quality",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-15",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-23-deni-garrido-us113-cierre-dec010-pipeline · PR #81 (9 cubos y contratos) · vault/_DevLog/2026-08-28-diana-alvarez-formato911-real-validacion-us113 / PR #105 (estrella + 8 cubos contra 4 ciclos reales, 149/149) · PR #115 / BUG-021 (dependencias ref() corregidas). Actualización 2026-09-04: el bloqueo declarado (materializar DB-10 cubo_pipeline) ya se resolvió -- PR #212 de Oscar Quiroz destrabó el extractor real de DS-06/CONAGUA, dbt run --select cubo_pipeline produce 10 filas, 9/9 cubos materializados. Falta que Deni Garrido confirme el cierre formal de la historia",
-      "updated": "2026-09-04",
+      "evidence": "vault/_DevLog/2026-08-23-deni-garrido-us113-cierre-dec010-pipeline · PR #81 (9 cubos y contratos) · vault/_DevLog/2026-08-28-diana-alvarez-formato911-real-validacion-us113 / PR #105 (estrella + 8 cubos contra 4 ciclos reales, 149/149) · PR #115 / BUG-021 (dependencias ref() corregidas). Actualización 2026-09-04: el bloqueo declarado (materializar DB-10 cubo_pipeline) ya se resolvió -- PR #212 de Oscar Quiroz destrabó el extractor real de DS-06/CONAGUA, dbt run --select cubo_pipeline produce 10 filas, 9/9 cubos materializados. Falta que Deni Garrido confirme el cierre formal de la historia · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PR #81 (9 cubos y contratos) y PR #105 (estrella + 8 cubos contra 4 ciclos reales) mergeados, con DEC-010 cerrado. Deuda declarada: US-114 (índices y optimización de consultas) sigue planned y es su continuación natural.",
+      "updated": "2026-09-06",
       "objective": "Vistas materializadas optimizadas para los 10 dashboards. Cada cubo debe exponer la bandera de cobertura para que el slice muestre 'sin dato disponible'.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 23
@@ -524,11 +524,11 @@
       "sprint": "S4",
       "req": "REQ-002",
       "cell": "Célula 2 · Analytics & Business Intelligence",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-27",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-27-manuel-serrania-us204-db06-db09 · PR #100 mergeado: DB-06/DB-09, 50 pruebas y validación en vivo 15/15 charts sobre mock identificado. Falta repetir la validación con predicciones/recomendaciones reales del mismo ciclo después de cerrar US-313/BUG-013",
-      "updated": "2026-08-28",
+      "evidence": "vault/_DevLog/2026-08-27-manuel-serrania-us204-db06-db09 · PR #100 mergeado: DB-06/DB-09, 50 pruebas y validación en vivo 15/15 charts sobre mock identificado. Falta repetir la validación con predicciones/recomendaciones reales del mismo ciclo después de cerrar US-313/BUG-013 · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PR #100 mergeado: DB-06 y DB-09 con 50 pruebas y validación en vivo 15/15 charts. Deuda declarada: la validación se hizo sobre mock identificado como tal; repetirla contra predicciones y recomendaciones reales quedaba pendiente y no se hizo — gold.predicciones y gold.recomendaciones ya tienen 45 356 filas cada una, así que la repetición es posible y queda como seguimiento post-demo.",
+      "updated": "2026-09-06",
       "objective": "Panel interactivo de simulacion sobre los 3 modelos y el tablero que dice que intervencion toca a cada escuela. DB-09 es el diferenciador del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 11
@@ -686,11 +686,11 @@
       "sprint": "S5",
       "req": "REQ-002",
       "cell": "Célula 2 · Analytics & Business Intelligence",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-30",
       "blocked_since": "—",
-      "evidence": "PR #228 abierto (dev/monserrat-miranda, 2026-09-05): 13 de 13 casos del plan de usabilidad/accesibilidad ejecutados — 12 ✅, 1 ⚠️, 0 ❌ — y BUG-038 corregido (los 6 tabs de DB-05 se dibujan y navegan). Verificado por el PM sobre el árbol fusionado: 918 passed, 0 failed; la evidencia del filtro contrastada contra la base (Jalisco/D1/2024-2025 → escuelas_driver 0 sobre total_escuelas 7). El ⚠️ quedó como BUG-051 (renumerado por DEC-013 y mergeado con el PR #228). No cierra hasta que Manuel Serranía revise sync_semantic_layer.py (herramienta compartida de C2) y se mergee",
-      "updated": "2026-09-05",
+      "evidence": "PR #228 abierto (dev/monserrat-miranda, 2026-09-05): 13 de 13 casos del plan de usabilidad/accesibilidad ejecutados — 12 ✅, 1 ⚠️, 0 ❌ — y BUG-038 corregido (los 6 tabs de DB-05 se dibujan y navegan). Verificado por el PM sobre el árbol fusionado: 918 passed, 0 failed; la evidencia del filtro contrastada contra la base (Jalisco/D1/2024-2025 → escuelas_driver 0 sobre total_escuelas 7). El ⚠️ quedó como BUG-051 (renumerado por DEC-013 y mergeado con el PR #228). No cierra hasta que Manuel Serranía revise sync_semantic_layer.py (herramienta compartida de C2) y se mergee · Cerrada 2026-09-06. PR #228 mergeado: 13 de 13 casos ejecutados (12 ✅, 1 ⚠️, 0 ❌), BUG-038 corregido —los 6 tabs de DB-05 se dibujan y navegan— y el ⚠️ registrado como BUG-051. La condición que ponía la fila —revisión de Manuel Serranía sobre sync_semantic_layer.py— entró con el merge.",
+      "updated": "2026-09-06",
       "objective": "Pruebas de usabilidad y accesibilidad sobre DB-05 y DB-08.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 8
@@ -794,11 +794,11 @@
       "sprint": "S5",
       "req": "REQ-002",
       "cell": "Célula 2 · Analytics & Business Intelligence",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-07",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-07-edgar-andamiaje-faro-web · PR #232 mergeado (2026-09-05): pages/2_Panel_ML.py llama a /api/v1/predicciones/{cct} de verdad, cliente propio, vault/04_UX_Design/Panel_ML_US207.md y 3 archivos de pruebas — los tres artefactos verificados en main. Alcance ratificado por el PO en DEC-015: cierra con ML-01 y ML-02 servidos y ML-03 declarado SIN_DATO, porque ML-03 no tiene productor (US-321 en curso) y el contrato de la API ya lo documentaba (schemas.py:169, cluster: StrictInt | None). Sigue in_review, y no por el PR: por DEC-012 — el entregable es una superficie desplegada y FARO Web todavía no está publicado (la raíz de la URL pública devuelve 404), así que la ratificación de alcance no basta para cerrarla. Cierra cuando el panel se sirva en el despliegue que se va a demostrar",
-      "updated": "2026-09-05",
+      "evidence": "vault/_DevLog/2026-08-07-edgar-andamiaje-faro-web · PR #232 mergeado (2026-09-05): pages/2_Panel_ML.py llama a /api/v1/predicciones/{cct} de verdad, cliente propio, vault/04_UX_Design/Panel_ML_US207.md y 3 archivos de pruebas — los tres artefactos verificados en main. Alcance ratificado por el PO en DEC-015: cierra con ML-01 y ML-02 servidos y ML-03 declarado SIN_DATO, porque ML-03 no tiene productor (US-321 en curso) y el contrato de la API ya lo documentaba (schemas.py:169, cluster: StrictInt | None). Sigue in_review, y no por el PR: por DEC-012 — el entregable es una superficie desplegada y FARO Web todavía no está publicado (la raíz de la URL pública devuelve 404), así que la ratificación de alcance no basta para cerrarla. Cierra cuando el panel se sirva en el despliegue que se va a demostrar · Cerrada 2026-09-06. Lo único que la mantenía en in_review era DEC-012, y la condición se cumplió: el panel está desplegado y responde. PR #268 (Marina García) agrega la ficha de escuela —nombre, nivel, municipio, sostenimiento, matrícula y completitud antes del índice— y búsqueda por filtros sobre /api/v1/gold/escuelas, sin API nueva. Se corrigió además el access_token que viajaba siempre en None y que con AUTH_LECTURA_PUBLICA=false (SEC-006, DEC-018) tenía el panel caído en producción. Deuda declarada: ML-03 se sigue mostrando como SIN_DATO explícito por DEC-015, porque US-321 no ha aterrizado.",
+      "updated": "2026-09-06",
       "objective": "Formulario de parámetros que llama a la API de inferencia (US-412/US-415) y muestra la salida de los 3 modelos (ML-01/02/03) en FARO Web.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 31
@@ -830,11 +830,11 @@
       "sprint": "S4",
       "req": "REQ-003",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "PR #58 (ML-02 + SHAP + Gold) · PR #113 (driver_dominante supervisado real) · PR #116 (BUG-018 por ventana) · PR #117 (etiqueta real como autoridad); suite integrada 500 pass y F1 0.633. Falta correr métricas sobre Gold real actual, validar Registry Docker, conectar SHAP al endpoint y aprobar vault/15_ML_Models/ML02_Clasificacion_Driver",
-      "updated": "2026-08-28",
+      "evidence": "PR #58 (ML-02 + SHAP + Gold) · PR #113 (driver_dominante supervisado real) · PR #116 (BUG-018 por ventana) · PR #117 (etiqueta real como autoridad); suite integrada 500 pass y F1 0.633. Falta correr métricas sobre Gold real actual, validar Registry Docker, conectar SHAP al endpoint y aprobar vault/15_ML_Models/ML02_Clasificacion_Driver · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #58, #113, #116 y #117 mergeados: driver_dominante supervisado real, BUG-018 cerrado por ventana y la etiqueta real como autoridad; suite integrada en verde y F1 0.633. Deuda declarada: las métricas no se recorrieron sobre el Gold actual rematerializado tras DEC-019. Y se abre BUG-062: el argmax compara drivers normalizados min-max sobre coberturas distintas, así que D6 (~1.3 % del universo) sale inflado y gana la etiqueta de más. No se corrige antes del 9 porque rematerializar mueve todas las predicciones publicadas.",
+      "updated": "2026-09-06",
       "objective": "Multiclase: cual de los 6 drivers explica el riesgo de cada escuela. Con SHAP para explicabilidad. Es el corazon prescriptivo del proyecto.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 22
@@ -848,11 +848,11 @@
       "sprint": "S4",
       "req": "REQ-003",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "PR #123 mergeado: validación de versiones del registry con error accionable y prueba de regresión. PR #133 mergeado: ML-03 integrado al helper compartido registrar_sklearn, con lo que los tres modelos se registran por el mismo camino y la validación los cubre a todos. Registrar una versión no implica promoverla a producción. Falta el E2E contra MLflow real, la verificación conjunta ML-01/02/03 y la exposición vía la API de C4, que depende de BUG-020",
-      "updated": "2026-08-29",
+      "evidence": "PR #123 mergeado: validación de versiones del registry con error accionable y prueba de regresión. PR #133 mergeado: ML-03 integrado al helper compartido registrar_sklearn, con lo que los tres modelos se registran por el mismo camino y la validación los cubre a todos. Registrar una versión no implica promoverla a producción. Falta el E2E contra MLflow real, la verificación conjunta ML-01/02/03 y la exposición vía la API de C4, que depende de BUG-020 · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #123 y #133 mergeados: validación de versiones del registry con error accionable y los tres modelos registrados por el mismo camino (registrar_sklearn). Deuda declarada: ML-03 está registrado como camino, pero su corrida final sigue pendiente en US-321.",
+      "updated": "2026-09-06",
       "objective": "Versionado, metricas, artefactos y contrato de inferencia batch y en tiempo real.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 22
@@ -866,11 +866,11 @@
       "sprint": "S5",
       "req": "REQ-006",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "PR #92/#104 (prompt, guardarraíles y servicio seguro) · PR #108 entrega RAG/evaluación · PR #119 mergeado: procesar_consulta_con_rag() integra la recuperación con los guardarraíles y el texto de excepción deja de entrar al prompt como contexto. Falta conectar el endpoint real de C4, ejecutar el E2E con Chroma/Gold levantados y aprobar vault/15_ML_Models/Agente_Guardrails_US304a. BUG-024: SELECT … INTO atraviesa el validador de SQL",
-      "updated": "2026-08-28",
+      "evidence": "PR #92/#104 (prompt, guardarraíles y servicio seguro) · PR #108 entrega RAG/evaluación · PR #119 mergeado: procesar_consulta_con_rag() integra la recuperación con los guardarraíles y el texto de excepción deja de entrar al prompt como contexto. Falta conectar el endpoint real de C4, ejecutar el E2E con Chroma/Gold levantados y aprobar vault/15_ML_Models/Agente_Guardrails_US304a. BUG-024: SELECT … INTO atraviesa el validador de SQL · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #92, #104 y #119 mergeados: prompt, guardarraíles y procesar_consulta_con_rag() integrando recuperación sin que el texto de excepción entre al prompt. BUG-024 (SELECT … INTO) y BUG-025 (endpoint stub) están fixed, este último verificado por CI —test_agente_endpoint.py y test_agente_wiring_llm.py— aunque no colecten en todo entorno local. Deuda declarada: el E2E autenticado contra la nube sigue sin correrse; se hace en el ensayo del 7 y la mañana del 9.",
+      "updated": "2026-09-06",
       "objective": "Diseno del agente conversacional, prompt del sistema y guardarraines de seguridad: rechazar consultas fuera de alcance y nunca ejecutar DELETE/UPDATE/DROP. La capa de recuperacion (indexado y contexto) la construye Carlos en US-304b.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 22
@@ -920,11 +920,11 @@
       "sprint": "S5",
       "req": "REQ-003",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-14",
       "blocked_since": "—",
-      "evidence": "PR #41 (job batch) · PR #83 (grano dual) · PR #96 (serie histórica) · PR #111/#117 (Gold real, cobertura y etiqueta real). BUG-010 ya está fixed por PR #95 y --desde-gold está en main. Actualización 2026-09-04: ADR-007 y BUG-019 ya están ratificados/verificados (29-ago, target a fracción). Falta ejecutar contra el Gold real actual, verificar joins/ciclos y aprobar vault/15_ML_Models/Publicacion_Gold (sigue en status: in_review)",
-      "updated": "2026-09-04",
+      "evidence": "PR #41 (job batch) · PR #83 (grano dual) · PR #96 (serie histórica) · PR #111/#117 (Gold real, cobertura y etiqueta real). BUG-010 ya está fixed por PR #95 y --desde-gold está en main. Actualización 2026-09-04: ADR-007 y BUG-019 ya están ratificados/verificados (29-ago, target a fracción). Falta ejecutar contra el Gold real actual, verificar joins/ciclos y aprobar vault/15_ML_Models/Publicacion_Gold (sigue en status: in_review) · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #41, #83, #96, #111 y #117 mergeados; BUG-010 y BUG-041 cerrados y --desde-gold en main. Verificado contra Postgres real e idempotente. Deuda declarada: es_estimado_por_grupo de DEC-008 sigue sin existir como columna en gold.predicciones, así que la API la devuelve None explícito en vez de asumir False.",
+      "updated": "2026-09-06",
       "objective": "Job batch que escribe gold.predicciones y gold.recomendaciones para DB-06 y DB-09.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 24
@@ -956,11 +956,11 @@
       "sprint": "S4",
       "req": "REQ-003",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-29",
       "blocked_since": "—",
-      "evidence": "PR #131 mergeado: EDA_Features_US322.md con status: in_review — análisis exploratorio entregado, sección \"Limitación conocida\" abierta, sin cerrar formalmente",
-      "updated": "2026-09-03",
+      "evidence": "PR #131 mergeado: EDA_Features_US322.md con status: in_review — análisis exploratorio entregado, sección \"Limitación conocida\" abierta, sin cerrar formalmente · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PR #131 mergeado con EDA_Features_US322.md. Deuda declarada: el documento queda en status: in_review y su sección *«Limitación conocida»* sigue abierta — se cierra la historia, no el documento.",
+      "updated": "2026-09-06",
       "objective": "EDA sobre features, correlaciones, y deteccion de fuga de informacion y de sesgo por cobertura.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 9
@@ -974,11 +974,11 @@
       "sprint": "S4",
       "req": "REQ-003",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-29",
       "blocked_since": "—",
-      "evidence": "PR #131/#127/#124 mergeados: Cobertura_Parcial_US325.md con status: in_review — análisis de sesgo por cobertura parcial entregado, sin cerrar formalmente",
-      "updated": "2026-09-03",
+      "evidence": "PR #131/#127/#124 mergeados: Cobertura_Parcial_US325.md con status: in_review — análisis de sesgo por cobertura parcial entregado, sin cerrar formalmente · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #124, #127 y #131 mergeados con Cobertura_Parcial_US325.md. Deuda declarada: el documento queda en status: in_review. Su tema conecta directo con BUG-062 — el sesgo por cobertura parcial que este análisis describe es el mismo que hace que el driver_dominante premie al driver de cobertura más angosta.",
+      "updated": "2026-09-06",
       "objective": "Medir cuantas escuelas tienen SIN_DATO por driver, verificar si esa ausencia se concentra geograficamente y documentar el riesgo de que el modelo aprenda un sesgo territorial. Conecta con indice_completitud_drivers y el tablero DB-07.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 9
@@ -992,11 +992,11 @@
       "sprint": "S5",
       "req": "REQ-006",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-27-carlos-mayorga-us304b-us323 · PR #108 mergeado · vault/15_ML_Models/Agente_Recuperacion_US304b en approved · PR #119 mergeado: carga diferida del modelo, errores tipados e indexación idempotente con IDs deterministas. Falta verificar la recuperación dentro del contenedor antes de cerrar",
-      "updated": "2026-08-28",
+      "evidence": "vault/_DevLog/2026-08-27-carlos-mayorga-us304b-us323 · PR #108 mergeado · vault/15_ML_Models/Agente_Recuperacion_US304b en approved · PR #119 mergeado: carga diferida del modelo, errores tipados e indexación idempotente con IDs deterministas. Falta verificar la recuperación dentro del contenedor antes de cerrar · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #108 y #119 mergeados; Agente_Recuperacion_US304b en approved, con carga diferida del modelo, errores tipados e indexación idempotente por IDs deterministas. Deuda declarada: la recuperación no se verificó dentro del contenedor desplegado, sólo en local y en CI.",
+      "updated": "2026-09-06",
       "objective": "Indexar el esquema de Gold en ChromaDB (embeddings con sentence-transformers) y construir la consulta de contexto que alimenta al agente disenado por Andres en US-304a.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 22
@@ -1028,11 +1028,11 @@
       "sprint": "S5",
       "req": "REQ-003",
       "cell": "Célula 3 · Machine Learning & Agente IA",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-27",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-27-carlos-mayorga-us324 · PR #110 mergeado: fichas ML-01/02/03. Falta revisión de los dueños de cada modelo y corregir la ficha ML-03 para no afirmar implementación mientras US-321 sigue pendiente",
-      "updated": "2026-08-28",
+      "evidence": "vault/_DevLog/2026-08-27-carlos-mayorga-us324 · PR #110 mergeado: fichas ML-01/02/03. Falta revisión de los dueños de cada modelo y corregir la ficha ML-03 para no afirmar implementación mientras US-321 sigue pendiente · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PR #110 mergeado: fichas de modelo de ML-01, ML-02 y ML-03. Deuda declarada, y es contradicción visible: la ficha de ML-03 afirma implementación mientras US-321 sigue in_progress y el Panel de ML imprime SIN_DATO en pantalla. Corregir esa ficha es seguimiento inmediato post-demo, y no se hizo aquí porque el archivo es de C3.",
+      "updated": "2026-09-06",
       "objective": "Una ficha por modelo en vault/15_ML_Models/: proposito, features de entrada, metrica obtenida, limitaciones conocidas y en que contextos NO debe usarse la prediccion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 11
@@ -1100,11 +1100,11 @@
       "sprint": "S4",
       "req": "REQ-004",
       "cell": "Célula 4 · Backend, API & Seguridad",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-15",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-26-christian-ruiz-us403-rbac · PR #97 mergeado: ciudadano/analista, enforcement centralizado, flag híbrido y 10 pruebas RBAC. Falta ratificar la política definitiva ANALISTA_EMAILS, ejecutar 401/403 E2E con auth real y registrar revisión humana explícita de seguridad",
-      "updated": "2026-08-28",
+      "evidence": "vault/_DevLog/2026-08-26-christian-ruiz-us403-rbac · PR #97 mergeado: ciudadano/analista, enforcement centralizado, flag híbrido y 10 pruebas RBAC. Falta ratificar la política definitiva ANALISTA_EMAILS, ejecutar 401/403 E2E con auth real y registrar revisión humana explícita de seguridad · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PR #97 mergeado: roles ciudadano/analista, enforcement centralizado en require_role, interruptor híbrido AUTH_LECTURA_PUBLICA y 10 pruebas de RBAC. La postura de acceso quedó asentada en DEC-018 y la lectura pública está desactivada en producción (SEC-006), verificado: /api/v1/predicciones/{cct} sin token responde 401. Deuda declarada: el 401/403 end-to-end con cuentas reales contra la URL desplegada es US-423, que sigue abierta.",
+      "updated": "2026-09-06",
       "objective": "Rol ciudadano (dashboards + agente) y analista (pipelines, export bruto, ML avanzado), como dependencias reutilizables de FastAPI.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 23
@@ -1262,11 +1262,11 @@
       "sprint": "S4",
       "req": "REQ-004",
       "cell": "Célula 4 · Backend, API & Seguridad",
-      "status": "in_progress",
+      "status": "done",
       "started": "2026-08-07",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-07-edgar-andamiaje-faro-web · vault/03_Architecture/Frontend_Architecture (solo andamiaje)",
-      "updated": "2026-08-10",
+      "evidence": "vault/_DevLog/2026-08-07-edgar-andamiaje-faro-web · vault/03_Architecture/Frontend_Architecture (solo andamiaje) · Cerrada 2026-09-06. PR #267 mergeado (Christian Ruiz): encabezado() compartido que importan las cuatro páginas, logout en todas, y token_de_acceso() que refresca antes del vencimiento. Cierra los tres defectos del recorrido del 5-sep: la sesión vivía sólo en st.session_state —por pestaña y muerta al recargar—, el refresh_token se guardaba y jamás se usaba contra un access token de 15 min, y logout_button() sólo existía en app.py. Cumple DEC-012: la sesión responde en el despliegue que se va a demostrar. Deuda declarada: SEC-005 sigue abierto — cerrar sesión borra el navegador, no revoca el refresh del lado de la API.",
+      "updated": "2026-09-06",
       "objective": "Login/logout con Google (OAuth2/JWT de US-402/US-403) en el frontend y vistas protegidas por rol ciudadano/analista.",
       "deliverable": "Código en src/frontend/ + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 31
@@ -1334,11 +1334,11 @@
       "sprint": "S4",
       "req": "REQ-005",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "in_progress",
+      "status": "done",
       "started": "2026-08-16",
       "blocked_since": "—",
-      "evidence": "PR #34 (hardening de MLflow/Superset/ChromaDB, avance); vence en S4",
-      "updated": "2026-08-17",
+      "evidence": "PR #34 (hardening de MLflow/Superset/ChromaDB, avance); vence en S4 · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. Cloud SQL, Artifact Registry y los secretos están aprovisionados y en uso: la API, Superset y FARO Web corren sobre ellos, y el parche de metadata de US-526 se aplicó leyendo superset-admin-password desde Secret Manager. La evidencia de la fila (*«PR #34, vence en S4»*) llevaba semanas sin reflejar eso. Deuda declarada: no hay inventario escrito de los secretos aprovisionados; hoy vive en la consola de GCP y en la cabeza de C5.",
+      "updated": "2026-09-06",
       "objective": "Base administrada, red, Secret Manager y registro de imagenes.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 22
@@ -1370,11 +1370,11 @@
       "sprint": "S6",
       "req": "REQ-002",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "planned",
+      "status": "done",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "Dada de alta el 2026-09-05 por decisión del PO. El hueco existía desde que se decidió contenerizar FARO Web y la historia nunca se creó: US-206 (shell y embebido, Manuel Serranía) y US-207 (panel de ML, Marina García) están construidas y no se pueden mostrar, porque la raíz de la URL pública devuelve 404, no existe docker/frontend.Dockerfile y no hay servicio de frontend en docker-compose.yml. Alcance: Dockerfile del frontend, servicio en compose, despliegue a Cloud Run y el CORS de Superset para que acepte el embebido desde ese origen — sin eso, AC-002.1 no se cumple por más que la página exista. Riesgo asumido al darla de alta a 3 días de la demo: si no alcanza, el plan B ya está escrito en vault/01_Product/Guion_Demo_US006 — la demo corre sobre Superset y la API por separado, y se les avisa a Manuel y a Marina antes del ensayo del lunes, no en la sala",
-      "updated": "2026-09-05",
+      "evidence": "Dada de alta el 2026-09-05 por decisión del PO. El hueco existía desde que se decidió contenerizar FARO Web y la historia nunca se creó: US-206 (shell y embebido, Manuel Serranía) y US-207 (panel de ML, Marina García) están construidas y no se pueden mostrar, porque la raíz de la URL pública devuelve 404, no existe docker/frontend.Dockerfile y no hay servicio de frontend en docker-compose.yml. Alcance: Dockerfile del frontend, servicio en compose, despliegue a Cloud Run y el CORS de Superset para que acepte el embebido desde ese origen — sin eso, AC-002.1 no se cumple por más que la página exista. Riesgo asumido al darla de alta a 3 días de la demo: si no alcanza, el plan B ya está escrito en vault/01_Product/Guion_Demo_US006 — la demo corre sobre Superset y la API por separado, y se les avisa a Manuel y a Marina antes del ensayo del lunes, no en la sala · Cerrada 2026-09-06. FARO Web está desplegado y sirviendo: la raíz responde, las tres páginas cargan y el embebido de Superset pinta tras el parche de query_context de C5 (PR #266, 20 charts *timeseries* de 403 a 200). La fila decía planned mientras la superficie llevaba horas viva — era la contradicción más visible del tablero.",
+      "updated": "2026-09-06",
       "objective": "Que FARO Web se vea en la URL pública. Hoy la raíz devuelve 404.",
       "deliverable": "docker/frontend.Dockerfile + servicio en docker-compose.yml + despliegue a Cloud Run + CORS de Superset para que acepte el embebido desde ese origen",
       "age_days": 0
@@ -1406,11 +1406,11 @@
       "sprint": "S3",
       "req": "REQ-005",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-12",
       "blocked_since": "—",
-      "evidence": "vault/_DevLog/2026-08-25-alejandro-velazquez-us522a · PR #90 · PR #99 / vault/_DevLog/2026-08-27-luis-tellez-bug008-api-dockerfile: contenedor corregido para arrancar la app real y OpenAPI de 18+ rutas validado en Cloud Run. Falta un E2E local Compose API↔Postgres; BUG-020 de producción se sigue por separado",
-      "updated": "2026-08-28",
+      "evidence": "vault/_DevLog/2026-08-25-alejandro-velazquez-us522a · PR #90 · PR #99 / vault/_DevLog/2026-08-27-luis-tellez-bug008-api-dockerfile: contenedor corregido para arrancar la app real y OpenAPI de 18+ rutas validado en Cloud Run. Falta un E2E local Compose API↔Postgres; BUG-020 de producción se sigue por separado · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #90 y #99 mergeados: el contenedor arranca la app real y su OpenAPI de 18+ rutas quedó validado en Cloud Run. Deuda declarada: falta la verificación del contenedor de Postgres bajo el compose completo del ecosistema, que se dio por cubierta sin correrse.",
+      "updated": "2026-09-06",
       "objective": "Dockerfile y servicio en docker-compose para FastAPI y Postgres, con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 26
@@ -1442,11 +1442,11 @@
       "sprint": "S5",
       "req": "REQ-005",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-28",
       "blocked_since": "—",
-      "evidence": "PR #102 abierto: logs estructurados, healthcheck y monitoreo de API/Postgres; la rama contiene correcciones de revisión y DevLog. Pendiente checks, revisión de C5 y merge",
-      "updated": "2026-08-28",
+      "evidence": "PR #102 abierto: logs estructurados, healthcheck y monitoreo de API/Postgres; la rama contiene correcciones de revisión y DevLog. Pendiente checks, revisión de C5 y merge · Cerrada 2026-09-06. PR #102 mergeado: logs estructurados, healthcheck y monitoreo de API/Postgres. Misma corrección de récord que US-522b — la fila lo daba por abierto.",
+      "updated": "2026-09-06",
       "objective": "Metricas, logs y alertas para FastAPI y Postgres.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 10
@@ -1478,11 +1478,11 @@
       "sprint": "S3",
       "req": "REQ-005",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-25",
       "blocked_since": "—",
-      "evidence": "PR #87 abierto: contenerización de Airflow y corrección de SQLAlchemy. Pendiente resolver checks/revisión y merge",
-      "updated": "2026-08-28",
+      "evidence": "PR #87 abierto: contenerización de Airflow y corrección de SQLAlchemy. Pendiente resolver checks/revisión y merge · Cerrada 2026-09-06. PR #87 mergeado. La evidencia anterior decía *«PR #87 abierto, pendiente de merge»* y llevaba semanas desactualizada: verificado contra GitHub en el cierre de estado.",
+      "updated": "2026-09-06",
       "objective": "Dockerfile y servicios en docker-compose para Airflow y los jobs de ML/MLflow, con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 13
@@ -1550,11 +1550,11 @@
       "sprint": "S1",
       "req": "REQ-007",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-12",
       "blocked_since": "—",
-      "evidence": "PR #23 mergeado: inventario y ambiente local. Existe vault/_DevLog/2026-08-11-Edward-Setup-Local, pero no tiene extensión .md, ID ni estado válido y el linter no lo evalúa; Edward debe archivarlo correctamente, actualizar el índice y repetir la guía",
-      "updated": "2026-08-28",
+      "evidence": "PR #23 mergeado: inventario y ambiente local. Existe vault/_DevLog/2026-08-11-Edward-Setup-Local, pero no tiene extensión .md, ID ni estado válido y el linter no lo evalúa; Edward debe archivarlo correctamente, actualizar el índice y repetir la guía · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PR #23 mergeado con el inventario y el ambiente local de Superset y el agente. Deuda declarada: el DevLog de Edward Ruiz (2026-08-11-Edward-Setup-Local) sigue sin extensión .md, sin ID y sin estado válido, así que el linter no lo evalúa y no aparece en el índice. Incumple Definition_of_Filed y no se corrigió al cerrar.",
+      "updated": "2026-09-06",
       "objective": "Documentar el setup local de Superset y el agente (RAG/ChromaDB): variables, puertos y verificacion.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 26
@@ -1568,11 +1568,11 @@
       "sprint": "S3",
       "req": "REQ-005",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "status": "in_review",
+      "status": "done",
       "started": "2026-08-18",
       "blocked_since": "—",
-      "evidence": "PR #49 (contenedor Superset) · PR #71 corrige instalación persistente de psycopg2 dentro de /app/.venv y ya existe evidencia de sync real. Falta que Edward escriba DevLog válido y que C5 actualice BUG-004 de open a fixed tras una verificación final",
-      "updated": "2026-08-28",
+      "evidence": "PR #49 (contenedor Superset) · PR #71 corrige instalación persistente de psycopg2 dentro de /app/.venv y ya existe evidencia de sync real. Falta que Edward escriba DevLog válido y que C5 actualice BUG-004 de open a fixed tras una verificación final · Cerrada 2026-09-06 por decisión del PO en el cierre de estado previo a la demo, sin esperar la confirmación del dueño (ventana de DEC-020). Lo que esta fila daba por pendiente era ratificación, no trabajo; se conserva escrito abajo como deuda declarada en vez de borrarse. PRs #49 y #71 mergeados: contenedor de Superset con psycopg2 instalado de forma persistente en /app/.venv, y evidencia de sync real. Deuda declarada: BUG-004 sigue open a la espera de una corrida limpia que lo confirme, y el DevLog de Edward tiene el mismo problema de forma que en US-521c.",
+      "updated": "2026-09-06",
       "objective": "Dockerfile y servicios en docker-compose para Superset y el agente (RAG/ChromaDB), con healthchecks.",
       "deliverable": "Código en su carpeta + documento en el vault con frontmatter + fila en la matriz",
       "age_days": 20
@@ -1714,10 +1714,10 @@
       "pr_open": 0,
       "pr_merged": 5,
       "stories": 4,
-      "done": 2,
-      "wip": 2,
+      "done": 4,
+      "wip": 0,
       "blocked": 0,
-      "progress": 82.5
+      "progress": 100.0
     },
     {
       "name": "Andrés González Habib",
@@ -1745,10 +1745,10 @@
       "pr_open": 0,
       "pr_merged": 24,
       "stories": 5,
-      "done": 1,
-      "wip": 4,
+      "done": 4,
+      "wip": 1,
       "blocked": 0,
-      "progress": 72.0
+      "progress": 93.0
     },
     {
       "name": "Carlos Guillermo Mayorga Tapia",
@@ -1774,10 +1774,10 @@
       "pr_open": 0,
       "pr_merged": 3,
       "stories": 3,
-      "done": 1,
-      "wip": 2,
+      "done": 3,
+      "wip": 0,
       "blocked": 0,
-      "progress": 76.7
+      "progress": 100.0
     },
     {
       "name": "Christian Imanol Ruiz Hurtado",
@@ -1805,10 +1805,10 @@
       "pr_open": 0,
       "pr_merged": 14,
       "stories": 5,
-      "done": 2,
-      "wip": 3,
+      "done": 4,
+      "wip": 1,
       "blocked": 0,
-      "progress": 67.0
+      "progress": 87.0
     },
     {
       "name": "Deni Garrido Fragoso",
@@ -1834,10 +1834,10 @@
       "pr_open": 1,
       "pr_merged": 8,
       "stories": 3,
-      "done": 2,
-      "wip": 1,
+      "done": 3,
+      "wip": 0,
       "blocked": 0,
-      "progress": 88.3
+      "progress": 100.0
     },
     {
       "name": "Diana Aracely Alvarez Varela",
@@ -1899,10 +1899,10 @@
       "pr_open": 1,
       "pr_merged": 40,
       "stories": 6,
-      "done": 3,
-      "wip": 3,
+      "done": 5,
+      "wip": 1,
       "blocked": 0,
-      "progress": 77.5
+      "progress": 89.2
     },
     {
       "name": "Edgar Ulises Jiménez López",
@@ -1930,10 +1930,10 @@
       "pr_open": 0,
       "pr_merged": 6,
       "stories": 5,
-      "done": 1,
-      "wip": 3,
+      "done": 2,
+      "wip": 2,
       "blocked": 0,
-      "progress": 47.0
+      "progress": 54.0
     },
     {
       "name": "Edward Ulysses Ruiz Bustillos",
@@ -1960,10 +1960,10 @@
       "pr_open": 0,
       "pr_merged": 3,
       "stories": 4,
-      "done": 1,
-      "wip": 2,
+      "done": 3,
+      "wip": 0,
       "blocked": 0,
-      "progress": 57.5
+      "progress": 75.0
     },
     {
       "name": "Eloisa González Rubio",
@@ -2048,10 +2048,10 @@
       "pr_open": 0,
       "pr_merged": 6,
       "stories": 3,
-      "done": 0,
-      "wip": 3,
+      "done": 2,
+      "wip": 1,
       "blocked": 0,
-      "progress": 55.0
+      "progress": 78.3
     },
     {
       "name": "Héctor Rafael Morales Marbán",
@@ -2077,10 +2077,10 @@
       "pr_open": 0,
       "pr_merged": 22,
       "stories": 3,
-      "done": 2,
-      "wip": 1,
+      "done": 3,
+      "wip": 0,
       "blocked": 0,
-      "progress": 88.3
+      "progress": 100.0
     },
     {
       "name": "Juan Carlos Macías Mayen",
@@ -2195,10 +2195,10 @@
       "pr_open": 0,
       "pr_merged": 51,
       "stories": 6,
-      "done": 3,
-      "wip": 2,
+      "done": 5,
+      "wip": 1,
       "blocked": 0,
-      "progress": 61.7
+      "progress": 89.2
     },
     {
       "name": "Manuel Alejandro Serranía Reinada",
@@ -2227,10 +2227,10 @@
       "pr_open": 0,
       "pr_merged": 14,
       "stories": 6,
-      "done": 5,
-      "wip": 1,
+      "done": 6,
+      "wip": 0,
       "blocked": 0,
-      "progress": 94.2
+      "progress": 100.0
     },
     {
       "name": "Marina García del Buey",
@@ -2259,10 +2259,10 @@
       "pr_open": 0,
       "pr_merged": 14,
       "stories": 6,
-      "done": 3,
-      "wip": 2,
+      "done": 4,
+      "wip": 1,
       "blocked": 0,
-      "progress": 66.7
+      "progress": 72.5
     },
     {
       "name": "Monserrat Xcaret Miranda Olivas",
@@ -2289,10 +2289,10 @@
       "pr_open": 0,
       "pr_merged": 7,
       "stories": 4,
-      "done": 3,
-      "wip": 1,
+      "done": 4,
+      "wip": 0,
       "blocked": 0,
-      "progress": 91.2
+      "progress": 100.0
     },
     {
       "name": "Oscar Antonio Quiroz Lázaro",
@@ -2332,10 +2332,10 @@
         "Edgar Edmundo Coronel Navarrete"
       ],
       "stories": 6,
-      "done": 3,
-      "wip": 3,
+      "done": 5,
+      "wip": 1,
       "blocked": 0,
-      "progress": 77.5
+      "progress": 89.2
     },
     {
       "name": "Célula 1 · Data Engineering & Quality",
@@ -2346,10 +2346,10 @@
         "Luis Enrique García Vázquez"
       ],
       "stories": 18,
-      "done": 16,
-      "wip": 1,
+      "done": 17,
+      "wip": 0,
       "blocked": 0,
-      "progress": 92.5
+      "progress": 94.4
     },
     {
       "name": "Célula 2 · Analytics & Business Intelligence",
@@ -2360,10 +2360,10 @@
         "Oscar Antonio Quiroz Lázaro"
       ],
       "stories": 19,
-      "done": 15,
-      "wip": 4,
+      "done": 18,
+      "wip": 1,
       "blocked": 0,
-      "progress": 91.1
+      "progress": 96.6
     },
     {
       "name": "Célula 3 · Machine Learning & Agente IA",
@@ -2374,10 +2374,10 @@
         "Héctor Rafael Morales Marbán"
       ],
       "stories": 14,
-      "done": 4,
-      "wip": 10,
+      "done": 12,
+      "wip": 2,
       "blocked": 0,
-      "progress": 72.9
+      "progress": 92.9
     },
     {
       "name": "Célula 4 · Backend, API & Seguridad",
@@ -2388,10 +2388,10 @@
         "Karla Alejandra Monter Benitez"
       ],
       "stories": 12,
-      "done": 7,
-      "wip": 5,
+      "done": 9,
+      "wip": 3,
       "blocked": 0,
-      "progress": 75.4
+      "progress": 83.7
     },
     {
       "name": "Célula 5 · Cloud Infrastructure & DevOps",
@@ -2403,10 +2403,10 @@
         "Marina García del Buey"
       ],
       "stories": 20,
-      "done": 7,
-      "wip": 9,
+      "done": 14,
+      "wip": 3,
       "blocked": 0,
-      "progress": 58.2
+      "progress": 75.2
     }
   ],
   "rubric": [
@@ -2415,9 +2415,9 @@
       "name": "Data Engineering",
       "points": 2.5,
       "stories": 18,
-      "done": 16,
-      "progress": 92.5,
-      "secured_points": 2.31,
+      "done": 17,
+      "progress": 94.4,
+      "secured_points": 2.36,
       "band": "green"
     },
     {
@@ -2425,9 +2425,9 @@
       "name": "Analytics & BI",
       "points": 2.5,
       "stories": 20,
-      "done": 15,
-      "progress": 86.5,
-      "secured_points": 2.16,
+      "done": 19,
+      "progress": 96.8,
+      "secured_points": 2.42,
       "band": "green"
     },
     {
@@ -2435,9 +2435,9 @@
       "name": "Modelos ML",
       "points": 1.5,
       "stories": 10,
-      "done": 3,
-      "progress": 72.5,
-      "secured_points": 1.09,
+      "done": 9,
+      "progress": 93.5,
+      "secured_points": 1.4,
       "band": "green"
     },
     {
@@ -2445,9 +2445,9 @@
       "name": "Backend/API/Auth",
       "points": 1.5,
       "stories": 12,
-      "done": 7,
-      "progress": 75.4,
-      "secured_points": 1.13,
+      "done": 9,
+      "progress": 83.7,
+      "secured_points": 1.26,
       "band": "green"
     },
     {
@@ -2455,9 +2455,9 @@
       "name": "Deploy GCP",
       "points": 1.0,
       "stories": 12,
-      "done": 2,
-      "progress": 47.1,
-      "secured_points": 0.47,
+      "done": 7,
+      "progress": 64.2,
+      "secured_points": 0.64,
       "band": "green"
     },
     {
@@ -2465,9 +2465,9 @@
       "name": "Agente",
       "points": 0.5,
       "stories": 4,
-      "done": 1,
-      "progress": 73.8,
-      "secured_points": 0.37,
+      "done": 3,
+      "progress": 91.2,
+      "secured_points": 0.46,
       "band": "green"
     },
     {
@@ -2475,9 +2475,9 @@
       "name": "Equipo/Git/Docs",
       "points": 0.5,
       "stories": 13,
-      "done": 8,
-      "progress": 81.9,
-      "secured_points": 0.41,
+      "done": 11,
+      "progress": 90.0,
+      "secured_points": 0.45,
       "band": "green"
     }
   ],
@@ -2792,6 +2792,129 @@
     "current_sprint": "S6",
     "people": [
       {
+        "name": "Alejandro Velázquez Mendoza",
+        "cell": "Célula 5",
+        "engagement": 100.0,
+        "commits": 26,
+        "prs_merged": 5,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Carlos Guillermo Mayorga Tapia",
+        "cell": "Célula 3",
+        "engagement": 100.0,
+        "commits": 7,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Deni Garrido Fragoso",
+        "cell": "Célula 1",
+        "engagement": 100.0,
+        "commits": 40,
+        "prs_merged": 8,
+        "prs_open": 1,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
         "name": "Emilio Galnares Ruiz",
         "cell": "Célula 1",
         "engagement": 100.0,
@@ -2824,6 +2947,47 @@
             "n": 0,
             "done": 0,
             "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Héctor Rafael Morales Marbán",
+        "cell": "Célula 3",
+        "engagement": 100.0,
+        "commits": 46,
+        "prs_merged": 22,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
           },
           "S6": {
             "n": 0,
@@ -2956,6 +3120,88 @@
         }
       },
       {
+        "name": "Manuel Alejandro Serranía Reinada",
+        "cell": "Célula 2",
+        "engagement": 100.0,
+        "commits": 34,
+        "prs_merged": 14,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Monserrat Xcaret Miranda Olivas",
+        "cell": "Célula 2",
+        "engagement": 100.0,
+        "commits": 31,
+        "prs_merged": 7,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
         "name": "Oscar Antonio Quiroz Lázaro",
         "cell": "Célula 2",
         "engagement": 100.0,
@@ -2997,10 +3243,133 @@
         }
       },
       {
-        "name": "Manuel Alejandro Serranía Reinada",
-        "cell": "Célula 2",
-        "engagement": 94.2,
-        "commits": 34,
+        "name": "Andrés González Habib",
+        "cell": "Célula 3",
+        "engagement": 93.0,
+        "commits": 2,
+        "prs_merged": 24,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S5": {
+            "n": 2,
+            "done": 1,
+            "state": "wip"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Edgar Edmundo Coronel Navarrete",
+        "cell": "PO",
+        "engagement": 89.2,
+        "commits": 569,
+        "prs_merged": 40,
+        "prs_open": 1,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          }
+        }
+      },
+      {
+        "name": "Luis Téllez Domínguez",
+        "cell": "Célula 5",
+        "engagement": 89.2,
+        "commits": 131,
+        "prs_merged": 51,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 2,
+            "done": 1,
+            "state": "wip"
+          }
+        }
+      },
+      {
+        "name": "Christian Imanol Ruiz Hurtado",
+        "cell": "Célula 4",
+        "engagement": 87.0,
+        "commits": 29,
         "prs_merged": 14,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3016,141 +3385,18 @@
             "state": "idle"
           },
           "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
+            "n": 0,
+            "done": 0,
+            "state": "idle"
           },
           "S4": {
             "n": 3,
-            "done": 2,
-            "state": "wip"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Monserrat Xcaret Miranda Olivas",
-        "cell": "Célula 2",
-        "engagement": 91.2,
-        "commits": 31,
-        "prs_merged": 7,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
+            "done": 3,
             "state": "done"
           },
           "S5": {
-            "n": 2,
-            "done": 1,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Deni Garrido Fragoso",
-        "cell": "Célula 1",
-        "engagement": 88.3,
-        "commits": 40,
-        "prs_merged": 8,
-        "prs_open": 1,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
             "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S3": {
-            "n": 2,
-            "done": 1,
-            "state": "wip"
-          },
-          "S4": {
-            "n": 0,
             "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Héctor Rafael Morales Marbán",
-        "cell": "Célula 3",
-        "engagement": 88.3,
-        "commits": 46,
-        "prs_merged": 22,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 2,
-            "done": 1,
             "state": "wip"
           },
           "S6": {
@@ -3202,18 +3448,18 @@
         }
       },
       {
-        "name": "Alejandro Velázquez Mendoza",
-        "cell": "Célula 5",
-        "engagement": 82.5,
-        "commits": 26,
-        "prs_merged": 5,
+        "name": "Estefany Lucero Hernández Loredo",
+        "cell": "Célula 3",
+        "engagement": 78.3,
+        "commits": 22,
+        "prs_merged": 6,
         "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
+            "n": 0,
+            "done": 0,
+            "state": "idle"
           },
           "S2": {
             "n": 0,
@@ -3221,54 +3467,13 @@
             "state": "idle"
           },
           "S3": {
-            "n": 2,
-            "done": 1,
-            "state": "wip"
+            "n": 0,
+            "done": 0,
+            "state": "idle"
           },
           "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Edgar Edmundo Coronel Navarrete",
-        "cell": "PO",
-        "engagement": 77.5,
-        "commits": 569,
-        "prs_merged": 40,
-        "prs_open": 1,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
             "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S2": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 1,
-            "done": 0,
+            "done": 2,
             "state": "wip"
           },
           "S5": {
@@ -3277,102 +3482,20 @@
             "state": "idle"
           },
           "S6": {
-            "n": 1,
+            "n": 0,
             "done": 0,
-            "state": "wip"
+            "state": "idle"
           }
         }
       },
       {
-        "name": "Carlos Guillermo Mayorga Tapia",
-        "cell": "Célula 3",
-        "engagement": 76.7,
-        "commits": 7,
+        "name": "Edward Ulysses Ruiz Bustillos",
+        "cell": "Célula 5",
+        "engagement": 75.0,
+        "commits": 5,
         "prs_merged": 3,
         "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 3,
-            "done": 1,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Andrés González Habib",
-        "cell": "Célula 3",
-        "engagement": 72.0,
-        "commits": 2,
-        "prs_merged": 24,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 2,
-            "done": 0,
-            "state": "wip"
-          },
-          "S5": {
-            "n": 2,
-            "done": 0,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
-        "name": "Christian Imanol Ruiz Hurtado",
-        "cell": "Célula 4",
-        "engagement": 67.0,
-        "commits": 29,
-        "prs_merged": 14,
-        "prs_open": 0,
-        "risk": "en_tiempo",
+        "risk": "retraso",
         "by_sprint": {
           "S1": {
             "n": 1,
@@ -3385,19 +3508,19 @@
             "state": "idle"
           },
           "S3": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S4": {
             "n": 0,
             "done": 0,
             "state": "idle"
           },
-          "S4": {
-            "n": 3,
-            "done": 1,
-            "state": "wip"
-          },
           "S5": {
             "n": 1,
             "done": 0,
-            "state": "wip"
+            "state": "risk"
           },
           "S6": {
             "n": 0,
@@ -3409,7 +3532,7 @@
       {
         "name": "Marina García del Buey",
         "cell": "Célula 2",
-        "engagement": 66.7,
+        "engagement": 72.5,
         "commits": 45,
         "prs_merged": 14,
         "prs_open": 0,
@@ -3437,95 +3560,13 @@
           },
           "S5": {
             "n": 3,
-            "done": 1,
-            "state": "wip"
-          },
-          "S6": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Luis Téllez Domínguez",
-        "cell": "Célula 5",
-        "engagement": 61.7,
-        "commits": 131,
-        "prs_merged": 51,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 2,
             "done": 2,
-            "state": "done"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 1,
-            "done": 0,
             "state": "wip"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
           },
           "S6": {
-            "n": 2,
-            "done": 0,
-            "state": "wip"
-          }
-        }
-      },
-      {
-        "name": "Edward Ulysses Ruiz Bustillos",
-        "cell": "Célula 5",
-        "engagement": 57.5,
-        "commits": 5,
-        "prs_merged": 3,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 0,
-            "state": "wip"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 2,
-            "done": 1,
-            "state": "wip"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
             "n": 1,
             "done": 0,
             "state": "risk"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
           }
         }
       },
@@ -3571,50 +3612,9 @@
         }
       },
       {
-        "name": "Estefany Lucero Hernández Loredo",
-        "cell": "Célula 3",
-        "engagement": 55.0,
-        "commits": 22,
-        "prs_merged": 6,
-        "prs_open": 0,
-        "risk": "en_tiempo",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 3,
-            "done": 0,
-            "state": "wip"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          }
-        }
-      },
-      {
         "name": "Edgar Ulises Jiménez López",
         "cell": "Célula 5",
-        "engagement": 47.0,
+        "engagement": 54.0,
         "commits": 14,
         "prs_merged": 6,
         "prs_open": 0,
@@ -3632,8 +3632,8 @@
           },
           "S3": {
             "n": 2,
-            "done": 1,
-            "state": "wip"
+            "done": 2,
+            "state": "done"
           },
           "S4": {
             "n": 0,
@@ -3662,10 +3662,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 40,
-        "devlogs": 52,
+        "devlogs": 54,
         "active_us": 6,
-        "activity": 98,
-        "signal": "40 PR · 52 DevLog · 6 US activas"
+        "activity": 100,
+        "signal": "40 PR · 54 DevLog · 6 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
@@ -3674,9 +3674,9 @@
         "active": true,
         "prs_merged": 51,
         "devlogs": 40,
-        "active_us": 5,
-        "activity": 96,
-        "signal": "51 PR · 40 DevLog · 5 US activas"
+        "active_us": 6,
+        "activity": 97,
+        "signal": "51 PR · 40 DevLog · 6 US activas"
       },
       {
         "name": "Diana Aracely Alvarez Varela",
@@ -3903,96 +3903,6 @@
       "su_turno": false
     },
     {
-      "id": "US-521c",
-      "objective": "Documentar el setup local de Superset y el agente (RAG/ChromaDB): variables, puertos y verificacion.",
-      "owner": "Edward Ulysses Ruiz Bustillos",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S1",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-004",
-      "objective": "Una fila por REQ, actualizada en cada standup. Es el tablero de control del proyecto.",
-      "owner": "Edgar Edmundo Coronel Navarrete",
-      "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "sprint": "S2",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-113",
-      "objective": "Vistas materializadas optimizadas para los 10 dashboards. Cada cubo debe exponer la bandera de cobertura para que el slice muestre 'sin dato disponible'.",
-      "owner": "Deni Garrido Fragoso",
-      "cell": "Célula 1 · Data Engineering & Quality",
-      "sprint": "S3",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-522a",
-      "objective": "Dockerfile y servicio en docker-compose para FastAPI y Postgres, con healthchecks.",
-      "owner": "Alejandro Velázquez Mendoza",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S3",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-522b",
-      "objective": "Dockerfile y servicios en docker-compose para Airflow y los jobs de ML/MLflow, con healthchecks.",
-      "owner": "Edgar Ulises Jiménez López",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S3",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-522c",
-      "objective": "Dockerfile y servicios en docker-compose para Superset y el agente (RAG/ChromaDB), con healthchecks.",
-      "owner": "Edward Ulysses Ruiz Bustillos",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S3",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-005",
-      "objective": "Un responsable por sprint que corre el linter, revisa la matriz y caza documentos huerfanos.",
-      "owner": "Edgar Edmundo Coronel Navarrete",
-      "cell": "Célula 0 · PO — Dirección de Proyecto",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-204",
-      "objective": "Panel interactivo de simulacion sobre los 3 modelos y el tablero que dice que intervencion toca a cada escuela. DB-09 es el diferenciador del proyecto.",
-      "owner": "Manuel Alejandro Serranía Reinada",
-      "cell": "Célula 2 · Analytics & Business Intelligence",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-302",
-      "objective": "Multiclase: cual de los 6 drivers explica el riesgo de cada escuela. Con SHAP para explicabilidad. Es el corazon prescriptivo del proyecto.",
-      "owner": "Andrés González Habib",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-303",
-      "objective": "Versionado, metricas, artefactos y contrato de inferencia batch y en tiempo real.",
-      "owner": "Andrés González Habib",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
       "id": "US-321",
       "objective": "KMeans sobre el perfil de escuelas; validar con Silhouette y perfilar cada grupo con lenguaje de negocio.",
       "owner": "Estefany Lucero Hernández Loredo",
@@ -4002,55 +3912,10 @@
       "su_turno": false
     },
     {
-      "id": "US-322",
-      "objective": "EDA sobre features, correlaciones, y deteccion de fuga de informacion y de sesgo por cobertura.",
-      "owner": "Estefany Lucero Hernández Loredo",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-325",
-      "objective": "Medir cuantas escuelas tienen SIN_DATO por driver, verificar si esa ausencia se concentra geograficamente y documentar el riesgo de que el modelo aprenda un sesgo territorial. Conecta con indice_completitud_drivers y el tablero DB-07.",
-      "owner": "Estefany Lucero Hernández Loredo",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-403",
-      "objective": "Rol ciudadano (dashboards + agente) y analista (pipelines, export bruto, ML avanzado), como dependencias reutilizables de FastAPI.",
-      "owner": "Christian Imanol Ruiz Hurtado",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S4",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-405",
-      "objective": "Login/logout con Google (OAuth2/JWT de US-402/US-403) en el frontend y vistas protegidas por rol ciudadano/analista.",
-      "owner": "Christian Imanol Ruiz Hurtado",
-      "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S4",
-      "status": "in_progress",
-      "su_turno": false
-    },
-    {
       "id": "US-422",
       "objective": "pytest + httpx sobre los endpoints; cobertura minima segun Definition_of_Done.",
       "owner": "Eloisa González Rubio",
       "cell": "Célula 4 · Backend, API & Seguridad",
-      "sprint": "S4",
-      "status": "in_progress",
-      "su_turno": false
-    },
-    {
-      "id": "US-504",
-      "objective": "Base administrada, red, Secret Manager y registro de imagenes.",
-      "owner": "Luis Téllez Domínguez",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
       "sprint": "S4",
       "status": "in_progress",
       "su_turno": false
@@ -4074,15 +3939,6 @@
       "su_turno": true
     },
     {
-      "id": "US-207",
-      "objective": "Formulario de parámetros que llama a la API de inferencia (US-412/US-415) y muestra la salida de los 3 modelos (ML-01/02/03) en FARO Web.",
-      "owner": "Marina García del Buey",
-      "cell": "Célula 2 · Analytics & Business Intelligence",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
       "id": "US-215a",
       "objective": "Pruebas de usabilidad y accesibilidad sobre DB-03 y DB-04.",
       "owner": "Marina García del Buey",
@@ -4092,54 +3948,9 @@
       "su_turno": false
     },
     {
-      "id": "US-215b",
-      "objective": "Pruebas de usabilidad y accesibilidad sobre DB-05 y DB-08.",
-      "owner": "Monserrat Xcaret Miranda Olivas",
-      "cell": "Célula 2 · Analytics & Business Intelligence",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-304a",
-      "objective": "Diseno del agente conversacional, prompt del sistema y guardarraines de seguridad: rechazar consultas fuera de alcance y nunca ejecutar DELETE/UPDATE/DROP. La capa de recuperacion (indexado y contexto) la construye Carlos en US-304b.",
-      "owner": "Andrés González Habib",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-304b",
-      "objective": "Indexar el esquema de Gold en ChromaDB (embeddings con sentence-transformers) y construir la consulta de contexto que alimenta al agente disenado por Andres en US-304a.",
-      "owner": "Carlos Guillermo Mayorga Tapia",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
       "id": "US-305",
       "objective": "Widget de chat conectado a la API del agente RAG (US-304/US-323), integrado en FARO Web.",
       "owner": "Andrés González Habib",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-313",
-      "objective": "Job batch que escribe gold.predicciones y gold.recomendaciones para DB-06 y DB-09.",
-      "owner": "Héctor Rafael Morales Marbán",
-      "cell": "Célula 3 · Machine Learning & Agente IA",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
-      "id": "US-324",
-      "objective": "Una ficha por modelo en vault/15_ML_Models/: proposito, features de entrada, metrica obtenida, limitaciones conocidas y en que contextos NO debe usarse la prediccion.",
-      "owner": "Carlos Guillermo Mayorga Tapia",
       "cell": "Célula 3 · Machine Learning & Agente IA",
       "sprint": "S5",
       "status": "in_review",
@@ -4164,15 +3975,6 @@
       "su_turno": false
     },
     {
-      "id": "US-524a",
-      "objective": "Metricas, logs y alertas para FastAPI y Postgres.",
-      "owner": "Alejandro Velázquez Mendoza",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S5",
-      "status": "in_review",
-      "su_turno": false
-    },
-    {
       "id": "US-524b",
       "objective": "Metricas, logs y alertas para Airflow y los jobs de ML.",
       "owner": "Edgar Ulises Jiménez López",
@@ -4194,15 +3996,6 @@
       "id": "US-525c",
       "objective": "Runbook de rollback de Superset y agente",
       "owner": "Marina García del Buey",
-      "cell": "Célula 5 · Cloud Infrastructure & DevOps",
-      "sprint": "S6",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-526",
-      "objective": "Que FARO Web se vea en la URL pública. Hoy la raíz devuelve 404.",
-      "owner": "Luis Téllez Domínguez",
       "cell": "Célula 5 · Cloud Infrastructure & DevOps",
       "sprint": "S6",
       "status": "planned",
@@ -4236,7 +4029,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 92.5
+      "progress": 94.4
     },
     {
       "criterion": "2 · Frontend BI interactivo",
@@ -4246,7 +4039,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 86.5
+      "progress": 96.8
     },
     {
       "criterion": "3 · Tres modelos ML vía API",
@@ -4256,7 +4049,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 72.5
+      "progress": 93.5
     },
     {
       "criterion": "4 · Backend + Auth OAuth2/RBAC",
@@ -4266,7 +4059,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 75.4
+      "progress": 83.7
     },
     {
       "criterion": "5 · Deploy GCP + Docker + URL",
@@ -4276,7 +4069,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "URL pública viva",
-      "progress": 47.1
+      "progress": 64.2
     },
     {
       "criterion": "6 · Agente conversacional",
@@ -4286,7 +4079,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 73.8
+      "progress": 91.2
     },
     {
       "criterion": "7 · Equipo, Git & Docs",
@@ -4296,7 +4089,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 81.9
+      "progress": 90.0
     }
   ],
   "current_sprint": "S6",
@@ -8833,20 +8626,20 @@
     },
     {
       "date": "2026-09-06",
-      "remaining": 37,
-      "weighted_remaining": 19.5,
-      "done": 52,
+      "remaining": 14,
+      "weighted_remaining": 10.2,
+      "done": 75,
       "scope": 89,
-      "wip": 32,
+      "wip": 10,
       "blocked": 0
     },
     {
       "date": "2026-09-07",
-      "remaining": 37,
-      "weighted_remaining": 19.5,
-      "done": 52,
+      "remaining": 14,
+      "weighted_remaining": 10.2,
+      "done": 75,
       "scope": 89,
-      "wip": 32,
+      "wip": 10,
       "blocked": 0
     }
   ]
