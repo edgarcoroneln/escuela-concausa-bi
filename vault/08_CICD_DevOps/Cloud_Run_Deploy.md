@@ -3,8 +3,8 @@ id: DOC-CLOUD-RUN-DEPLOY
 title: "Procedimiento de Deploy a Cloud Run"
 owner: "Luis Téllez Domínguez"
 status: active
-version: "1.2"
-traces_up: ["US-501", "US-505", "US-402", "REQ-005"]
+version: "1.3"
+traces_up: ["US-501", "US-505", "US-402", "US-304", "REQ-005", "REQ-006"]
 tags: [devops, gcp, cloud-run, deployment, sprint-1, fase-2]
 date: "2026-08-09"
 ---
@@ -321,6 +321,87 @@ gcloud run services update faro-api --region=us-central1 \
 > el flip `AUTH_LECTURA_PUBLICA=true → false` (hoy la lectura es pública para la demo). Detalle en
 > [[vault/_DevLog/2026-08-30-luis-tellez-oauth-creds-deploy]].
 
+### 4.6 Agente conversacional — multi-contenedor con sidecar ChromaDB (US-304)
+
+Enciende el **RAG Text-to-SQL** en prod (supera el stub de BUG-025, §4.4). El agente necesita tres cosas que
+la imagen base no traía: **deps** (`chromadb`, `sentence-transformers`, `anthropic`), un **ChromaDB
+alcanzable**, y dos **secretos**. Como `src/agente/recuperacion.py` (C3) crea `chromadb.HttpClient(host, port)`
+**sin `ssl`**, no puede hablarle a una URL `https://*.run.app`; por eso ChromaDB va como **sidecar** (2.º
+contenedor en el mismo servicio `faro-api`, por `localhost`, sin TLS). Cero cambios en C2/C3/C4.
+
+**a) Imagen de la API con deps + modelo de embeddings horneado.** `docker/api.Dockerfile` ya incluye la capa
+de deps del agente (**torch CPU-only** desde el índice de PyTorch + `chromadb==1.5.9` +
+`sentence-transformers==5.7.0` + `"anthropic>=0.116"`) y **hornea** `all-MiniLM-L6-v2` con runtime **OFFLINE**
+(`HF_HUB_OFFLINE=1` / `TRANSFORMERS_OFFLINE=1`), para no depender de HuggingFace en runtime (egress
+`private-ranges-only`). Se construye y sella como en §4.4 (`buildx --platform linux/amd64`, `--build-arg GIT_SHA`).
+
+**b) Imagen del sidecar (índice horneado).** Sobre el **digest amd64** de la imagen oficial
+(`chromadb/chroma@sha256:…`, inmutable) se hace `COPY faro_chroma_index/ /data/` + `ENV IS_PERSISTENT=1`. El
+índice (colección `faro_gold_schema`, **7 docs** del esquema Gold) se captura desde el ChromaDB local ya
+indexado ⇒ el sidecar **arranca poblado**, sin indexar en runtime.
+
+**c) Secretos en Secret Manager** (los valores **nunca** se versionan ni se imprimen):
+
+```bash
+# ANTHROPIC_API_KEY — se pega por stdin, no queda en el historial del shell
+printf '%s' 'PEGAR_API_KEY' | gcloud secrets create anthropic-api-key \
+  --data-file=- --replication-policy=automatic
+# DATABASE_URL_READ_ONLY — DSN de lectura compuesto en una variable, nunca impreso
+printf '%s' "$DSN_READ_ONLY" | gcloud secrets create database-url-read-only \
+  --data-file=- --replication-policy=automatic
+# acceso para la SA de la API
+for S in anthropic-api-key database-url-read-only; do
+  gcloud secrets add-iam-policy-binding "$S" \
+    --member=serviceAccount:faro-api-sa@faro-escuela-sensor.iam.gserviceaccount.com \
+    --role=roles/secretmanager.secretAccessor
+done
+```
+
+> **DSN de lectura:** reusa el usuario **`faro_app`** (mismo secreto `db-password`), **no** un rol SELECT-only
+> dedicado. Es seguro para la demo porque `src/api/ejecutor_gold.py::ejecutar_sql_read_only` fuerza
+> `SET TRANSACTION READ ONLY` **y** valida el SQL (no puede escribir aunque el rol pudiera). El rol SELECT-only
+> queda como **endurecimiento posterior**.
+
+**d) Revisión multi-contenedor (`services replace`, no `update`).** El servicio tenía **1 contenedor sin
+nombre**; `gcloud run services update` con flags crea un 2.º contenedor **con** puerto y falla (*"should
+contain exactly one container with an exposed port"*), y `--set-*` borraría el env. Se usa **`replace`** con un
+YAML curado que declara:
+
+- contenedor **`api`** (puerto 8080, 2Gi — torch+ST dejan ~700 MiB de base ⇒ 512Mi no alcanza) con
+  `CHROMA_HOST=localhost`, `CHROMA_PORT=8000` y los 5 secretos;
+- contenedor **`chromadb`** (sin puerto, del sidecar de (b));
+- `run.googleapis.com/container-dependencies: {"api":["chromadb"]}`;
+- **preservando** SA `faro-api-sa`, VPC connector `faro-connector` + egress `private-ranges-only`, y todo el
+  env de OAuth/JWT/`POSTGRES_*`/`AUTH_LECTURA_PUBLICA`/`ANALISTA_EMAILS` (§4.3, §4.5).
+
+```bash
+gcloud services enable cloudresourcemanager.googleapis.com    # 'replace' la exige (una vez)
+gcloud run services replace faro_api_deploy.yaml --region=us-central1   # namespace = número de proyecto
+```
+
+**e) Modelo del agente por variable de entorno (palanca de latencia).** El pipeline hace **dos** llamadas al
+LLM en serie (generar SQL + redactar respuesta); con Sonnet la latencia (**4–26 s**) rebasa el `timeout=15.0`
+del cliente del shell (`src/frontend/agente_client.py:43`, código C2), y se ve como
+*"La API del agente no está disponible"*. `src/agente/llm.py` **lee `AGENTE_MODELO` de env** (default
+`claude-sonnet-5`) ⇒ se ajusta sin tocar código:
+
+```bash
+gcloud run services update faro-api --region=us-central1 \
+  --container=api --update-env-vars AGENTE_MODELO=claude-haiku-4-5-20251001
+```
+
+**Haiku** entra holgado bajo el timeout y **sostiene la calidad** del diferenciador (D2 ≠ D4). **No** bajar
+`AGENTE_MAX_TOKENS` (trunca respuestas y `llm.py` lo convierte en error).
+
+**Verificación e2e:** shell → login Google → *Agente FARO* → preguntar por el driver D2 vs D4 (diferenciador) y
+una orden destructiva (guardrail). **Smoke:** `/health` 200 · `/version` = el `GIT_SHA` de la imagen · agente
+sin token → **401** (SEC-006). Estado 2026-09-07: revisión **`faro-api-00016-hj5`** (Haiku), verificado en vivo.
+
+**Rollback:** a Sonnet → `gcloud run services update-traffic faro-api --region=us-central1
+--to-revisions=faro-api-00015-f29=100`; pre-agente → revisión `faro-api-00014-24b` (imagen `c4410d1`).
+
+Detalle en [[vault/_DevLog/2026-09-07-luis-tellez-agente-gcp-sidecar-haiku]].
+
 ---
 
 ## 5. Verificación del Deploy
@@ -596,7 +677,7 @@ gcloud run services update faro-api \
 
 ---
 
-**Última actualización:** 2026-08-30 (v1.2 · §4.5 credenciales OAuth de Google, US-402)  
+**Última actualización:** 2026-09-07 (v1.3 · §4.6 agente conversacional multi-contenedor + sidecar ChromaDB + `AGENTE_MODELO`, US-304)  
 **Sprint:** S1 (base) · S4 (Fase 2)  
 **Owner:** Luis Téllez Domínguez  
 **Status:** ✅ Completado y verificado (BUG-020 curado en prod)
