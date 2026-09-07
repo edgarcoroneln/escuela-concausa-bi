@@ -267,11 +267,11 @@
   },
   {
     "date": "2026-09-07",
-    "remaining": 37,
-    "weighted_remaining": 19.5,
-    "done": 52,
+    "remaining": 14,
+    "weighted_remaining": 10.2,
+    "done": 75,
     "scope": 89,
-    "wip": 32,
+    "wip": 10,
     "blocked": 0
   }
 ]
