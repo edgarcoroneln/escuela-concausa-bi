@@ -232,11 +232,19 @@ declara como deuda, y `DEC-015` ya dejó abierta esa puerta.
 **No lo arregles sin avisarme.** Publicar a Gold a dos días toca las 45 276 filas y hay dos decisiones
 (`DEC-019`, `BUG-063`) que dependen de que nada publicado se mueva.
 
-## Cómo levantar tu ambiente local
+## El ambiente local, y por qué ya no es obligatorio
 
-**Producción da el veredicto; local es el banco de trabajo.** La regla de arriba no cambia: lo que
-califica el miércoles es la URL pública. Pero un hallazgo sin ambiente local es un hallazgo que no
-puedes diagnosticar ni arreglar — por eso todos levantan el suyo hoy.
+> **Cambio de estrategia del 2026-09-07 (PO).** La versión anterior de esta sección pedía a las siete
+> personas levantar su ambiente. **Ya no.** Las pruebas se hacen **en producción**, en
+> **https://faro-frontend-526490367142.us-central1.run.app/**, y nada más. Levantar siete ambientes a
+> dos días de la demo cuesta horas que no tenemos, y **local no puede responder las preguntas que
+> importan**: la postura de auth está invertida y el login con Google no corre (ver abajo). Un
+> ambiente local que no reproduce la sesión no sirve para probar la sesión.
+
+**Quién sí lo necesita, y sólo para arreglar:** **Andrés** (tiene que endurecer el agente y necesita
+verlo con y sin LLM cableado) y **Estefany** (tiene que trazar por qué ML-03 sale `SIN_DATO`, y eso se
+lee en el código, no en la pantalla). **Nadie más lo levanta.** Si tu superficie es un recorrido, tu
+ambiente es el navegador contra la URL de producción.
 
 ### Dos cosas en las que local NO es producción
 
@@ -252,7 +260,7 @@ Léelas o vas a sacar conclusiones falsas:
 
 Cualquier cosa que sólo reproduzcas en local y no en producción, dilo así en tu bitácora.
 
-### El prompt base — lo corre todo el mundo
+### El prompt base — sólo Andrés y Estefany
 
 Ábrelo en Claude Code, **parado en la raíz del repositorio**, y pega esto:
 
@@ -295,7 +303,10 @@ FARO_FRONTEND_URL=http://localhost:8501 \
 streamlit run src/frontend/app.py
 ```
 
-### Lo que cada quien agrega al prompt base
+### Lo que cada uno agrega al prompt base
+
+> Las filas de quienes **no** levantan ambiente se conservan por si algo cambia, pero **hoy no
+> aplican**: su superficie se prueba en el navegador contra producción.
 
 | Persona | Añade a tu prompt |
 |---|---|
