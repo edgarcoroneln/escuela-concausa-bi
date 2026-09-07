@@ -70,7 +70,7 @@ dashboards:
         viz: big_number_total
         ancho: 3
         alto: 38
-        subheader: "Índice de riesgo >= 0.6 (R3) · contexto AC-002.5"
+        subheader: "Índice de riesgo >= 0.5 (DEC-019) · contexto AC-002.5"
 
       # ----- Fila 2: composición de la intervención ----------------------------
       - nombre: "Recomendaciones por prioridad"
