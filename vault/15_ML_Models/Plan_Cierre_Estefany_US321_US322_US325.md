@@ -18,9 +18,9 @@ tags: [ml, ml-03, clustering, eda, cobertura, plan-cierre]
 
 | Historia | Estado verificable | Qué ya existe | Qué falta para cerrarla |
 |---|---|---|---|
-| `US-322` | `in_review` | EDA reproducible y evidencia agregada sobre el dump Gold final del 5-sep; llaves y target excluidos | Revisión técnica de Andrés y aprobación de Edgar para cerrar la historia |
-| `US-325` | `in_review` | Auditoría real por driver, entidad y municipio; D5/D6 declarados `SIN_DATO` | Ratificar la lectura de cobertura y el criterio de cierre sin inventar un umbral de sesgo |
-| `US-321` | `in_progress` | Pipeline `StandardScaler` + KMeans, selección temporal de `k`, perfiles y registro MLflow | Ratificar el vector final sin D5/D6, ejecutar la corrida temporal y registrar la versión validada |
+| `US-322` | `in_review` | EDA reproducible y evidencia agregada sobre el dump Gold final del 5-sep; llaves y target excluidos | Aprobación de Edgar para cerrar la historia, independiente de ML-03 |
+| `US-325` | `in_review` | Auditoría real por driver, entidad y municipio; D5/D6 declarados `SIN_DATO` | Aprobación documental de Edgar sin inventar un umbral de sesgo |
+| `US-321` | `in_progress` | Pipeline `StandardScaler` + KMeans y vector operativo ratificado D1–D4 + completitud | Ejecutar la corrida temporal real, seleccionar `k`, reportar Silhouette y registrar la versión con `run_id` real |
 
 La disponibilidad de Bronze dejó de ser el bloqueo: el PR #197, mergeado el 3-sep-2026, incorporó
 `python -m src.ingesta.reproducir_bronze_real` para DS-01/DS-02 y las suites de Great Expectations.
@@ -216,10 +216,11 @@ observaciones individuales. El contrato entregó 136,046 filas, 46,547 escuelas,
 `07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`). `final2` sólo fue una
 comparación independiente: produjo los mismos agregados y no se mezcló con el corte canónico.
 
-La evidencia real ya está documentada para US-322 y US-325. ML-03 quedó bloqueado por la política
-`casos_completos`: D5 está 100% en `SIN_DATO` y D6 98.70% sin dato. No se entrenó, no se calculó
-Silhouette y no se registró MLflow. Las historias permanecen abiertas hasta ratificar la política
-de ausencia con Andrés y Edgar.
+La evidencia real ya está documentada para US-322 y US-325. La política de ausencia fue ratificada
+técnicamente el 6-sep por Andrés: D5 está 100% en `SIN_DATO` y D6 98.70% sin dato, por lo que no
+entran al vector ni se imputan; la regla `casos_completos` se conserva sólo para D1–D4 y
+`indice_completitud_drivers`. Esa ratificación no cierra US-321: falta la corrida temporal real,
+la selección de `k`, Silhouette y el registro MLflow con `run_id` real.
 
 Se integró `origin/main` (25d76e3) mediante merge en la rama permanente. Docker Engine y Compose
 responden; se creó `.env` local desde la plantilla con claves aleatorias, excluido de Git. El servicio
@@ -233,7 +234,7 @@ se revise, se documente la decisión de ausencia y se publique en una nueva PR c
 
 1. Usar exclusivamente el dump autorizado `gold_bug048_final1_2026-09-05 1.sql` en una base aislada;
    conservar checksum, grano y agregados como evidencia. Los dumps nunca se versionan.
-2. Ratificar con Andrés y Edgar el vector final de ML-03: **D1–D4 más
+2. Aplicar el vector ya ratificado por Andrés para ML-03: **D1–D4 más
    `indice_completitud_drivers`**, excluyendo D5/D6 por ausencia estructural. D5/D6 se conservan en el
    reporte de cobertura y nunca se imputan, convierten a cero ni se interpretan como señal del cluster.
 3. Aplicar la decisión aprobada en el contrato y reproducir `k=2..6` con walk-forward. Reportar filas
@@ -288,7 +289,7 @@ valor `0`, que es un cluster legítimo.
 
 | Fase | Entregable verificable | Responsable | Compuerta |
 |---|---|---|---|
-| A. Política | Decisión escrita que aprueba D1–D4 + completitud y excluye D5/D6 del vector operativo | Andrés + Edgar | Sin esta decisión no se cambia el productor |
+| A. Política | Decisión escrita: D1–D4 + completitud; D5/D6 fuera del vector operativo | Andrés (ratificada el 6-sep) | Aplicada en C3; Edgar conserva la compuerta de aprobación del PR |
 | B. Productor C3 | `src/modelos/publicar_ml03.py`: valida contrato, recibe `ResultadoML03`, hace UPSERT por `cct,id_ciclo` y rechaza un `run_id` vacío | Estefany | Revisión técnica de Andrés y pruebas enfocadas |
 | C. Esquema Gold | DDL/migración idempotente de `gold.ml03_asignaciones`, PK, `CHECK cluster >= 0` e índices | Diana (C1) + Edgar | Regla 7: revisión humana explícita por cambio de esquema |
 | D. Registro | Corrida temporal real y versión MLflow con `run_id` recuperable | Estefany + C5 si el servicio MLflow lo requiere | E2E MLflow real, sin promover a producción automáticamente |
@@ -298,9 +299,9 @@ valor `0`, que es un cluster legítimo.
 
 ### Secuencia de ejecución y criterios de aceptación
 
-1. Andrés y Edgar ratifican la política. La recomendación es excluir D5/D6, no imputarlos: D5 carece
-   de señal observable y D6 no tiene cobertura suficiente para inferirla responsablemente.
-2. C3 actualiza `FEATURES_ML03`, repite la validación temporal y sólo genera asignaciones para filas
+1. C3 usa la política ya ratificada: excluir D5/D6 y no imputarlos. D5 carece de señal observable y
+   D6 no tiene cobertura suficiente para inferirla responsablemente.
+2. C3 ejecuta la validación temporal real y sólo genera asignaciones para filas
    elegibles. Debe probar: ausencia de D5/D6 en el vector, no fuga temporal, llave única, perfiles
    reproducibles e idempotencia del UPSERT.
 3. C1 revisa y aprueba el nuevo objeto Gold antes de cualquier merge de esquema. El productor no
@@ -317,14 +318,14 @@ valor `0`, que es un cluster legítimo.
 
 | Impedimento | Efecto | Cómo se resuelve |
 |---|---|---|
-| D5 100% y D6 98.70% `SIN_DATO` | Bloquea el vector vigente de casos completos | Decisión A: excluirlas del vector y mantenerlas como cobertura; requiere Andrés + Edgar |
+| D5 100% y D6 98.70% `SIN_DATO` | Contaminarían el clustering si se imputan o se usan como señal | Política ratificada: excluirlas del vector y mantenerlas como cobertura; no hay que esperar una nueva decisión técnica |
 | Tabla Gold inexistente para ML-03 | No hay contrato persistente para C4 | C1 crea/revisa la tabla idempotente; C3 no modifica `dbt/**` ni el esquema ajeno |
 | API no tiene productor | Hoy devuelve `cluster: null` sin distinguir causas | C4 implementa el `LEFT JOIN` y el estado explícito de cobertura |
 | E2E MLflow no ejecutado con la corrida final | No hay `run_id` trazable para publicar | C3/C5 levantan MLflow, registran una sola corrida revisada y validan su carga |
 
-No hay impedimento técnico irresoluble. El bloqueo real es de decisión y coordinación: la política
-de ausencia debe ser aprobada antes de alterar el vector, y los cambios de Gold/API deben hacerse por
-sus dueños en PRs separados. Este plan preserva el alcance de Estefany y las compuertas del vault.
+No hay impedimento técnico irresoluble. La política ya no bloquea; el trabajo pendiente es ejecutar
+la corrida reproducible y coordinar los cambios de Gold/API con sus dueños mediante PRs separados.
+Este plan preserva el alcance de Estefany y las compuertas del vault.
 
 ## 10. Plan de respuesta a la revisión técnica de Andrés — 6-sep-2026
 
@@ -333,7 +334,7 @@ prematuramente el estado de las historias:
 
 | Observación | Acción de cierre | Estado |
 |---|---|---|
-| US-321 no está cerrada | Esperar la ratificación de Andrés y Edgar; aplicar el vector aprobado; ejecutar `k=2..6`, seleccionar `k`, reportar Silhouette y registrar un `run_id` real | Pendiente |
+| US-321 no está cerrada | Política ratificada por Andrés; ejecutar sobre Gold canónico `k=2..6`, seleccionar `k`, reportar Silhouette y registrar un `run_id` real | Pendiente de ejecución C3 |
 | US-322 está cerca de cierre | Mantenerla independiente de ML-03; solicitar a Edgar aprobar la evidencia agregada ya completa y cambiar sólo entonces a `done` | Pendiente de Edgar |
 | US-325 está cerca de cierre | Conservar cobertura y limitación sin crear un umbral de sesgo; solicitar a Edgar decidir el cierre documental | Pendiente de Edgar |
 | Ambigüedad de dumps | Declarar `final1` como fuente canónica y `final2` sólo como comparación equivalente con checksum | Corregido en esta actualización |
@@ -341,12 +342,12 @@ prematuramente el estado de las historias:
 
 ### Próximos pasos ordenados
 
-1. Edgar aprueba o ajusta la política propuesta D1–D4 +
-   `indice_completitud_drivers`; Andrés confirma que el vector respeta el protocolo temporal.
+1. Ejecutar la corrida temporal real con el vector ya ratificado D1–D4 +
+   `indice_completitud_drivers`; conservar la tabla comparable `k=2..6`, selección y Silhouette.
 2. Cerrar US-322 y US-325 por revisión documental independiente, si Edgar lo aprueba; no esperar la
    corrida de ML-03 ni cambiar sus conclusiones de cobertura.
-3. Sólo con la política aprobada, C3 modifica el vector de ML-03, ejecuta el entrenamiento real y
-   registra MLflow. Si no hay métrica válida o la interpretación no es defendible, US-321 sigue
+3. Registrar en MLflow la corrida reproducible revisada. Si no hay métrica válida o la interpretación
+   no es defendible, US-321 sigue
    abierta con el resultado reportado tal cual.
 4. Con una corrida trazable, C1 y C4 reciben el contrato de `gold.ml03_asignaciones` para sus PRs de
    esquema y API. Ninguno de esos cambios se incluye en esta PR documental.
