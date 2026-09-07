@@ -9,6 +9,18 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Dependencias de runtime del AGENTE conversacional (US-304 / BUG-025): RAG + LLM.
+# Fuente de verdad de los pines: requirements/celula-3.txt (Célula 3). Aquí se instala SOLO
+# el subconjunto que la API necesita en runtime (no todo celula-3.txt, que arrastra mlflow,
+# streamlit, etc. ajenos a la API). torch se toma CPU-only del índice de PyTorch para evitar
+# la variante CUDA (~2 GB) en linux/amd64: Cloud Run no tiene GPU. Validado en local con
+# chromadb 1.5.9 · sentence-transformers 5.7.0 · anthropic 1.4.0 · torch 2.14.0.
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+ && pip install --no-cache-dir \
+      chromadb==1.5.9 \
+      sentence-transformers==5.7.0 \
+      "anthropic>=0.116"
+
 # Copiar código fuente
 COPY src/ ./src/
 
