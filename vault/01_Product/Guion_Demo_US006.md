@@ -32,8 +32,8 @@ verificación previa; si una falla en el ensayo del lunes, se cae ese bloque, no
 |---|---|---|---|---|
 | 0:00–1:00 | **El problema** | Edgar Coronel | Sin pantalla. La escuela como sensor del territorio y las dos preguntas del proyecto | — |
 | 1:00–3:00 | **El dato es real** | Diana Alvarez | Las 8 fuentes; Bronze→Silver→Gold; cobertura por driver y `SIN_DATO` explícito | `/api/v1/kpis` responde y `indice_completitud_drivers` ≈ 0.62 |
-| 3:00–5:00 | **El diferenciador** | Marina García | Ficha de escuela → driver dominante → recomendación. **El par**: mismo riesgo, distinta recomendación | El par elegido responde en producción **ese día** |
-| 5:00–6:30 | **El modelo** | Andrés González / Héctor Morales | Cómo se predice, partición temporal, y por qué `escuelas_en_riesgo` = 0 es un resultado, no una falla | Cifras del rerun a la vista |
+| 3:00–5:00 | **El diferenciador** | Marina García | Ficha de escuela → driver dominante → recomendación. **El par**: `15DPR0920D` y `15DPR2254O`, mismo riesgo (0.4774), distinta recomendación | Las dos responden en producción **ese día**, con sesión iniciada |
+| 5:00–6:30 | **El modelo** | Andrés González / Héctor Morales | Cómo se predice, partición temporal, y por qué **7 escuelas de 45 276** es un resultado, no una falla: la línea de alerta baja a 0.50 (`DEC-019`) sin recalibrar la sigmoide | Cifras del rerun a la vista y **el conteo** con la línea nueva — la **etiqueta** del tablero sigue diciendo 0.6 y eso se dice, ver punto 3 |
 | 6:30–7:30 | **Pregúntale a los datos** | Andrés González | El agente: una pregunta real con **su SQL a la vista**, y una destructiva **rechazada en vivo** | Los dos chips corridos contra producción **ese día**, con sesión iniciada |
 | 7:30–8:30 | **La plataforma** | Luis Téllez | Cloud Run, las dos URLs vivas, SSO con Google, RBAC 200/403 | Las dos URLs responden y el login entra |
 | 8:30–9:00 | **Cómo trabajamos** | Christian Ruiz | PRs, gate de propiedad, DevLogs, registros de bugs y decisiones | `vault_lint` y CI en verde |
@@ -57,6 +57,50 @@ el gate de propiedad y los DevLogs siguen ahí el jueves, auditables sin nosotro
 más alto de la rúbrica).
 
 **Luis y Christian se enteran en el ensayo del lunes**, no el miércoles.
+
+### El par de demostración
+
+Elegido por Marina García el 2026-09-06 sobre el Gold rematerializado por C1 tras `DEC-019`.
+
+| CCT | Nombre | Nivel | Municipio | Riesgo | Driver | Recomendación |
+|---|---|---|---|---|---|---|
+| `15DPR0920D` | FRANCISCO I. MADERO | Primaria | Ecatepec de Morelos | **0.4774** | **D4 · conectividad** | Ampliar conectividad y dotación de equipo de cómputo |
+| `15DPR2254O` | RICARDO FLORES MAGON | Primaria | Ecatepec de Morelos | **0.4774** | **D2 · inseguridad** | Coordinar con seguridad pública rutas escolares seguras y entornos protegidos |
+
+**Por qué estas dos y no otras.** El bloque tiene que aislar una sola variable, y aquí todo lo
+demás está controlado: mismo municipio, mismo nivel, y el `indice_riesgo` no es parecido sino
+> **El par es de los menos expuestos a `BUG-062`, y conviene decirlo.** Ese defecto infla los drivers
+> de **cobertura angosta** al reescalarlos min-max sobre su propio conjunto, y el caso extremo es **D6**,
+> que cubre ~1.3 % del universo. **Este par usa D4 y D2, los dos de cobertura amplia**, así que el
+> artefacto no lo explica. Lo señaló Marina García al revisar el PR: tal como estaba redactado parecía
+> que el par estuviera en riesgo por el bug, y es al revés.
+
+**idéntico al cuarto decimal**. Lo único que cambia es el driver dominante, y la recomendación
+cambia con él. Si el evaluador busca otra explicación para la diferencia, no hay ninguna
+disponible.
+
+**Las dos tienen completitud 0.5** — 3 de los 6 drivers observados. Se dice en voz alta, no se
+esquiva: es la política de `SIN_DATO` funcionando. Un panel que rellenara esos huecos con ceros
+afirmaría cosas que nadie midió.
+
+**Los empates de riesgo no son un defecto.** En la cola alta hay bloques de escuelas con el mismo
+índice —19 en Coyoacán con 0.4702, 7 en El Oro con 0.4984—. El `indice_riesgo` es una función
+determinista de la caída proyectada de matrícula (`DEC-006`): mismo valor, mismo índice. Es
+también lo que hace que este par tenga el riesgo idéntico y no sólo parecido.
+
+**Ninguna de las dos cruza la línea de alerta de 0.50, y es deliberado.** La alternativa por
+encima de la línea era `15EES1468A` (0.5228, D4) con `15EPR0628Y` (0.5153, D2), las dos en
+Toluca, pero son de **distinto nivel** —secundaria contra primaria— y con riesgos distintos: dos
+variables extra a las que atribuir la diferencia, justo lo que este bloque quiere descartar. La
+tesis del proyecto es *"mismo riesgo, distinta recomendación"*, no *"están en alerta"*.
+
+**Evitar el tercer candidato de Toluca:** `15EJN4151O` y `15EJN0104C` se llaman igual
+("LIC. AGUSTIN GONZALEZ") con distinto CCT. Es legítimo, pero en pantalla parece un error de dato
+y abre una pregunta que no aporta nada.
+
+**Verificación previa (checklist del día).** Las dos responden en producción con sesión iniciada, y
+la ficha muestra nombre, nivel, municipio, sostenimiento, matrícula y completitud antes del
+índice. Se comprueba en el ensayo del lunes 7 y otra vez la mañana del 9.
 
 ## El bloque del agente, en detalle
 
@@ -116,16 +160,31 @@ para el panel de ML— y **se dice en voz alta que la interfaz es local y el dat
 
 ## Lo que decimos antes de que lo pregunten
 
-Tres cosas que se ven y que **conviene explicar nosotros**, no que las descubran:
+Cuatro cosas que se ven y que **conviene explicar nosotros**, no que las descubran:
 
-1. **`escuelas_en_riesgo` = 0.** No es un error: con datos reales, la caída máxima proyectada es
-   **−4.53 %** y el umbral de `DEC-006` es −5 %. Nadie cruza porque nadie debe cruzar. La narrativa
-   va por el **ranking prescriptivo**, no por el conteo — y eso está ratificado desde antes de
-   conocer el número.
-2. **`/explicacion` no devuelve SHAP todavía** (`BUG-053`). El driver dominante y la recomendación
-   **sí son reales**, salen de ML-02; lo que falta es el desglose de contribuciones. Está registrado
-   con el orden de cierre.
-3. **Accesibilidad**: de los 10 colores del tema de fábrica que pintan los 103 charts, **8 no llegan
+1. **`escuelas_en_riesgo` = 7 de 45 276, y el par que mostramos no está entre ellas.** Son dos
+   cosas y conviene decir las dos. La primera: el conteo era 0 porque el corte de alerta estaba
+   **por encima del techo del fenómeno** —la caída máxima proyectada es **−4.53 %** y el ancla de
+   `DEC-006` equivale a −5 %—, así que `DEC-019` bajó la **línea de alerta** a 0.50 (≈ −3.4 %, justo
+   por debajo del 3.7 % de deserción real en secundaria) **sin recalibrar la sigmoide ni mover un
+   solo `indice_riesgo` publicado**. Siete es una lista accionable; 0.40 habría marcado el 26 % del
+   universo y eso ya no es una alerta. La segunda: **el par del minuto 3:00 está en 0.4774, debajo
+   de la línea, y eso no es una contradicción**. La línea de alerta es un umbral de *triage* —a
+   quién atender primero—; la recomendación es *prescriptiva* y se deriva del driver dominante, que
+   existe para toda escuela con cobertura, esté o no en alerta. La tesis es **mismo riesgo,
+   distinta recomendación**, no *"están en alerta"*.
+2. **`/explicacion` ya devuelve SHAP real** — `BUG-053` quedó **`fixed`** el 2026-09-05 (Christian
+   Ruiz, C4): el endpoint lee `gold.recomendaciones.shap_d1..shap_d6` a través de
+   `RepositorioModelos`, no `mock_data`. Se decía como deuda declarada y **dejó de serlo**; si sale
+   la pregunta, se enseña. Lo que sigue abierto es `ML-03` (clustering, `US-321`), y el panel lo
+   pinta como `SIN_DATO` explícito en vez de esconderlo.
+3. **Las etiquetas de los tableros todavía dicen «Índice ≥ 0.6».** El **conteo es correcto** —los
+   cubos ya cuentan con la línea de 0.50 y por eso dicen **7**—, pero el texto del `subheader` sólo se
+   actualiza corriendo `sync_semantic_layer.py`, y **`DEC-020` lo prohíbe** porque ese run borraría la
+   metadata con la que C5 levantó 20 charts *timeseries*. Es deuda **visible, medida y decidida**: se
+   corrige después del 9, junto con `BUG-058`. Lo mismo aplica a la corrección de lectura horizontal de
+   **DB-05** de Monserrat Miranda, que está mergeada pero no llega a producción por la misma razón.
+4. **Accesibilidad**: de los 10 colores del tema de fábrica que pintan los 103 charts, **8 no llegan
    a 4.5:1 y 5 no llegan ni a 3:1**. Es deuda declarada, medida sobre el bundle real, y decidida
    —`DEC-016`— no ignorada.
 

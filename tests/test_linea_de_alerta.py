@@ -124,11 +124,19 @@ def test_los_cubos_cuentan_con_la_misma_linea_que_la_api(ruta: str) -> None:
 
 
 def test_no_hay_cubos_nuevos_con_el_corte() -> None:
-    """Si aparece otro `.sql` con el corte y no está en la lista, se queda atrás en silencio."""
+    """Si aparece otro `.sql` con el corte y no está en la lista, se queda atrás en silencio.
+
+    `dbt/target/` se excluye: son artefactos de build —`dbt run`/`dbt parse` los regenera— y
+    están en `dbt/.gitignore`, así que CI nunca los ve. Sin la exclusión, esta guarda **falla en
+    cualquier máquina que haya corrido dbt** y verde en CI, que es el peor modo de falla posible
+    para una prueba: sólo reprueba a quien sí trabaja con la herramienta. Encontrado por el PO el
+    2026-09-06 al preparar el barrido de QA de cinco personas.
+    """
     encontrados = {
         str(p.relative_to(RAIZ)).replace("\\", "/")
         for p in (RAIZ / "dbt").rglob("*.sql")
-        if _CORTE.search(p.read_text(encoding="utf-8"))
+        if "target/" not in str(p.relative_to(RAIZ)).replace("\\", "/")
+        and _CORTE.search(p.read_text(encoding="utf-8"))
     }
     assert encontrados == set(CUBOS_CON_CORTE), (
         f"archivos de dbt con el corte que la lista no cubre: {encontrados - set(CUBOS_CON_CORTE)}"
