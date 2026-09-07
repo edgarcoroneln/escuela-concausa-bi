@@ -33,7 +33,7 @@ verificación previa; si una falla en el ensayo del lunes, se cae ese bloque, no
 | 0:00–1:00 | **El problema** | Edgar Coronel | Sin pantalla. La escuela como sensor del territorio y las dos preguntas del proyecto | — |
 | 1:00–3:00 | **El dato es real** | Diana Alvarez | Las 8 fuentes; Bronze→Silver→Gold; cobertura por driver y `SIN_DATO` explícito | `/api/v1/kpis` responde y `indice_completitud_drivers` ≈ 0.62 |
 | 3:00–5:00 | **El diferenciador** | Marina García | Ficha de escuela → driver dominante → recomendación. **El par**: `15DPR0920D` y `15DPR2254O`, mismo riesgo (0.4774), distinta recomendación | Las dos responden en producción **ese día**, con sesión iniciada |
-| 5:00–6:30 | **El modelo** | Andrés González / Héctor Morales | Cómo se predice, partición temporal, y por qué **7 escuelas de 45 276** es un resultado, no una falla: la línea de alerta baja a 0.50 (`DEC-019`) sin recalibrar la sigmoide | Cifras del rerun a la vista y el conteo con la línea nueva |
+| 5:00–6:30 | **El modelo** | Andrés González / Héctor Morales | Cómo se predice, partición temporal, y por qué **7 escuelas de 45 276** es un resultado, no una falla: la línea de alerta baja a 0.50 (`DEC-019`) sin recalibrar la sigmoide | Cifras del rerun a la vista y **el conteo** con la línea nueva — la **etiqueta** del tablero sigue diciendo 0.6 y eso se dice, ver punto 3 |
 | 6:30–7:30 | **Pregúntale a los datos** | Andrés González | El agente: una pregunta real con **su SQL a la vista**, y una destructiva **rechazada en vivo** | Los dos chips corridos contra producción **ese día**, con sesión iniciada |
 | 7:30–8:30 | **La plataforma** | Luis Téllez | Cloud Run, las dos URLs vivas, SSO con Google, RBAC 200/403 | Las dos URLs responden y el login entra |
 | 8:30–9:00 | **Cómo trabajamos** | Christian Ruiz | PRs, gate de propiedad, DevLogs, registros de bugs y decisiones | `vault_lint` y CI en verde |
@@ -69,6 +69,12 @@ Elegido por Marina García el 2026-09-06 sobre el Gold rematerializado por C1 tr
 
 **Por qué estas dos y no otras.** El bloque tiene que aislar una sola variable, y aquí todo lo
 demás está controlado: mismo municipio, mismo nivel, y el `indice_riesgo` no es parecido sino
+> **El par es de los menos expuestos a `BUG-062`, y conviene decirlo.** Ese defecto infla los drivers
+> de **cobertura angosta** al reescalarlos min-max sobre su propio conjunto, y el caso extremo es **D6**,
+> que cubre ~1.3 % del universo. **Este par usa D4 y D2, los dos de cobertura amplia**, así que el
+> artefacto no lo explica. Lo señaló Marina García al revisar el PR: tal como estaba redactado parecía
+> que el par estuviera en riesgo por el bug, y es al revés.
+
 **idéntico al cuarto decimal**. Lo único que cambia es el driver dominante, y la recomendación
 cambia con él. Si el evaluador busca otra explicación para la diferencia, no hay ninguna
 disponible.
@@ -154,7 +160,7 @@ para el panel de ML— y **se dice en voz alta que la interfaz es local y el dat
 
 ## Lo que decimos antes de que lo pregunten
 
-Tres cosas que se ven y que **conviene explicar nosotros**, no que las descubran:
+Cuatro cosas que se ven y que **conviene explicar nosotros**, no que las descubran:
 
 1. **`escuelas_en_riesgo` = 7 de 45 276, y el par que mostramos no está entre ellas.** Son dos
    cosas y conviene decir las dos. La primera: el conteo era 0 porque el corte de alerta estaba
@@ -172,7 +178,13 @@ Tres cosas que se ven y que **conviene explicar nosotros**, no que las descubran
    `RepositorioModelos`, no `mock_data`. Se decía como deuda declarada y **dejó de serlo**; si sale
    la pregunta, se enseña. Lo que sigue abierto es `ML-03` (clustering, `US-321`), y el panel lo
    pinta como `SIN_DATO` explícito en vez de esconderlo.
-3. **Accesibilidad**: de los 10 colores del tema de fábrica que pintan los 103 charts, **8 no llegan
+3. **Las etiquetas de los tableros todavía dicen «Índice ≥ 0.6».** El **conteo es correcto** —los
+   cubos ya cuentan con la línea de 0.50 y por eso dicen **7**—, pero el texto del `subheader` sólo se
+   actualiza corriendo `sync_semantic_layer.py`, y **`DEC-020` lo prohíbe** porque ese run borraría la
+   metadata con la que C5 levantó 20 charts *timeseries*. Es deuda **visible, medida y decidida**: se
+   corrige después del 9, junto con `BUG-058`. Lo mismo aplica a la corrección de lectura horizontal de
+   **DB-05** de Monserrat Miranda, que está mergeada pero no llega a producción por la misma razón.
+4. **Accesibilidad**: de los 10 colores del tema de fábrica que pintan los 103 charts, **8 no llegan
    a 4.5:1 y 5 no llegan ni a 3:1**. Es deuda declarada, medida sobre el bundle real, y decidida
    —`DEC-016`— no ignorada.
 
