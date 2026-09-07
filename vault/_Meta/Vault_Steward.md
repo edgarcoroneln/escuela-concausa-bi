@@ -42,9 +42,15 @@ El mismo patrón volvió con el **PR #263** de Luis Téllez: midió el universo 
 tras cerrar `BUG-048` y escribió el resultado en dos documentos de C2 —`Cube_Specs_DB03_DB04.md` y
 `Panel_ML_US207.md`—, que no están en su alcance. `quality-checks` en rojo, PR bloqueado.
 
-**Estado real al 2026-09-06: el #263 sigue `OPEN` y no se ha mergeado.** Lo que existe es la
-decisión del PO de mergearlo con bypass de admin, y esta entrada la asienta **por adelantado** para
-que el registro exista antes que el acto, no después.
+**Estado al escribirse (2026-09-06): el #263 seguía `OPEN`.** Lo que existía entonces era la decisión
+del PO de mergearlo con bypass de admin, y esta entrada se asentó **por adelantado** para que el
+registro existiera antes que el acto, no después.
+
+> **Consumado el 2026-09-06 a las 07:13Z**, con `gh pr merge 263 --merge --admin`, después de que
+> `DEC-018` entrara a `main` con el PR #264 — el orden comprometido abajo se respetó. Se actualiza
+> aquí el tiempo verbal por la misma razón que obligó a corregir esta sección la primera vez: un
+> documento con `source_of_truth: true` no puede quedarse describiendo como pendiente algo que ya
+> ocurrió.
 
 > **Corrección de esta misma sección, 2026-09-06.** La primera redacción decía *"Se merge con bypass
 > de admin"* en un tiempo verbal que se lee como hecho consumado, y afirmaba que la aprobación de
@@ -75,6 +81,59 @@ PR del PM.
 de que `ownership.yml` no describe cómo trabaja el equipo — la gente escribe donde su trabajo lo
 lleva, no donde el padrón dice. Revisar el padrón contra los PRs reales del sprint es el punto 2 de
 la lista de verificación, y existe por esto.
+
+### Lo que se omitió del 6 al 7 de septiembre, y en qué se distingue (2026-09-07)
+
+La ventana de correcciones de `DEC-020` movió doce PRs en dos días. Se saltaron revisiones, y **no
+todas se saltaron igual**. Registrarlas juntas las volvería indistinguibles, así que van separadas
+por lo que cada una realmente eludió. Los datos son de la API de GitHub, verificados uno por uno.
+
+**Tipo 1 — Gate en rojo, con la aprobación del dueño presente.** Un caso: el **#263**, arriba. Es la
+más defendible de las tres, porque lo que se saltó fue el mecanismo y no el control: las dos
+aprobaciones estaban escritas en el PR antes del merge.
+
+**Tipo 2 — Revisión de ruta crítica omitida, con el gate en verde.** Tres casos, todos sobre
+`src/frontend/**`, que está en `criticos` a nombre de **Manuel Serranía**:
+
+| PR | Autor | Aprobó | Revisión de Manuel |
+|---|---|---|---|
+| **#265** | Andrés González Habib | sólo `edgarcoroneln` | no |
+| **#267** | Christian Ruiz Hurtado | sólo `edgarcoroneln` | no |
+| **#268** | Marina García del Buey | sólo `edgarcoroneln` | no |
+
+El gate pasó en los tres —`criticos` es **aviso, no veto**, y los tres autores tenían la ruta en su
+amarillo—, así que no hubo bypass: hubo un aviso desatendido, tres veces seguidas, sobre la misma
+carpeta y la misma persona. **Lo que lo hace tolerable** es que las tres entregas eran P0/P1 de
+`DEC-020` con corte a las 18:00 y Manuel estuvo sin actividad entre el 6-sep 20:11 y el 7-sep 00:09.
+**Lo que no lo hace inocuo** es que `src/frontend/**` acumuló tres cambios sin que su dueño mirara
+ninguno, y el cuarto —el PR #275, suyo— tocó los mismos archivos sin saber qué había entrado antes.
+
+**Tipo 3 — La compuerta única, saltada en los PRs del propio PM.** Dos casos: **#271** y **#278**,
+los dos con `reviewDecision: REVIEW_REQUIRED`, **cero revisores**, mergeados con `--admin`.
+
+Ésta es la más débil de las tres y conviene decirlo sin adornos. `DEC-003` define **una** aprobación
+obligatoria —la del PM— y cuando el PM es el autor, **no queda ninguna**: GitHub no permite
+aprobarse a uno mismo, así que el `--admin` no saltó una revisión pendiente, saltó la *única* que el
+proceso contempla.
+
+**Y no era inevitable.** En el mismo periodo, el **#264** y el **#277** —también del PM— **sí** los
+revisó Marina García del Buey. La diferencia entre unos y otros no fue estructural: fue haberla
+pedido. El #278 tocaba `Execution_Status.md` con **23 historias pasando a `done`**, que es
+precisamente el artefacto donde una segunda mirada vale más.
+
+**Lo que estas omisiones no autorizan:**
+
+- Repetir el tipo 2 fuera de una ventana declarada. Si `DEC-020` no estuviera vigente, un aviso de
+  `criticos` desatendido tres veces sería un defecto de proceso, no una excepción.
+- Tratar el tipo 3 como práctica. **Un PR del PM que cambia estado, alcance o decisiones se pide
+  revisado**, y hay dos precedentes de la misma semana que demuestran que se puede.
+
+**Para el Steward que tome el turno.** Aquí está el hueco estructural que este registro destapa:
+`DEC-003` no dice qué pasa cuando el autor **es** la compuerta. Mientras no lo diga, cada PR del PM
+depende de que el PM se acuerde de pedir revisión — y el registro de esta semana muestra que a veces
+sí y a veces no. Proponer la regla (por ejemplo: *el PM pide revisión al TL del área que toca, y si
+no hay área, al TL de C2 por ser el de mayor superficie compartida*) es trabajo de post-demo, y es el
+punto 2 de la lista de verificación aplicado al propio proceso.
 
 ## Qué hace el Steward
 
