@@ -108,7 +108,7 @@ datasets:
         expresion: "SUM(escuelas_en_riesgo)"
         formato: entero
         kpi: KPI-04
-        umbral: 0.6
+        umbral: 0.5
         cobertura: cobertura_prediccion
         nota: "Solo cuenta escuelas puntuadas por ML-01 (cobertura_prediccion = 'OK')."
       - nombre: pct_escuelas_en_riesgo
@@ -157,7 +157,7 @@ datasets:
         expresion: "SUM(CASE WHEN en_riesgo THEN 1 END)"
         formato: entero
         kpi: KPI-04
-        umbral: 0.6
+        umbral: 0.5
         cobertura: cobertura_prediccion
         nota: "en_riesgo es NULL sin predicción: solo suma los TRUE reales, nunca los desconocidos."
       - nombre: variacion_proyectada
@@ -234,6 +234,6 @@ datasets:
         expresion: "SUM(CASE WHEN en_riesgo THEN 1 END)"
         formato: entero
         kpi: KPI-04
-        umbral: 0.6
+        umbral: 0.5
         cobertura: cobertura_prediccion
         nota: "Contexto global (AC-002.5): el riesgo llega por LEFT JOIN a predicciones (ML-01)."

@@ -158,7 +158,7 @@ datasets:
         expresion: "SUM(escuelas_en_riesgo)"
         formato: entero
         kpi: KPI-04
-        umbral: 0.6
+        umbral: 0.5
       - nombre: pct_escuelas_en_riesgo
         etiqueta: "% escuelas en riesgo"
         expresion: "SUM(escuelas_en_riesgo) / NULLIF(SUM(escuelas_con_prediccion), 0)"
@@ -210,7 +210,7 @@ datasets:
         expresion: "SUM(escuelas_en_riesgo)"
         formato: entero
         kpi: KPI-04
-        umbral: 0.6
+        umbral: 0.5
       - nombre: pct_escuelas_en_riesgo
         etiqueta: "% escuelas en riesgo"
         expresion: "SUM(escuelas_en_riesgo) / NULLIF(SUM(escuelas_con_prediccion), 0)"

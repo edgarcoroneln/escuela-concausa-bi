@@ -9,8 +9,9 @@ el mapa de riesgo territorial, leídos desde los cubos físicos C1:
 * **El SQL semántico lee `gold.cubo_*`** (repunteo US-205/US-113): ya no agrega
   el hecho ni une salidas de ML — C1 las resolvió por LEFT JOIN con llave
   completa y filtro de modelo; aquí solo se enriquece el nombre del municipio.
-* **El umbral de riesgo es >= 0.6** (R3, ratificado 2026-08-13) y queda
-  declarado en el YAML de métricas (`umbral: 0.6`).
+* **El umbral de riesgo es 0.50** (línea de alerta DEC-019; el 0.60 quedó como ancla
+  de calibración DEC-006, máximo real ML-01 0.5717) y queda declarado en el YAML de
+  métricas (`umbral: 0.5`).
 * **Los porcentajes dividen entre el denominador real**: `% en riesgo` sobre
   escuelas *puntuadas*, no sobre el total.
 * **El mock de ML es inofensivo**: determinístico, idempotente y sin DDL/DML
@@ -45,7 +46,7 @@ YAML_METRICAS = SEMANTIC / "metrics_db01_db02.yaml"
 YAML_DB01 = DASHBOARDS / "db01_ejecutivo.yaml"
 YAML_DB02 = DASHBOARDS / "db02_mapa_riesgo.yaml"
 
-UMBRAL_RIESGO = "0.6"
+UMBRAL_RIESGO = "0.5"
 
 # Salidas de ML: viven en gold.predicciones / gold.recomendaciones, jamás en el hecho.
 SALIDAS_ML = ("indice_riesgo", "driver_dominante", "recomendacion", "prioridad")
@@ -165,14 +166,14 @@ def test_driver_dominante_se_reagrega_del_cubo(db01_driver: str) -> None:
 
 
 def test_el_umbral_de_riesgo_es_el_ratificado(datasets_por_nombre: dict[str, dict]) -> None:
-    """0.6 = perder ~5% de matrícula, ratificado el 2026-08-13 (Indice_Riesgo_ML01).
+    """0.5 = línea de alerta DEC-019 (antes 0.6, ancla de calibración DEC-006, max real 0.5717).
     Con el repunteo el umbral ya no vive en el SQL (lo aplicó C1): queda declarado
-    en el YAML de métricas (`umbral: 0.6`) para mantener el contrato R3."""
+    en el YAML de métricas (`umbral: 0.5`) para mantener el contrato KPI-04 (BUG-060)."""
     for nombre in ("db02_cubo_riesgo_territorial", "db02_coropletico"):
         ds = datasets_por_nombre[nombre]
         metricas = {m["nombre"]: m for m in ds["metricas"]}
         assert metricas["escuelas_en_riesgo"].get("umbral") == float(UMBRAL_RIESGO), (
-            f"{nombre}: debe ratificar el umbral 0.6 como R3 en el YAML."
+            f"{nombre}: debe ratificar el umbral 0.5 (DEC-019) en el YAML."
         )
 
 
@@ -499,8 +500,8 @@ def test_el_mock_ejercita_el_caso_sin_dato(mock_sql: str) -> None:
 
 
 def test_el_mock_respeta_el_umbral_r3(mock_sql: str) -> None:
-    """La prioridad ALTA del mock usa el mismo umbral 0.6 que el negocio."""
-    assert re.search(r">=\s*0\.6\s+then\s+'ALTA'", mock_sql, re.IGNORECASE)
+    """La prioridad ALTA del mock usa la misma línea de alerta 0.5 que el negocio (DEC-019)."""
+    assert re.search(r">=\s*0\.5\s+then\s+'ALTA'", mock_sql, re.IGNORECASE)
 
 
 # --------------------------------------------------------------------------- script de sincronización
@@ -563,6 +564,67 @@ def test_params_extra_sobreescrive_lo_base(sync) -> None:
            "params_extra": {"sort_by_metric": False}}
     params = sync._params_chart(cfg, 5, ",d")
     assert params["sort_by_metric"] is False
+
+
+def test_query_context_timeseries_envuelve_el_eje_x_en_base_axis(sync) -> None:
+    """BUG-058: el 403 de guest ocurre porque el eje X viaja como adhoc BASE_AXIS (Superset 6.1)."""
+    qc = sync._query_context_timeseries("ciclo")
+    columna = qc["queries"][0]["columns"][0]
+    assert columna == {
+        "columnType": "BASE_AXIS",
+        "expressionType": "SQL",
+        "isColumnReference": True,
+        "label": "ciclo",
+        "sqlExpression": "ciclo",
+    }
+    # Monotónico: el dict se replica en groupby y ambas direcciones de orderby para que
+    # lo guardado sea siempre superconjunto de lo que pide buildQuery del guest.
+    assert qc["queries"][0]["groupby"] == [columna]
+    assert qc["queries"][0]["orderby"] == [[columna, True], [columna, False]]
+
+
+def test_ensure_chart_crea_timeseries_con_query_context(sync, monkeypatch) -> None:
+    """Un chart echarts_timeseries_* se crea con el query_context BASE_AXIS persistido."""
+
+    def _request_falso(method, path, token=None, body=None, **kw):
+        if method == "GET" and "?q=" in path:
+            return {"result": []}  # ningún homónimo: va por POST
+        if method == "POST" and path == "/api/v1/chart/":
+            assert "query_context" in body and body["query_context_generation"] is True
+            qc = body["query_context"]["queries"][0]
+            assert qc["columns"][0]["columnType"] == "BASE_AXIS"
+            assert qc["columns"][0]["label"] == "ciclo"
+            return {"id": 1, "uuid": "u"}
+        if method == "GET" and path == "/api/v1/chart/1":
+            return {"result": {}}
+        raise AssertionError(f"llamada inesperada: {method} {path}")
+
+    monkeypatch.setattr(sync, "_request", _request_falso)
+    cfg = {"nombre": "Matrícula por ciclo", "dataset": "db01_cubo_matricula",
+           "viz": "echarts_timeseries_line", "metrica": "matricula_total", "eje_x": "ciclo"}
+    sync.ensure_chart("t", "c", cfg, {"db01_cubo_matricula": 7}, [])
+
+
+def test_ensure_chart_actualiza_timeseries_sin_perder_query_context(sync, monkeypatch) -> None:
+    """El PUT de un re-sync conserva el query_context: no reintroduce el 403 (BUG-058)."""
+    vistos = {}
+
+    def _request_falso(method, path, token=None, body=None, **kw):
+        if method == "GET" and "?q=" in path:
+            return {"result": [{"id": 11, "slice_name": "Matrícula por ciclo", "datasource_id": 7}]}
+        if method == "PUT" and path == "/api/v1/chart/11":
+            vistos["put"] = body
+            return {}
+        if method == "GET" and path == "/api/v1/chart/11":
+            return {"result": {"uuid": "u"}}
+        raise AssertionError(f"llamada inesperada: {method} {path}")
+
+    monkeypatch.setattr(sync, "_request", _request_falso)
+    cfg = {"nombre": "Matrícula por ciclo", "dataset": "db01_cubo_matricula",
+           "viz": "echarts_timeseries_bar", "metrica": "matricula_total", "eje_x": "ciclo"}
+    sync.ensure_chart("t", "c", cfg, {"db01_cubo_matricula": 7}, [])
+    assert vistos["put"]["query_context"]["queries"][0]["columns"][0]["label"] == "ciclo"
+    assert vistos["put"]["query_context_generation"] is True
 
 
 def test_los_formatos_d3_cubren_los_formatos_del_yaml(sync, metricas: dict) -> None:
