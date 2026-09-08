@@ -273,5 +273,14 @@
     "scope": 89,
     "wip": 10,
     "blocked": 0
+  },
+  {
+    "date": "2026-09-08",
+    "remaining": 14,
+    "weighted_remaining": 10.2,
+    "done": 75,
+    "scope": 89,
+    "wip": 10,
+    "blocked": 0
   }
 ]
