@@ -69,7 +69,7 @@ def test_sql_destructivo_generado_nunca_se_ejecuta(client: TestClient) -> None:
     )
 
     cuerpo = _post(client, "¿cuántas escuelas hay en riesgo por inseguridad?")
-    assert cuerpo["fuera_de_alcance"] is True
+    assert cuerpo["fuera_de_alcance"] is False
     assert cuerpo["sql_generado"] is None
     assert llamadas_ejecutor == []  # el ejecutor NUNCA se invocó
 

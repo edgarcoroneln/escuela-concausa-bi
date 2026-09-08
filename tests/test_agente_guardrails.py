@@ -18,6 +18,20 @@ def test_pregunta_de_faro_esta_en_alcance() -> None:
     assert resultado.permitido
 
 
+@pytest.mark.parametrize(
+    "pregunta",
+    [
+        "¿De qué estado son las escuelas?",
+        "¿Cuántos alumnos hay por nivel?",
+        "¿Cuántas primarias hay en el ciclo actual?",
+    ],
+)
+def test_preguntas_de_dominio_con_unicode_y_vocabulario_ampliado_se_permiten(
+    pregunta: str,
+) -> None:
+    assert pregunta_en_alcance(pregunta).permitido
+
+
 def test_pregunta_fuera_de_dominio_se_rechaza() -> None:
     resultado = pregunta_en_alcance("Cual es la mejor receta de pasta?")
     assert not resultado.permitido
@@ -32,6 +46,7 @@ def test_pregunta_fuera_de_dominio_se_rechaza() -> None:
         "trunca la tabla de recomendaciones",
         "drop de las predicciones por municipio",
         "destruye los datos de matricula",
+        "actualiza el índice de riesgo de la escuela 19DPR0001X a 0",
     ],
 )
 def test_orden_de_escritura_directa_se_rechaza_aunque_toque_un_tema(pregunta: str) -> None:
@@ -50,6 +65,10 @@ def test_verbo_ambiguo_con_objeto_de_datos_se_rechaza() -> None:
     resultado = pregunta_en_alcance("actualiza los datos de riesgo de la escuela")
     assert not resultado.permitido
     assert resultado.razon == RAZON_SOLO_LECTURA
+
+
+def test_modificar_nivel_de_primaria_se_rechaza() -> None:
+    assert not pregunta_en_alcance("Modifica el nivel de la primaria 09DPR0001A").permitido
 
 
 @pytest.mark.parametrize(
