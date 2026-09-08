@@ -57,8 +57,19 @@ def api_agente(monkeypatch: pytest.MonkeyPatch):
     servidor.server_close()
 
 
+def _app_chat_con_sesion() -> AppTest:
+    """Crea AppTest con sesión simulada (usuario analista)."""
+    app = AppTest.from_file(str(PAGINA_CHAT))
+    import time
+    app.session_state["user"] = {"sub": "test-sub", "email": "test@faro.local", "name": "Test User", "role": "analista"}
+    app.session_state["access_token"] = "fake-access-token"
+    app.session_state["refresh_token"] = "fake-refresh-token"
+    app.session_state["access_token_vence"] = time.monotonic() + 3600
+    return app
+
+
 def test_chat_conserva_historial_y_muestra_sql_y_rechazo(api_agente: None) -> None:
-    app = AppTest.from_file(str(PAGINA_CHAT)).run(timeout=20)
+    app = _app_chat_con_sesion().run(timeout=20)
     assert not app.exception
     assert app.title[0].value == "Agente FARO"
     etiquetas = {boton.label for boton in app.button}
@@ -85,3 +96,15 @@ def test_chat_conserva_historial_y_muestra_sql_y_rechazo(api_agente: None) -> No
     assert not app.exception
     assert any("no está permitida" in warning.value for warning in app.warning)
     assert len(app.chat_message) == 6
+
+
+def test_chat_sin_sesion_muestra_login_y_no_renderiza(api_agente: None) -> None:
+    """Sin sesión, la página muestra info de login y no renderiza el chat."""
+    app = AppTest.from_file(str(PAGINA_CHAT)).run(timeout=20)
+
+    assert not app.exception
+    assert app.title[0].value == "Agente FARO"
+    # Debe mostrar el mensaje de login y no renderizar el chat
+    assert any("Inicia sesión" in info.value for info in app.info)
+    assert len(app.chat_message) == 0
+    assert len(app.button) == 0

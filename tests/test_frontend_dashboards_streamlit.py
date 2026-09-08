@@ -87,9 +87,21 @@ def superset_fake(monkeypatch: pytest.MonkeyPatch):
     servidor.server_close()
 
 
+def _app_con_sesion() -> AppTest:
+    """Crea AppTest con sesión simulada (usuario analista)."""
+    app = AppTest.from_file(str(PAGINA))
+    # Simular sesión iniciada: user + tokens
+    import time
+    app.session_state["user"] = {"sub": "test-sub", "email": "test@faro.local", "name": "Test User", "role": "analista"}
+    app.session_state["access_token"] = "fake-access-token"
+    app.session_state["refresh_token"] = "fake-refresh-token"
+    app.session_state["access_token_vence"] = time.monotonic() + 3600  # 1 hora en el futuro
+    return app
+
+
 def test_con_guest_token_valido_dibuja_los_filtros(superset_fake: SupersetHTTPFake) -> None:
     superset_fake.guest_status = 200
-    app = AppTest.from_file(str(PAGINA)).run(timeout=20)
+    app = _app_con_sesion().run(timeout=20)
 
     assert not app.exception, app.exception
     assert app.title[0].value == "Dashboards"
@@ -105,11 +117,23 @@ def test_con_guest_token_rechazado_no_hay_tableros_ni_filtros(
 ) -> None:
     # AC-002.1: si Superset rechaza el guest token, no se muestra ningún tablero.
     superset_fake.guest_status = 401
-    app = AppTest.from_file(str(PAGINA)).run(timeout=20)
+    app = _app_con_sesion().run(timeout=20)
 
     assert not app.exception, app.exception
     assert app.title[0].value == "Dashboards"
     # Avisa al usuario (warning) en vez de renderizar.
     assert len(app.warning) >= 1
     # No se dibujan los filtros, señal de que no se llegó a la sección de iframes.
+    assert len(app.sidebar.selectbox) == 0
+
+
+def test_sin_sesion_muestra_login_y_no_renderiza(superset_fake: SupersetHTTPFake) -> None:
+    """Sin sesión, la página muestra info de login y no llega a Superset."""
+    superset_fake.guest_status = 200
+    app = AppTest.from_file(str(PAGINA)).run(timeout=20)
+
+    assert not app.exception, app.exception
+    assert app.title[0].value == "Dashboards"
+    # Debe mostrar el mensaje de login y no renderizar filtros ni iframes
+    assert any("Inicia sesión" in info.value for info in app.info)
     assert len(app.sidebar.selectbox) == 0

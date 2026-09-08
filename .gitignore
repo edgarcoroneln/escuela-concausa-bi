@@ -94,3 +94,4 @@ _local/
 /dbt/gold_bug048*.sql
 *.patch
 /gold_dec019*.sql
+*.canvas
