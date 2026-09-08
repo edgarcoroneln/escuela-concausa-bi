@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
-import re
 
 from src.agente.guardrails import pregunta_en_alcance, preparar_sql_seguro
 from src.agente.prompt import construir_prompt_sistema
