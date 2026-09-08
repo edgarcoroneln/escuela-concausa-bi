@@ -55,8 +55,30 @@ def _ruta_frontend():
             limpiar.clear()
 
 
-def _app() -> AppTest:
-    return AppTest.from_file(str(PAGINA)).run(timeout=30)
+USUARIO = {"sub": "u-demo", "email": "demo@faro.mx", "name": "Demo", "role": "analista"}
+
+
+def _app(*, con_sesion: bool = True) -> AppTest:
+    """La página **con** sesión es el caso normal desde BUG-071.
+
+    Antes estas pruebas corrían sin sesión y aun así llenaban el formulario, porque la
+    página lo dejaba usable — que es justo el defecto que BUG-071 reporta. Se inyecta un
+    usuario en `st.session_state`, que es de donde `auth.current_user()` lo lee.
+    """
+    app = AppTest.from_file(str(PAGINA))
+    if con_sesion:
+        app.session_state["user"] = dict(USUARIO)
+    return app.run(timeout=30)
+
+
+def _submit(app: AppTest):
+    """El botón del formulario, **por etiqueta y no por índice**.
+
+    Con sesión, `encabezado()` dibuja además "Cerrar sesión" en la barra lateral, así que
+    `app.button[0]` dejó de ser el submit. Buscarlo por etiqueta es lo que hace que estas
+    pruebas no dependan del orden de pintado.
+    """
+    return next(b for b in app.button if "Consultar" in b.label)
 
 
 def test_la_pagina_carga_sin_excepcion(_ruta_frontend) -> None:
@@ -75,7 +97,7 @@ def test_ofrece_el_formulario_de_cct(_ruta_frontend) -> None:
 def test_un_cct_de_longitud_invalida_no_llama_a_la_api(_ruta_frontend) -> None:
     app = _app()
     app.text_input[0].set_value("123").run(timeout=30)
-    app.button[0].click().run(timeout=30)
+    _submit(app).click().run(timeout=30)
     assert not app.exception, app.exception
     assert app.error, "debió avisar que el CCT no tiene 10 caracteres"
 
@@ -181,8 +203,9 @@ def test_la_pagina_sigue_teniendo_un_solo_campo_y_un_solo_boton(_ruta_frontend) 
     assert len(app.text_input) == 1, (
         "hay más de un campo de texto: `app.text_input[0]` deja de ser el CCT"
     )
-    assert len(app.button) == 1, (
-        "hay más de un botón: `app.button[0]` deja de ser el submit del formulario"
+    submits = [b for b in app.button if "Consultar" in b.label]
+    assert len(submits) == 1, (
+        "hay más de un botón de consulta: `_submit()` deja de ser determinista"
     )
     assert len(app.title) == 1, "`app.title[0]` deja de ser el título de la página"
 
@@ -228,3 +251,45 @@ def test_la_ficha_muestra_lo_que_pidio_el_p0(_ruta_frontend) -> None:
     for campo in ("ficha.nombre", "ficha.nivel", "nombre_municipio", "ficha.sostenimiento",
                   "ficha.matricula_total", "ficha.indice_completitud_drivers"):
         assert campo in fuente, f"la ficha no muestra {campo}"
+
+
+# ------------------------------------------------ BUG-071: la página exige sesión
+
+
+def test_sin_sesion_el_formulario_queda_inutilizable(_ruta_frontend) -> None:
+    """El defecto de BUG-071 en esta página: avisaba, pero dejaba usar el formulario.
+
+    No se esconde el formulario, se **apaga**: la página sigue explicando qué ofrece, pero
+    no se puede disparar una consulta que la API va a rechazar. `AppTest` hace cumplir
+    `disabled` igual que un navegador —rechaza `set_value` sobre un widget apagado—, así
+    que esta prueba comprueba el comportamiento, no solo la bandera.
+    """
+    app = _app(con_sesion=False)
+    assert not app.exception, app.exception
+
+    assert app.text_input[0].disabled, "el campo de CCT sigue editable sin sesión"
+    assert _submit(app).disabled, "el botón de consulta sigue pulsable sin sesión"
+    assert app.selectbox[0].disabled, "la cascada sigue viva sin sesión"
+
+
+def test_sin_sesion_se_dice_la_verdad_sobre_por_que(_ruta_frontend) -> None:
+    """El aviso viejo decía "la lectura es pública" y desde DEC-018 **es falso**.
+
+    Producción corre con `AUTH_LECTURA_PUBLICA=false`, así que sin sesión la API responde
+    401 y el panel lo presentaba como *"La API rechazó la solicitud"*: un fallo de permiso
+    disfrazado de fallo de servicio. Si alguien restaura la promesa vieja, esto lo dice.
+    """
+    app = _app(con_sesion=False)
+    avisos = " ".join(i.value for i in app.info)
+    assert "Inicia sesión" in avisos, f"no se pide iniciar sesión: {avisos!r}"
+    assert "pública" not in avisos, (
+        "la página vuelve a prometer lectura pública, que DEC-018 dejó sin efecto"
+    )
+
+
+def test_con_sesion_los_controles_vuelven(_ruta_frontend) -> None:
+    """La guarda no puede romper el caso normal: con sesión, todo se usa."""
+    app = _app()
+    assert not app.text_input[0].disabled
+    assert not _submit(app).disabled
+    assert not app.selectbox[0].disabled
