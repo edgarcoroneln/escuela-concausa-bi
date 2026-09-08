@@ -11,16 +11,21 @@ tags: [ml, ml-03, clustering, eda, cobertura, plan-cierre]
 # Propuesta de cierre — US-321, US-322 y US-325
 
 > Responsable: Estefany Lucero Hernández Loredo · Rama: `dev/estefany-hernandez`
-> Corte de diagnóstico: 4-sep-2026 · Revisión obligatoria: Edgar Coronel (PM)
+> Corte vigente: 8-sep-2026 · Revisión obligatoria: Edgar Coronel (PM)
 > Apoyo técnico recomendado: Andrés González Habib (Tech Lead C3)
+
+> **Actualización de ejecución:** la fase de evidencia ya terminó: `k=3`, Silhouette `0.4644549058`,
+> 114,200 observaciones elegibles. La sección 12 distingue lo ejecutado del plan anterior y
+> registra la salvedad de cobertura RISK-011. No ejecutar los comandos históricos de reconstrucción
+> o publicación para reproducir este corte: se usa exclusivamente el dump local aislado en solo lectura.
 
 ## 1. Resultado de la revisión
 
 | Historia | Estado verificable | Qué ya existe | Qué falta para cerrarla |
 |---|---|---|---|
-| `US-322` | `in_review` | EDA reproducible y evidencia agregada sobre el dump Gold final del 5-sep; llaves y target excluidos | Aprobación de Edgar para cerrar la historia, independiente de ML-03 |
-| `US-325` | `in_review` | Auditoría real por driver, entidad y municipio; D5/D6 declarados `SIN_DATO` | Aprobación documental de Edgar sin inventar un umbral de sesgo |
-| `US-321` | `in_progress` | Pipeline `StandardScaler` + KMeans y vector operativo ratificado D1–D4 + completitud | Ejecutar la corrida temporal real, seleccionar `k`, reportar Silhouette y registrar la versión con `run_id` real |
+| `US-322` | `done` en Execution_Status desde el 6-sep | EDA reproducible y evidencia agregada sobre el dump Gold final; llaves y target excluidos | El PO cerró la historia con salvedades documentales; la ficha conserva `in_review` |
+| `US-325` | `done` en Execution_Status desde el 6-sep | Auditoría real por driver, entidad y municipio; D5/D6 declarados `SIN_DATO` | La ausencia de datos no queda corregida por cerrar su diagnóstico; RISK-011 registra su efecto indirecto en ML-03 |
+| `US-321` | `in_progress` | Corrida temporal del 8-sep ejecutada: k=3, Silhouette 0.4644549058, perfiles y exclusiones documentados | Revisión de RISK-011 por Andrés/Edgar; registro MLflow si se autoriza; productor Gold/API y decisión explícita de cierre pendientes |
 
 La disponibilidad de Bronze dejó de ser el bloqueo: el PR #197, mergeado el 3-sep-2026, incorporó
 `python -m src.ingesta.reproducir_bronze_real` para DS-01/DS-02 y las suites de Great Expectations.
@@ -382,3 +387,23 @@ dump ni artefactos por Git, y ninguna persona modifica el alcance de otra.
 
 El resultado máximo de esta PR de prueba es una corrida C3 reproducible y protegida contra registros
 prematuros. La persistencia Gold y exposición API permanecen explícitamente fuera de alcance.
+
+## 12. Resultado de ejecución — 8-sep-2026
+
+Este corte actualiza los pendientes históricos de las secciones anteriores. Evidencia canónica:
+[[vault/15_ML_Models/ML03_Entrenamiento_US321]], apartado «Corrida final de evidencia — 2026-09-08».
+
+| Paso | Estado y evidencia | Siguiente decisión |
+|---|---|---|
+| T0: fuente y corrida aislada | Completado: dump final1 y tabla local coinciden por hash; acceso de solo lectura; 114,200 elegibles, 21,846 excluidas; k=3 y Silhouette 0.4644549058 | Aceptar la evidencia de ejecución, sin confundirla con promoción |
+| Auditoría de interpretación | Completada: cluster 2 coincide exactamente con 1,648 observaciones elegibles con D6 observado mediante completitud; RISK-011 registrado | Andrés revisa el grupo de cobertura y la propuesta de comparación posterior sin completitud; no ejecutada ni autorizada por este documento |
+| T1/T3: MLflow | Pendiente; no se usó tracking URI ni se generó run_id | Revisión técnica de evidencia primero; luego coordinación y autorización del registro |
+| T4: cierre | PR para Edgar; US-321 conserva in_progress | Edgar decide aceptación/cierre o deuda explícita bajo DEC-015 |
+| T5: Gold/API | Los dos cables siguen pendientes; la corrida no publica asignaciones | C1/C3 primero persistencia y C4 después lectura, en sus PRs y bajo regla 7 |
+| Panel frente a DB-03 | No verificado por esta corrida; QA previo registró bloqueo BUG-065 | Resolver filtro y completar la comparación del par en producción, sin confundirla con disponibilidad del Panel |
+
+**Recomendación:** aceptar el trabajo analítico como entregable y mantener ML-03 sin publicar para la
+demo hasta revisar RISK-011. No se movió el umbral ni se cambió el vector para mejorar la métrica.
+La ventaja de k=3 sobre k=2 es 0.00562 y sólo hay una ventana para seleccionar k; no se afirma
+significancia estadística ni generalización externa. La evidencia permite decidir con conocimiento
+del costo de interpretación, además de los costos de los dos cables.
