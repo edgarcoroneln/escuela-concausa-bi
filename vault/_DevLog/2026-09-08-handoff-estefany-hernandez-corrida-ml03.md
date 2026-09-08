@@ -41,4 +41,4 @@ tags: [devlog, handoff, ml03, validacion-temporal, cobertura]
 - tests/test_generate_pm_dashboard.py: 12 passed; TEST-002 válido después de actualizar registros.
 - Integridad del JSON: conteos y selección de k consistentes; solo lectura, sin publicación, sin run_id, sin CCT individuales. Bloque Python de reproducción compila.
 - Ruff: todos los checks pasan. El JSON agregado ocupa 12,349 bytes.
-
+- check_ownership.py: identidad, rama y los 9 archivos dentro de alcance; matriz y registro de riesgos requieren revisión de Edgar.
