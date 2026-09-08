@@ -11,7 +11,7 @@ from __future__ import annotations
 import httpx
 import streamlit as st
 
-from auth import encabezado, token_de_acceso
+from auth import encabezado
 from superset_client import (
     SupersetDeshabilitado,
     SupersetError,
@@ -34,14 +34,7 @@ def render() -> None:
     st.caption("Los 10 tableros de Superset, embebidos por guest token + RLS (US-206).")
 
     user = encabezado()  # sesión + botón de cerrar sesión (antes solo vivían en app.py)
-    if user is None:
-        st.info("Inicia sesión para acceder a los dashboards.")
-        return
-
-    # Trigger token refresh if needed (access token dura 15 min)
-    token_de_acceso()
-
-    rol = user.get("role", "ciudadano")
+    rol = (user or {}).get("role", "ciudadano")
 
     try:
         tableros = _tableros(rol)

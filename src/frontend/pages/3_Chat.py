@@ -33,11 +33,7 @@ PREGUNTAS_SUGERIDAS = [
 st.title("Agente FARO")
 st.caption("Pregunta en lenguaje natural sobre los datos del proyecto.")
 
-user = encabezado()  # sesion + boton de cerrar sesion (antes solo vivian en app.py)
-if user is None:
-    st.info("Inicia sesión para usar el agente.")
-    st.stop()
-
+encabezado()  # sesion + boton de cerrar sesion (antes solo vivian en app.py)
 # `token_de_acceso()` refresca si esta por expirar; leer la clave directo devolvia
 # el token guardado aunque ya hubiera vencido (dura 15 min, menos que una demo).
 access_token = token_de_acceso()
