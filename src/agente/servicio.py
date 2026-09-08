@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
+import re
 
 from src.agente.guardrails import pregunta_en_alcance, preparar_sql_seguro
 from src.agente.prompt import construir_prompt_sistema
@@ -18,6 +19,10 @@ RecuperarContexto = Callable[[str], str]
 GenerarSQL = Callable[[str, str], str]
 EjecutarSQL = Callable[[str], Sequence[Mapping[str, Any]]]
 RedactarRespuesta = Callable[[str, Sequence[Mapping[str, Any]]], str]
+PREGUNTA_REFERENCIAL = re.compile(
+    r"\b(estas|esas|los anteriores|las anteriores|ese grupo|esa lista|sus recomendaciones)\b",
+    re.IGNORECASE,
+)
 
 
 @dataclass(frozen=True)
@@ -35,6 +40,7 @@ def procesar_consulta(
     generar_sql: GenerarSQL,
     ejecutar_sql: EjecutarSQL,
     redactar_respuesta: RedactarRespuesta,
+    contexto_conversacional: Mapping[str, object] | None = None,
 ) -> ResultadoConsulta:
     """Procesa una pregunta sin acoplarse a RAG, LLM, base de datos ni API."""
     alcance = pregunta_en_alcance(pregunta)
@@ -43,6 +49,15 @@ def procesar_consulta(
             respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
             sql_generado=None,
             fuera_de_alcance=True,
+        )
+    if PREGUNTA_REFERENCIAL.search(pregunta) and not contexto_conversacional:
+        return ResultadoConsulta(
+            respuesta=(
+                "Necesito el contexto de la consulta anterior. Indica las escuelas, CCT o ciclo "
+                "a los que te refieres."
+            ),
+            sql_generado=None,
+            fuera_de_alcance=False,
         )
 
     try:
@@ -59,7 +74,7 @@ def procesar_consulta(
             sql_generado=None,
             fuera_de_alcance=False,
         )
-    prompt = construir_prompt_sistema(contexto)
+    prompt = construir_prompt_sistema(contexto, contexto_conversacional)
     try:
         sql_seguro = preparar_sql_seguro(generar_sql(prompt, pregunta))
     except ValueError as exc:
@@ -82,6 +97,7 @@ def procesar_consulta_con_rag(
     generar_sql: GenerarSQL,
     ejecutar_sql: EjecutarSQL,
     redactar_respuesta: RedactarRespuesta,
+    contexto_conversacional: Mapping[str, object] | None = None,
 ) -> ResultadoConsulta:
     """Procesa una pregunta usando la recuperación ChromaDB de US-304b."""
     return procesar_consulta(
@@ -90,4 +106,5 @@ def procesar_consulta_con_rag(
         generar_sql=generar_sql,
         ejecutar_sql=ejecutar_sql,
         redactar_respuesta=redactar_respuesta,
+        contexto_conversacional=contexto_conversacional,
     )

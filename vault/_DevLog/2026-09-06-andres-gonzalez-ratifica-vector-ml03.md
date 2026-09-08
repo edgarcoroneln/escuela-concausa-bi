@@ -59,3 +59,37 @@ tags: [devlog, celula-3, ml-03, clustering, cobertura-parcial]
 
 - Estefany puede reintentar ML-03 con D1-D4 + completitud.
 - Si la corrida produce asignaciones válidas, registrar MLflow y pedir a C1/C4 sus PRs separados de esquema/API.
+
+## Continuación — contexto conversacional del agente
+
+Durante la validación de producción apareció un caso de seguimiento: la pregunta inicial devuelve
+escuelas, pero una pregunta posterior como "¿cuáles son las recomendaciones para esas escuelas?"
+no puede resolverse porque el contrato actual sólo envía `pregunta`; la API no recibe los CCT ni el
+ciclo de la respuesta anterior.
+
+Se implementó en C3 el núcleo seguro y compatible:
+
+- `procesar_consulta()` y `procesar_consulta_con_rag()` aceptan `contexto_conversacional` opcional.
+- Las referencias (`esas escuelas`, `las anteriores`, `ese grupo`, `sus recomendaciones`) sin contexto
+  piden aclaración y no llegan al RAG/LLM/SQL.
+- Con contexto estructurado, el prompt recibe ciclo, CCTs, filtros y resumen como datos no confiables.
+- El guardarraíl SQL no se relaja: siguen vigentes `SELECT`/`WITH`, esquema `gold` y `LIMIT 1000`.
+- Regresiones agregadas en `tests/test_agente_servicio.py`; 9 pruebas enfocadas pasan.
+
+### Contrato que debe implementar C4
+
+```json
+{
+  "pregunta": "¿Cuáles son las recomendaciones para esas escuelas?",
+  "contexto": {
+    "ciclo": "2024-2025",
+    "ccts": ["19ABC0001X"],
+    "filtros": {},
+    "resumen": "Escuelas identificadas en la consulta anterior"
+  }
+}
+```
+
+C4 debe agregar `contexto` opcional y validado a `AgenteConsultaIn`, actualizar OpenAPI y pruebas.
+C3 debe conectar `src/frontend/agente_client.py` y `pages/3_Chat.py` después de ese merge; C5 debe
+redeployar API/agente. No activar el payload en producción antes de que C4 publique el contrato.
