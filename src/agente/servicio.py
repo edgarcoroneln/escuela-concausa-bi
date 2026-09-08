@@ -81,7 +81,7 @@ def procesar_consulta(
         return ResultadoConsulta(
             respuesta=f"La consulta generada fue rechazada: {exc}",
             sql_generado=None,
-            fuera_de_alcance=True,
+            fuera_de_alcance=False,
         )
 
     filas = ejecutar_sql(sql_seguro)
