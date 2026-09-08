@@ -42,8 +42,6 @@ PALABRAS_AMBITO = frozenset(
         "alumno",
         "alumnos",
         "total",
-        "nivel",
-        "primaria",
         "secundaria",
         "preescolar",
         "especial",

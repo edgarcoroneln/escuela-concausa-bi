@@ -67,6 +67,10 @@ def test_verbo_ambiguo_con_objeto_de_datos_se_rechaza() -> None:
     assert resultado.razon == RAZON_SOLO_LECTURA
 
 
+def test_modificar_nivel_de_primaria_se_rechaza() -> None:
+    assert not pregunta_en_alcance("Modifica el nivel de la primaria 09DPR0001A").permitido
+
+
 @pytest.mark.parametrize(
     "pregunta",
     [
