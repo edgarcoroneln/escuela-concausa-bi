@@ -3,7 +3,7 @@ id: DOC-APISPEC
 title: "API Specification — FARO"
 owner: "Karla Alejandra Monter Benitez"
 status: in_review
-version: "1.1"
+version: "1.2"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/03_Architecture/Data_Model"]
 traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416"]
@@ -252,6 +252,40 @@ C2/C3), no se retoma como pendiente de US-411.
 
 - El agente responde en lenguaje natural sobre Gold y devuelve la consulta generada para auditoría.
   **Nunca** ejecuta escritura/borrado; rechaza preguntas fuera de alcance (`fuera_de_alcance: true`).
+
+#### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
+
+`AgenteConsultaIn` acepta un `contexto` **opcional y retrocompatible**: un cuerpo sin él se comporta
+exactamente como antes. Existe para que *"¿y las recomendaciones para **esas** escuelas?"* pueda
+resolverse sin que el LLM invente CCTs.
+
+```json
+{
+  "pregunta": "¿cuáles son las recomendaciones para esas escuelas?",
+  "contexto": {
+    "ciclo": "2024-2025",
+    "ccts": ["19DES0007C"],
+    "filtros": {"entidad": "19"},
+    "resumen": "Se identificaron 7 escuelas en riesgo"
+  }
+}
+```
+
+> **El contexto lo escribe el cliente: es entrada, no estado de confianza.** `/agente/consulta` es
+> público bajo `require_lectura`, así que cualquiera puede mandar lo que quiera ahí, y cada valor
+> entra **literalmente** al prompt del sistema. El contrato es la frontera:
+>
+> | Campo | Regla | Por qué |
+> |---|---|---|
+> | *(cualquier otro)* | `extra="forbid"` → 422 | Un `sql` o `rol` en el contexto se rechaza; **no hay puerta para SQL del frontend** |
+> | `ccts` | `^[0-9A-Z]{10}$`, máx. 200 | Sin comillas ni saltos de línea que alteren el prompt |
+> | `ciclo` | `^\d{4}-\d{4}$` | — |
+> | `filtros` | máx. 10, 100 chars, sin caracteres de control | Se interpolan en el prompt |
+> | `resumen` | máx. 300 chars, sin caracteres de control | Texto libre: un `\n` falsificaría el bloque de contexto |
+>
+> No se valida que los CCT **existan** — eso lo decide Gold, no el contrato. Y nada de esto
+> sustituye a los guardarraíles de C3 (solo `SELECT`/`WITH` sobre Gold, `LIMIT 1000`): es la capa
+> de antes. Fijado por `tests/test_agente_contexto.py`.
 
 ### 3.6 Administración `/admin/*` (solo `analista`)
 | Método | Ruta | Rol | Request | Response | Códigos |

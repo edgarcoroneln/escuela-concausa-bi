@@ -90,6 +90,15 @@ def consulta(
 
     Aplica los guardarraíles reales del agente. Equivale a `procesar_consulta_con_rag()` con el
     recuperador inyectable, de modo que Andrés (C3) pueda enchufar su LLM/ejecutor por dependencias.
+
+    **`contexto` (opcional, US-305)** permite resolver preguntas de seguimiento —*"¿y las
+    recomendaciones para **esas** escuelas?"*— sin que el LLM invente CCTs. Es opcional y
+    retrocompatible: un cuerpo sin `contexto` se comporta exactamente como antes.
+
+    El contexto lo manda el cliente, así que **se valida como entrada hostil, no como estado de
+    confianza** (`ContextoConversacionalIn`): forma de los CCT, cotas de tamaño, sin caracteres de
+    control, y `extra="forbid"` para que no se pueda colar un `sql` por esta puerta. Ver el
+    docstring del esquema. Lo que llega al servicio de C3 es siempre un objeto ya validado.
     """
     try:
         resultado = procesar_consulta(
@@ -98,6 +107,7 @@ def consulta(
             generar_sql=generar_sql,
             ejecutar_sql=ejecutar_sql,
             redactar_respuesta=redactar_respuesta,
+            contexto_conversacional=body.contexto.model_dump() if body.contexto else None,
         )
     except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
         return AgenteRespuestaOut(
