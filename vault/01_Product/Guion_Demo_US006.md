@@ -212,12 +212,41 @@ Cuatro cosas que se ven y que **conviene explicar nosotros**, no que las descubr
 **El ambiente local corriendo es la red de seguridad de todo lo demás.** Se levanta antes de salir de
 casa, no en la sala.
 
+## La sesión se inicia DENTRO de la demo, no antes
+
+**Regla nueva, y no es opcional.** `BUG-070`: el refresco automático del access token está en `main`
+desde el 6-sep pero **nunca se desplegó** —la imagen del frontend es una cadena parchada a mano que
+nunca se construyó desde `main`—, así que **la sesión muere a los 15 minutos sin avisar**. Medido por
+Karla Monter: login 6:24, y a los 16 min el Panel ML rechaza la predicción.
+
+Consecuencia concreta: si iniciamos sesión en la preparación y la demo empieza 15 minutos después,
+**el Panel ML y el chat fallan a media presentación** y el mensaje que sale no dice *"vuelve a iniciar
+sesión"*, dice que la API rechazó la solicitud.
+
+**Por eso el login se hace en el minuto 7:30, en vivo, como parte del bloque de Luis** — que ya lo
+tenía en su verificación previa. Cuesta 20 segundos y elimina el riesgo por completo, esté o no
+reconstruida la imagen para el miércoles.
+
+**Lo que esto obliga en los bloques anteriores:** Marina (3:00–5:00) y Andrés (6:30–7:30) usan
+superficies que exigen sesión. Dos salidas, y hay que elegir una **en el ensayo, no en la sala**:
+
+- **Si la imagen se reconstruye a tiempo**, se inicia sesión una vez al abrir y el refresco la
+  sostiene. Es lo preferible.
+- **Si no**, quien abra primero inicia sesión **al empezar su bloque**, y nadie deja una sesión
+  abierta esperando.
+
+**Verificación del arreglo, si C5 alcanza a reconstruir:** iniciar sesión, **esperar más de 16
+minutos**, y usar el Panel ML. Si no se corre esa prueba, se asume no arreglado y aplica la regla de
+arriba.
+
 ## Checklist del día, en orden
 
 Se corre **la mañana del 9**, no la noche anterior:
 
 - [ ] `/api/v1/health` y `/api/v1/kpis` responden con los números esperados
 - [ ] Superset abre y el login con Google entra con la cuenta del evaluador
+- [ ] **Nadie deja una sesión abierta esperando**: el login va dentro de la demo (`BUG-070`)
+- [ ] Si C5 reconstruyó la imagen: **sesión abierta >16 min + Panel ML responde** — si no se probó, no está arreglado
 - [ ] El par de demostración responde **en producción**, con los valores del guion
 - [ ] **Los dos chips del agente responden en producción**, con la cuenta con la que se va a demostrar
 - [ ] **`BUG-025` verificado autenticado**, o el bloque del agente se declara caído **antes** de entrar

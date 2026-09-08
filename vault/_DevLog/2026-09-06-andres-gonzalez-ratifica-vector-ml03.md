@@ -75,6 +75,9 @@ Se implementó en C3 el núcleo seguro y compatible:
 - Con contexto estructurado, el prompt recibe ciclo, CCTs, filtros y resumen como datos no confiables.
 - El guardarraíl SQL no se relaja: siguen vigentes `SELECT`/`WITH`, esquema `gold` y `LIMIT 1000`.
 - Regresiones agregadas en `tests/test_agente_servicio.py`; 9 pruebas enfocadas pasan.
+- Se corrigió la clasificación: SQL inválido generado por el modelo devuelve `fuera_de_alcance=False`, mientras que una orden de escritura del usuario conserva `True`.
+- Se amplió el tokenizador del dominio a Unicode y se agregaron `estado`, `alumnos`, `total`, `nivel`, `primaria`, `secundaria`, `preescolar`, `especial`, `indice` e `índice`, sin modificar los filtros de intención de escritura.
+- Ruff y las suites de servicio/guardarraíles/evaluación pasan: `46 passed`.
 
 ### Contrato que debe implementar C4
 

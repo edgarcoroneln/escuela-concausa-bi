@@ -53,5 +53,6 @@ reciban recomendaciones distintas.
 | [[vault/15_ML_Models/ML03_Model_Card]] | Ficha de Modelo de ML-03: agrupamiento no supervisado (clustering), características usadas, silhouette score y fronteras (US-324) |
 | [[vault/15_ML_Models/EDA_Features_US322]] | Diagnóstico reproducible, correlaciones y selección de variables sin fuga para ML-03 (US-322) |
 | [[vault/15_ML_Models/Cobertura_Parcial_US325]] | Auditoría de `SIN_DATO`, completitud y concentración territorial por entidad y municipio (US-325) |
-| [[vault/15_ML_Models/ML03_Entrenamiento_US321]] | KMeans temporal, selección de `k` por Silhouette y perfiles auditables; política provisional sin imputación (US-321) |
+| [[vault/15_ML_Models/ML03_Entrenamiento_US321]] | Corrida real del 8-sep: k=3, Silhouette 0.4645, exclusiones y perfiles; RISK-011 por cobertura indirecta. Sin MLflow ni publicación Gold (US-321) |
+| [ML03_Evidencia_20260908.json](ML03_Evidencia_20260908.json) | Agregados y proveniencia de la corrida; comparación k=2..6 y cruce cluster/completitud/D6. Sin filas individuales |
 | [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]] | Propuesta post-PR #197 y prompt maestro para llevar US-321/322/325 de fixtures a evidencia reproducible sobre Gold real |

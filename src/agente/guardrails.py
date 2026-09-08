@@ -38,6 +38,13 @@ PALABRAS_AMBITO = frozenset(
         "cct",
         "ciclo",
         "faro",
+        "estado",
+        "alumno",
+        "alumnos",
+        "total",
+        "secundaria",
+        "preescolar",
+        "especial",
     }
 )
 
@@ -135,12 +142,14 @@ OBJETOS_DE_DATOS = frozenset(
         "esquema",
         "bd",
         "gold",
+        "indice",
+        "índice",
     }
 )
 
 RAZON_SOLO_LECTURA = "FARO solo responde consultas de lectura; no ejecuta cambios sobre los datos."
 
-PATRON_PALABRA = re.compile(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b")
+PATRON_PALABRA = re.compile(r"\b\w+\b", re.UNICODE)
 PATRON_LIMIT = re.compile(r"\blimit\s+(\d+)\b", re.IGNORECASE)
 PATRON_COMENTARIO = re.compile(r"(--|/\*|\*/)")
 PATRON_REFERENCIA = re.compile(

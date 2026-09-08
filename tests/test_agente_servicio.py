@@ -71,9 +71,23 @@ def test_sql_inseguro_nunca_llega_al_ejecutor() -> None:
         redactar_respuesta=lambda pregunta, filas: "No debe ejecutarse",
     )
 
-    assert resultado.fuera_de_alcance
+    assert resultado.fuera_de_alcance is False
     assert resultado.sql_generado is None
     assert not ejecutado
+
+
+def test_sql_invalido_es_fallo_del_sistema_no_fuera_de_alcance() -> None:
+    resultado = procesar_consulta(
+        "¿Cuántas escuelas hay?",
+        recuperar_contexto=lambda pregunta: "gold.predicciones",
+        generar_sql=lambda prompt, pregunta: "DELETE FROM gold.predicciones",
+        ejecutar_sql=lambda sql: [],
+        redactar_respuesta=lambda pregunta, filas: "no debe llamarse",
+    )
+
+    assert resultado.fuera_de_alcance is False
+    assert resultado.sql_generado is None
+    assert "rechazada" in resultado.respuesta
 
 
 def test_orden_de_escritura_se_corta_antes_de_generar_sql() -> None:
