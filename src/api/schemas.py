@@ -12,9 +12,18 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Generic, TypeVar
+from typing import Annotated, Generic, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    StringConstraints,
+    field_validator,
+)
 
 # --------------------------------------------------------------------------- #
 # Infraestructura del contrato
@@ -197,8 +206,89 @@ class ExplicacionSHAPOut(BaseModel):
 # --------------------------------------------------------------------------- #
 
 
+#: Un CCT es la clave de 10 caracteres de la escuela. **No se valida su estructura**
+#: (`\d{2}[A-Z]{3}\d{4}[A-Z]`) sino solo longitud y alfabeto: rechazar un CCT real por una
+#: variante de formato rompería el chat, mientras que lo que hay que impedir aquí —espacios,
+#: saltos de línea, comillas, cualquier cosa que altere la estructura del prompt— ya lo impide
+#: este patrón. La existencia del CCT la decide Gold, no el contrato.
+CCT = Annotated[str, StringConstraints(pattern=r"^[0-9A-Z]{10}$")]
+
+#: Cotas del contexto. Existen para acotar el tamaño del prompt y la superficie de abuso, no por
+#: gusto: cada valor entra **literalmente** en el prompt del sistema (`src/agente/prompt.py`).
+MAX_CCTS_CONTEXTO = 200
+MAX_FILTROS_CONTEXTO = 10
+MAX_LARGO_FILTRO = 100
+MAX_LARGO_RESUMEN = 300
+
+
+class ContextoConversacionalIn(EntradaEstricta):
+    """Contexto estructurado del turno anterior del chat (US-305).
+
+    Existe para que *"¿cuáles son las recomendaciones para **esas** escuelas?"* pueda resolverse
+    sin que el LLM invente CCTs. C3 lo consume en `construir_prompt_sistema()`.
+
+    **Este objeto es entrada del cliente, no estado de confianza.** Quien llame a la API puede
+    escribir aquí lo que quiera —el endpoint es público bajo `require_lectura`—, así que se trata
+    como hostil:
+
+    - `extra="forbid"` (heredado): un `sql`, `sql_generado` o `rol` en el cuerpo se rechaza con 422
+      en vez de ignorarse. **El frontend no puede colar SQL por esta puerta.**
+    - Los CCT se validan por forma, así que no pueden transportar saltos de línea ni comillas.
+    - `resumen` es el único campo de texto libre y por eso es el más peligroso: entra literal al
+      prompt, donde un salto de línea permitiría falsificar la estructura del bloque de contexto.
+      Se rechazan los caracteres de control.
+    - Todo está acotado en tamaño: un contexto no puede empujar el prompt hasta desplazar las
+      instrucciones de seguridad.
+
+    Nada de esto sustituye a los guardarraíles de C3 (`preparar_sql_seguro`, solo `SELECT`/`WITH`
+    sobre Gold, `LIMIT 1000`). Es la capa de antes: lo que nunca debió llegar al LLM.
+    """
+
+    ciclo: StrictStr | None = Field(
+        default=None,
+        pattern=r"^\d{4}-\d{4}$",
+        description="Ciclo del turno anterior, p. ej. `2024-2025`.",
+    )
+    ccts: list[CCT] = Field(
+        default_factory=list,
+        max_length=MAX_CCTS_CONTEXTO,
+        description="CCTs que el turno anterior identificó. La API no verifica que existan.",
+    )
+    filtros: dict[str, StrictStr] = Field(
+        default_factory=dict,
+        description="Filtros del turno anterior (entidad, nivel...). Solo texto plano.",
+    )
+    resumen: StrictStr | None = Field(
+        default=None,
+        max_length=MAX_LARGO_RESUMEN,
+        description="Resumen del turno anterior. **Dato no confiable**: entra literal al prompt.",
+    )
+
+    @field_validator("resumen")
+    @classmethod
+    def _resumen_sin_caracteres_de_control(cls, v: str | None) -> str | None:
+        """Un salto de línea aquí permitiría falsificar la estructura del bloque de contexto."""
+        if v is not None and not v.isprintable():
+            raise ValueError("el resumen no puede contener saltos de línea ni caracteres de control")
+        return v
+
+    @field_validator("filtros")
+    @classmethod
+    def _filtros_acotados(cls, v: dict[str, str]) -> dict[str, str]:
+        if len(v) > MAX_FILTROS_CONTEXTO:
+            raise ValueError(f"como máximo {MAX_FILTROS_CONTEXTO} filtros")
+        for clave, valor in v.items():
+            if len(clave) > MAX_LARGO_FILTRO or len(valor) > MAX_LARGO_FILTRO:
+                raise ValueError(f"clave y valor de un filtro: máximo {MAX_LARGO_FILTRO} caracteres")
+            if not f"{clave}{valor}".isprintable():
+                raise ValueError("los filtros no pueden contener caracteres de control")
+        return v
+
+
 class AgenteConsultaIn(EntradaEstricta):
     pregunta: StrictStr = Field(min_length=3, max_length=500)
+    #: Opcional y **retrocompatible**: un cuerpo sin `contexto` se comporta igual que antes.
+    contexto: ContextoConversacionalIn | None = None
 
 
 class AgenteRespuestaOut(BaseModel):
