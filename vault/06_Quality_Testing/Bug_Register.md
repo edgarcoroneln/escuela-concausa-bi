@@ -1324,3 +1324,32 @@ deja el check en rojo.
 Los dos checks **requeridos** por `main` son «Calidad de codigo y vault» y «Generar y validar
 tablero PM» — viven en `ci.yml` y `pm-dashboard.yml`, no en este workflow, así que el cambio no los
 altera. («Contrato dbt» corre en cada PR pero **no** es required.)
+## BUG-034 — OAuth callback / refresh token no funcional en producción
+
+### Descripción
+
+Durante la validación de la API en producción se identificó que el flujo de autenticación OAuth no completa correctamente las operaciones relacionadas con callback y refresh token.
+
+### Pasos para reproducir
+
+1. Acceder al ambiente productivo.
+
+2. Ejecutar el flujo de autenticación OAuth.
+
+3. Intentar completar el callback o renovar el token mediante refresh.
+
+### Resultado actual vs esperado
+
+- **Actual:** El flujo no permite validar correctamente la funcionalidad esperada de callback y refresh token.
+
+- **Esperado:** El callback debe completarse correctamente y el refresh token debe permitir la renovación de credenciales sin errores.
+
+### Entorno
+
+- Ambiente: Producción
+
+- Detectado durante validación E2E de API
+
+### Reportado por
+
+Eloisa González Rubio
