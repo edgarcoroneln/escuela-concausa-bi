@@ -30,7 +30,7 @@ class SupersetHTTPFake(BaseHTTPRequestHandler):
     Flujo del contrato nuevo: login (+csrf) → filtro por slug (devuelve id) → habilitar
     embed (devuelve embedded_uuid) → guest token acotado a esos uuids.
 
-    **`protocol_version` tiene que ser HTTP/1.1 (BUG-072).** No confundir con `BUG-059`,
+    **`protocol_version` tiene que ser HTTP/1.1 (BUG-074).** No confundir con `BUG-059`,
     que es la sesion de `auth.py` y ya la cerro C4: esto es un defecto **de la prueba**, no
     del embebido. `BaseHTTPRequestHandler` habla HTTP/1.0 por defecto y cierra
     la conexión después de cada respuesta; `superset_client` reutiliza **un solo**

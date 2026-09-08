@@ -4,8 +4,8 @@ date: "2026-09-08"
 author_human: "Marina García del Buey"
 agent: "Claude Code"
 model: "claude-opus-5"
-session_duration: "sesión: se commitea el embebido de Superset que nunca llegó a main (BUG-061), guardas de sesión en las tres páginas (BUG-071) y un flaky de prueba diagnosticado (BUG-072)"
-touches: ["US-206", "US-526", "US-207", "US-305", "BUG-061", "BUG-070", "BUG-071", "BUG-072", "REQ-002", "REQ-004", "DEC-018"]
+session_duration: "sesión: se commitea el embebido de Superset que nunca llegó a main (BUG-061), guardas de sesión en las tres páginas (BUG-071) y un flaky de prueba diagnosticado (BUG-074)"
+touches: ["US-206", "US-526", "US-207", "US-305", "BUG-061", "BUG-070", "BUG-071", "BUG-074", "REQ-002", "REQ-004", "DEC-018"]
 tags: [devlog, frontend, streamlit, superset, embebido, seguridad, celula-2]
 ---
 
@@ -56,7 +56,7 @@ parece un defecto del embebido y no lo es.
 
 Una línea lo arregla (`protocol_version = "HTTP/1.1"`; `_respond` ya emitía `Content-Length`).
 **5 corridas consecutivas en verde.** El mismo defecto existía en la versión previa de la prueba
-en `main`, así que no lo introdujo el handoff. Queda registrado como **BUG-072**.
+en `main`, así que no lo introdujo el handoff. Queda registrado como **BUG-074**.
 
 > **Corrección de mi diagnóstico, y agradezco que me la hicieran.** Lo reporté primero como *"la
 > causa raíz de BUG-059"*. **Es falso.** `BUG-059` es la sesión de `auth.py` —refresco de token y
@@ -112,7 +112,7 @@ Panel ML y en Chat. Ya no dependen del orden de pintado.
 - **Decisiones autónomas:** apagar el Panel de ML en vez de ocultarlo; poner la guarda de
   Dashboards **antes** del login a Superset y no después; corregir las pruebas por etiqueta en vez
   de reordenar la barra lateral.
-- **Correcciones propias:** (1) atribuí el flaky a `BUG-059` sin verificarlo — es `BUG-072`;
+- **Correcciones propias:** (1) atribuí el flaky a `BUG-059` sin verificarlo — es `BUG-074`;
   (2) quité un `from typing import Any` sin usar que traía el handoff y que **habría reprobado el
   CI** por `ruff`.
 
