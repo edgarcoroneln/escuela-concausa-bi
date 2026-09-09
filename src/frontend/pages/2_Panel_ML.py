@@ -54,9 +54,14 @@ NOMBRE_DRIVER = {
 }
 
 #: CCT de ejemplo para que el panel sea usable sin conocer una clave de memoria.
-#: Se eligen dos con **driver dominante distinto**, que es justo lo que la historia
-#: quiere demostrar.
-EJEMPLOS = ("15DJN0049A", "09DSN0042A")
+#: BUG-073: son **el par oficial de la demostración** (`US-006`), no dos CCT cualesquiera.
+#: Mismo municipio (Ecatepec), mismo nivel y `indice_riesgo` **idéntico (0.4774)**, con
+#: driver dominante distinto -- D4 conectividad y D2 inseguridad. Todo lo demás está
+#: controlado, así que la única variable que explica la diferencia de recomendación es el
+#: driver, que es exactamente lo que el bloque 3:00-5:00 del guion quiere demostrar.
+#: Antes eran `15DJN0049A` / `09DSN0042A`, CCT de la validación del camino del agente:
+#: quien copiara un ejemplo no reproducía la ficha del guion.
+EJEMPLOS = ("15DPR0920D", "15DPR2254O")
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -70,7 +75,7 @@ def _municipios(api_base_url: str, cve_ent: str, _token: str | None) -> dict[str
     return listar_municipios(api_base_url, cve_ent, access_token=_token)
 
 
-def _buscador(token: str | None) -> str | None:
+def _buscador(token: str | None, *, deshabilitado: bool = False) -> str | None:
     """Cascada entidad -> municipio -> nivel -> escuela. Devuelve el CCT elegido, o `None`.
 
     **Solo `st.selectbox`, ningún campo de texto ni botón nuevo.** Las pruebas de la página
@@ -79,13 +84,18 @@ def _buscador(token: str | None) -> str | None:
     disparan rerun por sí solos, con lo que la cascada no necesita botón.
 
     No sustituye al campo de CCT: lo alimenta. Quien ya sabe la clave la teclea.
+
+    `deshabilitado` apaga la cascada sin sesión (BUG-071). Basta apagar el **primer**
+    selector: los otros tres solo se dibujan después de elegir entidad, así que con el
+    centinela bloqueado la función sale antes de tocar la red. Se apaga el control en vez
+    de esconderlo para que la página siga explicando qué ofrece cuando entres.
     """
     st.markdown("**Buscar por filtros** — para llegar a una escuela sin teclear su clave.")
 
     col_ent, col_mun, col_niv = st.columns(3)
     with col_ent:
         etiquetas_ent = ["Elige entidad"] + [f"{c} · {n}" for c, n in ENTIDADES.items()]
-        elegida = st.selectbox("Entidad", etiquetas_ent, index=0)
+        elegida = st.selectbox("Entidad", etiquetas_ent, index=0, disabled=deshabilitado)
     if elegida == etiquetas_ent[0]:
         st.caption("Elige una entidad para empezar la búsqueda.")
         return None
@@ -254,21 +264,32 @@ def render() -> None:
     )
 
     user = encabezado()  # sesión + botón de cerrar sesión (antes solo vivían en app.py)
-    if user is None:
-        st.info("Puedes consultar predicciones sin iniciar sesión: la lectura es pública.")
+    # BUG-071. El aviso anterior decía "la lectura es pública" y desde DEC-018 eso es FALSO:
+    # producción corre con `AUTH_LECTURA_PUBLICA=false`, así que sin sesión la API responde
+    # 401 y el panel lo presentaba como "La API rechazó la solicitud" -- un fallo de permiso
+    # disfrazado de fallo de servicio. Se dice la verdad y se apagan los controles.
+    sin_sesion = user is None
+    if sin_sesion:
+        st.info(
+            "Inicia sesión para consultar predicciones: desde `DEC-018` la lectura de la API "
+            "exige sesión, así que sin ella cualquier consulta devolvería 401."
+        )
 
     token = token_de_acceso()
-    cct_elegido = _buscador(token)
+    cct_elegido = _buscador(token, deshabilitado=sin_sesion)
     st.divider()
 
     with st.form("form_prediccion"):
         cct = st.text_input(
             "CCT de la escuela",
             max_chars=10,
-            placeholder="15DJN0049A",
+            placeholder="15DPR0920D",
             help="Clave del Centro de Trabajo: 10 caracteres.",
+            disabled=sin_sesion,
         ).strip().upper()
-        enviado = st.form_submit_button("Consultar predicción", type="primary")
+        enviado = st.form_submit_button(
+            "Consultar predicción", type="primary", disabled=sin_sesion
+        )
 
     st.caption("Ejemplos con driver dominante distinto: " + " · ".join(f"`{c}`" for c in EJEMPLOS))
 
