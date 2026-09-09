@@ -2,7 +2,7 @@
 id: DOC-PUBLICACION-GOLD
 title: "Publicación de predicciones y recomendaciones a Gold"
 owner: "Héctor Rafael Morales Marbán"
-status: in_review
+status: approved
 traces_up: ["vault/02_Requirements/User_Stories", "vault/03_Architecture/Data_Model", "vault/15_ML_Models/Indice_Riesgo_ML01"]
 traces_down: ["US-313"]
 tags: [ml, celula-3, gold, batch]
@@ -186,13 +186,59 @@ Las que importan:
 - `test_escribir_rechaza_un_lote_con_granos_mezclados` — objetivo de conflicto inequívoco.
 - `test_la_base_rechaza_una_fila_con_las_dos_llaves` — el `CHECK` protege incluso al SQL directo.
 
-## 9. Pendientes
+## 9. Corrida contra Gold real — verificada 2026-09-05
 
-1. **Re-ejecutar con `gold.features_escuela` real** y la etiqueta supervisada confirmada por C1.
+El pendiente que mantenía este documento en `in_review` era ejecutar el job contra
+`gold.features_escuela` real, no contra el fixture de 145 filas. **Hecho, y por dos vías
+independientes que coinciden.**
+
+| | Héctor (4-sep, Gold con CONEVAL) | Andrés (5-sep, Gold con CONAPO real) |
+|---|---|---|
+| Features | 136,046 filas · 46,547 escuelas · 3 ciclos | idéntico |
+| ML-01 MAE, pérdida cuadrática | **0.1592** | **0.159148** (baseline 0.159223) |
+| ML-01 MAE, `absolute_error` | — | **0.141458** (11.04 % sobre baseline) |
+| ML-02 F1 macro | 0.8331 | 0.8333 |
+| Publicadas | 45,276 + 45,276 | 45,276 + 45,276 |
+| Huérfanas vs `fact_escuela_ciclo` | **1,168** | **1,168** |
+
+### Por qué ML-01 cambió a pérdida absoluta
+
+Con pérdida cuadrática el modelo **no le gana al baseline temporal** sobre datos reales (0.159148
+contra 0.159223) y queda aplastado contra la media: su peor predicción en 45,276 escuelas es
+−1.33 %, cuando la mediana real cae 1.68 % y el 39 % de las escuelas caen más de 5 %. La causa es la
+cola del target real —σ 0.4994, máximo **+66.0**, 76 escuelas creciendo más de 500 %—, que el fixture
+de 145 filas nunca contuvo.
+
+`loss="absolute_error"` (Andrés, `entrenar_ml01.py`) reduce la influencia de esa cola. **No se
+movieron las anclas de riesgo de DEC-006 ni se buscó un porcentaje objetivo de escuelas en riesgo.**
+
+### El umbral de aceptación sigue incumplido, y se declara
+
+`evaluar.py` fija `ML-01_mae: 0.03`. La corrida real da **0.141458**: sigue **4.7×** por encima. Se
+reporta tal cual, con el mismo criterio que se aplicó al Silhouette de ML-03 en `US-312`: un modelo
+que no alcanza su umbral no se presenta como si lo hiciera. Lo que sí mejoró y se puede afirmar es
+que **ahora le gana al baseline temporal por 11.04 %**, cosa que la pérdida cuadrática no hacía.
+
+### Las 1,168 huérfanas se conservan a propósito
+
+`features_escuela` tiene 45,276 escuelas en 2024-2025 y `fact_escuela_ciclo` sólo 44,114, porque el
+hecho filtra `matricula_ciclo_anterior is not null`. Las 1,168 filas de diferencia hacen reprobar
+`cubo_recomendaciones_kpi11_parity` y `gold_ml_runtime_recomendaciones_fact_relationship`.
+
+**No se filtran.** Decisión de Andrés a petición de Luis Téllez: se publican las 45,276 y el desfase
+queda visible en el gate. Filtrarlas pondría las dos pruebas en verde escondiendo un desajuste real
+entre el hecho y las features, que es información que el equipo debe ver.
+
+## 10. Pendientes
+
+1. ~~Re-ejecutar con `gold.features_escuela` real~~ — **hecho** (ver §9).
 2. ~~Verificar el grano dual contra Postgres~~ — **hecho** (ver §3).
-3. **Forma exacta del contrato de la API**: DEC-010 la deja pendiente de confirmar con Christian
+3. **Cerrar el desfase de las 1,168 huérfanas** en el origen: acordar con C1 si `features_escuela`
+   debe filtrar por `matricula_ciclo_anterior is not null` como hace el hecho, o si el hecho debe
+   ensancharse. Hoy la diferencia se declara, no se resuelve.
+4. **Forma exacta del contrato de la API**: DEC-010 la deja pendiente de confirmar con Christian
    Ruiz, dueño de `PrediccionOut`. Hoy el esquema de `PrediccionOut` asume grano escuela.
-2. **Resolver la duplicación del catálogo** con la Célula 4.
-3. `vault/03_Architecture/Data_Model.md` **línea 255** conserva la redacción vieja — dice que
+5. **Resolver la duplicación del catálogo** con la Célula 4.
+6. `vault/03_Architecture/Data_Model.md` **línea 255** conserva la redacción vieja — dice que
    `indice_riesgo` vive en la columna `valor`, lo que contradice el §4.5 tras DEC-005. Es de la
    Célula 1.

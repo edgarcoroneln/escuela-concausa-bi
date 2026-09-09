@@ -50,7 +50,7 @@ alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
 | US-111 | Implementar transformaciones Bronze → Silver con dbt | Deni Garrido Fragoso | Medio | S2 | REQ-001 |
 | US-112 | Implementar transformaciones Silver → Gold con dbt | Deni Garrido Fragoso | Medio | S3 | REQ-001 |
 | US-113 | Construir los cubos de agregación | Deni Garrido Fragoso | Medio | S3 | REQ-001 |
-| US-114 | Optimizar consultas y crear índices | Deni Garrido Fragoso | Medio | S5 | REQ-001 |
+| US-114 | Optimizar consultas y crear índices | Diana Aracely Alvarez Varela | Medio | S5 | REQ-001 |
 | US-121a | Prueba de descarga real de DS-06 (CONAGUA) y DS-08 (CONAPO) | Emilio Galnares Ruiz | Bajo | S1 | REQ-001 |
 | US-122a | Escribir los extractores de DS-06 y DS-08 | Emilio Galnares Ruiz | Bajo | S2 | REQ-001 |
 | US-123a | Validaciones Great Expectations de DS-06 y DS-08 | Emilio Galnares Ruiz | Bajo | S3 | REQ-001 |
@@ -151,6 +151,7 @@ requisito de "3 modelos integrados vía API" (REQ-003).
 | US-503 | Configurar el pipeline de CI en GitHub Actions | Luis Téllez Domínguez | Medio | S2 | REQ-007 ᵇ |
 | US-504 | Aprovisionar Cloud SQL, Artifact Registry y secretos | Luis Téllez Domínguez | Medio | S4 | REQ-005 |
 | US-505 | Despliegue final productivo y verificación | Luis Téllez Domínguez | Medio | S6 | REQ-005 |
+| US-526 | Contenerizar y desplegar FARO Web en Cloud Run | Luis Téllez Domínguez | Medio | S6 | REQ-002 |
 | US-521a | Guía de ambiente local reproducible — API y Postgres | Alejandro Velázquez Mendoza | Bajo | S1 | REQ-007 ᵇ |
 | US-522a | Contenerizar API (FastAPI) y Postgres | Alejandro Velázquez Mendoza | Bajo | S3 | REQ-005 |
 | US-523a | Branch protection y required reviews en GitHub | Alejandro Velázquez Mendoza | Bajo | S3 | REQ-007 ᵇ |
@@ -165,7 +166,7 @@ requisito de "3 modelos integrados vía API" (REQ-003).
 | US-522c | Contenerizar Superset y el agente | Edward Ulysses Ruiz Bustillos | Bajo | S3 | REQ-005 |
 | US-523c | Quality gate de vault_lint y plantilla de PR | Edward Ulysses Ruiz Bustillos | Bajo | S3 | REQ-007 ᵇ |
 | US-524c | Monitoreo, logs y alertas de Superset y agente | Edward Ulysses Ruiz Bustillos | Bajo | S5 | REQ-005 |
-| US-525c | Runbook de rollback de Superset y agente | Edward Ulysses Ruiz Bustillos | Bajo | S6 | REQ-005 |
+| US-525c | Runbook de rollback de Superset y agente | Marina García del Buey | Bajo | S6 | REQ-005 |
 
 ᵇ Historias ejecutadas por la Célula 5 pero cuyo **valor de rúbrica** cae en gobernanza / Git /
 documentación (REQ-007): CI, branch protection, quality gates y guía de ambiente local.
@@ -211,12 +212,12 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Persona | Célula | Nivel | # | IDs |
 |---|---|---|---|---|
 | Edgar Edmundo Coronel Navarrete | PO | Medio | 6 | US-001…US-006 |
-| Diana Aracely Alvarez Varela | C1 | Alto | 6 | US-101…US-106 |
-| Deni Garrido Fragoso | C1 | Medio | 4 | US-111, US-112, US-113, US-114 |
+| Diana Aracely Alvarez Varela | C1 | Alto | 7 | US-101…US-106, US-114 |
+| Deni Garrido Fragoso | C1 | Medio | 3 | US-111, US-112, US-113 |
 | Emilio Galnares Ruiz | C1 | Bajo | 4 | US-121a, US-122a, US-123a, US-124a |
 | Luis Enrique García Vázquez | C1 | Bajo | 4 | US-121b, US-122b, US-123b, US-124b |
 | Manuel Alejandro Serranía Reinada | C2 | Alto | 6 | US-201…US-205, US-206 |
-| Marina García del Buey | C2 | Medio | 5 | US-211a, US-212, US-214a, US-215a, US-207 |
+| Marina García del Buey | C2 | Medio | 6 | US-211a, US-212, US-214a, US-215a, US-207, US-525c |
 | Monserrat Xcaret Miranda Olivas | C2 | Medio | 4 | US-211b, US-213, US-214b, US-215b |
 | Eloisa González Rubio | C4 | Bajo | 3 | US-421, US-422, US-423 |
 | Andrés González Habib | C3 | Alto | 5 | US-301, US-302, US-303, US-304a, US-305 |
@@ -227,10 +228,10 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Christian Imanol Ruiz Hurtado | C4 | Alto | 5 | US-401, US-402, US-403, US-404, US-405 |
 | Juan Carlos Macías Mayen | C4 | Medio | 3 | US-412, US-415, US-416 |
 | Oscar Antonio Quiroz Lázaro | C2 | Bajo | 4 | US-221, US-222, US-223, US-224 |
-| Luis Téllez Domínguez | C5 | Medio | 5 | US-501…US-505 |
+| Luis Téllez Domínguez | C5 | Medio | 6 | US-501…US-505, US-526 |
 | Alejandro Velázquez Mendoza | C5 | Bajo | 5 | US-521a, US-522a, US-523a, US-524a, US-525a |
 | Edgar Ulises Jiménez López | C5 | Bajo | 5 | US-521b, US-522b, US-523b, US-524b, US-525b |
-| Edward Ulysses Ruiz Bustillos | C5 | Bajo | 5 | US-521c, US-522c, US-523c, US-524c, US-525c |
+| Edward Ulysses Ruiz Bustillos | C5 | Bajo | 4 | US-521c, US-522c, US-523c, US-524c |
 | **Total** | | | **91** | |
 
 > **Célula 3 rebalanceada:** al partir US-304 (diseño → Andrés / recuperación → Carlos) y añadir

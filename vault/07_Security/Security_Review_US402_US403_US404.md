@@ -2,12 +2,12 @@
 id: DOC-SECREV-C4
 title: "Revisión de seguridad — cierre de US-402, US-403 y US-404"
 owner: "Christian Imanol Ruiz Hurtado"
-status: in_review
-version: "1.1"
+status: approved
+version: "1.2"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/07_Security/Security_Review_Checklist", "vault/_Meta/Vault_Rules"]
-traces_down: ["US-402", "US-403", "US-404", "US-405", "SEC-002", "SEC-003", "SEC-004", "SEC-005", "SEC-006", "SEC-007", "SEC-009", "BUG-046"]
-last_reviewed: "2026-09-04"
+traces_down: ["US-402", "US-403", "US-404", "US-405", "SEC-002", "SEC-003", "SEC-004", "SEC-005", "SEC-006", "SEC-007", "SEC-008", "SEC-009", "BUG-046", "BUG-059", "DEC-018", "AC-004.5"]
+last_reviewed: "2026-09-06"
 tags: [security, review, oauth2, jwt, rbac, hardening, celula-4]
 ---
 
@@ -234,3 +234,82 @@ código inventado y **422** con cuerpo malformado; `/auth/me` **401** sin token;
 | **Alcance** | `BUG-046` (anexo A) y verificación en la URL pública (anexo B) |
 | **Veredicto** | 🟢 `BUG-046` aprobado sin cambios · `SEC-009` abierto como follow-up · login e2e real **pendiente** |
 | **Asistencia de IA** | Claude Code / claude-opus-5 — reversión del parche y lectura del código de `jose` ejecutadas y comprobadas antes de firmar |
+
+---
+
+## 11. Anexo C (2026-09-06) — Validación de `SEC-006` → `resolved` y de `DEC-018`
+
+> Luis Téllez (C5) ejecutó el flip `AUTH_LECTURA_PUBLICA=false` en producción y marcó `SEC-006` como
+> `resolved`, notificándome como dueño de `vault/07_Security/**`. Este anexo es esa validación.
+
+### 11.1 Veredicto
+
+**🟢 Validado. `SEC-006` queda `resolved`.** La condición de cierre que este documento fijó el
+2026-09-02 era *"poner `false` cuando el login e2e esté validado en vivo"*. **Se cumplió**, y en ese
+orden: el login e2e real se ejecutó el 2026-09-04 (rev `00011-hr5`, tras el fix de `at_hash`) y el
+flip vino después, el 2026-09-05. No se cerró un riesgo apagando la comprobación: se cerró habiendo
+demostrado primero que la alternativa funciona.
+
+Ejecución correcta: variable de entorno, sin rebuild, reversible. `require_lectura`
+(`src/api/security/rbac.py`) se comporta como está especificado — no hubo cambio de código, así que
+no hay superficie nueva que revisar.
+
+### 11.2 Corrección de tres afirmaciones que hice y eran falsas
+
+Es la parte incómoda de este anexo y por eso va escrita, no omitida. Durante varios días sostuve
+—en mensajes al equipo— que:
+
+| Lo que dije | Lo real |
+|---|---|
+| *"El login e2e real nunca se ha ejecutado"* | Se ejecutó el **2026-09-04** en producción, por Luis Téllez |
+| *"Falta cerrar AC-004.5 (403 con `ciudadano` real)"* | **Cerrado**: 401 sin token · 200 analista · **403 ciudadano**, con cuentas reales |
+| *"C5 debe buscar `SEC-007` en los logs"* | **Buscado**: `almacen` en `faro-api`, últimas 3 h, **sin coincidencias** |
+
+La evidencia estaba en [[vault/_DevLog/2026-09-04-luis-tellez-redeploy-bug046-e2e]] desde el día 4.
+El error fue mío: sostuve un estado mental de tres días atrás en vez de leer el DevLog del owner
+antes de repetir la afirmación. Consecuencia concreta: se le pidió a C5 trabajo que ya había
+entregado.
+
+**`AC-004.5` queda cerrada.** `SEC-007` queda **verificado con la salvedad que el propio DevLog
+declara**: la búsqueda fue acotada a 3 h, no exhaustiva. Como el almacén degradado y el sano se
+comportan igual con una instancia, la ausencia del log es evidencia razonable, no prueba — y con
+`min=max=1` en Cloud Run el riesgo no se materializa. Se mantiene `accepted_risk`, no se sube a
+`resolved`.
+
+### 11.3 Sobre `DEC-018`, y por qué no la reabro
+
+Recomendé lo contrario: volver a `AUTH_LECTURA_PUBLICA=true` para la demo, sosteniendo que el flag
+no aporta puntos de rúbrica (OAuth2 y RBAC se demuestran con `/admin/*`, que exige `analista`
+**siempre**, independiente del flag) y que cierra la URL pública, que sí vale 1.0 y fija el techo en
+6.0 vía `RISK-001`.
+
+El PO decidió la postura contraria y la asentó como `DEC-018`. **Es su decisión y la respeto.** Queda
+registrada aquí para que conste que el costo de rúbrica fue evaluado y aceptado a conciencia, no
+descubierto por accidente — que era lo único que pedí.
+
+**Consecuencia técnica que sí es mía, y que `DEC-018` activó:** con la lectura cerrada, el defecto
+del token en FARO Web deja de ser latente. `2_Panel_ML.py` enviaba `access_token=None` (el dict de
+`/auth/me` nunca tuvo el token) a una API que **ahora exige token**, y el access token de 15 minutos
+no se refrescaba nunca. Corregido en `BUG-059`; sin ese arreglo, `DEC-018` deja el front sin
+funcionar para alguien con sesión iniciada. Las dos cosas tienen que desplegarse juntas.
+
+### 11.4 Estado de los riesgos tras este anexo
+
+| ID | Estado | Nota |
+|---|---|---|
+| `SEC-002` | ✅ resuelto | `state` firmado + cookie (2026-09-02) |
+| `SEC-003` | accepted_risk | Rate limiting por proceso; `min=max=1` lo hace inocuo hoy |
+| `SEC-004` · `SEC-005` | accepted_risk | RS256 y rotación de refresh: follow-ups post-freeze |
+| `SEC-006` | ✅ **resuelto** | Validado en este anexo |
+| `SEC-007` | accepted_risk | Verificado con salvedad (§11.2) |
+| `SEC-008` | open | Credencial admin de Superset — C5 provisiona, C2 consume |
+| `SEC-009` | accepted_risk | `at_hash` desactivado; riesgo nulo en code flow (Anexo A) |
+
+## 12. Firma del anexo C
+
+| | |
+|---|---|
+| **Revisor** | Christian Imanol Ruiz Hurtado — Tech Lead C4, dueño de `vault/07_Security/**` |
+| **Fecha** | 2026-09-06 |
+| **Alcance** | `SEC-006` → `resolved`, `SEC-007` con salvedad, `AC-004.5` cerrada, constancia de `DEC-018` |
+| **Veredicto** | 🟢 Validado. Sin hallazgos bloqueantes abiertos en la superficie de auth |

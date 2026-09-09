@@ -33,6 +33,11 @@ STATE_WEIGHT = {
     "descoped": 0.0,
 }
 VALID_STATES = set(STATE_WEIGHT)
+#: Historias del catálogo (`vault/02_Requirements/User_Stories.md`), en alcance o recortadas.
+#: Guarda deliberada: si el conteo cambia sin que alguien toque esta línea, es un error de parseo
+#: o una US que se coló/desapareció, no un cambio de alcance. 2026-09-05: 91 -> 92 al dar de alta
+#: US-526 (contenerizar y desplegar FARO Web), que faltaba desde que se decidió hacerlo.
+CATALOGO_US = 92
 SPRINT_DATES = {
     "S1": ("2026-08-03", "2026-08-09"),
     "S2": ("2026-08-10", "2026-08-16"),
@@ -182,8 +187,12 @@ def parse_stories(root: Path) -> list[dict[str, Any]]:
                     "cell": cell,
                 }
             )
-    if len(stories) != 91:
-        raise ValueError(f"Se esperaban 91 historias y se encontraron {len(stories)}")
+    if len(stories) != CATALOGO_US:
+        raise ValueError(
+            f"Se esperaban {CATALOGO_US} historias en el catálogo y se encontraron {len(stories)}. "
+            "Si diste de alta o retiraste una US, actualiza CATALOGO_US aquí y en "
+            "validate_pm_dashboard.py -- la guarda existe para que el número no cambie por accidente."
+        )
     return stories
 
 
@@ -678,7 +687,9 @@ def build_prd_compliance(rubric: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for label, points, req, ref in PRD_CRITERIA:
         prog = by_req.get(req, {}).get("progress", 0.0)
         done = by_req.get(req, {}).get("done", 0)
-        if prog >= 40 or (req == "REQ-005" and done):
+        if prog >= 100:
+            exec_band, exec_label = "green", "Cerrado administrativamente"
+        elif prog >= 40 or (req == "REQ-005" and done):
             exec_band, exec_label = "green", "En ejecución"
         elif prog > 0:
             exec_band, exec_label = "amber", "Iniciado"
@@ -686,6 +697,10 @@ def build_prd_compliance(rubric: list[dict[str, Any]]) -> list[dict[str, Any]]:
             exec_band, exec_label = "red", "Sin iniciar"
         if req == "REQ-005" and done:
             exec_label = "URL pública viva"
+        elif req == "REQ-003" and prog >= 100:
+            exec_band, exec_label = "amber", "Parcial técnico · ML-03 sin API/UI"
+        elif req == "REQ-007" and 0 < prog < 100:
+            exec_band, exec_label = "amber", "Pendiente demo/entrega"
         out.append(
             {
                 "criterion": label,

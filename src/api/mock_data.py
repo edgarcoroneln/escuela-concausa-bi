@@ -12,6 +12,10 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+# La linea de alerta vive en el repositorio real (una sola fuente en la capa API); el mock la
+# importa para no volver a divergir -- antes contaba con 0.5 mientras el repositorio usaba 0.6.
+from src.api.repositorio_gold import LINEA_DE_ALERTA
+
 # --------------------------------------------------------------------------- #
 # Escuelas (una por entidad del alcance)
 # --------------------------------------------------------------------------- #
@@ -149,7 +153,8 @@ def prediccion_de_escuela(escuela: dict, id_ciclo: str = CICLO_DEFAULT) -> dict:
 def kpis_mock() -> dict:
     """KPIs agregados de ejemplo sobre las escuelas del mock."""
     matricula = sum(e["matricula_total"] for e in ESCUELAS)
-    en_riesgo = sum(1 for e in ESCUELAS if e["indice_riesgo"] >= 0.5)
+    # Mismo corte que el repositorio real: si divergen, el contrato miente en las pruebas.
+    en_riesgo = sum(1 for e in ESCUELAS if e["indice_riesgo"] >= LINEA_DE_ALERTA)
     completitud = sum(e["indice_completitud_drivers"] for e in ESCUELAS) / len(ESCUELAS)
     return {
         "matricula_total": matricula,

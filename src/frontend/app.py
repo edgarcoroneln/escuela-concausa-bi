@@ -7,22 +7,19 @@ from __future__ import annotations
 
 import streamlit as st
 
-from auth import current_user, login_button, logout_button
+from auth import encabezado
 
 
 def main() -> None:
     st.set_page_config(page_title="FARO Web", page_icon="🛰️", layout="wide")
     st.sidebar.title("FARO · Escuela como Sensor Social")
 
-    user = current_user()
+    user = encabezado()
     if user is None:
         st.title("FARO Web")
         st.info("Inicia sesión para acceder a los dashboards, el panel de ML y el agente.")
-        login_button()
         return
 
-    st.sidebar.success(f"{user.get('name') or user['email']} · rol: {user['role']}")
-    logout_button()
     st.title("FARO Web")
     st.write(
         "Usa el menú lateral: **Dashboards**, **Panel de ML** y **Chat del agente**. "
@@ -31,11 +28,11 @@ def main() -> None:
     st.subheader("Acceso rápido")
     cols = st.columns(3)
     with cols[0]:
-        st.button("📊 Dashboards", use_container_width=True)
+        st.page_link("pages/1_Dashboards.py", label="📊 Dashboards", use_container_width=True)
     with cols[1]:
-        st.button("🤖 Panel de ML", use_container_width=True)
+        st.page_link("pages/2_Panel_ML.py", label="🤖 Panel de ML", use_container_width=True)
     with cols[2]:
-        st.button("💬 Chat del agente", use_container_width=True)
+        st.page_link("pages/3_Chat.py", label="💬 Chat del agente", use_container_width=True)
 
 
 if __name__ == "__main__":

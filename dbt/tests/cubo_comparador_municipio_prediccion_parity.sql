@@ -6,7 +6,7 @@ with esperado as (
         f.id_ciclo,
         sum(p.indice_riesgo) as suma_indice_riesgo,
         count(*) as escuelas_con_prediccion,
-        count(*) filter (where p.indice_riesgo >= 0.6) as escuelas_en_riesgo
+        count(*) filter (where p.indice_riesgo >= 0.5) as escuelas_en_riesgo
     from {{ ref('fact_escuela_ciclo') }} f
     inner join {{ ref('dim_escuela') }} e
         on f.cct = e.cct

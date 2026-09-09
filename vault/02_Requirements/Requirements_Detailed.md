@@ -2,10 +2,11 @@
 id: DOC-REQ-DET
 title: "Requisitos Detallados"
 owner: "Edgar Edmundo Coronel Navarrete"
-status: in_review
+status: approved
 version: "1.0"
 source_of_truth: true
 traces_up: ["vault/01_Product/PRD_General_Materia", "vault/01_Product/PRD"]
+last_reviewed: "2026-09-08"
 tags: [requirements, detailed, rubrica]
 ---
 
@@ -43,17 +44,34 @@ tags: [requirements, detailed, rubrica]
     nulos silenciosos, y cada cubo expone su bandera de cobertura.
   - **AC-001.7** — Los scripts de ingesta son idempotentes: re-ejecutar no duplica filas.
 - **User Stories:** US-101, US-102, US-103, US-104, US-105, US-111, US-112, US-113, US-121, US-122, US-123
-- **Estado:** in_review
+- **Estado:** done — cierre técnico y administrativo; deuda residual declarada en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
 ### REQ-002 — Frontend BI interactivo
 - **Módulo de rúbrica:** 2 · **Peso:** 2.5 pts · **Tipo:** funcional · **Prioridad:** Must
-- **Qué pide el profesor:** dashboard dinámico, intuitivo y estético, con visualización avanzada de
-  KPIs, tendencias, componentes interactivos y filtros que consolidan las fuentes.
+- **Qué pide el profesor:** el §3.5 del PRD no pide sólo un dashboard: enumera **cinco componentes**
+  del *Frontend & Business Intelligence Interactivo*, y **los cinco cargan sobre estos 2.5 puntos**.
+  La redacción anterior de este requisito sólo describía el primero y el segundo, así que dos
+  entregables reales del proyecto —el panel de ML y el chat— no tenían criterio de aceptación aquí
+  aunque `US-207` y `US-305` ya trazaban a `REQ-002`. Ampliado el **2026-09-07**:
+
+  | # | Componente que pide §3.5 | Dónde vive en FARO |
+  |---|---|---|
+  | 1 | KPIs globales en tiempo real | `AC-002.5` · KPI-01…KPI-18 en Superset y `/api/v1/kpis` |
+  | 2 | Gráficos interactivos (series, distribución, **mapas si aplica**) | `AC-002.2`…`AC-002.4`, `AC-002.6` |
+  | 3 | **Panel de Machine Learning** — *"el usuario ingresa parámetros y recibe predicciones de los 3 modelos"* | **`AC-002.7`** · `US-207` |
+  | 4 | **Widget del Agente Conversacional** — *"ventana de chat flotante o dedicada"* | **`AC-002.8`** · `US-305` |
+  | 5 | Módulo de Gestión de Usuarios/Auth — login, logout y vistas por rol | **`AC-002.9`** · `US-405` |
+
+  **El §3.2 lo refuerza desde el otro lado:** los modelos deben estar *"expuestos vía API… integrándose
+  en el Frontend/BI"*. El panel de ML **es** esa integración, así que sirve de evidencia a `REQ-002` y
+  a `REQ-003` a la vez — no se cuenta dos veces en la rúbrica, pero se demuestra una sola vez.
 - **Cómo lo resuelve FARO:** **10 dashboards DB-01 a DB-10 en Apache Superset** (no Power BI) sobre la
   capa Gold acotada a las 4 entidades, incluyendo el mapa de riesgo (DB-02), la ficha de escuela
-  (DB-03), recomendaciones prescriptivas (DB-09) y el mapa de vacíos de datos (DB-07).
+  (DB-03), recomendaciones prescriptivas (DB-09) y el mapa de vacíos de datos (DB-07). **Más FARO Web**
+  (`https://faro-frontend-eanzfglvyq-uc.a.run.app`, `US-526`), el shell de Streamlit que hospeda los
+  tableros embebidos, el panel de ML y el chat del agente bajo una sola URL con sesión de Google.
 - **Criterios de aceptación:**
   - **AC-002.1** — Existen los 10 dashboards DB-01…DB-10 desplegados en Superset y accesibles desde la
     URL pública.
@@ -65,8 +83,25 @@ tags: [requirements, detailed, rubrica]
     predicción y recomendación.
   - **AC-002.5** — Los dashboards muestran KPIs globales y al menos una serie de tiempo de matrícula.
   - **AC-002.6** — DB-07 visualiza `indice_completitud_drivers` y los territorios `SIN_DATO`.
-- **User Stories:** US-201, US-202, US-203, US-204, US-205, US-211, US-212, US-213, US-214, US-221, US-222, US-223
-- **Estado:** in_review
+  - **AC-002.7** — **Panel de ML interactivo**: el usuario elige una escuela por CCT —con búsqueda por
+    filtros, no tecleando la clave— y recibe **predicción, driver dominante y recomendación** sin salir
+    de la página. **Brecha declarada contra la letra del §3.5**, que pide *"los 3 modelos"*: el panel
+    sirve **ML-01** (riesgo) y **ML-02** (driver dominante y recomendación) con datos reales; **ML-03
+    no se sirve** porque su corrida quedó `bloqueada` con la política `casos_completos` —**D5 al 100 %
+    `SIN_DATO` y D6 al 98.7 %**—, y entregar un clustering entrenado sobre dos columnas vacías sería
+    inventar un resultado. Está registrado, medido y se dice en la demo antes de que lo pregunten;
+    **no se maquilla como cumplido**. Ver `US-321`, `US-324` y el guion de `US-006`.
+  - **AC-002.8** — **Widget del agente conversacional**: página de chat dedicada dentro de FARO Web que
+    consulta `/api/v1/agente/consulta` con la sesión del usuario, **muestra el SQL generado** —la
+    respuesta es auditable, no una opinión— y **rechaza** las preguntas fuera de alcance y las
+    destructivas con los guardarraíles reales. Ver `US-305`, `US-304a/b`, `US-323` y `REQ-006`, donde
+    vive el peso propio del agente.
+  - **AC-002.9** — **Gestión de usuarios y vistas por rol**: login y logout con Google en las cuatro
+    páginas de FARO Web, sesión que **sobrevive a la recarga** y refresco automático del access token
+    antes de que expire (`BUG-059`), con **403 demostrable en vivo** para una cuenta `ciudadano` sobre
+    una ruta de `analista`. Ver `US-405`, `US-403` y `AC-004.5`.
+- **User Stories:** US-201, US-202, US-203, US-204, US-205, US-207, US-211, US-212, US-213, US-214, US-221, US-222, US-223, US-305, US-405, US-526
+- **Estado:** done — cierre administrativo con salvedades visuales y sin ML-03 en el panel; ver [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -91,7 +126,7 @@ tags: [requirements, detailed, rubrica]
   - **AC-003.6** — ML-02 devuelve, además de la clase, la atribución del driver dominante (SHAP) por
     escuela, y dos escuelas con igual riesgo pero distinto driver reciben recomendaciones distintas.
 - **User Stories:** US-301, US-302, US-303, US-311, US-312, US-313, US-321, US-322
-- **Estado:** in_review
+- **Estado:** done — cierre administrativo; cumplimiento externo parcial porque ML-03 no fue promovido a Gold/API/UI. La brecha se conserva en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -115,7 +150,7 @@ tags: [requirements, detailed, rubrica]
   - **AC-004.6** — Las entradas se validan con Pydantic; un payload inválido devuelve 422 sin exponer
     trazas internas.
 - **User Stories:** US-401, US-402, US-403, US-404, US-411, US-412, US-413, US-421, US-422, US-423
-- **Estado:** in_review
+- **Estado:** done — autenticación, autorización y contrato verificados; riesgos residuales aceptados en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -136,7 +171,7 @@ tags: [requirements, detailed, rubrica]
   - **AC-005.4** — La URL pública está viva y estable durante la ventana de evaluación (demo 9-sep).
   - **AC-005.5** — Los secretos no están en el repo; se inyectan por configuración/gestor de secretos.
 - **User Stories:** US-501, US-502, US-503, US-504, US-505, US-521, US-522, US-523, US-524, US-525
-- **Estado:** in_review
+- **Estado:** done — despliegue final verificado; deuda operativa aceptada en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -156,7 +191,7 @@ tags: [requirements, detailed, rubrica]
     documentado.
   - **AC-006.4** — El agente no ejecuta sentencias de escritura/borrado (`DELETE`/`UPDATE`/`DROP`).
 - **User Stories:** US-304, US-323
-- **Estado:** in_review
+- **Estado:** done — agente desplegado y funcional en modo single-turn; residual documentado en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -178,7 +213,7 @@ tags: [requirements, detailed, rubrica]
     Conventional Commits con el ID de la historia.
   - **AC-007.5** — Cada sesión con IA tiene su entrada de DevLog y `vault_lint.py` corre en verde.
 - **User Stories:** US-001, US-002, US-003, US-004, US-005, US-006
-- **Estado:** in_review
+- **Estado:** in_progress — sólo falta ejecutar la demo/entrega (`US-006`) el 9-sep; el resto queda cerrado por `DEC-021`.
 
 ---
 
@@ -187,10 +222,10 @@ tags: [requirements, detailed, rubrica]
 | REQ | Módulo de rúbrica | Puntos | # AC |
 |---|---|---|---|
 | REQ-001 | Data Engineering y pipelines multi-fuente | 2.5 | 7 |
-| REQ-002 | Frontend BI interactivo | 2.5 | 6 |
+| REQ-002 | Frontend BI interactivo | 2.5 | 9 |
 | REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 6 |
 | REQ-004 | Backend, API y autenticación avanzada | 1.5 | 6 |
 | REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 5 |
 | REQ-006 | Agente conversacional | 0.5 | 4 |
 | REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 5 |
-| **Total** | **7 módulos** | **10.0** | **39** |
+| **Total** | **7 módulos** | **10.0** | **42** |

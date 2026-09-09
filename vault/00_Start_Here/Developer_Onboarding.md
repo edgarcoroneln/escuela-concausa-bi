@@ -53,7 +53,7 @@ GitHub necesaria para invitaciones, asignaciones, revisiones y `CODEOWNERS`.
 | Carlos Guillermo Mayorga Tapia | Bajo | Célula 3 | `cmayorgat44` | Confirmado |
 | Karla Alejandra Monter Benitez | Medio | Célula 4 | `marlakonter` | Confirmado |
 | Christian Imanol Ruiz Hurtado | Alto | Célula 4 | `ImanolRuiz00` | Confirmado |
-| Juan Carlos Macías Mayen | Medio | Célula 4 | `juanmmayen98` | Usuario confirmado; nivel por conciliar |
+| Juan Carlos Macías Mayen | Medio | Célula 4 | `juanmmayen98-pixel` | Confirmado. **Corregido el 2026-09-05**: decía `juanmmayen98`, handle que no existe en GitHub, y el tablero lee esta tabla —no `ownership.yml`— para contar PRs, así que le marcaba **0 teniendo 3 mergeados** (#95, #101, #191) |
 | Oscar Antonio Quiroz Lázaro | Bajo | Célula 2 | `oscarqlazaro-lab` | Confirmado |
 | Luis Téllez Domínguez | Medio | Célula 5 | `LuisTellez03` | Confirmado |
 | Edgar Ulises Jiménez López | Bajo | Célula 5 | `EJ-by-Me` | Confirmado |

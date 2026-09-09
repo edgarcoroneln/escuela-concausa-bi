@@ -39,11 +39,47 @@ reporte cuantifica la concentración para que la interpretación sea auditable.
 
 ## Criterio de salida
 
-La implementación queda lista para revisión con el fixture sintético. Para declarar US-325 `done`
-se requiere integrar el contrato de Célula 1, reconstruir `gold.features_escuela` y ejecutar el
-diagnóstico sobre Gold real. D5 seguirá identificado como cobertura parcial mientras falte el
-crosswalk `region_hidrologica → cve_mun`.
+La evidencia sobre Gold real ya existe. Para declarar US-325 `done` falta la aprobación de Edgar
+sobre la limitación documentada; no hace falta entrenar ML-03 ni inventar un umbral de “sesgo”. D5
+continúa identificado como cobertura parcial estructural mientras falte el crosswalk
+`region_hidrologica → cve_mun`. La secuencia de cierre está en
+[[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
 
-El PR #197 ya resolvió la reproducción de Bronze DS-01/DS-02 y sus suites de calidad; el pendiente
-es ahora una corrida Bronze → Silver → Gold y la evidencia agregada de cobertura real. Secuencia y
-criterios: [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]].
+## Ejecución reproducible desde Gold
+
+## Evidencia real — 2026-09-05
+
+La fuente canónica es el dump `gold_bug048_final1_2026-09-05 1.sql`, restaurado en la base local
+aislada `faro_gold_bug048_final1_review_20260905`; no se copia al repositorio. Su SHA-256 es
+`07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`. `final2` se empleó sólo como
+comparación independiente con los mismos agregados, sin mezclar cortes. El corte tiene 136,046
+observaciones, 46,547 escuelas, 3 ciclos y `cve_mun` disponible.
+
+| Driver | Observaciones sin dato | % sin dato | Escuelas afectadas |
+|---|---:|---:|---:|
+| D1 · pobreza | 0 | 0.00% | 0 |
+| D2 · inseguridad | 0 | 0.00% | 0 |
+| D3 · infraestructura | 21,769 | 16.00% | 8,022 |
+| D4 · conectividad | 21,654 | 15.92% | 7,984 |
+| D5 · agua | 136,046 | 100.00% | 46,547 |
+| D6 · aire | 134,272 | 98.70% | 45,952 |
+
+El hallazgo principal es que D5 está completamente ausente y D6 tiene cobertura residual. Esto
+impide interpretar clusters como perfiles completos del territorio y bloquea `casos_completos` de
+ML-03. La sección municipal sí está disponible para continuar el análisis de concentración; no se
+declara un umbral de sesgo ni se cambia el estado a `done` sin revisión humana.
+
+`python -m src.modelos.ejecutar_cierre_ml03` produce agregados por driver, entidad y municipio,
+incluida la dispersión municipal, sin exportar CCT individuales ni convertir `SIN_DATO` en cero.
+Cuando `cve_mun` falta o contiene nulos, el reporte marca la sección municipal como bloqueada.
+
+La limitación de ambiente del 4-sep quedó superada por la restauración aislada del 5-sep. No se
+inventan cifras de cobertura ni un umbral de sesgo; el documento permanece `in_review` hasta la
+aprobación de Edgar.
+
+## Criterios de cierre de US-325
+
+- [x] Cobertura real agregada por driver y territorio documentada.
+- [x] D5/D6 conservados como `SIN_DATO`, sin convertirlos en cero ni imputarlos.
+- [x] Limitación territorial explícita, sin crear un umbral de sesgo no ratificado.
+- [ ] Aprobación de Edgar Coronel y actualización final del estado a `done`.

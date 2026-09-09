@@ -164,6 +164,10 @@ personas:
       - "src/frontend/**"
       - "tests/**"
       - "requirements/celula-2.txt"
+      # US-525c reasignada del PO el 2026-09-05: el runbook de rollback de Superset
+      # vive en 08_CICD_DevOps (C5) pero lo escribe quien conoce Superset, no quien
+      # tiene la carpeta. Alcance abierto solo para esa historia; C5 revisa por criticos.
+      - "vault/08_CICD_DevOps/Runbook_Rollback_Superset_Agente.md"
 
   monserrat-miranda:
     nombre: "Monserrat Xcaret Miranda Olivas"

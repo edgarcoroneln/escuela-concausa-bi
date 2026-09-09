@@ -1,0 +1,490 @@
+{
+  "id": "DOC-ML03-EVIDENCIA-20260908",
+  "owner": "Estefany Lucero Hernández Loredo",
+  "status": "in_review",
+  "traces_up": [
+    "US-321",
+    "US-325",
+    "REQ-003",
+    "RISK-011"
+  ],
+  "descripcion": "Agregados de la corrida local; sin filas individuales, modelo ni credenciales.",
+  "metadatos": {
+    "filas": 136046,
+    "escuelas": 46547,
+    "ciclos": [
+      "2022-2023",
+      "2023-2024",
+      "2024-2025"
+    ],
+    "duplicados_cct_ciclo": 0
+  },
+  "ml03": {
+    "estado": "ejecutado",
+    "politica_ausencia": "casos_completos",
+    "features": [
+      "d1_pobreza",
+      "d2_inseguridad",
+      "d3_infraestructura",
+      "d4_conectividad",
+      "indice_completitud_drivers"
+    ],
+    "filas_totales": 136046,
+    "filas_entrenadas": 114200,
+    "filas_excluidas": 21846,
+    "k_seleccionado": 3,
+    "silhouette_temporal_promedio": 0.46445490581498633,
+    "metricas_temporales": [
+      {
+        "ciclos_entrenamiento": "2022-2023,2023-2024",
+        "ciclo_prueba": "2024-2025",
+        "k": 2,
+        "silhouette": 0.4588341487,
+        "n_entrenamiento": 76510,
+        "n_prueba": 37690
+      },
+      {
+        "ciclos_entrenamiento": "2022-2023,2023-2024",
+        "ciclo_prueba": "2024-2025",
+        "k": 3,
+        "silhouette": 0.4644549058,
+        "n_entrenamiento": 76510,
+        "n_prueba": 37690
+      },
+      {
+        "ciclos_entrenamiento": "2022-2023,2023-2024",
+        "ciclo_prueba": "2024-2025",
+        "k": 4,
+        "silhouette": 0.413970491,
+        "n_entrenamiento": 76510,
+        "n_prueba": 37690
+      },
+      {
+        "ciclos_entrenamiento": "2022-2023,2023-2024",
+        "ciclo_prueba": "2024-2025",
+        "k": 5,
+        "silhouette": 0.3939472663,
+        "n_entrenamiento": 76510,
+        "n_prueba": 37690
+      },
+      {
+        "ciclos_entrenamiento": "2022-2023,2023-2024",
+        "ciclo_prueba": "2024-2025",
+        "k": 6,
+        "silhouette": 0.4067550465,
+        "n_entrenamiento": 76510,
+        "n_prueba": 37690
+      }
+    ],
+    "perfiles_agregados": [
+      {
+        "cluster": 0,
+        "observaciones": 29875,
+        "escuelas": 10014,
+        "d1_pobreza": 0.1488576571,
+        "d2_inseguridad": 0.158416298,
+        "d3_infraestructura": 0.7431129707,
+        "d4_conectividad": 0.3851213389,
+        "completitud_promedio": 0.6666666667,
+        "perfil_negocio": "Presión principal: brecha de conectividad; secundaria: carencias de infraestructura; completitud media: 67%."
+      },
+      {
+        "cluster": 1,
+        "observaciones": 82677,
+        "escuelas": 27942,
+        "d1_pobreza": 0.0446876564,
+        "d2_inseguridad": 0.2869596148,
+        "d3_infraestructura": 0.989178772,
+        "d4_conectividad": 0.9124061105,
+        "completitud_promedio": 0.6666666667,
+        "perfil_negocio": "Presión principal: inseguridad; secundaria: brecha de conectividad; completitud media: 67%."
+      },
+      {
+        "cluster": 2,
+        "observaciones": 1648,
+        "escuelas": 551,
+        "d1_pobreza": 0.1876572163,
+        "d2_inseguridad": 0.1355996571,
+        "d3_infraestructura": 0.8129045307,
+        "d4_conectividad": 0.6595873786,
+        "completitud_promedio": 0.8333333333,
+        "perfil_negocio": "Presión principal: brecha de conectividad; secundaria: pobreza y rezago; completitud media: 83%."
+      }
+    ]
+  },
+  "proveniencia": {
+    "fecha_utc": "2026-09-08T17:43:28.693937+00:00",
+    "commit_codigo": "7e514b849648ce7f5aa645495118d70d99dc58a6",
+    "dump_sha256": "07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE",
+    "copy_features_sha256_filas_ordenadas": "2969de94a7ce88e8e2715756e6654f30770c098a310cc0cea5819a6e6c3c007b",
+    "tabla_igual_al_dump": true,
+    "solo_lectura": true,
+    "orden_entrada": [
+      "id_ciclo",
+      "cct"
+    ],
+    "semilla": 42,
+    "n_init": 20,
+    "valores_k": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "hilos": 2,
+    "working_memory_mib": 256,
+    "python": "3.12.14",
+    "versiones": {
+      "scikit-learn": "1.9.0",
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "sqlalchemy": "2.0.52",
+      "psycopg2-binary": "2.9.12",
+      "threadpoolctl": "3.6.0"
+    },
+    "segundos": 112.282,
+    "mlflow_run_id": null,
+    "registro_mlflow": "no solicitado; pendiente revisión técnica",
+    "publicacion_gold": false,
+    "elegibilidad_ciclo_entidad": [
+      {
+        "id_ciclo": "2022-2023",
+        "cve_ent": "09",
+        "filas": 7082,
+        "elegibles": 6328,
+        "excluidas": 754
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "cve_ent": "14",
+        "filas": 12452,
+        "elegibles": 9904,
+        "excluidas": 2548
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "cve_ent": "15",
+        "filas": 19208,
+        "elegibles": 16771,
+        "excluidas": 2437
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "cve_ent": "19",
+        "filas": 6575,
+        "elegibles": 5404,
+        "excluidas": 1171
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cve_ent": "09",
+        "filas": 7031,
+        "elegibles": 6238,
+        "excluidas": 793
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cve_ent": "14",
+        "filas": 12620,
+        "elegibles": 9867,
+        "excluidas": 2753
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cve_ent": "15",
+        "filas": 19269,
+        "elegibles": 16687,
+        "excluidas": 2582
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cve_ent": "19",
+        "filas": 6533,
+        "elegibles": 5311,
+        "excluidas": 1222
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cve_ent": "09",
+        "filas": 6886,
+        "elegibles": 6096,
+        "excluidas": 790
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cve_ent": "14",
+        "filas": 12603,
+        "elegibles": 9776,
+        "excluidas": 2827
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cve_ent": "15",
+        "filas": 19249,
+        "elegibles": 16565,
+        "excluidas": 2684
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cve_ent": "19",
+        "filas": 6538,
+        "elegibles": 5253,
+        "excluidas": 1285
+      }
+    ],
+    "distribucion_ciclo_cluster": [
+      {
+        "id_ciclo": "2022-2023",
+        "cluster": 0,
+        "observaciones": 9992
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "cluster": 1,
+        "observaciones": 27866
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "cluster": 2,
+        "observaciones": 549
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cluster": 0,
+        "observaciones": 9961
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cluster": 1,
+        "observaciones": 27592
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "cluster": 2,
+        "observaciones": 550
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cluster": 0,
+        "observaciones": 9922
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cluster": 1,
+        "observaciones": 27219
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "cluster": 2,
+        "observaciones": 549
+      }
+    ],
+    "distribucion_entidad_cluster": [
+      {
+        "cve_ent": "09",
+        "cluster": 0,
+        "observaciones": 82
+      },
+      {
+        "cve_ent": "09",
+        "cluster": 1,
+        "observaciones": 18232
+      },
+      {
+        "cve_ent": "09",
+        "cluster": 2,
+        "observaciones": 348
+      },
+      {
+        "cve_ent": "14",
+        "cluster": 0,
+        "observaciones": 9599
+      },
+      {
+        "cve_ent": "14",
+        "cluster": 1,
+        "observaciones": 19948
+      },
+      {
+        "cve_ent": "15",
+        "cluster": 0,
+        "observaciones": 16596
+      },
+      {
+        "cve_ent": "15",
+        "cluster": 1,
+        "observaciones": 32127
+      },
+      {
+        "cve_ent": "15",
+        "cluster": 2,
+        "observaciones": 1300
+      },
+      {
+        "cve_ent": "19",
+        "cluster": 0,
+        "observaciones": 3598
+      },
+      {
+        "cve_ent": "19",
+        "cluster": 1,
+        "observaciones": 12370
+      }
+    ],
+    "centroides_escala_original": [
+      [
+        0.14880438807880464,
+        0.15840016143082294,
+        0.7430669387481876,
+        0.38549158665908073,
+        0.6666666666666666
+      ],
+      [
+        0.04468423641783993,
+        0.28699344232528257,
+        0.9892490029317028,
+        0.9123870358944894,
+        0.6666666666666666
+      ],
+      [
+        0.187657216317874,
+        0.13559965709891109,
+        0.8129045307443363,
+        0.6595873786407774,
+        0.8333333333333344
+      ]
+    ],
+    "estadisticas_features": {
+      "d1_pobreza": {
+        "min": 0.0,
+        "max": 0.7349526253470897,
+        "mean": 0.07854350462104853,
+        "std": 0.0817055874020222
+      },
+      "d2_inseguridad": {
+        "min": 0.015512384476318499,
+        "max": 1.0,
+        "mean": 0.24566896452047715,
+        "std": 0.14620604411134178
+      },
+      "d3_infraestructura": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.9222896995895937,
+        "std": 0.16544817248234306
+      },
+      "d4_conectividad": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.7709936009511155,
+        "std": 0.32916320854412245
+      },
+      "indice_completitud_drivers": {
+        "min": 0.3333333333333333,
+        "max": 0.8333333333333334,
+        "mean": 0.6156434833316182,
+        "std": 0.12382765001182593
+      }
+    },
+    "asignaciones_llave_unica": true
+  },
+  "auditoria_cobertura": {
+    "k_fijo_sin_busqueda": 3,
+    "conteos_refit_coinciden": true,
+    "cluster_completitud_d6": [
+      {
+        "cluster": 0,
+        "indice_completitud_drivers": 0.6666666667,
+        "d6_cobertura": "SIN_DATO",
+        "observaciones": 29875
+      },
+      {
+        "cluster": 1,
+        "indice_completitud_drivers": 0.6666666667,
+        "d6_cobertura": "SIN_DATO",
+        "observaciones": 82677
+      },
+      {
+        "cluster": 2,
+        "indice_completitud_drivers": 0.8333333333,
+        "d6_cobertura": "OK",
+        "observaciones": 1648
+      }
+    ],
+    "cobertura_elegibilidad": [
+      {
+        "id_ciclo": "2022-2023",
+        "d6_cobertura": "OK",
+        "elegible": false,
+        "observaciones": 42
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "d6_cobertura": "OK",
+        "elegible": true,
+        "observaciones": 549
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "d6_cobertura": "SIN_DATO",
+        "elegible": false,
+        "observaciones": 6868
+      },
+      {
+        "id_ciclo": "2022-2023",
+        "d6_cobertura": "SIN_DATO",
+        "elegible": true,
+        "observaciones": 37858
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "d6_cobertura": "OK",
+        "elegible": false,
+        "observaciones": 42
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "d6_cobertura": "OK",
+        "elegible": true,
+        "observaciones": 550
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "d6_cobertura": "SIN_DATO",
+        "elegible": false,
+        "observaciones": 7308
+      },
+      {
+        "id_ciclo": "2023-2024",
+        "d6_cobertura": "SIN_DATO",
+        "elegible": true,
+        "observaciones": 37553
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "d6_cobertura": "OK",
+        "elegible": false,
+        "observaciones": 42
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "d6_cobertura": "OK",
+        "elegible": true,
+        "observaciones": 549
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "d6_cobertura": "SIN_DATO",
+        "elegible": false,
+        "observaciones": 7544
+      },
+      {
+        "id_ciclo": "2024-2025",
+        "d6_cobertura": "SIN_DATO",
+        "elegible": true,
+        "observaciones": 37141
+      }
+    ]
+  }
+}

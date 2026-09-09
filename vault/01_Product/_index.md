@@ -16,3 +16,4 @@ tags: [moc, product]
 | [[vault/01_Product/PRD]] | **Nuestro proyecto FARO.** Fuente de verdad de **CÓMO** lo resolvemos. Traza a `PRD-GENERAL`. |
 | [[vault/01_Product/OKRs_NorthStar]] | Nuestro Faro y OKRs |
 | [[vault/01_Product/Personas]] | Personas y casos de uso |
+| [[vault/01_Product/Guion_Demo_US006]] | **Guion de la demo del 9-sep**: minuto a minuto, reparto, plan B y checklist del día (`US-006`) |

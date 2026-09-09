@@ -25,6 +25,7 @@ tags: [moc, reports]
 | [[vault/13_Reports/Junta_Mock_2026-08-29]] | Guion de la junta del mock: qué se puede demostrar hoy, las 3 decisiones a tomar y los bloqueos con dueño |
 | [[vault/13_Reports/US_Pendientes_Cierre_2026-08-30]] | Qué le falta a cada una de las 30 US abiertas, separando lo que depende de su dueño de lo que está frenado por un tercero |
 | [[vault/13_Reports/Datos_Bloqueo_P01_Carril_A_2026-09-01]] | Qué falta para el recálculo de producción-local (P-01/P-02): las URLs de fuente sin confirmar por dueño (DS-02/03/08, verificar DS-06), la regla "las 8 juntas o ninguna" y la cadena 8→9→10 |
+| [[vault/13_Reports/Cierre_Proyecto_2026-09-08]] | Cierre previo a la demo: 91/92 US, URLs públicas verificadas, code freeze y dictamen de cumplimiento del PRD con residuales explícitos |
 
 ## Convención
 - Un reporte por fecha: `Executive_YYYY-MM-DD.md`.

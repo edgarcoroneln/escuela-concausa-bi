@@ -587,6 +587,121 @@ def test_el_dashboard_db05_se_traduce_a_un_arbol_valido_via_layout_tabs(sync, da
             assert f"MD-{tab['id']}-0" in position
 
 
+def test_cada_tab_de_db05_se_lee_en_horizontal_como_los_demas_tableros(
+    sync, dashboard_db05: dict
+) -> None:
+    """Lectura horizontal de DB-05 (US-213), contra el YAML real.
+
+    DB-05 se veía como una tira vertical de un chart por pantalla mientras los otros
+    nueve tableros agrupaban: `_layout_tabs()` ignoraba el `ancho` declarado. Con los
+    anchos reales (3,3,3,3 | 6,6 — el mismo patrón de DB-03) cada tab debe caber en
+    una fila de tarjetas más una de charts anchos.
+
+    Se valida contra el YAML para que también cace la deriva al revés: si alguien
+    cambia un `ancho` y rompe la lectura horizontal, esta guarda lo dice.
+    """
+    tabs_layout = []
+    for tab in dashboard_db05["tabs"]:
+        layout_tab = [
+            (i, ch["nombre"], int(ch.get("ancho", 12)), int(ch.get("alto", 60)))
+            for i, ch in enumerate(tab.get("charts", []))
+        ]
+        tabs_layout.append((tab["id"], tab.get("etiqueta", tab["id"]), layout_tab, tab.get("nota")))
+
+    position = sync._layout_tabs(tabs_layout)
+
+    for tab in dashboard_db05["tabs"]:
+        filas = position[f"TAB-{tab['id']}"]["children"]
+        anchos_por_fila = [
+            [position[h]["meta"]["width"] for h in position[f]["children"]] for f in filas
+        ]
+        # Ninguna fila puede desbordar la grilla de 12.
+        for fila, anchos in zip(filas, anchos_por_fila):
+            assert sum(anchos) <= sync.ANCHO_GRILLA, f"{fila} suma {sum(anchos)}"
+        # Y ninguna fila puede llevar un solo chart estrecho: eso es la tira vertical.
+        estrechas = [
+            (f, a) for f, a in zip(filas, anchos_por_fila)
+            if len(a) == 1 and a[0] < sync.ANCHO_GRILLA
+        ]
+        assert not estrechas, (
+            f"TAB-{tab['id']} tiene filas de un solo chart angosto {estrechas}: "
+            "es el defecto de lectura vertical que US-213 corrigió"
+        )
+
+
+# --------------------------------------------------------------------------- uuid por chartId (US-213)
+#
+# `_position_con_uuid()` emparejaba uuid con nodos CHART **por posición**: los uuid
+# ordenados por id contra los nodos en orden de declaración. Sólo acierta si los ids
+# ascienden en el mismo orden en que los charts aparecen en el YAML.
+
+
+def _pos_de(sync, ids: list[int]) -> dict:
+    """position_json plano con un chart por id, en orden de declaración."""
+    return sync._layout_grilla([(cid, f"chart {cid}", 3, 38) for cid in ids])
+
+
+def _uuid_por_chart(position: dict) -> dict:
+    return {
+        n["meta"]["chartId"]: n["meta"].get("uuid")
+        for n in position.values()
+        if isinstance(n, dict) and n.get("type") == "CHART"
+    }
+
+
+def test_el_uuid_sigue_al_chart_aunque_su_id_no_sea_el_menor(sync) -> None:
+    """El defecto que rompió DB-05 el 2026-09-05.
+
+    `ensure_chart()` identifica por `slice_name`, así que **renombrar** un chart crea
+    uno nuevo con un id alto. Si ese chart va primero en el YAML —como el de KPI-07 en
+    cada tab de DB-05— su id es el mayor de todos y el emparejamiento por posición le
+    daba el uuid de otro chart. El sync terminaba en verde y el tablero salía con las
+    tarjetas vacías o intercambiadas al abrirlo.
+    """
+    # 104 se declara primero (chart recién renombrado), 42..44 después.
+    ids = [104, 42, 43, 44]
+    uuids = {cid: f"uuid-{cid}" for cid in ids}
+    position = sync._position_con_uuid(_pos_de(sync, ids), [(c, uuids[c]) for c in ids])
+
+    assert _uuid_por_chart(position) == uuids, (
+        "cada nodo CHART debe llevar el uuid de SU chartId; emparejar por posición "
+        "se los cruza en cuanto un id no sigue el orden de declaración"
+    )
+
+
+def test_con_ids_ascendentes_el_resultado_no_cambia(sync) -> None:
+    """Guarda de no-regresión para los 10 tableros: en el caso normal —ids que
+    ascienden con el orden del YAML— el emparejamiento por chartId da exactamente lo
+    mismo que daba el de por posición."""
+    ids = [41, 42, 43, 44, 45, 46]
+    uuids = {cid: f"uuid-{cid}" for cid in ids}
+    position = sync._position_con_uuid(_pos_de(sync, ids), [(c, uuids[c]) for c in ids])
+    assert _uuid_por_chart(position) == uuids
+
+
+def test_un_chart_sin_uuid_no_borra_el_de_los_demas(sync) -> None:
+    """`ensure_chart()` devuelve uuid vacío cuando no lo pudo resolver; eso no puede
+    arrastrar a los otros nodos ni escribir un uuid vacío."""
+    position = sync._position_con_uuid(
+        _pos_de(sync, [41, 42, 43]), [(41, "uuid-41"), (42, ""), (43, "uuid-43")]
+    )
+    por_chart = _uuid_por_chart(position)
+    assert por_chart[41] == "uuid-41"
+    assert por_chart[43] == "uuid-43"
+    assert not por_chart[42]
+
+
+def test_el_camino_con_tabs_tambien_empareja_por_chartid(sync) -> None:
+    """DB-05 es el tablero donde el defecto se manifestó, y va por `_layout_tabs()`."""
+    tabs = [
+        ("D1", "D1", [(104, "D1 · KPI-07", 3, 38), (42, "D1 · escuelas", 3, 38)], None),
+        ("D2", "D2", [(105, "D2 · KPI-07", 3, 38), (48, "D2 · escuelas", 3, 38)], None),
+    ]
+    uuids = {104: "u-104", 42: "u-42", 105: "u-105", 48: "u-48"}
+    position = sync._position_con_uuid(sync._layout_tabs(tabs), list(uuids.items()))
+    assert _uuid_por_chart(position) == uuids
+
+
 # --------------------------------------------------------------------------- tablero declarativo DB-08 (US-213)
 #
 # DB-08 usa el camino plano (`charts:`), no `tabs:` -- es un solo explorador

@@ -11,16 +11,21 @@ tags: [ml, ml-03, clustering, eda, cobertura, plan-cierre]
 # Propuesta de cierre — US-321, US-322 y US-325
 
 > Responsable: Estefany Lucero Hernández Loredo · Rama: `dev/estefany-hernandez`
-> Corte de diagnóstico: 4-sep-2026 · Revisión obligatoria: Edgar Coronel (PM)
+> Corte vigente: 8-sep-2026 · Revisión obligatoria: Edgar Coronel (PM)
 > Apoyo técnico recomendado: Andrés González Habib (Tech Lead C3)
+
+> **Actualización de ejecución:** la fase de evidencia ya terminó: `k=3`, Silhouette `0.4644549058`,
+> 114,200 observaciones elegibles. La sección 12 distingue lo ejecutado del plan anterior y
+> registra la salvedad de cobertura RISK-011. No ejecutar los comandos históricos de reconstrucción
+> o publicación para reproducir este corte: se usa exclusivamente el dump local aislado en solo lectura.
 
 ## 1. Resultado de la revisión
 
 | Historia | Estado verificable | Qué ya existe | Qué falta para cerrarla |
 |---|---|---|---|
-| `US-322` | `in_review` | EDA reproducible, selección de variables, controles de fuga y pruebas sobre fixture | Ejecutar contra `gold.features_escuela` reconstruida con datos reales, conservar evidencia agregada y actualizar conclusiones |
-| `US-325` | `in_review` | Auditoría por driver, entidad y municipio; validación de `cve_mun`; pruebas de consistencia | Ejecutar contra Gold real, cuantificar brechas territoriales y documentar D5 como cobertura parcial sin convertir ausencia en cero |
-| `US-321` | `in_progress` | Pipeline `StandardScaler` + KMeans, selección temporal de `k`, perfiles y registro MLflow | Ratificar política de ausencias, añadir una ejecución reproducible desde Gold, iterar sobre la métrica y registrar la corrida final |
+| `US-322` | `done` en Execution_Status desde el 6-sep | EDA reproducible y evidencia agregada sobre el dump Gold final; llaves y target excluidos | El PO cerró la historia con salvedades documentales; la ficha conserva `in_review` |
+| `US-325` | `done` en Execution_Status desde el 6-sep | Auditoría real por driver, entidad y municipio; D5/D6 declarados `SIN_DATO` | La ausencia de datos no queda corregida por cerrar su diagnóstico; RISK-011 registra su efecto indirecto en ML-03 |
+| `US-321` | `in_progress` | Corrida temporal del 8-sep ejecutada: k=3, Silhouette 0.4644549058, perfiles y exclusiones documentados | Revisión de RISK-011 por Andrés/Edgar; registro MLflow si se autoriza; productor Gold/API y decisión explícita de cierre pendientes |
 
 La disponibilidad de Bronze dejó de ser el bloqueo: el PR #197, mergeado el 3-sep-2026, incorporó
 `python -m src.ingesta.reproducir_bronze_real` para DS-01/DS-02 y las suites de Great Expectations.
@@ -179,3 +184,226 @@ fuera de mi alcance. Formula una pregunta concreta al dueño correcto. No uses u
 La aprobación del PM es una compuerta deliberadamente pendiente, no un incumplimiento del autor. No
 se propone cambiar `US-321`, `US-322` o `US-325` a `done`: este PR entrega el plan verificable de
 cierre y mantiene visibles la evidencia real aún necesaria y el Silhouette inferior al umbral.
+
+## 7. Inicio de ejecución — 4-sep-2026
+
+Se implementó `python -m src.modelos.ejecutar_cierre_ml03` como punto de entrada único para las
+fases B y C. El comando lee `gold.features_escuela` desde `DATABASE_URL`, valida el contrato y emite
+JSON exclusivamente agregado: metadatos del grano, EDA, correlaciones sin target, cobertura y
+completitud por driver/entidad/municipio, dispersión municipal y resultado temporal de ML-03.
+
+La primera corrida local del 4-sep no tuvo Docker ni Gold materializado. Ese hecho histórico fue
+superado el 5-sep al restaurar el dump final en una base aislada; la evidencia resultante está en la
+sección 8. El comando permanece cubierto por pruebas con fixture y MLflow es opt-in mediante
+`--tracking-uri`; mientras el vector incluya D5/D6, `casos_completos` conserva el estado `bloqueado`
+y no registra un modelo.
+
+Comando pendiente en un ambiente conforme al runbook:
+
+```bash
+python -m src.modelos.ejecutar_cierre_ml03 --salida /tmp/evidencia-ml03.json
+```
+
+El JSON contiene agregados y puede adjuntarse a la revisión, pero no debe commitearse si pudiera
+permitir reidentificación por grupos pequeños. Las historias conservan su estado hasta ejecutar y
+revisar esa evidencia con Edgar y Andrés.
+
+## 8. Continuación verificada — 5-sep-2026
+
+### Resultado con dump Gold local — 2026-09-05
+
+Se restauró `gold_bug048_final1_2026-09-05 1.sql` en la base aislada
+`faro_gold_bug048_final1_review_20260905` y se ejecutó `src.modelos.ejecutar_cierre_ml03` sin exportar
+observaciones individuales. El contrato entregó 136,046 filas, 46,547 escuelas, 3 ciclos,
+`cve_mun` disponible y cero duplicados por `cct × id_ciclo`.
+
+`final1` es la fuente canónica de evidencia (SHA-256
+`07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE`). `final2` sólo fue una
+comparación independiente: produjo los mismos agregados y no se mezcló con el corte canónico.
+
+La evidencia real ya está documentada para US-322 y US-325. La política de ausencia fue ratificada
+técnicamente el 6-sep por Andrés: D5 está 100% en `SIN_DATO` y D6 98.70% sin dato, por lo que no
+entran al vector ni se imputan; la regla `casos_completos` se conserva sólo para D1–D4 y
+`indice_completitud_drivers`. Esa ratificación no cierra US-321: falta la corrida temporal real,
+la selección de `k`, Silhouette y el registro MLflow con `run_id` real.
+
+Se integró `origin/main` (25d76e3) mediante merge en la rama permanente. Docker Engine y Compose
+responden; se creó `.env` local desde la plantilla con claves aleatorias, excluido de Git. El servicio
+`db` arrancó y la conexión SQLAlchemy desde Windows funciona. La consulta de catálogo confirma que
+`gold.features_escuela` todavía no existe en esta base. Instalar Docker no materializa Gold.
+
+El PR #231 fue fusionado a `main` el 5-sep-2026. Esta evidencia posterior permanece local hasta que
+se revise, se documente la decisión de ausencia y se publique en una nueva PR conforme al vault.
+
+### Secuencia propuesta para completar la evidencia
+
+1. Usar exclusivamente el dump autorizado `gold_bug048_final1_2026-09-05 1.sql` en una base aislada;
+   conservar checksum, grano y agregados como evidencia. Los dumps nunca se versionan.
+2. Aplicar el vector ya ratificado por Andrés para ML-03: **D1–D4 más
+   `indice_completitud_drivers`**, excluyendo D5/D6 por ausencia estructural. D5/D6 se conservan en el
+   reporte de cobertura y nunca se imputan, convierten a cero ni se interpretan como señal del cluster.
+3. Aplicar la decisión aprobada en el contrato y reproducir `k=2..6` con walk-forward. Reportar filas
+   elegibles/excluidas, perfiles, Silhouette y cualquier limitación territorial; no modificar umbrales
+   sin una decisión explícita.
+4. Registrar en MLflow sólo la corrida que pase la revisión técnica, con versión, `run_id`, vector,
+   política de ausencia y métricas. Si la métrica no alcanza el umbral, se reporta; no se fabrica una
+   mejora ni se impide registrar el experimento reproducible.
+5. Publicar las asignaciones válidas en Gold por un productor específico de ML-03 y permitir que C4
+   las exponga mediante la API. El contrato ejecutable y las compuertas están en la sección 9.
+6. Actualizar fichas, matriz, índices y DevLog; solicitar aprobación de Edgar con CI verde. Mantener
+   la rama permanente y no autoaprobar, promover modelos ni cambiar historias a `done` por anticipado.
+
+### Ejecución desde PowerShell, cuando Gold esté disponible
+
+El ejecutor no carga `.env` automáticamente. Este comando lo carga dentro del proceso sin imprimir
+claves ni pasarlas como argumentos. Ejecutarlo desde la raíz del repositorio:
+
+```powershell
+& ./.venv/Scripts/python.exe -c "from dotenv import load_dotenv; load_dotenv('.env'); from src.modelos.ejecutar_cierre_ml03 import main; raise SystemExit(main())"
+```
+
+`DATABASE_URL` usa `127.0.0.1:5432` desde Windows; las conexiones de Compose conservan `db:5432`.
+Para registrar después de revisar resultados, levantar MLflow y utilizar `--tracking-uri
+http://127.0.0.1:5001`. MLflow todavía no se levantó ni se registró una corrida en esta verificación.
+
+Validación local tras el merge: **973 passed, 8 skipped**, Ruff limpio y tablero PM válido.
+Los skips y las pruebas con fixtures no sustituyen la evidencia sobre Gold real.
+
+## 9. Plan de aterrizaje final — productor ML-03 y exposición C4
+
+### Decisión técnica propuesta
+
+El productor no debe escribir `cluster` dentro de `gold.predicciones`: esa tabla representa la salida
+de ML-01 y exige `valor`, `indice_riesgo` y un grano que ML-03 no produce. Rellenar esos campos para
+adaptar un cluster sería información inventada. La salida final debe vivir en una tabla Gold propia:
+`gold.ml03_asignaciones`.
+
+| Campo | Regla |
+|---|---|
+| `cct`, `id_ciclo` | llave primaria compuesta; mismo grano escuela × ciclo que las features |
+| `cluster` | entero `>= 0`; sólo existe cuando la escuela fue elegible para la corrida aprobada |
+| `modelo`, `mlflow_run_id`, `version_modelo` | trazabilidad obligatoria de la versión registrada |
+| `politica_ausencia`, `vector_features`, `generado_at` | reproducibilidad de la asignación, sin copiar features individuales |
+
+Una escuela excluida no recibe un cluster de relleno ni una fila artificial. La ausencia se expresa
+en C4 como `cluster: null` y `ml03_estado: "SIN_DATO"`; una asignación válida se expone como
+`ml03_estado: "OK"` con su `ml03_run_id`. Así se distingue cobertura insuficiente de un supuesto
+valor `0`, que es un cluster legítimo.
+
+### Entregables y responsables
+
+| Fase | Entregable verificable | Responsable | Compuerta |
+|---|---|---|---|
+| A. Política | Decisión escrita: D1–D4 + completitud; D5/D6 fuera del vector operativo | Andrés (ratificada el 6-sep) | Aplicada en C3; Edgar conserva la compuerta de aprobación del PR |
+| B. Productor C3 | `src/modelos/publicar_ml03.py`: valida contrato, recibe `ResultadoML03`, hace UPSERT por `cct,id_ciclo` y rechaza un `run_id` vacío | Estefany | Revisión técnica de Andrés y pruebas enfocadas |
+| C. Esquema Gold | DDL/migración idempotente de `gold.ml03_asignaciones`, PK, `CHECK cluster >= 0` e índices | Diana (C1) + Edgar | Regla 7: revisión humana explícita por cambio de esquema |
+| D. Registro | Corrida temporal real y versión MLflow con `run_id` recuperable | Estefany + C5 si el servicio MLflow lo requiere | E2E MLflow real, sin promover a producción automáticamente |
+| E. API C4 | `LEFT JOIN` de la asignación por `cct,id_ciclo`; contrato con `cluster`, `ml03_estado` y `ml03_run_id` | Christian/Juan (C4) | Revisión C4 y pruebas de contrato/API |
+| F. UI C2 | Mostrar cluster/perfil cuando `ml03_estado=OK` y `SIN_DATO` con explicación cuando no exista fila | Manuel/Marina (C2) | Prueba de integración visual |
+| G. Cierre | Evidencia, matriz, DevLog, CI verde y aprobación del PM | Estefany + Edgar | PRs separados por propietario; Edgar es la aprobación final |
+
+### Secuencia de ejecución y criterios de aceptación
+
+1. C3 usa la política ya ratificada: excluir D5/D6 y no imputarlos. D5 carece de señal observable y
+   D6 no tiene cobertura suficiente para inferirla responsablemente.
+2. C3 ejecuta la validación temporal real y sólo genera asignaciones para filas
+   elegibles. Debe probar: ausencia de D5/D6 en el vector, no fuga temporal, llave única, perfiles
+   reproducibles e idempotencia del UPSERT.
+3. C1 revisa y aprueba el nuevo objeto Gold antes de cualquier merge de esquema. El productor no
+   ejecutará `DELETE`, `TRUNCATE` ni borrará versiones históricas.
+4. Después de registrar en MLflow, el productor persiste las asignaciones con el `run_id` real. Un
+   registro fallido revierte la publicación: no se expone una asignación sin trazabilidad.
+5. C4 consulta Gold, nunca invoca KMeans ni MLflow por request. Para una escuela sin fila válida debe
+   devolver `cluster: null`, `ml03_estado: "SIN_DATO"` y `ml03_run_id: null`; para una válida, los tres
+   campos deben corresponder a la misma fila Gold.
+6. Se ejecuta E2E `Gold → MLflow → Gold ML-03 → API`, incluyendo una escuela elegible, una excluida
+   y una inexistente. C2 consume esos tres casos sin sustituir `null` por `0`.
+
+### Impedimentos actuales y salida
+
+| Impedimento | Efecto | Cómo se resuelve |
+|---|---|---|
+| D5 100% y D6 98.70% `SIN_DATO` | Contaminarían el clustering si se imputan o se usan como señal | Política ratificada: excluirlas del vector y mantenerlas como cobertura; no hay que esperar una nueva decisión técnica |
+| Tabla Gold inexistente para ML-03 | No hay contrato persistente para C4 | C1 crea/revisa la tabla idempotente; C3 no modifica `dbt/**` ni el esquema ajeno |
+| API no tiene productor | Hoy devuelve `cluster: null` sin distinguir causas | C4 implementa el `LEFT JOIN` y el estado explícito de cobertura |
+| E2E MLflow no ejecutado con la corrida final | No hay `run_id` trazable para publicar | C3/C5 levantan MLflow, registran una sola corrida revisada y validan su carga |
+
+No hay impedimento técnico irresoluble. La política ya no bloquea; el trabajo pendiente es ejecutar
+la corrida reproducible y coordinar los cambios de Gold/API con sus dueños mediante PRs separados.
+Este plan preserva el alcance de Estefany y las compuertas del vault.
+
+## 10. Plan de respuesta a la revisión técnica de Andrés — 6-sep-2026
+
+La revisión técnica confirma el enfoque y añade cinco condiciones de cierre. Se aceptan sin cambiar
+prematuramente el estado de las historias:
+
+| Observación | Acción de cierre | Estado |
+|---|---|---|
+| US-321 no está cerrada | Política ratificada por Andrés; ejecutar sobre Gold canónico `k=2..6`, seleccionar `k`, reportar Silhouette y registrar un `run_id` real | Pendiente de ejecución C3 |
+| US-322 está cerca de cierre | Mantenerla independiente de ML-03; solicitar a Edgar aprobar la evidencia agregada ya completa y cambiar sólo entonces a `done` | Pendiente de Edgar |
+| US-325 está cerca de cierre | Conservar cobertura y limitación sin crear un umbral de sesgo; solicitar a Edgar decidir el cierre documental | Pendiente de Edgar |
+| Ambigüedad de dumps | Declarar `final1` como fuente canónica y `final2` sólo como comparación equivalente con checksum | Corregido en esta actualización |
+| Gold/API fuera del alcance C3 | Mantener `gold.ml03_asignaciones` y C4 como plan posterior; C1 y C4 lo implementan en PRs propios bajo regla 7 | Plan, no entregable de esta PR |
+
+### Próximos pasos ordenados
+
+1. Ejecutar la corrida temporal real con el vector ya ratificado D1–D4 +
+   `indice_completitud_drivers`; conservar la tabla comparable `k=2..6`, selección y Silhouette.
+2. Cerrar US-322 y US-325 por revisión documental independiente, si Edgar lo aprueba; no esperar la
+   corrida de ML-03 ni cambiar sus conclusiones de cobertura.
+3. Registrar en MLflow la corrida reproducible revisada. Si no hay métrica válida o la interpretación
+   no es defendible, US-321 sigue
+   abierta con el resultado reportado tal cual.
+4. Con una corrida trazable, C1 y C4 reciben el contrato de `gold.ml03_asignaciones` para sus PRs de
+   esquema y API. Ninguno de esos cambios se incluye en esta PR documental.
+
+## 11. Coordinación de la corrida MLflow real — US-321
+
+Esta coordinación separa la evidencia de C3 del entorno de C5. No se comparten `.env`, contraseñas,
+dump ni artefactos por Git, y ninguna persona modifica el alcance de otra.
+
+| Momento | Responsable | Acción verificable | Entrega al siguiente responsable |
+|---|---|---|---|
+| T0 · preflight | Estefany (C3) | Verifica el SHA-256 canónico de `final1`, restaura sólo en base aislada y ejecuta ML-03 **sin** `--tracking-uri` | Agregados: filas, ciclos, exclusiones, `k=2..6`, Silhouette y perfiles; nunca CCT individuales |
+| T1 · entorno | Luis (C5) | Confirma una ventana de MLflow accesible, su healthcheck y el URI autorizado; no comparte secretos | Confirmación de disponibilidad o error operativo exacto para el DevLog |
+| T2 · revisión | Andrés (C3 TL) | Revisa vector D1-D4 + completitud, tabla temporal, perfiles y lectura honesta de Silhouette | `OK` técnico o ajustes concretos; no es promoción del modelo |
+| T3 · registro | Estefany (C3) | Repite la misma corrida con `--tracking-uri --confirmar-registro` sólo después del OK técnico | `run_id`, versión, parámetros, métricas y commit, recuperables desde MLflow |
+| T4 · decisión | Edgar (PM) | Decide el cierre de US-321 o conserva la historia abierta si la métrica/interpretación no es defendible | Aprobación de PR y estado de la historia |
+| T5 · aterrizaje posterior | Diana (C1) y C4 | Reciben exclusivamente el contrato ya trazable para sus PRs de Gold/API | C1 aplica regla 7 al esquema; C4 hace el `LEFT JOIN`; no bloquean la corrida C3 |
+
+### Protocolo operativo C3 + C5
+
+1. Estefany pide a Luis una ventana y el URI de tracking por el canal interno; nunca lo coloca en un
+   commit, comentario de PR ni DevLog. Luis confirma salud del servicio, no credenciales.
+2. Estefany corre T0 localmente contra la base aislada y comparte sólo el JSON agregado o su resumen.
+   Si no hay filas elegibles, ciclos suficientes o Silhouette válida, detiene aquí y registra el
+   bloqueo; no solicita un `run_id` de relleno.
+3. Andrés revisa T0. Con su visto bueno, Estefany ejecuta T3 con la confirmación explícita del CLI.
+   Un fallo de registro se conserva como error trazable y se devuelve a Luis; no se reintenta contra
+   otro URI ni se promociona un modelo.
+4. Estefany consulta MLflow para recuperar el `run_id` y versión, repite la prueba de lectura y añade
+   a la ficha únicamente identificadores y métricas agregadas. Después ejecuta Ruff, pruebas C3 y
+   `vault_lint.py`, redacta DevLog y abre PR para Edgar.
+
+El resultado máximo de esta PR de prueba es una corrida C3 reproducible y protegida contra registros
+prematuros. La persistencia Gold y exposición API permanecen explícitamente fuera de alcance.
+
+## 12. Resultado de ejecución — 8-sep-2026
+
+Este corte actualiza los pendientes históricos de las secciones anteriores. Evidencia canónica:
+[[vault/15_ML_Models/ML03_Entrenamiento_US321]], apartado «Corrida final de evidencia — 2026-09-08».
+
+| Paso | Estado y evidencia | Siguiente decisión |
+|---|---|---|
+| T0: fuente y corrida aislada | Completado: dump final1 y tabla local coinciden por hash; acceso de solo lectura; 114,200 elegibles, 21,846 excluidas; k=3 y Silhouette 0.4644549058 | Aceptar la evidencia de ejecución, sin confundirla con promoción |
+| Auditoría de interpretación | Completada: cluster 2 coincide exactamente con 1,648 observaciones elegibles con D6 observado mediante completitud; RISK-011 registrado | Andrés revisa el grupo de cobertura y la propuesta de comparación posterior sin completitud; no ejecutada ni autorizada por este documento |
+| T1/T3: MLflow | Pendiente; no se usó tracking URI ni se generó run_id | Revisión técnica de evidencia primero; luego coordinación y autorización del registro |
+| T4: cierre | PR para Edgar; US-321 conserva in_progress | Edgar decide aceptación/cierre o deuda explícita bajo DEC-015 |
+| T5: Gold/API | Los dos cables siguen pendientes; la corrida no publica asignaciones | C1/C3 primero persistencia y C4 después lectura, en sus PRs y bajo regla 7 |
+| Panel frente a DB-03 | No verificado por esta corrida; QA previo registró bloqueo BUG-065 | Resolver filtro y completar la comparación del par en producción, sin confundirla con disponibilidad del Panel |
+
+**Recomendación:** aceptar el trabajo analítico como entregable y mantener ML-03 sin publicar para la
+demo hasta revisar RISK-011. No se movió el umbral ni se cambió el vector para mejorar la métrica.
+La ventaja de k=3 sobre k=2 es 0.00562 y sólo hay una ventana para seleccionar k; no se afirma
+significancia estadística ni generalización externa. La evidencia permite decidir con conocimiento
+del costo de interpretación, además de los costos de los dos cables.

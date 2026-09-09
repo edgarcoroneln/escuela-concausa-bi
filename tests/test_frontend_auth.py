@@ -202,3 +202,115 @@ def test_analista_pasa_cualquier_guarda(st_falso) -> None:
 def test_rol_inventado_es_error_de_programacion(st_falso) -> None:
     with pytest.raises(AssertionError):
         authmod.require_role("superadmin")
+
+
+# --------------------------------------------------------------------------- #
+# Refresco del access token (P0 de Edgar, 2026-09-06)
+# --------------------------------------------------------------------------- #
+#
+# El access token dura 15 min (`src/api/config.py::access_token_expire_minutes`), menos que una
+# demo. `auth.py` guardaba el `refresh_token` y **nunca lo usaba**: no habia una sola llamada a
+# `/auth/refresh` en todo el front, asi que iniciar sesion en la preparacion significaba llegar
+# con el token muerto a la sala.
+
+
+def _api_refresco(peticiones: list[str] | None = None, estado: int = 200):
+    """Google falso que responde `/auth/refresh` con un par nuevo."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if peticiones is not None:
+            peticiones.append(request.url.path)
+        if request.url.path == "/api/v1/auth/refresh":
+            if estado != 200:
+                return httpx.Response(estado, json={"error": "unauthorized"})
+            return httpx.Response(
+                200,
+                json={
+                    "access_token": "access-nuevo",
+                    "refresh_token": "refresh-nuevo",
+                    "token_type": "bearer",
+                    "expires_in": 900,
+                },
+            )
+        return httpx.Response(404)
+
+    return handler
+
+
+def _sesion_viva(st_falso, vence_en: float) -> None:
+    """Deja una sesion en curso cuyo access token vence dentro de `vence_en` segundos."""
+    import time
+
+    st_falso.session_state["user"] = USUARIO
+    st_falso.session_state["access_token"] = "access-viejo"
+    st_falso.session_state["refresh_token"] = "refresh-viejo"
+    st_falso.session_state["access_token_vence"] = time.monotonic() + vence_en
+
+
+def test_el_canje_guarda_el_vencimiento(st_falso, monkeypatch: pytest.MonkeyPatch) -> None:
+    """`expires_in` viene en la respuesta y antes se tiraba: sin el no se puede saber cuando refrescar."""
+    monkeypatch.setattr(authmod.httpx, "Client", _transporte(_api_ok()))
+    st_falso.query_params["code_faro"] = "c"
+    authmod.current_user()
+    assert st_falso.session_state["access_token_vence"] > 0
+
+
+def test_token_vigente_no_llama_a_la_api(st_falso, monkeypatch: pytest.MonkeyPatch) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise AssertionError("no debio refrescar: el token sigue vigente")
+
+    monkeypatch.setattr(authmod.httpx, "Client", _transporte(handler))
+    _sesion_viva(st_falso, vence_en=600)
+    assert authmod.token_de_acceso() == "access-viejo"
+
+
+def test_token_por_expirar_se_refresca(st_falso, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Dentro del margen se pide uno nuevo ANTES de que expire, no despues del 401."""
+    peticiones: list[str] = []
+    monkeypatch.setattr(authmod.httpx, "Client", _transporte(_api_refresco(peticiones)))
+    _sesion_viva(st_falso, vence_en=30)  # margen es 120 s
+
+    assert authmod.token_de_acceso() == "access-nuevo"
+    assert peticiones == ["/api/v1/auth/refresh"]
+    # El refresh token tambien rota: el viejo no se reutiliza.
+    assert st_falso.session_state["refresh_token"] == "refresh-nuevo"
+
+
+def test_token_ya_expirado_se_refresca(st_falso, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(authmod.httpx, "Client", _transporte(_api_refresco()))
+    _sesion_viva(st_falso, vence_en=-60)
+    assert authmod.token_de_acceso() == "access-nuevo"
+
+
+def test_refresh_rechazado_cierra_la_sesion(st_falso, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Mejor mostrar "Iniciar sesion" que dejar un token muerto dando 401 en cada pagina."""
+    monkeypatch.setattr(authmod.httpx, "Client", _transporte(_api_refresco(estado=401)))
+    _sesion_viva(st_falso, vence_en=0)
+
+    assert authmod.token_de_acceso() is None
+    assert "user" not in st_falso.session_state
+    assert "access_token" not in st_falso.session_state
+
+
+def test_api_caida_no_borra_la_sesion(st_falso, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Un corte de red pasajero no debe tirar la sesion: el token actual quiza siga sirviendo."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("sin ruta al host")
+
+    monkeypatch.setattr(authmod.httpx, "Client", _transporte(handler))
+    _sesion_viva(st_falso, vence_en=10)
+
+    assert authmod.token_de_acceso() == "access-viejo"
+    assert st_falso.session_state["user"] == USUARIO
+
+
+def test_sin_sesion_no_hay_token(st_falso) -> None:
+    assert authmod.token_de_acceso() is None
+
+
+def test_cerrar_sesion_limpia_las_cuatro_claves(st_falso) -> None:
+    _sesion_viva(st_falso, vence_en=600)
+    authmod.cerrar_sesion()
+    for clave in ("user", "access_token", "refresh_token", "access_token_vence"):
+        assert clave not in st_falso.session_state

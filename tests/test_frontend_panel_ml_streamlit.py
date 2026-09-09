@@ -55,8 +55,30 @@ def _ruta_frontend():
             limpiar.clear()
 
 
-def _app() -> AppTest:
-    return AppTest.from_file(str(PAGINA)).run(timeout=30)
+USUARIO = {"sub": "u-demo", "email": "demo@faro.mx", "name": "Demo", "role": "analista"}
+
+
+def _app(*, con_sesion: bool = True) -> AppTest:
+    """La página **con** sesión es el caso normal desde BUG-071.
+
+    Antes estas pruebas corrían sin sesión y aun así llenaban el formulario, porque la
+    página lo dejaba usable — que es justo el defecto que BUG-071 reporta. Se inyecta un
+    usuario en `st.session_state`, que es de donde `auth.current_user()` lo lee.
+    """
+    app = AppTest.from_file(str(PAGINA))
+    if con_sesion:
+        app.session_state["user"] = dict(USUARIO)
+    return app.run(timeout=30)
+
+
+def _submit(app: AppTest):
+    """El botón del formulario, **por etiqueta y no por índice**.
+
+    Con sesión, `encabezado()` dibuja además "Cerrar sesión" en la barra lateral, así que
+    `app.button[0]` dejó de ser el submit. Buscarlo por etiqueta es lo que hace que estas
+    pruebas no dependan del orden de pintado.
+    """
+    return next(b for b in app.button if "Consultar" in b.label)
 
 
 def test_la_pagina_carga_sin_excepcion(_ruta_frontend) -> None:
@@ -75,16 +97,29 @@ def test_ofrece_el_formulario_de_cct(_ruta_frontend) -> None:
 def test_un_cct_de_longitud_invalida_no_llama_a_la_api(_ruta_frontend) -> None:
     app = _app()
     app.text_input[0].set_value("123").run(timeout=30)
-    app.button[0].click().run(timeout=30)
+    _submit(app).click().run(timeout=30)
     assert not app.exception, app.exception
     assert app.error, "debió avisar que el CCT no tiene 10 caracteres"
 
 
-def test_la_pagina_anuncia_el_umbral_de_dec_006(_ruta_frontend) -> None:
-    """El usuario tiene que poder leer contra qué se compara el índice."""
+def test_la_pagina_distingue_el_ancla_de_la_linea_de_alerta(_ruta_frontend) -> None:
+    """El usuario tiene que poder leer contra qué se compara el índice — y son **dos**.
+
+    Desde DEC-019 la calibración (0.60 ≡ perder 5 %) y la línea que enciende la alerta
+    (0.50) son números distintos. Antes eran el mismo y la página los presentaba como uno
+    solo, que es lo que hacía imposible bajar la alerta sin parecer que se recalibraba el
+    modelo. Si vuelven a colapsarse en una sola constante, esta prueba lo dice.
+    """
     import prediccion_client
 
-    assert prediccion_client.UMBRAL_RIESGO == 0.60
+    assert prediccion_client.ANCLA_SIGMOIDE == 0.60
+    assert prediccion_client.LINEA_DE_ALERTA == 0.50
+
+    fuente = PAGINA.read_text(encoding="utf-8")
+    assert "DEC-019" in fuente, "la página no cita la decisión que fija la línea de alerta"
+    assert "ANCLA_SIGMOIDE" in fuente and "LINEA_DE_ALERTA" in fuente, (
+        "la página debe mostrar los dos números, no uno"
+    )
 
 
 def test_ml03_sin_productor_se_documenta_en_la_pagina(_ruta_frontend) -> None:
@@ -145,4 +180,150 @@ def test_el_cliente_es_el_unico_que_habla_con_la_api(_ruta_frontend) -> None:
     ]
     assert not any("/api/v1/predicciones" in s for s in en_codigo), (
         "la página construye la ruta a mano; debe pedírsela a prediccion_client"
+    )
+
+
+# --------------------------------------------------------- P0 2026-09-06: ficha y búsqueda
+
+
+def test_la_pagina_sigue_teniendo_un_solo_campo_y_un_solo_boton(_ruta_frontend) -> None:
+    """Guarda de las guardas: protege a las dos pruebas que direccionan por índice.
+
+    `test_un_cct_de_longitud_invalida_no_llama_a_la_api` hace `app.text_input[0]` y
+    `app.button[0]`. Hoy funciona porque hay exactamente uno de cada, pero eso es un
+    accidente afortunado, no un invariante declarado — y al añadir la búsqueda del P0 fue
+    justo lo que hubo que cuidar. Sin esta prueba, el día que alguien meta un `st.button`
+    de "Limpiar" arriba, aquella prueba **pasa a pulsar el botón equivocado** y falla por
+    una razón que no tiene nada que ver con lo que dice medir.
+
+    Por eso la búsqueda se construyó **solo con `st.selectbox`**: no entra en ninguna de
+    las dos listas.
+    """
+    app = _app()
+    assert len(app.text_input) == 1, (
+        "hay más de un campo de texto: `app.text_input[0]` deja de ser el CCT"
+    )
+    submits = [b for b in app.button if "Consultar" in b.label]
+    assert len(submits) == 1, (
+        "hay más de un botón de consulta: `_submit()` deja de ser determinista"
+    )
+    assert len(app.title) == 1, "`app.title[0]` deja de ser el título de la página"
+
+
+def test_ofrece_busqueda_por_filtros(_ruta_frontend) -> None:
+    """El P0 pide llegar al CCT sin escribirlo: entidad -> municipio -> nivel -> plantel."""
+    app = _app()
+    assert app.selectbox, "no hay ningún selector de búsqueda"
+    etiquetas = [s.label for s in app.selectbox]
+    assert any("Entidad" in e for e in etiquetas), f"falta el selector de entidad: {etiquetas}"
+
+
+def test_la_busqueda_no_llama_a_la_api_antes_de_elegir_entidad(_ruta_frontend) -> None:
+    """Cargar la página no debe disparar la cascada.
+
+    La API limita a 120 peticiones por minuto y por ruta; una cascada que consulta en cada
+    rerun aunque no se haya elegido nada agota ese margen sola. El selector arranca en su
+    centinela y `_buscador` sale antes de tocar la red.
+    """
+    app = _app()
+    assert not app.exception, app.exception
+    assert any("Elige una entidad" in c.value for c in app.caption), (
+        "la página debería pedir elegir entidad antes de consultar nada"
+    )
+
+
+def test_la_ficha_se_renderiza_antes_del_indice(_ruta_frontend) -> None:
+    """El P0 es que el panel diga **de qué escuela** habla antes de dar el número.
+
+    Se comprueba sobre el orden del código, no sobre una corrida: renderizar la ficha exige
+    una predicción real, y estas pruebas no levantan API.
+    """
+    fuente = PAGINA.read_text(encoding="utf-8")
+    assert "_render_ficha" in fuente, "no existe la ficha del plantel"
+    assert fuente.index("_render_ficha(ficha") < fuente.index("_render_ml01(pred)\n"), (
+        "la ficha se pinta después del índice: el P0 pide lo contrario"
+    )
+
+
+def test_la_ficha_muestra_lo_que_pidio_el_p0(_ruta_frontend) -> None:
+    """Nombre, nivel, municipio, sostenimiento, matrícula y completitud de drivers."""
+    fuente = PAGINA.read_text(encoding="utf-8")
+    for campo in ("ficha.nombre", "ficha.nivel", "nombre_municipio", "ficha.sostenimiento",
+                  "ficha.matricula_total", "ficha.indice_completitud_drivers"):
+        assert campo in fuente, f"la ficha no muestra {campo}"
+
+
+# ------------------------------------------------ BUG-071: la página exige sesión
+
+
+def test_sin_sesion_el_formulario_queda_inutilizable(_ruta_frontend) -> None:
+    """El defecto de BUG-071 en esta página: avisaba, pero dejaba usar el formulario.
+
+    No se esconde el formulario, se **apaga**: la página sigue explicando qué ofrece, pero
+    no se puede disparar una consulta que la API va a rechazar. `AppTest` hace cumplir
+    `disabled` igual que un navegador —rechaza `set_value` sobre un widget apagado—, así
+    que esta prueba comprueba el comportamiento, no solo la bandera.
+    """
+    app = _app(con_sesion=False)
+    assert not app.exception, app.exception
+
+    assert app.text_input[0].disabled, "el campo de CCT sigue editable sin sesión"
+    assert _submit(app).disabled, "el botón de consulta sigue pulsable sin sesión"
+    assert app.selectbox[0].disabled, "la cascada sigue viva sin sesión"
+
+
+def test_sin_sesion_se_dice_la_verdad_sobre_por_que(_ruta_frontend) -> None:
+    """El aviso viejo decía "la lectura es pública" y desde DEC-018 **es falso**.
+
+    Producción corre con `AUTH_LECTURA_PUBLICA=false`, así que sin sesión la API responde
+    401 y el panel lo presentaba como *"La API rechazó la solicitud"*: un fallo de permiso
+    disfrazado de fallo de servicio. Si alguien restaura la promesa vieja, esto lo dice.
+    """
+    app = _app(con_sesion=False)
+    avisos = " ".join(i.value for i in app.info)
+    assert "Inicia sesión" in avisos, f"no se pide iniciar sesión: {avisos!r}"
+    assert "pública" not in avisos, (
+        "la página vuelve a prometer lectura pública, que DEC-018 dejó sin efecto"
+    )
+
+
+def test_con_sesion_los_controles_vuelven(_ruta_frontend) -> None:
+    """La guarda no puede romper el caso normal: con sesión, todo se usa."""
+    app = _app()
+    assert not app.text_input[0].disabled
+    assert not _submit(app).disabled
+    assert not app.selectbox[0].disabled
+
+
+def test_los_ejemplos_son_el_par_oficial_de_la_demostracion(_ruta_frontend) -> None:
+    """BUG-073: los ejemplos deben poder copiarse y reproducir la ficha del guion.
+
+    Antes mostraban `15DJN0049A` / `09DSN0042A`, CCT de la validación del camino del
+    agente. Quien copiara uno no llegaba a la ficha del bloque 3:00-5:00.
+
+    El par de `US-006` no es arbitrario: mismo municipio, mismo nivel y `indice_riesgo`
+    idéntico, con driver dominante distinto. Si alguien lo cambia por dos CCT cualesquiera,
+    el bloque deja de aislar la única variable que quiere demostrar.
+
+    **Mira el CÓDIGO, no la prosa.** La primera versión de esta prueba buscaba los CCT
+    viejos en el archivo completo y reprobaba por el propio comentario que documenta el
+    cambio — la misma trampa que ya cayó en `test_el_cliente_es_el_unico_que_habla_con_la_api`
+    y en el `sin_comentarios` de `test_drill_down_db03_db04.py`: castigar la documentación
+    en vez del defecto.
+    """
+    fuente = (FRONTEND / "pages" / "2_Panel_ML.py").read_text(encoding="utf-8")
+    codigo = [
+        l for l in fuente.splitlines()
+        if l.strip() and not l.lstrip().startswith(("#", "#:"))
+    ]
+
+    assert 'EJEMPLOS = ("15DPR0920D", "15DPR2254O")' in codigo, (
+        "los ejemplos dejaron de ser el par oficial de US-006"
+    )
+    assert any('placeholder="15DPR0920D"' in l for l in codigo), (
+        "el placeholder del CCT no usa una escuela del par"
+    )
+    viejos = [l for l in codigo if "15DJN0049A" in l or "09DSN0042A" in l]
+    assert not viejos, (
+        f"volvieron los CCT de la validación del agente al código del panel: {viejos}"
     )

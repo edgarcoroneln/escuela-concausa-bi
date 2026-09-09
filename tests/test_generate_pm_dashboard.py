@@ -92,7 +92,13 @@ def test_us004_conserva_su_evidencia_completa(ejecucion):
     # El alias del wikilink con `\|` sobrevive resuelto a su texto visible: si el pipe
     # escapado hubiera cortado la celda, este fragmento y todo lo que sigue faltarían.
     assert "plan de corrección del vault" in fila["evidence"]
-    assert fila["evidence"].endswith("hasta el cierre del proyecto")
+    # Segunda mitad de la celda, DESPUÉS del `\|`: si el pipe escapado hubiera cortado la
+    # fila, este fragmento faltaría. Se comprueba que está PRESENTE, no que sea el final:
+    # `endswith` congelaba las últimas palabras y reprobaba ante cualquier apéndice
+    # legítimo -- exactamente el modo de falla contra el que advierte el docstring, y que
+    # se materializó el 2026-09-06 al anotar el cierre de estado. Que la fila no se truncó
+    # lo prueba igual de bien la presencia del fragmento que su posición.
+    assert "hasta el cierre del proyecto" in fila["evidence"]
 
 
 # ── El índice de DevLog alimenta las métricas por persona ────────────────────

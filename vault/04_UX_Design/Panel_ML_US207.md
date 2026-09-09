@@ -91,6 +91,14 @@ página lo aprovecha: se puede consultar una predicción sin iniciar sesión, y 
 pantalla. Si C5 pone esa bandera en `false`, el cliente ya acepta un `access_token` y la
 página lo pasa desde la sesión — no hay cambio de código pendiente.
 
+> **Actualización (2026-09-05):** en **producción** esa bandera está en
+> **`AUTH_LECTURA_PUBLICA=false`** desde el cierre de **SEC-006** (postura del PO, **DEC-018**;
+> ver **BUG-057**), así que la lectura **ya exige sesión** —el escenario "responde sin token" de
+> arriba describe el diseño del cliente, no el estado actual de prod—. Tal como el párrafo
+> anticipaba, **no hubo cambio de código**: el cliente ya pasa el `access_token` desde la sesión.
+> Es reversible en segundos (`AUTH_LECTURA_PUBLICA=true`, sin rebuild) si se decidiera reabrir la
+> lectura anónima durante la demo, pero la postura vigente es lectura con sesión.
+
 ## 4. ML-03: el hueco declarado, no escondido
 
 **La historia pide "los 3 modelos". Se entregan 2, y el tercero se declara.**

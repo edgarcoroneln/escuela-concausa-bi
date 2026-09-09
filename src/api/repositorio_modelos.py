@@ -40,6 +40,12 @@ _logger = logging.getLogger("faro.api")
 MODELO_ML01 = "ML-01"
 GRANO_ESCUELA = "escuela"
 
+# Contribución SHAP de cada driver, en `gold.recomendaciones` (BUG-053). Viajan en la MISMA fila
+# que la predicción a propósito: `/predicciones/{cct}/explicacion` reutiliza `obtener_prediccion`
+# en vez de tener su propia consulta, así hereda gratis el cache TTL y la traducción a 503 de
+# US-416, y no puede desincronizarse del `driver_dominante` que explica.
+COLUMNAS_SHAP = tuple(f"shap_d{i}" for i in range(1, 7))
+
 
 class RepositorioModelosNoDisponible(Exception):
     """Gold no está disponible para responder la predicción (US-416).
@@ -58,7 +64,11 @@ class RepositorioModelos(Protocol):
     """Lecturas sobre `gold.predicciones` + `gold.recomendaciones` que necesita `/predicciones/*`."""
 
     def obtener_prediccion(self, cct: str, id_ciclo: str) -> dict | None:
-        """Predicción de una escuela × ciclo, o `None` si no hay fila en `gold.predicciones`."""
+        """Predicción de una escuela × ciclo, o `None` si no hay fila en `gold.predicciones`.
+
+        La fila incluye además `shap_d1..shap_d6` (contribución de cada driver, `None` = SIN_DATO),
+        que es lo que sirve `/predicciones/{cct}/explicacion` -- ver `COLUMNAS_SHAP`.
+        """
         ...
 
     def listar_predicciones(self, ccts: list[str], id_ciclo: str) -> list[dict]:
@@ -86,6 +96,7 @@ class RepositorioModelosPostgres:
                 predicciones.c.mlflow_run_id,
                 recomendaciones.c.driver_dominante,
                 recomendaciones.c.recomendacion,
+                *(recomendaciones.c[col] for col in COLUMNAS_SHAP),
             )
             .select_from(
                 predicciones.join(

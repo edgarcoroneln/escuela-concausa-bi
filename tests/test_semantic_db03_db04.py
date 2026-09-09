@@ -8,7 +8,8 @@ permitirse romper en la capa de BI:
   está midiendo. Estas pruebas fallan si eso aparece.
 * **El SQL semántico lee `gold.cubo_*`** (repunteo US-205/US-113): ya no agrega el hecho
   ni une salidas de ML — los LEFT JOIN con llave completa, el modelo `ML-01` y el umbral
-  `0.6` ya los resolvió el cubo C1. La capa hace passthrough explícito del contrato.
+  `0.5` (DEC-019, antes 0.6/ancla DEC-006) ya los resolvió el cubo C1. La capa hace
+  passthrough explícito del contrato.
 * **Las razones se guardan como numerador y denominador**, para que se puedan reagregar con
   cualquier combinación de los filtros globales (AC-002.2).
 
@@ -33,7 +34,7 @@ SQL_DB04 = SEMANTIC / "db04_cubo_comparador_municipio.sql"
 YAML_METRICAS = SEMANTIC / "metrics_db03_db04.yaml"
 
 DRIVERS = ("d1", "d2", "d3", "d4", "d5", "d6")
-UMBRAL_RIESGO = "0.6"
+UMBRAL_RIESGO = "0.5"
 
 # Salidas de ML: viven en gold.predicciones / gold.recomendaciones, jamás en el hecho.
 SALIDAS_ML = ("indice_riesgo", "driver_dominante", "recomendacion", "prioridad")
@@ -163,18 +164,18 @@ def test_la_capa_semantica_no_reune_salidas_de_ml(cubo: str, request: pytest.Fix
         )
 
 
-# --------------------------------------------------------------------------- R3: umbral de negocio
+# --------------------------------------------------------------------------- DEC-019: linea de alerta
 
 
-def test_el_umbral_de_riesgo_es_el_ratificado(datasets_por_nombre: dict[str, dict]) -> None:
-    """0.6 = perder ~5% de matrícula, ratificado el 2026-08-13 (Indice_Riesgo_ML01).
+def test_el_umbral_de_riesgo_es_la_linea_de_alerta(datasets_por_nombre: dict[str, dict]) -> None:
+    """0.5 = línea de alerta DEC-019 (antes 0.6, ancla de calibración DEC-006).
     Con el repunteo el umbral ya no vive en el SQL (lo aplicó C1): queda declarado
-    en el YAML de métricas (`umbral: 0.6`) para mantener el contrato R3."""
+    en el YAML de métricas (`umbral: 0.5`) para mantener el contrato KPI-04 (BUG-060)."""
     for nombre in ("cubo_escuela_360", "cubo_comparador_municipio"):
         ds = datasets_por_nombre[nombre]
         metricas = {m["nombre"]: m for m in ds["metricas"]}
         assert metricas["escuelas_en_riesgo"].get("umbral") == float(UMBRAL_RIESGO), (
-            f"{nombre}: debe ratificar el umbral 0.6 como R3 en el YAML."
+            f"{nombre}: debe ratificar el umbral 0.5 (DEC-019) en el YAML."
         )
 
 

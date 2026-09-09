@@ -62,7 +62,7 @@ tarjetas:
   - kpi: KPI-04
     etiqueta: "Escuelas en riesgo"
     formato_d3: ",d"
-    nota: "Umbral ratificado DEC-006: indice_riesgo >= 0.6. Mostrar junto a escuelas_con_prediccion (denominador visible)."
+    nota: "Umbral ratificado DEC-019: indice_riesgo >= 0.5 (alineado al cubo Gold de C1). Mostrar junto a escuelas_con_prediccion (denominador visible)."
     fuente:
       dataset: db02_cubo_riesgo_territorial
       metrica: escuelas_en_riesgo

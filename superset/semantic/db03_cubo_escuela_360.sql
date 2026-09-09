@@ -16,7 +16,7 @@
 --       gold.recomendaciones) con la llave completa y el filtro de modelo.
 --   R2  SIN_DATO explicito: cada driver viaja con su bandera d#_cobertura y la
 --       ausencia de ML con cobertura_prediccion / cobertura_recomendacion.
---   R3  umbral de negocio 0.6 (en_riesgo), ratificado el 2026-08-13.
+--   DEC-019  linea de alerta 0.5 (en_riesgo), ratificado el 2026-09-06.
 --   R5  Gold ya viene acotado a SCOPE_ENTIDADES.
 -- =============================================================================
 

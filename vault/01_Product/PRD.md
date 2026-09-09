@@ -2,11 +2,11 @@
 id: PRD
 title: "PRD — FARO · Escuela como Sensor Social"
 owner: "Edgar Edmundo Coronel Navarrete"
-status: in_review
+status: approved
 version: "1.0"
 source_of_truth: true
 traces_up: [PRD-GENERAL]
-last_reviewed: "2026-08-02"
+last_reviewed: "2026-09-08"
 tags: [product, prd, faro, concausa]
 ---
 

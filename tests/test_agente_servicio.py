@@ -71,9 +71,23 @@ def test_sql_inseguro_nunca_llega_al_ejecutor() -> None:
         redactar_respuesta=lambda pregunta, filas: "No debe ejecutarse",
     )
 
-    assert resultado.fuera_de_alcance
+    assert resultado.fuera_de_alcance is False
     assert resultado.sql_generado is None
     assert not ejecutado
+
+
+def test_sql_invalido_es_fallo_del_sistema_no_fuera_de_alcance() -> None:
+    resultado = procesar_consulta(
+        "¿Cuántas escuelas hay?",
+        recuperar_contexto=lambda pregunta: "gold.predicciones",
+        generar_sql=lambda prompt, pregunta: "DELETE FROM gold.predicciones",
+        ejecutar_sql=lambda sql: [],
+        redactar_respuesta=lambda pregunta, filas: "no debe llamarse",
+    )
+
+    assert resultado.fuera_de_alcance is False
+    assert resultado.sql_generado is None
+    assert "rechazada" in resultado.respuesta
 
 
 def test_orden_de_escritura_se_corta_antes_de_generar_sql() -> None:
@@ -132,6 +146,46 @@ def test_contexto_no_encontrado_no_se_reporta_como_caida() -> None:
     assert resultado.respuesta == "No encontré contexto de Gold para responder esa pregunta."
     assert resultado.sql_generado is None
     assert not resultado.fuera_de_alcance
+
+
+def test_pregunta_referencial_sin_contexto_pide_aclaracion() -> None:
+    resultado = procesar_consulta(
+        "¿Cuáles son las recomendaciones para esas escuelas?",
+        recuperar_contexto=lambda pregunta: "no debe llamarse",
+        generar_sql=lambda prompt, pregunta: "no debe llamarse",
+        ejecutar_sql=lambda sql: [],
+        redactar_respuesta=lambda pregunta, filas: "no debe llamarse",
+    )
+
+    assert "contexto" in resultado.respuesta.lower()
+    assert resultado.sql_generado is None
+    assert not resultado.fuera_de_alcance
+
+
+def test_pregunta_referencial_usa_contexto_estructurado() -> None:
+    observado: dict[str, object] = {}
+
+    def generar(prompt: str, pregunta: str) -> str:
+        observado["prompt"] = prompt
+        return "SELECT cct, recomendacion FROM gold.recomendaciones"
+
+    resultado = procesar_consulta(
+        "¿Cuáles son las recomendaciones para esas escuelas?",
+        recuperar_contexto=lambda pregunta: "gold.recomendaciones(cct, recomendacion)",
+        generar_sql=generar,
+        ejecutar_sql=lambda sql: [{"cct": "19ABC0001X", "recomendacion": "seguridad"}],
+        redactar_respuesta=lambda pregunta, filas: f"{len(filas)} resultado.",
+        contexto_conversacional={
+            "ciclo": "2024-2025",
+            "ccts": ["19ABC0001X"],
+            "resumen": "Una escuela identificada en la consulta anterior",
+        },
+    )
+
+    assert resultado.sql_generado == (
+        "SELECT cct, recomendacion FROM gold.recomendaciones LIMIT 1000;"
+    )
+    assert "19ABC0001X" in str(observado["prompt"])
 
 
 def test_entrada_compuesta_usa_recuperacion_rag_real(monkeypatch) -> None:

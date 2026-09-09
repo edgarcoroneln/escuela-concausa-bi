@@ -3,7 +3,7 @@ id: DOC-APISPEC
 title: "API Specification — FARO"
 owner: "Karla Alejandra Monter Benitez"
 status: in_review
-version: "1.1"
+version: "1.2"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/03_Architecture/Data_Model"]
 traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416"]
@@ -207,15 +207,21 @@ C2/C3), no se retoma como pendiente de US-411.
 
 - `PrediccionOut` combina **ML-01** (`indice_riesgo`), **ML-02** (`driver_dominante` + recomendación)
   y **ML-03** (`cluster`, `None` mientras ML-03 no exista -- US-321, BUG-010).
-- **`/predicciones/{cct}/explicacion` todavía NO devuelve valores SHAP.** Las `contribuciones` salen
-  de `mock_data`, no de ningún modelo. La causa no es el endpoint: **no hay fuente que leer**.
-  `src/modelos/entrenar_ml02.py::explicar_driver` calcula SHAP con la forma exacta de
-  `ExplicacionSHAPOut`, pero no la invoca nadie y `publicar_gold.py` solo escribe
-  `gold.predicciones` y `gold.recomendaciones` -- ninguna guarda contribuciones. Calcularlo por
-  petición no es opción (`shap` no está en la imagen de la API y `KernelExplainer` tarda segundos
-  por fila, incompatible con el `statement_timeout` de US-416). Orden de cierre: **C3 persiste en
-  Gold → C4 lee del repositorio → prueba de contrato**; el contrato de respuesta ya está fijado por
-  `tests/test_explicacion_shap.py`, así que el cambio será del cuerpo, no de la forma.
+- **`/predicciones/{cct}/explicacion` sirve contribuciones SHAP reales** desde el 2026-09-05
+  (`BUG-053` cerrado). Lee `gold.recomendaciones.shap_d1..shap_d6`, que persiste `publicar_gold.py`
+  a partir de `entrenar_ml02.explicar_driver` (C3). **Reutiliza la misma fila** que
+  `/predicciones/{cct}` en vez de hacer una consulta propia: hereda el cache TTL y la traducción a
+  503 de US-416, y hace imposible que la explicación se desincronice del `driver_dominante` que
+  dice explicar. Acepta `?ciclo` igual que la ruta de predicción — sin él tendría que asumir un
+  ciclo, que es el default silencioso que causó `BUG-044`.
+  > **`null` es SIN_DATO, no cero.** Un driver sin contribución calculable viaja como `null`;
+  > colapsarlo a `0.0` afirmaría que ese driver **no contribuyó** al riesgo, que es una afirmación
+  > falsa sobre la causa (`BUG-055`). Las seis claves están siempre presentes: el hueco se declara,
+  > no se omite. Aplica sobre todo a **D5** (agua, regional) y **D6** (aire, ~80 zonas urbanas),
+  > donde el hueco es el caso normal. Quien persista contribuciones escribe `NULL`, nunca `0`.
+- No se calcula SHAP por petición y no se va a hacer: `shap` no está en la imagen de la API y
+  `KernelExplainer` tarda segundos por fila, incompatible con el `statement_timeout` de US-416. Es
+  un job batch por diseño.
 - **Un driver sin dato viaja como `None` (SIN_DATO), nunca como `0.0`.** Las seis claves `D1`..`D6`
   están siempre presentes -- el hueco se **declara**, no se omite. Esto no es cosmético: D5 (estrés
   hídrico) es regional y D6 (aire) cubre ~80 zonas urbanas, así que el hueco es el caso **normal**.
@@ -246,6 +252,40 @@ C2/C3), no se retoma como pendiente de US-411.
 
 - El agente responde en lenguaje natural sobre Gold y devuelve la consulta generada para auditoría.
   **Nunca** ejecuta escritura/borrado; rechaza preguntas fuera de alcance (`fuera_de_alcance: true`).
+
+#### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
+
+`AgenteConsultaIn` acepta un `contexto` **opcional y retrocompatible**: un cuerpo sin él se comporta
+exactamente como antes. Existe para que *"¿y las recomendaciones para **esas** escuelas?"* pueda
+resolverse sin que el LLM invente CCTs.
+
+```json
+{
+  "pregunta": "¿cuáles son las recomendaciones para esas escuelas?",
+  "contexto": {
+    "ciclo": "2024-2025",
+    "ccts": ["19DES0007C"],
+    "filtros": {"entidad": "19"},
+    "resumen": "Se identificaron 7 escuelas en riesgo"
+  }
+}
+```
+
+> **El contexto lo escribe el cliente: es entrada, no estado de confianza.** `/agente/consulta` es
+> público bajo `require_lectura`, así que cualquiera puede mandar lo que quiera ahí, y cada valor
+> entra **literalmente** al prompt del sistema. El contrato es la frontera:
+>
+> | Campo | Regla | Por qué |
+> |---|---|---|
+> | *(cualquier otro)* | `extra="forbid"` → 422 | Un `sql` o `rol` en el contexto se rechaza; **no hay puerta para SQL del frontend** |
+> | `ccts` | `^[0-9A-Z]{10}$`, máx. 200 | Sin comillas ni saltos de línea que alteren el prompt |
+> | `ciclo` | `^\d{4}-\d{4}$` | — |
+> | `filtros` | máx. 10, 100 chars, sin caracteres de control | Se interpolan en el prompt |
+> | `resumen` | máx. 300 chars, sin caracteres de control | Texto libre: un `\n` falsificaría el bloque de contexto |
+>
+> No se valida que los CCT **existan** — eso lo decide Gold, no el contrato. Y nada de esto
+> sustituye a los guardarraíles de C3 (solo `SELECT`/`WITH` sobre Gold, `LIMIT 1000`): es la capa
+> de antes. Fijado por `tests/test_agente_contexto.py`.
 
 ### 3.6 Administración `/admin/*` (solo `analista`)
 | Método | Ruta | Rol | Request | Response | Códigos |

@@ -59,7 +59,7 @@ SELECT
     p.indice_riesgo,
     CASE
         WHEN p.indice_riesgo IS NULL THEN NULL     -- sin prediccion: desconocido
-        WHEN p.indice_riesgo >= 0.6   THEN TRUE    -- R3: umbral de negocio
+        WHEN p.indice_riesgo >= 0.5   THEN TRUE    -- DEC-019: linea de alerta
         ELSE FALSE
     END                                          AS en_riesgo,
     CASE

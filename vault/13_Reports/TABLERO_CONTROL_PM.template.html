@@ -43,7 +43,7 @@
   <main class="shell">
     <section class="panel active" id="panel-exec">
       <div class="grid">
-        <article class="card span8"><h2>Semáforo ejecutivo por módulo</h2><div class="desc">Los 7 módulos de la rúbrica: avance ponderado y puntos asegurados de los 10 pts. Semáforo por calendario, no por % crudo.</div><div id="exec-rubric"></div></article>
+        <article class="card span8"><h2>Semáforo ejecutivo por módulo</h2><div class="desc">Los 7 módulos de la rúbrica: avance administrativo ponderado sobre los 10 pts potenciales. No equivale a calificación; el dictamen técnico estricto está en Cumplimiento PRD.</div><div id="exec-rubric"></div></article>
         <article class="card span4"><h2>Avance global</h2><div class="desc">Ponderado por estado; se mueve con el trabajo en curso.</div><div id="exec-progress"></div></article>
         <article class="card span6"><h2>Burndown (corregido)</h2><div class="desc">Restantes por Done <b>y</b> por avance ponderado (in-progress 35% · in-review 65%): baja con cada entrega, no solo al cerrar la US.</div><div class="chart" id="exec-burndown"></div></article>
         <article class="card span6"><h2>Cumplimiento del PRD del profesor</h2><div class="desc">Los 7 criterios: cobertura de diseño vs. estado de ejecución.</div><div id="exec-prd"></div></article>
@@ -123,7 +123,7 @@
       </article>
     </section>
     <section class="panel" id="panel-prd">
-      <article class="card"><h2>Cumplimiento del PRD del profesor</h2><div class="desc">Los 7 criterios de la rúbrica (PRD-GENERAL) contra la cobertura del proyecto: diseño vs. ejecución.</div><div class="scroll"><table><thead><tr><th>Criterio (profesor)</th><th class="num">Puntos</th><th>Cobertura de diseño</th><th>Ejecución</th><th>Referencia PRD</th></tr></thead><tbody id="prd-table"></tbody></table></div><div class="note" style="margin-top:12px"><b>100% de los requisitos cubiertos en diseño.</b> Valor extra sobre la rúbrica: privacidad por diseño, enfoque prescriptivo (SHAP), estrategia <code>SIN_DATO</code> y CI/CD (no exigido).</div></article>
+      <article class="card"><h2>Cumplimiento del PRD del profesor</h2><div class="desc">Los 7 criterios de la rúbrica (PRD-GENERAL) contra la cobertura del proyecto: diseño vs. ejecución.</div><div class="scroll"><table><thead><tr><th>Criterio (profesor)</th><th class="num">Puntos</th><th>Cobertura de diseño</th><th>Ejecución</th><th>Referencia PRD</th></tr></thead><tbody id="prd-table"></tbody></table></div><div class="note" style="margin-top:12px"><b>El porcentaje de historias mide cierre administrativo, no calificación.</b> REQ-003 permanece parcial bajo lectura estricta: ML-03 tiene corrida y métrica, pero no llegó a Gold/API/UI; el SHAP productivo permanece <code>SIN_DATO</code>. Ver <code>Cierre_Proyecto_2026-09-08.md</code>.</div></article>
     </section>
     <div class="footer">FARO · Tablero PM v2.3 · <span id="footer-meta"></span></div>
   </main>

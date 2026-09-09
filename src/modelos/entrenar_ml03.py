@@ -28,7 +28,10 @@ from src.modelos.particion_temporal import (
 
 COLUMNA_COMPLETITUD = "indice_completitud_drivers"
 COLUMNA_TARGET = "target_variacion_matricula"
-FEATURES_ML03: tuple[str, ...] = (*DRIVERS, COLUMNA_COMPLETITUD)
+DRIVERS_OPERATIVOS_ML03: tuple[str, ...] = tuple(
+    driver for driver in DRIVERS if driver not in {"d5_agua", "d6_aire"}
+)
+FEATURES_ML03: tuple[str, ...] = (*DRIVERS_OPERATIVOS_ML03, COLUMNA_COMPLETITUD)
 COLUMNAS_PROHIBIDAS: frozenset[str] = frozenset(
     {"cct", "cve_mun", "id_ciclo", COLUMNA_TARGET}
 )
@@ -204,7 +207,7 @@ def _perfilar(asignaciones: pd.DataFrame) -> pd.DataFrame:
         .agg(
             observaciones=("cct", "size"),
             escuelas=("cct", "nunique"),
-            **{driver: (driver, "mean") for driver in DRIVERS},
+            **{driver: (driver, "mean") for driver in DRIVERS_OPERATIVOS_ML03},
             completitud_promedio=(COLUMNA_COMPLETITUD, "mean"),
         )
         .reset_index()
@@ -215,7 +218,8 @@ def _perfilar(asignaciones: pd.DataFrame) -> pd.DataFrame:
         # D3/D4 miden servicios presentes (alto = mejor); su PRESIÓN es el complemento (1 - media),
         # igual que la inversión del argmax en features_escuela.sql y entrenar_ml02.py (P-05).
         orden = sorted(
-            DRIVERS, key=lambda driver: (-_presion_driver(driver, fila[driver]), driver)
+            DRIVERS_OPERATIVOS_ML03,
+            key=lambda driver: (-_presion_driver(driver, fila[driver]), driver),
         )
         principal, secundaria = orden[:2]
         descripciones.append(

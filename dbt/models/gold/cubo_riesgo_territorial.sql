@@ -5,7 +5,7 @@
 -- cve_mun × nivel × id_ciclo.
 --
 -- Replica el contrato semántico C2:
--- riesgo ML-01 por LEFT JOIN, componentes aditivos y umbral >= 0.6.
+-- riesgo ML-01 por LEFT JOIN, componentes aditivos y umbral (LINEA_DE_ALERTA) >= 0.5.
 -- Sin predicciones el municipio/nivel NO desaparece:
 -- riesgo queda NULL y cobertura_riesgo='SIN_DATO'.
 
@@ -54,7 +54,7 @@ riesgo as (
 
         sum(p.indice_riesgo) as suma_indice_riesgo,
         count(*) as escuelas_con_prediccion,
-        count(*) filter (where p.indice_riesgo >= 0.6) as escuelas_en_riesgo
+        count(*) filter (where p.indice_riesgo >= 0.5) as escuelas_en_riesgo
 
     from {{ ref('fact_escuela_ciclo') }} f
     inner join {{ ref('dim_escuela') }} e

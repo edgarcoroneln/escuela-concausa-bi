@@ -9,6 +9,7 @@ from src.modelos import entrenar_ml03
 from src.modelos.contrato import DRIVERS
 from src.modelos.entrenar_ml03 import (
     COLUMNAS_PROHIBIDAS,
+    DRIVERS_OPERATIVOS_ML03,
     FEATURES_ML03,
     NOMBRE_MODELO,
     entrenar_y_evaluar,
@@ -47,13 +48,34 @@ def perfiles_sinteticos() -> pd.DataFrame:
 
 def test_features_no_contienen_llaves_ni_target() -> None:
     assert set(FEATURES_ML03).isdisjoint(COLUMNAS_PROHIBIDAS)
-    assert set(DRIVERS) < set(FEATURES_ML03)
+    assert set(DRIVERS_OPERATIVOS_ML03) < set(FEATURES_ML03)
+    assert {"d5_agua", "d6_aire"}.isdisjoint(FEATURES_ML03)
 
 
-def test_casos_completos_no_imputan(perfiles_sinteticos: pd.DataFrame) -> None:
+def test_d5_d6_no_bloquean_el_vector_operativo(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
     incompleto = perfiles_sinteticos.copy()
-    incompleto.loc[incompleto.index[0], "d5_agua"] = None
-    incompleto.loc[incompleto.index[0], "d5_cobertura"] = "SIN_DATO"
+    incompleto["d5_agua"] = incompleto["d5_agua"].astype("Float64")
+    incompleto["d6_aire"] = incompleto["d6_aire"].astype("Float64")
+    incompleto.loc[:, "d5_agua"] = pd.NA
+    incompleto.loc[:, "d5_cobertura"] = "SIN_DATO"
+    incompleto.loc[:, "d6_aire"] = pd.NA
+    incompleto.loc[:, "d6_cobertura"] = "SIN_DATO"
+
+    completos, excluidos = preparar_casos_completos(incompleto)
+
+    assert excluidos == 0
+    assert len(completos) == len(incompleto)
+    assert completos.loc[:, FEATURES_ML03].notna().all().all()
+
+
+def test_casos_completos_no_imputan_drivers_operativos(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    incompleto = perfiles_sinteticos.copy()
+    incompleto.loc[incompleto.index[0], "d2_inseguridad"] = None
+    incompleto.loc[incompleto.index[0], "d2_cobertura"] = "SIN_DATO"
 
     completos, excluidos = preparar_casos_completos(incompleto)
 
@@ -136,4 +158,5 @@ def test_registra_version_canonica_en_mlflow(
     assert recibido["modelo"] is resultado.modelo
     assert config.nombre_modelo == NOMBRE_MODELO == "ML03_ClusteringEscuelas"
     assert config.registrar_modelo is True
+    assert config.parametros["features"] == ",".join(FEATURES_ML03)
     assert config.metricas["silhouette_temporal_promedio"] > 0

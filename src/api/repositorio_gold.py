@@ -28,6 +28,32 @@ from src.api.db import get_engine, get_tablas
 # extra en cada petición a /escuelas, /kpis y /escuelas/{cct}.
 _CICLO_CACHE_TTL_SEGUNDOS = 300
 
+#: **Ancla de calibracion** de la sigmoide (`DEC-006`). `indice_riesgo = 0.60` equivale a proyectar
+#: una perdida de 5 % de matricula y `0.30` a matricula estable: la sigmoide de
+#: `src/modelos/riesgo.py` esta fijada por esas dos anclas. **No cambia** -- es lo que hace
+#: interpretable el indice. Se declara aqui aunque la API no la use en ningun calculo, para que
+#: quede a la vista que son DOS numeros distintos y no vuelvan a confundirse.
+ANCLA_SIGMOIDE = 0.60
+
+#: **Linea de alerta** del KPI-04 (`DEC-019`, 2026-09-06, revisa `DEC-006`). Criterio de negocio,
+#: no de calibracion, y por eso es un numero **distinto** del ancla. Antes eran el mismo 0.60 y
+#: no se podia bajar uno sin parecer que se movia el otro.
+#:
+#: Baja a 0.50 porque 0.60 era inalcanzable **por construccion**: sobre el Gold real de produccion
+#: (45,276 escuelas) el maximo que ML-01 predice es 0.5717 (perder 4.53 %), asi que el conteo daba
+#: 0 no por un defecto sino porque el corte estaba por encima del techo del fenomeno. 0.50 equivale
+#: a perder 3.4 %, justo por debajo del 3.7 % de desercion real en secundaria: la alerta enciende
+#: **antes** de que la escuela alcance la norma nacional, que es lo que significa "temprana". Bajar
+#: mas diluye -- 0.40 marcaria el 26 % del universo y 0.35 el 55 %. Medicion de Marina Garcia (C2).
+#:
+#: **ACOPLAMIENTO QUE HAY QUE RESPETAR AL DESPLEGAR.** Este mismo corte esta hardcodeado en los
+#: cubos de dbt (`cubo_riesgo_territorial.sql`, `cubo_comparador_municipio.sql`,
+#: `cubo_escuela_360.sql` y dos pruebas de paridad), donde alimenta columnas **materializadas** que
+#: son las que leen los tableros de Superset -- no esta constante. Mientras C1 no re-materialice
+#: Gold con 0.50, `/kpis` y los tableros **cuentan distinto**. El orden correcto es: dbt primero (o
+#: a la vez), API despues. Ver `BUG-058` y el aviso de Marina Garcia del 2026-09-06.
+LINEA_DE_ALERTA = 0.50
+
 # Whitelist de `order_by` (Decisión 3 de US-411, avisada a C2/C3, ver API_Specification.md §3.3).
 # Fuente de verdad para el Literal de FastAPI en `src/api/v1/gold.py` -- un valor fuera de aquí
 # nunca llega a construir SQL (ni siquiera necesita whitelist propia en la Postgres real).
@@ -307,7 +333,9 @@ class RepositorioGoldPostgres:
     ) -> dict:
         """Fórmulas tomadas literalmente de `vault/04_UX_Design/Screen_Specs.md` (KPI-02 variación
         como razón de sumas con la columna directa `matricula_ciclo_anterior` — BUG-031/P-09;
-        KPI-04 escuelas en riesgo vía JOIN a `gold.predicciones` con umbral 0.6 ratificado;
+        KPI-04 escuelas en riesgo vía JOIN a `gold.predicciones` con la **línea de alerta**
+        `LINEA_DE_ALERTA` (0.50, `DEC-019`) -- distinta del ancla de calibración de la sigmoide,
+        que sigue en 0.60;
         KPI-05 completitud promedio). El `cast(..., Numeric)` evita la división entera de dos
         columnas integer en Postgres (SUM(int)/SUM(int) truncaría a -1)."""
         fact, dim_municipio, predicciones = self._fact, self._dim_municipio, self._predicciones
@@ -322,7 +350,7 @@ class RepositorioGoldPostgres:
                     - 1
                 ).label("variacion_matricula"),
                 func.count(predicciones.c.cct)
-                .filter(predicciones.c.indice_riesgo >= 0.6)
+                .filter(predicciones.c.indice_riesgo >= LINEA_DE_ALERTA)
                 .label("escuelas_en_riesgo"),
                 func.coalesce(func.avg(fact.c.indice_completitud_drivers), 0).label(
                     "indice_completitud_drivers"
