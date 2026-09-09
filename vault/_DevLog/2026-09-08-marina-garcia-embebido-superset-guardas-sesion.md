@@ -5,7 +5,7 @@ author_human: "Marina García del Buey"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "sesión: se commitea el embebido de Superset que nunca llegó a main (BUG-061), guardas de sesión en las tres páginas (BUG-071) y un flaky de prueba diagnosticado (BUG-074)"
-touches: ["US-206", "US-526", "US-207", "US-305", "BUG-061", "BUG-070", "BUG-071", "BUG-074", "REQ-002", "REQ-004", "DEC-018"]
+touches: ["US-206", "US-526", "US-207", "US-305", "US-006", "BUG-061", "BUG-070", "BUG-071", "BUG-073", "BUG-074", "REQ-002", "REQ-004", "DEC-018", "DEC-020"]
 tags: [devlog, frontend, streamlit, superset, embebido, seguridad, celula-2]
 ---
 
@@ -105,10 +105,13 @@ Panel ML y en Chat. Ya no dependen del orden de pintado.
 
 - **Agente / modelo:** Claude Code / claude-opus-5
 - **Código de terceros:** el embebido (`superset_client.py`, `1_Dashboards.py` y sus dos pruebas)
-  es **de Manuel Serranía (C2)**, empaquetado por **Luis Téllez (C5)**. Lo subo yo por
-  indisponibilidad de Manuel, con respaldo explícito del PO. **Leí los cuatro archivos completos
-  antes de copiarlos** y verifiqué por mi cuenta que no traen secretos: la credencial de Superset
-  sale de `SUPERSET_ADMIN_PASSWORD`.
+  es **de Manuel Serranía (C2)**, empaquetado por **Luis Téllez (C5)**. Lo subo yo **con
+  autorización explícita del PO**, tras pedirle Edgar los cambios a Manuel sin recibir respuesta.
+  **Queda dicho tal cual, sin adornarlo:** Manuel sí está activo —mergeó el PR #289 hoy a las
+  14:50— así que esto no es indisponibilidad sino falta de respuesta a una petición del PO sobre
+  este trabajo concreto, y el PO decidió no seguir esperando la víspera de la demo. **Leí los
+  cuatro archivos completos antes de copiarlos** y verifiqué por mi cuenta que no traen secretos:
+  la credencial de Superset sale de `SUPERSET_ADMIN_PASSWORD`.
 - **Decisiones autónomas:** apagar el Panel de ML en vez de ocultarlo; poner la guarda de
   Dashboards **antes** del login a Superset y no después; corregir las pruebas por etiqueta en vez
   de reordenar la barra lateral.
@@ -116,11 +119,40 @@ Panel ML y en Chat. Ya no dependen del orden de pintado.
   (2) quité un `from typing import Any` sin usar que traía el handoff y que **habría reprobado el
   CI** por `ruff`.
 
+## 5. BUG-073: los ejemplos ya reproducen la ficha del guion
+
+`EJEMPLOS` y el `placeholder` mostraban `15DJN0049A` / `09DSN0042A`, CCT de la validación del
+camino del agente. Quien copiara un ejemplo **no llegaba a la ficha del bloque 3:00–5:00**. Ahora
+son el par oficial de `US-006`: `15DPR0920D` y `15DPR2254O`.
+
+**Se adelanta al post-demo con autorización del PO, y por una razón concreta:** el registro lo
+difirió *"para no tocar `src/frontend/**` por riesgo de regresar el embebido (BUG-061)"* — y este
+mismo PR **es el que commitea el embebido**. A partir de él ese riesgo deja de existir, así que la
+causa del aplazamiento desaparece con el propio cambio que la producía.
+
+La guarda se validó **reintroduciendo el defecto**: con los CCT viejos reprueba. Y su primera
+versión **reprobaba por mi propio comentario** —el que documenta el cambio—, la misma trampa que
+ya cayó en `test_el_cliente_es_el_unico_que_habla_con_la_api` y en el `sin_comentarios` de
+`test_drill_down_db03_db04.py`. Ahora mira solo líneas de código.
+
+## Evidencia de navegador (DEC-020)
+
+`DEC-020` exige, para cualquier cambio de frontend, **evidencia de navegador local — "captura en
+el chat, no sólo CI en verde"**. Streamlit levantado en un puerto aparte, contra la API local, sin
+sesión:
+
+| Página | Qué se ve |
+|---|---|
+| Dashboards | *"Inicia sesión para ver los tableros…"*, ningún embebido, **cero peticiones a Superset** |
+| Chat | *"Inicia sesion para preguntarle a los datos…"*, sin sugerencias ni campo de pregunta |
+| Panel de ML | El aviso correcto y, en el DOM: `Entidad` `disabled:true`, `CCT de la escuela` `disabled:true`, `Consultar predicción` `disabled:true` |
+
 ## Seguridad / calidad
 
 - [x] Sin secretos en el código (verificado por mí, no asumido del LEEME)
-- [x] `ruff` ✅ · **1117 pruebas en verde**, 4 saltadas
-- [x] 6 pruebas nuevas de guarda de sesión; el flaky validado con 5 corridas consecutivas
+- [x] `ruff` ✅ · **1118 pruebas en verde**, 4 saltadas · `vault_lint` ✅
+- [x] 7 pruebas nuevas; el flaky validado con 5 corridas consecutivas y la guarda de
+      BUG-073 validada reintroduciendo el defecto
 - [x] Las tres páginas exigen sesión; ninguna consulta la API ni Superset sin ella
 
 ## Lo que se ve y no se toca

@@ -293,3 +293,37 @@ def test_con_sesion_los_controles_vuelven(_ruta_frontend) -> None:
     assert not app.text_input[0].disabled
     assert not _submit(app).disabled
     assert not app.selectbox[0].disabled
+
+
+def test_los_ejemplos_son_el_par_oficial_de_la_demostracion(_ruta_frontend) -> None:
+    """BUG-073: los ejemplos deben poder copiarse y reproducir la ficha del guion.
+
+    Antes mostraban `15DJN0049A` / `09DSN0042A`, CCT de la validación del camino del
+    agente. Quien copiara uno no llegaba a la ficha del bloque 3:00-5:00.
+
+    El par de `US-006` no es arbitrario: mismo municipio, mismo nivel y `indice_riesgo`
+    idéntico, con driver dominante distinto. Si alguien lo cambia por dos CCT cualesquiera,
+    el bloque deja de aislar la única variable que quiere demostrar.
+
+    **Mira el CÓDIGO, no la prosa.** La primera versión de esta prueba buscaba los CCT
+    viejos en el archivo completo y reprobaba por el propio comentario que documenta el
+    cambio — la misma trampa que ya cayó en `test_el_cliente_es_el_unico_que_habla_con_la_api`
+    y en el `sin_comentarios` de `test_drill_down_db03_db04.py`: castigar la documentación
+    en vez del defecto.
+    """
+    fuente = (FRONTEND / "pages" / "2_Panel_ML.py").read_text(encoding="utf-8")
+    codigo = [
+        l for l in fuente.splitlines()
+        if l.strip() and not l.lstrip().startswith(("#", "#:"))
+    ]
+
+    assert 'EJEMPLOS = ("15DPR0920D", "15DPR2254O")' in codigo, (
+        "los ejemplos dejaron de ser el par oficial de US-006"
+    )
+    assert any('placeholder="15DPR0920D"' in l for l in codigo), (
+        "el placeholder del CCT no usa una escuela del par"
+    )
+    viejos = [l for l in codigo if "15DJN0049A" in l or "09DSN0042A" in l]
+    assert not viejos, (
+        f"volvieron los CCT de la validación del agente al código del panel: {viejos}"
+    )

@@ -54,9 +54,14 @@ NOMBRE_DRIVER = {
 }
 
 #: CCT de ejemplo para que el panel sea usable sin conocer una clave de memoria.
-#: Se eligen dos con **driver dominante distinto**, que es justo lo que la historia
-#: quiere demostrar.
-EJEMPLOS = ("15DJN0049A", "09DSN0042A")
+#: BUG-073: son **el par oficial de la demostración** (`US-006`), no dos CCT cualesquiera.
+#: Mismo municipio (Ecatepec), mismo nivel y `indice_riesgo` **idéntico (0.4774)**, con
+#: driver dominante distinto -- D4 conectividad y D2 inseguridad. Todo lo demás está
+#: controlado, así que la única variable que explica la diferencia de recomendación es el
+#: driver, que es exactamente lo que el bloque 3:00-5:00 del guion quiere demostrar.
+#: Antes eran `15DJN0049A` / `09DSN0042A`, CCT de la validación del camino del agente:
+#: quien copiara un ejemplo no reproducía la ficha del guion.
+EJEMPLOS = ("15DPR0920D", "15DPR2254O")
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -278,7 +283,7 @@ def render() -> None:
         cct = st.text_input(
             "CCT de la escuela",
             max_chars=10,
-            placeholder="15DJN0049A",
+            placeholder="15DPR0920D",
             help="Clave del Centro de Trabajo: 10 caracteres.",
             disabled=sin_sesion,
         ).strip().upper()
