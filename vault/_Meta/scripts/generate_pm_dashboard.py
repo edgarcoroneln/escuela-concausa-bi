@@ -687,7 +687,9 @@ def build_prd_compliance(rubric: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for label, points, req, ref in PRD_CRITERIA:
         prog = by_req.get(req, {}).get("progress", 0.0)
         done = by_req.get(req, {}).get("done", 0)
-        if prog >= 40 or (req == "REQ-005" and done):
+        if prog >= 100:
+            exec_band, exec_label = "green", "Cerrado administrativamente"
+        elif prog >= 40 or (req == "REQ-005" and done):
             exec_band, exec_label = "green", "En ejecución"
         elif prog > 0:
             exec_band, exec_label = "amber", "Iniciado"
@@ -695,6 +697,10 @@ def build_prd_compliance(rubric: list[dict[str, Any]]) -> list[dict[str, Any]]:
             exec_band, exec_label = "red", "Sin iniciar"
         if req == "REQ-005" and done:
             exec_label = "URL pública viva"
+        elif req == "REQ-003" and prog >= 100:
+            exec_band, exec_label = "amber", "Parcial técnico · ML-03 sin API/UI"
+        elif req == "REQ-007" and 0 < prog < 100:
+            exec_band, exec_label = "amber", "Pendiente demo/entrega"
         out.append(
             {
                 "criterion": label,

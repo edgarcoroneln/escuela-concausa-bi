@@ -6,7 +6,7 @@ status: approved
 source_of_truth: true
 traces_up: ["US-006", "US-305", "US-323", "REQ-006", "REQ-007", "vault/01_Product/PRD_General_Materia"]
 traces_down: ["vault/12_Roadmap_Sprints/Execution_Status"]
-last_reviewed: "2026-09-06"
+last_reviewed: "2026-09-08"
 tags: [demo, pitch, guion, contingencia, us-006, agente]
 ---
 
@@ -14,6 +14,16 @@ tags: [demo, pitch, guion, contingencia, us-006, agente]
 
 > 10 minutos. Quién muestra qué, en qué orden, y qué hacer si algo falla.
 > → [[vault/00_Start_Here/PROJECT_INDEX]] · [[vault/10_Risk_Governance/Decision_Log]]
+
+## Corte final — 8 de septiembre
+
+- **Diana Alvarez presenta el guion completo al profesor.** Edgar abre/cierra sólo si Diana lo
+  solicita; los Tech Leads quedan como respaldo para preguntas técnicas.
+- El despliegue final y el smoke de las tres superficies están cerrados por el PR #294; evidencia:
+  [[vault/_DevLog/2026-09-08-luis-tellez-despliegue-agente-us305-frontend-main]].
+- Rige el **code freeze definitivo de `DEC-021`**. No se incorporan cambios funcionales antes de la
+  demo; sólo se ejecuta el checklist de verificación.
+- `US-006` es la única historia abierta: se cierra cuando la demo y la entrega se ejecuten el 9-sep.
 
 ## La tesis, en una frase
 
@@ -30,14 +40,14 @@ verificación previa; si una falla en el ensayo del lunes, se cae ese bloque, no
 
 | Min | Bloque | Quién | Qué se ve | Verificación previa |
 |---|---|---|---|---|
-| 0:00–1:00 | **El problema** | Edgar Coronel | Sin pantalla. La escuela como sensor del territorio y las dos preguntas del proyecto | — |
+| 0:00–1:00 | **El problema** | Diana Alvarez | Sin pantalla. La escuela como sensor del territorio y las dos preguntas del proyecto | — |
 | 1:00–3:00 | **El dato es real** | Diana Alvarez | Las 8 fuentes; Bronze→Silver→Gold; cobertura por driver y `SIN_DATO` explícito | `/api/v1/kpis` responde y `indice_completitud_drivers` ≈ 0.62 |
-| 3:00–5:00 | **El diferenciador** | Marina García | Ficha de escuela → driver dominante → recomendación. **El par**: `15DPR0920D` y `15DPR2254O`, mismo riesgo (0.4774), distinta recomendación | Las dos responden en producción **ese día**, con sesión iniciada |
-| 5:00–6:30 | **El modelo** | Andrés González / Héctor Morales | Cómo se predice, partición temporal, y por qué **7 escuelas de 45 276** es un resultado, no una falla: la línea de alerta baja a 0.50 (`DEC-019`) sin recalibrar la sigmoide | Cifras del rerun a la vista y **el conteo** con la línea nueva — la **etiqueta** del tablero sigue diciendo 0.6 y eso se dice, ver punto 3 |
-| 6:30–7:30 | **Pregúntale a los datos** | Andrés González | El agente: una pregunta real con **su SQL a la vista**, y una destructiva **rechazada en vivo** | Los dos chips corridos contra producción **ese día**, con sesión iniciada |
-| 7:30–8:30 | **La plataforma** | Luis Téllez | Cloud Run, las dos URLs vivas, SSO con Google, RBAC 200/403 | Las dos URLs responden y el login entra |
-| 8:30–9:00 | **Cómo trabajamos** | Christian Ruiz | PRs, gate de propiedad, DevLogs, registros de bugs y decisiones | `vault_lint` y CI en verde |
-| 9:00–10:00 | **Cierre y preguntas** | Edgar Coronel | Qué falta, qué se cortó y por qué | — |
+| 3:00–5:00 | **El diferenciador** | Diana Alvarez | Ficha de escuela → driver dominante → recomendación. **El par**: `15DPR0920D` y `15DPR2254O`, mismo riesgo (0.4774), distinta recomendación | Las dos responden en producción **ese día**, con sesión iniciada |
+| 5:00–6:30 | **El modelo** | Diana Alvarez | Cómo se predice, partición temporal, y por qué **7 escuelas de 45 276** es un resultado, no una falla: la línea de alerta baja a 0.50 (`DEC-019`) sin recalibrar la sigmoide | Cifras del rerun a la vista y **el conteo** con la línea nueva — la **etiqueta** del tablero sigue diciendo 0.6 y eso se dice, ver punto 3 |
+| 6:30–7:30 | **Pregúntale a los datos** | Diana Alvarez | El agente: una pregunta real con **su SQL a la vista**, y una destructiva **rechazada en vivo** | Los dos chips corridos contra producción **ese día**, con sesión iniciada |
+| 7:30–8:30 | **La plataforma** | Diana Alvarez | Cloud Run, las tres superficies públicas, SSO con Google, RBAC 200/403 | FARO Web, API y Superset responden y el login entra |
+| 8:30–9:00 | **Cómo trabajamos** | Diana Alvarez | PRs, gate de propiedad, DevLogs, registros de bugs y decisiones | `vault_lint` y CI en verde |
+| 9:00–10:00 | **Cierre y preguntas** | Diana Alvarez | Entrega cerrada, limitaciones declaradas y siguiente iteración | — |
 
 ### De dónde salió el minuto del agente
 
@@ -56,7 +66,7 @@ el gate de propiedad y los DevLogs siguen ahí el jueves, auditables sin nosotro
 **Intocables:** el bloque de Marina (el diferenciador **es** la tesis) y el de Diana (2.5 pts, el peso
 más alto de la rúbrica).
 
-**Luis y Christian se enteran en el ensayo del lunes**, no el miércoles.
+**Luis y Christian quedan como respaldo técnico**, sin cambiar de narrador durante los diez minutos.
 
 ### El par de demostración
 
@@ -100,7 +110,7 @@ y abre una pregunta que no aporta nada.
 
 **Verificación previa (checklist del día).** Las dos responden en producción con sesión iniciada, y
 la ficha muestra nombre, nivel, municipio, sostenimiento, matrícula y completitud antes del
-índice. Se comprueba en el ensayo del lunes 7 y otra vez la mañana del 9.
+índice. La comprobación final se repite la mañana del 9.
 
 ## El bloque del agente, en detalle
 
@@ -146,17 +156,18 @@ Las preguntas salen del set de evaluación de `US-323` (`tests/fixtures/pregunta
 y recorre el flujo**, no que responda bien contra el Gold real. Cada chip se corre contra producción
 antes de quedar fijo.
 
-**Dónde corre.** El widget vive en FARO Web, que **hoy no está desplegado** (`US-526`). Si no alcanza,
-este bloque sale del Streamlit local **contra la API de producción** —el mismo arreglo ya verificado
-para el panel de ML— y **se dice en voz alta que la interfaz es local y el dato es de producción**.
+**Dónde corre.** El widget vive en FARO Web y está desplegado en
+`https://faro-frontend-eanzfglvyq-uc.a.run.app` (`US-526`). Si la superficie falla durante la
+evaluación, el plan B conserva el Streamlit local contra la API de producción y se declara la
+diferencia de ambiente.
 
-**Lo que puede tumbar el bloque, hoy abierto:**
+**Verificaciones del bloque para la mañana del 9:**
 
-- `/api/v1/agente/consulta` responde **401**: exige sesión. Depende de `US-405` y de que la cuenta con
-  la que se demuestre esté dada de alta.
-- `BUG-025` sigue `open` en el registro. El código ya **no** es el stub —`src/api/v1/agente.py:95`
-  llama a `procesar_consulta()` con los guardarraíles reales— pero **falta la verificación
-  autenticada**. Sin ella, el bloque no se presenta.
+- `/api/v1/agente/consulta` responde **401 sin sesión**, como exige `SEC-006`; iniciar sesión antes
+  de ejecutar el chip.
+- El agente completo está desplegado en `faro-api-00018-gjx` y el smoke del PR #294 quedó verde.
+  Aun así, los dos chips se repiten el mismo día: una demo depende del dato vivo, no del resultado
+  de la víspera.
 
 ## Lo que decimos antes de que lo pregunten
 
@@ -201,7 +212,7 @@ Cuatro cosas que se ven y que **conviene explicar nosotros**, no que las descubr
 
 | Si falla | Qué se hace | Preparado por |
 |---|---|---|
-| **FARO Web no alcanza a desplegarse** (`US-526`) | La demo corre sobre **Superset y la API por separado**: Luis muestra las dos URLs en el minuto 7 y Marina el panel desde el ambiente local. **Se les avisa a Manuel y a Marina el lunes**, no el miércoles | Edgar Coronel |
+| **FARO Web no responde** | La demo corre sobre **Superset y la API por separado**; el panel local usa la API de producción y se declara el plan B | Edgar Coronel |
 | **El agente no responde, o el login lo rechaza** | Se cae el bloque completo y **sus 60 s vuelven al modelo**. Se dice en una frase: *"el agente está construido y evaluado con un set de 20 preguntas; hoy no lo demostramos en vivo."* **No se improvisa tecleando otra pregunta** | Andrés González |
 | **La conexión de la sede** | Video de 3 min grabado el lunes con el recorrido completo, en el equipo local y en una memoria USB | Edgar Coronel |
 | **Superset no carga o el login rechaza** | Capturas de los 10 tableros en el vault (`04_UX_Design/capturas/`) y el recorrido se narra sobre ellas | Marina · Monserrat |
@@ -214,30 +225,27 @@ casa, no en la sala.
 
 ## La sesión se inicia DENTRO de la demo, no antes
 
-**Regla nueva, y no es opcional.** `BUG-070`: el refresco automático del access token está en `main`
-desde el 6-sep pero **nunca se desplegó** —la imagen del frontend es una cadena parchada a mano que
-nunca se construyó desde `main`—, así que **la sesión muere a los 15 minutos sin avisar**. Medido por
-Karla Monter: login 6:24, y a los 16 min el Panel ML rechaza la predicción.
+**Antecedente.** `BUG-070` mostró que la imagen anterior no incluía el refresco automático del
+access token y la sesión moría a los 15 minutos. El PR #294 documenta la remediación: C5 reconstruyó
+FARO Web desde `main` y promovió `faro-frontend-00009-way` al 100 % del tráfico. La verificación de
+duración >16 minutos se conserva en el checklist del día como control de operación.
 
 Consecuencia concreta: si iniciamos sesión en la preparación y la demo empieza 15 minutos después,
 **el Panel ML y el chat fallan a media presentación** y el mensaje que sale no dice *"vuelve a iniciar
 sesión"*, dice que la API rechazó la solicitud.
 
-**Por eso el login se hace en el minuto 7:30, en vivo, como parte del bloque de Luis** — que ya lo
-tenía en su verificación previa. Cuesta 20 segundos y elimina el riesgo por completo, esté o no
-reconstruida la imagen para el miércoles.
+**Por eso el login se hace dentro de la demo, dirigido por Diana.** Cuesta unos segundos, demuestra
+OAuth de Google y reduce el riesgo de llegar con una sesión expirada.
 
-**Lo que esto obliga en los bloques anteriores:** Marina (3:00–5:00) y Andrés (6:30–7:30) usan
-superficies que exigen sesión. Dos salidas, y hay que elegir una **en el ensayo, no en la sala**:
+**Lo que esto obliga en los bloques anteriores:** la ficha y el agente usan superficies que exigen
+sesión. Diana inicia sesión antes de la primera de ellas y conserva el plan B local preparado:
 
-- **Si la imagen se reconstruye a tiempo**, se inicia sesión una vez al abrir y el refresco la
-  sostiene. Es lo preferible.
-- **Si no**, quien abra primero inicia sesión **al empezar su bloque**, y nadie deja una sesión
-  abierta esperando.
+- Con la imagen final se inicia sesión una vez y el refresco debe sostenerla.
+- Si la prueba de duración falla, se reinicia sesión antes del bloque afectado y se registra el
+  defecto después de la entrega; no se modifica producción durante el freeze.
 
-**Verificación del arreglo, si C5 alcanza a reconstruir:** iniciar sesión, **esperar más de 16
-minutos**, y usar el Panel ML. Si no se corre esa prueba, se asume no arreglado y aplica la regla de
-arriba.
+**Verificación del arreglo:** iniciar sesión, esperar más de 16 minutos y usar el Panel ML. El
+rebuild ya está desplegado; esta prueba confirma comportamiento sostenido, no habilita otro cambio.
 
 ## Checklist del día, en orden
 
@@ -246,7 +254,7 @@ Se corre **la mañana del 9**, no la noche anterior:
 - [ ] `/api/v1/health` y `/api/v1/kpis` responden con los números esperados
 - [ ] Superset abre y el login con Google entra con la cuenta del evaluador
 - [ ] **Nadie deja una sesión abierta esperando**: el login va dentro de la demo (`BUG-070`)
-- [ ] Si C5 reconstruyó la imagen: **sesión abierta >16 min + Panel ML responde** — si no se probó, no está arreglado
+- [ ] **Sesión abierta >16 min + Panel ML responde** en la imagen final
 - [ ] El par de demostración responde **en producción**, con los valores del guion
 - [ ] **Los dos chips del agente responden en producción**, con la cuenta con la que se va a demostrar
 - [ ] **`BUG-025` verificado autenticado**, o el bloque del agente se declara caído **antes** de entrar
@@ -254,15 +262,8 @@ Se corre **la mañana del 9**, no la noche anterior:
 - [ ] Ambiente local levantado y verificado como respaldo
 - [ ] Video de respaldo accesible sin internet
 
-## Qué falta de este documento
+## Qué falta para cerrar `US-006`
 
-El **ensayo** en sí. Este guion es la mitad de `US-006`; la otra mitad es correrlo completo, con
-cronómetro y con las pantallas reales, **antes del 9**. Un guion sin ensayar no cumple la historia:
-el objetivo escrito en el plan de sprint dice *"preparar **y ensayar**"*.
-
-Y falta que **Andrés deje los chips del agente** (`US-305`): el bloque de 6:30–7:30 existe en este
-guion pero todavía no en la pantalla. Si el lunes no están, ese minuto vuelve al modelo y se dice
-por qué — lo que no se hace es presentarlo a ver si sale.
-
-**Fecha comprometida del ensayo: lunes 7 de septiembre.** Si el ensayo descubre que un bloque no se
-sostiene, se corta ese bloque y se redistribuye el minuto — no se presenta a ver qué pasa.
+Sólo **ejecutar la demo y formalizar la entrega el 9 de septiembre**. Diana da el guion completo;
+el equipo conserva las respuestas técnicas y los planes B. El checklist de la mañana sigue abierto
+porque debe medir el estado vivo del día, no porque falte desarrollo.
