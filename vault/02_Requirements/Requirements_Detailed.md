@@ -2,10 +2,11 @@
 id: DOC-REQ-DET
 title: "Requisitos Detallados"
 owner: "Edgar Edmundo Coronel Navarrete"
-status: in_review
+status: approved
 version: "1.0"
 source_of_truth: true
 traces_up: ["vault/01_Product/PRD_General_Materia", "vault/01_Product/PRD"]
+last_reviewed: "2026-09-08"
 tags: [requirements, detailed, rubrica]
 ---
 
@@ -43,7 +44,7 @@ tags: [requirements, detailed, rubrica]
     nulos silenciosos, y cada cubo expone su bandera de cobertura.
   - **AC-001.7** — Los scripts de ingesta son idempotentes: re-ejecutar no duplica filas.
 - **User Stories:** US-101, US-102, US-103, US-104, US-105, US-111, US-112, US-113, US-121, US-122, US-123
-- **Estado:** in_review
+- **Estado:** done — cierre técnico y administrativo; deuda residual declarada en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -100,7 +101,7 @@ tags: [requirements, detailed, rubrica]
     antes de que expire (`BUG-059`), con **403 demostrable en vivo** para una cuenta `ciudadano` sobre
     una ruta de `analista`. Ver `US-405`, `US-403` y `AC-004.5`.
 - **User Stories:** US-201, US-202, US-203, US-204, US-205, US-207, US-211, US-212, US-213, US-214, US-221, US-222, US-223, US-305, US-405, US-526
-- **Estado:** in_review
+- **Estado:** done — cierre administrativo con salvedades visuales y sin ML-03 en el panel; ver [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -125,7 +126,7 @@ tags: [requirements, detailed, rubrica]
   - **AC-003.6** — ML-02 devuelve, además de la clase, la atribución del driver dominante (SHAP) por
     escuela, y dos escuelas con igual riesgo pero distinto driver reciben recomendaciones distintas.
 - **User Stories:** US-301, US-302, US-303, US-311, US-312, US-313, US-321, US-322
-- **Estado:** in_review
+- **Estado:** done — cierre administrativo; cumplimiento externo parcial porque ML-03 no fue promovido a Gold/API/UI. La brecha se conserva en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -149,7 +150,7 @@ tags: [requirements, detailed, rubrica]
   - **AC-004.6** — Las entradas se validan con Pydantic; un payload inválido devuelve 422 sin exponer
     trazas internas.
 - **User Stories:** US-401, US-402, US-403, US-404, US-411, US-412, US-413, US-421, US-422, US-423
-- **Estado:** in_review
+- **Estado:** done — autenticación, autorización y contrato verificados; riesgos residuales aceptados en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -170,7 +171,7 @@ tags: [requirements, detailed, rubrica]
   - **AC-005.4** — La URL pública está viva y estable durante la ventana de evaluación (demo 9-sep).
   - **AC-005.5** — Los secretos no están en el repo; se inyectan por configuración/gestor de secretos.
 - **User Stories:** US-501, US-502, US-503, US-504, US-505, US-521, US-522, US-523, US-524, US-525
-- **Estado:** in_review
+- **Estado:** done — despliegue final verificado; deuda operativa aceptada en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -190,7 +191,7 @@ tags: [requirements, detailed, rubrica]
     documentado.
   - **AC-006.4** — El agente no ejecuta sentencias de escritura/borrado (`DELETE`/`UPDATE`/`DROP`).
 - **User Stories:** US-304, US-323
-- **Estado:** in_review
+- **Estado:** done — agente desplegado y funcional en modo single-turn; residual documentado en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
 
 ---
 
@@ -212,7 +213,7 @@ tags: [requirements, detailed, rubrica]
     Conventional Commits con el ID de la historia.
   - **AC-007.5** — Cada sesión con IA tiene su entrada de DevLog y `vault_lint.py` corre en verde.
 - **User Stories:** US-001, US-002, US-003, US-004, US-005, US-006
-- **Estado:** in_review
+- **Estado:** in_progress — sólo falta ejecutar la demo/entrega (`US-006`) el 9-sep; el resto queda cerrado por `DEC-021`.
 
 ---
 
@@ -221,10 +222,10 @@ tags: [requirements, detailed, rubrica]
 | REQ | Módulo de rúbrica | Puntos | # AC |
 |---|---|---|---|
 | REQ-001 | Data Engineering y pipelines multi-fuente | 2.5 | 7 |
-| REQ-002 | Frontend BI interactivo | 2.5 | 6 |
+| REQ-002 | Frontend BI interactivo | 2.5 | 9 |
 | REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 6 |
 | REQ-004 | Backend, API y autenticación avanzada | 1.5 | 6 |
 | REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 5 |
 | REQ-006 | Agente conversacional | 0.5 | 4 |
 | REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 5 |
-| **Total** | **7 módulos** | **10.0** | **39** |
+| **Total** | **7 módulos** | **10.0** | **42** |

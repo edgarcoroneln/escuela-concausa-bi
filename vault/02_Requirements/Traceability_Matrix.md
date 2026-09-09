@@ -6,7 +6,7 @@ status: in_review
 version: "1.0"
 source_of_truth: true
 traces_up: ["vault/02_Requirements/Requirements_Detailed", "vault/02_Requirements/User_Stories"]
-last_reviewed: "2026-08-28"
+last_reviewed: "2026-09-08"
 tags: [requirements, traceability, matrix]
 ---
 
@@ -706,3 +706,11 @@ anclas no existen en el DOM hasta hacer scroll.
 | REQ | Historias | Evidencia entregada | Desbloquea | Estado |
 |---|---|---|---|---|
 | `REQ-002` · `REQ-004` · `REQ-007` | `US-206` · `US-526` · `US-006` · `BUG-061` · `BUG-071` · `BUG-073` · `BUG-074` | **El embebido de Superset llega a `main`: `BUG-061` cerrado.** El codigo que corre en produccion no estaba en ninguna rama del repo —`_local/` esta en `.gitignore` y vivia solo en la maquina de C5—; lo sube C2 por indisponibilidad de Manuel Serrania, con respaldo del PO. Evidencia: `tests/test_frontend_superset_client.py` (5) y `tests/test_frontend_dashboards_streamlit.py` (3), **1117 pruebas en verde**, `ruff` limpio. `BUG-071` cerrado en las tres paginas, con 6 pruebas nuevas: guarda completa en Dashboards y Chat, controles apagados en el Panel de ML — y `AppTest` **hace cumplir `disabled`**, asi que la prueba mide comportamiento. `BUG-074` (flaky del mock HTTP/1.0) corregido y validado con 5 corridas consecutivas. **`BUG-073` cerrado**: los ejemplos del Panel de ML pasan al par oficial de `US-006` (`15DPR0920D` / `15DPR2254O`), con guarda validada reintroduciendo el defecto. Evidencia de navegador local segun `DEC-020`: las tres paginas verificadas sin sesion | [[vault/_DevLog/2026-09-08-marina-garcia-embebido-superset-guardas-sesion]] | **Desbloquea a C5 para reconstruir la imagen del frontend y cerrar `BUG-070`** (`critical`): el refresco de token esta en `main` desde el 6-sep pero no en la imagen desplegada | fixed |
+
+## Evidencia incremental — 2026-09-08 · cierre de construcción y despliegue final (PM)
+
+| REQ | Historias | Evidencia | Residual / siguiente gate | Estado |
+|---|---|---|---|---|
+| `REQ-001`…`REQ-007` | 91 de 92 US | `DEC-021` cierra administrativamente la fase de construcción. PR #294 promueve API/agente y reconstruye FARO Web desde `main`; FARO Web, API y Superset responden 200. El dictamen completo, URLs y correspondencia con el PRD viven en [[vault/13_Reports/Cierre_Proyecto_2026-09-08]] | `US-006`: ejecutar demo y entrega el 9-sep. Diana Alvarez presenta el guion completo. No entra código durante el freeze | ready_for_delivery |
+| `REQ-003` | `US-321` | PR #292: corrida real ML-03, `k=3`, Silhouette 0.4644549058, perfiles y cobertura documentados | `RISK-011`: no se promueve a Gold/API/UI. El módulo de tres modelos sigue **parcial bajo la letra estricta del profesor** | accepted_with_residual |
+| `REQ-004` · `REQ-005` · `REQ-006` | `US-305`, `US-404`, `US-423`, `US-505` | OAuth/RBAC 401/403/200 real, hardening revisado, agente completo en `faro-api-00018-gjx`, frontend `faro-frontend-00009-way` y smoke integral verde | UI del agente single-turn; sesión >16 min se repite en el checklist del día | ready |
