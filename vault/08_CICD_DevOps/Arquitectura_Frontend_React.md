@@ -15,9 +15,19 @@ date: "2026-09-10"
 > frontend 100% custom, con estética propia. Equipo 5 (Diana + Luis + Christian) es
 > responsable de programarlo y dejarlo en producción para el sábado en la
 > mañana. Este doc deja por escrito las decisiones de herramienta y
-> estructura antes de construir el contenido de las 12 pantallas, para no
+> estructura antes de construir el contenido pantalla por pantalla, para no
 > improvisar sobre la marcha y que Luis pueda tomar el deploy sin
-> reconstruir el razonamiento.
+> reconstruir el razonamiento. El número y contenido final de pantallas lo
+> define el plan de Equipo 3 (7 pantallas: Login + Entrada + Panorama +
+> Selección de caso + Expediente + Conclusión Top3 + Exploración); las 9
+> rutas ya construidas aquí se reconcilian contra ese plan, no al revés.
+
+> **Alcance de este documento:** stack, estructura de carpetas, auth y deploy — las decisiones
+> técnicas que sostienen el frontend, sin importar qué se dibuje sobre él. **El contenido visual
+> (paleta, tipografía, íconos, layout de cada pantalla) es responsabilidad de Equipo 3 (UX/UI,
+> Marina García) y vive en su propio plan:**
+> `vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO.md`. Este doc consume lo que ellos definan
+> (tokens de color, componentes), no lo decide.
 
 ## 1. Stack
 
@@ -80,11 +90,12 @@ frontend/
 `/vista-general` · `/comparativa` · `/mapa` · `/drivers` (matriz) ·
 `/comparacion-territorial` · `/hallazgos`.
 
-Estado actual: el layout, el router, la navegación y la identidad visual
-del mockup (top nav oscuro, paleta, matriz de drivers con escala
-divergente) ya están aplicados. Home, Los 7 casos, Vista general, Mapa,
-Drivers y Expediente tienen datos reales/mock conectados; Predicción y
-Recomendación dentro del expediente son la siguiente fase de contenido.
+Estado actual: el router, la navegación y la estructura de páginas ya están armados. La
+identidad visual (top nav oscuro, paleta, matriz de drivers con escala divergente) sigue el mockup
+que mandó Equipo 3 — se aplicó tal cual llegó, no se decidió aquí, y cualquier ajuste final de
+diseño lo define Equipo 3, no este documento. Home, Los 7 casos, Vista general, Mapa, Drivers y
+Expediente tienen datos reales/mock conectados; Predicción y Recomendación dentro del expediente
+son la siguiente fase de contenido.
 
 ## 5. El mapa (D3 + geojson real)
 
@@ -164,10 +175,13 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
 - **Christian/C4 (segundo punto, no bloqueante para hoy):** confirmar que `EscuelaDetalleOut` ya trae
   `latitud`/`longitud` reales para los 7 casos — hoy 5 de 7 son coordenadas placeholder documentadas
   como tal en el código.
-- **Equipo 6 (UX/UI — Marina, Oscar, Juan Macias, Monse):** el mockup de storytelling de 12 pantallas
-  ya se está siguiendo al pie de la letra (paleta, tipografía Inter, semáforo de riesgo). Falta que
-  confirmen si los tokens de color que se sacaron del mockup (`src/index.css`) son los definitivos o
-  si hay una guía de marca más formal que debamos usar en su lugar.
+- **Equipo 3 (UX/UI y storytelling — Marina, Oscar, Juan Macías, Monse):** dueños del diseño, no
+  E5. El mockup de storytelling se está siguiendo al pie de la letra (paleta, tipografía Inter,
+  semáforo de riesgo) como punto de partida, pero **la versión final de paleta/tipografía/íconos la
+  define su propio plan** (`vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO.md`), no este
+  documento. Falta que confirmen si los tokens de color que se sacaron del mockup
+  (`src/index.css`) son los definitivos o si hay una guía de marca más formal — E5 solo los
+  implementa una vez que Equipo 3 los cierre.
 - **Edgar (PM):** este documento pivotea de lo que dice `ADR-002` (Streamlit sobre Superset + API,
   `accepted`) hacia un frontend 100% custom — es un cambio de arquitectura, no un ajuste menor.
   Recomendación: que Edgar lo revise y decidamos juntos si esto se formaliza como un ADR nuevo que
@@ -179,11 +193,15 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
   deploy real (`build-and-push-frontend.sh` + `deploy-cloud-run-frontend.sh`) — el `docker build` ya
   quedó validado, así que esto ya no espera nada de Docker Desktop.
 
-## 9. Qué falta (siguiente fase, contenido pantalla por pantalla)
+## 9. Qué falta
 
-- Tarjetas de "Pistas"/drivers con íconos (parcialmente hecho en Los 7 casos).
+**De E5 (ingeniería, no depende de nadie más):**
 - Gráfica de predicción con tramo punteado (forecast) y tab de Recomendación dentro del expediente.
 - Conectar cada pantalla a `src/lib/api.js` en vez de `mock.js`.
-- Confirmar con Equipo 6 la paleta/tipografía final (ver §8).
 - Code-splitting por ruta (`React.lazy`) si sobra tiempo — el bundle pesa ~940KB, no bloqueante para
   la demo pero señalado por Vite en el build.
+
+**Depende de Equipo 3 (E5 solo lo integra una vez definido, no lo diseña):**
+- Íconos y tratamiento final de las tarjetas de "Pistas"/drivers (parcialmente hecho en Los 7 casos
+  con placeholders, a la espera de lo que entregue Equipo 3).
+- Paleta/tipografía definitivas (ver §8) — mientras tanto se usan los tokens sacados del mockup.
