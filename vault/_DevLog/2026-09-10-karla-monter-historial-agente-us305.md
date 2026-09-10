@@ -1,7 +1,7 @@
 ---
 project: "FARO"
 date: "2026-09-10"
-author_human: "Karla Alejandra Monter"
+author_human: "Karla Alejandra Monter Benitez"
 agent: "Claude Code"
 model: "claude-sonnet-5"
 session_duration: "1h"
