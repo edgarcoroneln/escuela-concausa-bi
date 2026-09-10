@@ -2,17 +2,22 @@
 id: DOC-UXGUIDE
 title: "UX Guidelines"
 owner: "Edgar Edmundo Coronel Navarrete"
-status: approved
-source_of_truth: true
+status: superseded
+source_of_truth: false
+superseded_by: "ADR-011"
 traces_up: ["REQ-002", "vault/01_Product/PRD_General_Materia"]
 traces_down: ["vault/04_UX_Design/Accessibility", "US-215a", "US-215b", "DEC-016"]
-last_reviewed: "2026-09-05"
+last_reviewed: "2026-09-10"
 tags: [ux, design-system, accesibilidad]
 ---
 
 # UX Guidelines — FARO
 
 > Sistema de diseño. → [[vault/04_UX_Design/_index]] · [[vault/04_UX_Design/Accessibility]]
+
+> **Baseline histórico, sustituido para S7 por `DEC-023` y `ADR-011`.** La ausencia deliberada de
+> identidad propia y la dependencia visual de Superset/Streamlit describen la entrega del 9-sep; no
+> restringen el rediseño. Los criterios de accesibilidad y `SIN_DATO` continúan vigentes.
 
 ## Para qué sirve este documento
 

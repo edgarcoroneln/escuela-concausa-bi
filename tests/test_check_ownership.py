@@ -63,11 +63,11 @@ def test_src_frontend_tiene_un_solo_dueno_en_verde(datos):
     en_verde = [
         i for i, p in datos["personas"].items() if "src/frontend/**" in p.get("verde", [])
     ]
-    assert en_verde == ["manuel-serrania"]
+    assert en_verde == ["diana-alvarez"]
 
 
 def test_quien_no_es_dueno_de_src_frontend_lo_tiene_en_amarillo(datos):
-    for identidad in ("andres-gonzalez", "christian-ruiz", "marina-garcia"):
+    for identidad in ("andres-gonzalez", "christian-ruiz", "marina-garcia", "luis-tellez"):
         assert "src/frontend/**" in datos["personas"][identidad]["amarillo"]
 
 

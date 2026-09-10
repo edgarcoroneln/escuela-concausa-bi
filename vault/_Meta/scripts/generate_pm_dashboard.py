@@ -37,7 +37,9 @@ VALID_STATES = set(STATE_WEIGHT)
 #: Guarda deliberada: si el conteo cambia sin que alguien toque esta línea, es un error de parseo
 #: o una US que se coló/desapareció, no un cambio de alcance. 2026-09-05: 91 -> 92 al dar de alta
 #: US-526 (contenerizar y desplegar FARO Web), que faltaba desde que se decidió hacerlo.
-CATALOGO_US = 92
+#: 2026-09-10: 92 -> 99 al abrir seis frentes colectivos y una US de gobernanza
+#: por DEC-022. No se crean tareas personales hasta que cada equipo acuerde su desglose.
+CATALOGO_US = 99
 SPRINT_DATES = {
     "S1": ("2026-08-03", "2026-08-09"),
     "S2": ("2026-08-10", "2026-08-16"),
@@ -45,6 +47,7 @@ SPRINT_DATES = {
     "S4": ("2026-08-24", "2026-08-30"),
     "S5": ("2026-08-31", "2026-09-06"),
     "S6": ("2026-09-07", "2026-09-08"),
+    "S7": ("2026-09-10", "2026-09-13"),
 }
 
 
@@ -339,6 +342,46 @@ def parse_individual_plans(root: Path) -> dict[str, dict[str, Any]]:
         }
     if len(plans) != 21:
         raise ValueError(f"Se esperaban 21 planes individuales y se encontraron {len(plans)}")
+
+    # S7 reorganiza temporalmente a todo el equipo. No hay tareas individuales acordadas:
+    # el plan declara seis frentes colectivos, un líder por frente y un padrón de participación.
+    # Los 21 planes históricos se conservan como evidencia S1-S6, pero no deben hacer que el
+    # tablero muestre una misión vieja ni inventar una asignación personal para S7.
+    recovery_path = root / "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md"
+    if recovery_path.exists():
+        recovery_lines = read(recovery_path).splitlines()
+        teams: dict[str, dict[str, str]] = {}
+        for line in recovery_lines:
+            cells = table_cells(line) if line.startswith("|") else []
+            if len(cells) < 5 or not re.fullmatch(r"US-6\d{2}", cells[0]):
+                continue
+            story_id, team, owner, result, dependency = cells[:5]
+            if owner not in plans:
+                raise ValueError(f"Líder S7 no existe en planes individuales: {owner}")
+            teams[team] = {"leader": owner, "result": result, "dependency": dependency}
+            plans[owner]["mission"] = f"S7 · Liderar {team}"
+            plans[owner]["inputs"] = dependency
+            plans[owner]["outputs"] = result
+            plans[owner]["reviewer"] = "QA · PO"
+            plans[owner]["delivery"] = "PR desde dev/{identidad} con prueba, DevLog y trazabilidad"
+            plans[owner]["path"] = str(recovery_path.relative_to(root))
+            plans[owner]["stories"][story_id] = {
+                "objective": f"Coordinar el resultado colectivo de {team}",
+                "deliverable": result,
+                "delivery": dependency,
+            }
+        for line in recovery_lines:
+            cells = table_cells(line) if line.startswith("|") else []
+            if len(cells) != 3 or cells[0] not in plans or cells[1] not in teams:
+                continue
+            owner, team, participation = cells
+            metadata = teams[team]
+            plans[owner]["mission"] = f"S7 · {participation} de {team}; desglose interno pendiente"
+            plans[owner]["inputs"] = "Acuerdos del equipo y revisión diaria de las 18:00"
+            plans[owner]["outputs"] = metadata["result"]
+            plans[owner]["reviewer"] = f"{metadata['leader']} · QA · PO"
+            plans[owner]["delivery"] = "Contribución al resultado común mediante su rama dev/* y PR"
+            plans[owner]["path"] = str(recovery_path.relative_to(root))
     return plans
 
 
