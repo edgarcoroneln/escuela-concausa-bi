@@ -103,6 +103,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       LOG_LEVEL: ${LOG_LEVEL}
+      # Variables del Agente Conversacional (Fase 4 / Célula 5)
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AGENTE_MODELO: ${AGENTE_MODELO:-}
+      DATABASE_URL_READ_ONLY: ${DATABASE_URL_READ_ONLY:-}
+      CHROMA_HOST: ${CHROMA_HOST:-chromadb}
+      CHROMA_PORT: ${CHROMA_PORT:-8000}
     ports:
       - "127.0.0.1:${API_PORT}:${API_PORT}"  # Solo localhost (seguridad)
     volumes:
