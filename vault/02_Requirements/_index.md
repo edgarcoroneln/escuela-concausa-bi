@@ -14,5 +14,5 @@ tags: [moc, requirements]
 |---|---|
 | [[vault/02_Requirements/Requirements_General]] | Requisitos de alto nivel (por épica/capacidad) |
 | [[vault/02_Requirements/Requirements_Detailed]] | Requisitos detallados `REQ-001`…`REQ-007` (uno por módulo de rúbrica) + criterios `AC-###` |
-| [[vault/02_Requirements/User_Stories]] | **Catálogo único** de las 87 historias `US-###` (por célula) + mapeo a REQ y resúmenes por sprint/REQ/persona |
+| [[vault/02_Requirements/User_Stories]] | **Catálogo único** de 113 historias `US-###`: 92 históricas + 21 de recuperación S7, con dueño, sprint y REQ |
 | [[vault/02_Requirements/Traceability_Matrix]] | ⭐ Matriz viva REQ→…→Release |

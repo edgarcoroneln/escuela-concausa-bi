@@ -37,7 +37,8 @@ VALID_STATES = set(STATE_WEIGHT)
 #: Guarda deliberada: si el conteo cambia sin que alguien toque esta línea, es un error de parseo
 #: o una US que se coló/desapareció, no un cambio de alcance. 2026-09-05: 91 -> 92 al dar de alta
 #: US-526 (contenerizar y desplegar FARO Web), que faltaba desde que se decidió hacerlo.
-CATALOGO_US = 92
+#: 2026-09-10: 92 -> 113 al abrir 21 historias de recuperación por DEC-022.
+CATALOGO_US = 113
 SPRINT_DATES = {
     "S1": ("2026-08-03", "2026-08-09"),
     "S2": ("2026-08-10", "2026-08-16"),
@@ -45,6 +46,7 @@ SPRINT_DATES = {
     "S4": ("2026-08-24", "2026-08-30"),
     "S5": ("2026-08-31", "2026-09-06"),
     "S6": ("2026-09-07", "2026-09-08"),
+    "S7": ("2026-09-10", "2026-09-13"),
 }
 
 
@@ -339,6 +341,30 @@ def parse_individual_plans(root: Path) -> dict[str, dict[str, Any]]:
         }
     if len(plans) != 21:
         raise ValueError(f"Se esperaban 21 planes individuales y se encontraron {len(plans)}")
+
+    # S7 reorganiza temporalmente a todo el equipo. El plan de recuperación es la fuente
+    # canónica de la nueva misión y del entregable por persona; los 21 planes históricos se
+    # conservan como evidencia S1-S6, pero no deben hacer que el tablero muestre una misión vieja.
+    recovery_path = root / "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md"
+    if recovery_path.exists():
+        for line in read(recovery_path).splitlines():
+            cells = table_cells(line) if line.startswith("|") else []
+            if len(cells) < 5 or not re.fullmatch(r"US-6\d{2}", cells[0]):
+                continue
+            story_id, owner, objective, deliverable, dependency = cells[:5]
+            if owner not in plans:
+                raise ValueError(f"Responsable S7 no existe en planes individuales: {owner}")
+            plans[owner]["mission"] = f"S7 · {objective}"
+            plans[owner]["inputs"] = dependency
+            plans[owner]["outputs"] = deliverable
+            plans[owner]["reviewer"] = "Líder del equipo S7 · QA · PO"
+            plans[owner]["delivery"] = "PR desde dev/{identidad} con prueba, DevLog y trazabilidad"
+            plans[owner]["path"] = str(recovery_path.relative_to(root))
+            plans[owner]["stories"][story_id] = {
+                "objective": objective,
+                "deliverable": deliverable,
+                "delivery": dependency,
+            }
     return plans
 
 

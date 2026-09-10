@@ -11,7 +11,7 @@ from pathlib import Path
 
 VALID_STATES = {"planned", "in_progress", "in_review", "blocked", "done", "descoped"}
 # Historias del catálogo (vault/02_Requirements/User_Stories.md), en alcance o recortadas.
-CATALOGO_US = 92  # 91 + US-526 (FARO Web a Cloud Run), dada de alta el 2026-09-05
+CATALOGO_US = 113  # 92 históricas + 21 de recuperación S7, DEC-022
 
 
 def fail(message: str, failures: list[str]) -> None:
@@ -38,7 +38,7 @@ def main(root_value: str = ".") -> int:
         fail("La entrega no traza al Plan Maestro", failures)
     stories = data.get("stories", [])
     ids = [story.get("id") for story in stories]
-    # El catálogo son 91 historias y sigue siéndolo: recortar no borra la historia, la
+    # El catálogo incluye el baseline y la recuperación: recortar no borra una historia, la
     # saca del alcance (DEC-014). La guarda vigila el TOTAL -- alcance + recortadas --
     # para que una US no pueda desaparecer del tablero en silencio, que es lo que esta
     # comprobación existe para impedir.
@@ -108,9 +108,9 @@ def main(root_value: str = ".") -> int:
             fail(f"Rúbrica {item.get('req')} sin banda de semáforo válida", failures)
     # Bloques ejecutivos (schema 2.3)
     performance = data.get("performance", {})
-    if len(performance.get("people", [])) != 21 or len(performance.get("sprints", [])) != 6:
-        fail("Bloque performance incompleto (21 personas × 6 sprints)", failures)
-    if performance.get("current_sprint") not in {f"S{i}" for i in range(1, 7)}:
+    if len(performance.get("people", [])) != 21 or len(performance.get("sprints", [])) != 7:
+        fail("Bloque performance incompleto (21 personas × 7 sprints)", failures)
+    if performance.get("current_sprint") not in {f"S{i}" for i in range(1, 8)}:
         fail("performance.current_sprint inválido", failures)
     engagement = data.get("engagement", {})
     eng_people = engagement.get("people", [])

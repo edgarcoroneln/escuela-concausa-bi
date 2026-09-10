@@ -33,9 +33,13 @@ driver dominante. El proyecto es **prescriptivo**, no solo descriptivo.
 
 **Privacidad por diseño:** el Formato 911 observa la ESCUELA, nunca al alumno. Todo es agregado.
 
-- **Entrega / demo en vivo:** miércoles 9 de septiembre de 2026
-- **Equipo:** 21 personas en 5 células + PO
-- **Ventana:** 6 semanas desde el 3 de agosto · **CODE FREEZE 6 de septiembre**
+- **Nueva entrega:** lunes 14 de septiembre de 2026, a primera hora
+- **Equipo:** 21 personas en 6 equipos de recuperación; Edgar conserva el rol PO y apoya QA
+- **Ventana activa:** jueves 10 a domingo 13 · revisión diaria 18:00 · **CODE FREEZE domingo 20:00**
+
+> La revisión del profesor del 9-sep no aceptó satisfactoriamente la entrega. `DEC-022` reabre el
+> desarrollo. Contexto vigente: `vault/13_Reports/Revision_Profesor_2026-09-09.md` y
+> `vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md`.
 
 ---
 
@@ -165,16 +169,16 @@ nulo silencioso.** Cada cubo expone bandera de cobertura y se calcula `indice_co
 
 ---
 
-## 6. Equipo — 5 células
+## 6. Equipo — 6 frentes de recuperación S7
 
-| Célula | Área | Tech Lead | Peso rúbrica |
+| Equipo | Área | Líder | Integrantes |
 |---|---|---|---|
-| 1 | Data Engineering & Quality | Diana Alvarez | 2.5 pts |
-| 2 | Analytics & BI | Manuel Serranía | 2.5 pts |
-| 3 | ML & Agente IA | Andrés González Habib | 2.0 pts |
-| 4 | Backend, API & Seguridad | Christian Ruiz | 1.5 pts |
-| 5 | Cloud & DevOps | Luis Téllez | 1.0 pt |
-| PO | Dirección de proyecto | Edgar Coronel | 0.5 pts |
+| 1 | Componentes y memoria técnica | Héctor Morales | Manuel Serranía · Carlos Mayorga |
+| 2 | Chat IA natural | Andrés González | Karla Monter · Alejandro Velázquez |
+| 3 | UX/UI y storytelling | Marina García | Oscar Quiroz · Juan Macías · Monserrat Miranda |
+| 4 | ML-03 y explicación ML | Estefany Hernández | Deni Garrido · Luis García |
+| 5 | Frontend y deploy | Diana Alvarez | Luis Téllez · Christian Ruiz |
+| 6 | QA integral | Edward Ruiz | Emilio Galnares · Edgar Jiménez · Eloisa González · Edgar Coronel (comodín) |
 
 Cada integrante tiene su plan en `vault/12_Roadmap_Sprints/Sprints/` y su alcance de IA en
 `vault/09_AI_Governance/Agent_Contexts/`.
@@ -217,4 +221,4 @@ dbt test
 
 ---
 
-*Última actualización: 31 de julio de 2026 · Proyecto final BI · MTIIA Anáhuac*
+*Última actualización: 10 de septiembre de 2026 · Sprint de recuperación · MTIIA Anáhuac*
