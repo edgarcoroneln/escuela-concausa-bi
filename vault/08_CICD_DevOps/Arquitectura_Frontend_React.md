@@ -1,17 +1,18 @@
 ---
-id: DOC-FRONTEND-ARCH
+id: DOC-E5-ARQ-FRONTEND-REACT
 title: "Arquitectura del Frontend React (rediseño post-feedback del Dr.)"
-owner: "Diana Álvarez / Luis Téllez (Equipo x: Front + Deploy en Prod)"
+owner: "Diana Álvarez / Luis Téllez (Equipo 5: Frontend y despliegue)"
 status: draft
-traces_up: ["REQ-005"]
-tags: [frontend, react, arquitectura, deploy, equipo-x]
+traces_up: ["REQ-005", "US-641"]
+traces_down: ["vault/03_Architecture/ADRs/ADR-012-retiro-streamlit-frontend-nativo"]
+tags: [frontend, react, arquitectura, deploy, equipo-5]
 date: "2026-09-10"
 ---
 
 # Arquitectura del Frontend React
 
 > Contexto: el Dr. pidió tirar Superset/Streamlit visibles y rehacer el
-> frontend 100% custom, con estética propia. Equipo x (Diana + Luis) es
+> frontend 100% custom, con estética propia. Equipo 5 (Diana + Luis + Christian) es
 > responsable de programarlo y dejarlo en producción para el sábado en la
 > mañana. Este doc deja por escrito las decisiones de herramienta y
 > estructura antes de construir el contenido de las 12 pantallas, para no
