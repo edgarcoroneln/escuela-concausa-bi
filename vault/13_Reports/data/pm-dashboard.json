@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-10T19:02:52+00:00",
+    "generated_at": "2026-09-10T21:09:22+00:00",
     "generated_date": "2026-09-10",
-    "commit": "2e0fb24",
+    "commit": "0735215",
     "branch": "main",
     "working_tree": "clean",
-    "source_fingerprint": "d8d104b59822",
+    "source_fingerprint": "07e1173310fd",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -13,13 +13,13 @@
   "summary": {
     "total": 99,
     "done": 91,
-    "planned": 6,
-    "in_progress": 2,
+    "planned": 5,
+    "in_progress": 3,
     "in_review": 0,
     "blocked": 0,
-    "wip": 2,
+    "wip": 3,
     "descoped": 0,
-    "progress": 92.6,
+    "progress": 93.0,
     "days_to_demo": 4
   },
   "delivery": {
@@ -1730,10 +1730,10 @@
       "sprint": "S7",
       "req": "REQ-002",
       "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "status": "planned",
-      "started": "—",
+      "status": "in_progress",
+      "started": "2026-09-10",
       "blocked_since": "—",
-      "evidence": "Frente colectivo E3; Marina coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
+      "evidence": "PR #297 aprobado y mergeado: estructura y storytelling inicial en vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO. DEC-023 y ADR-011 autorizan el rediseño sin conservar Superset como experiencia principal. Pendientes: contenido final, mockups, handoff a E5 y QA",
       "updated": "2026-09-10",
       "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
       "deliverable": "Propuesta visual, gráficas, pantallas y storytelling",
@@ -2025,8 +2025,8 @@
         "US-654"
       ],
       "pr_count": 49,
-      "pr_open": 1,
-      "pr_merged": 45,
+      "pr_open": 0,
+      "pr_merged": 46,
       "stories": 7,
       "done": 5,
       "wip": 2,
@@ -2395,9 +2395,9 @@
       "pr_merged": 16,
       "stories": 7,
       "done": 6,
-      "wip": 0,
+      "wip": 1,
       "blocked": 0,
-      "progress": 85.7
+      "progress": 90.7
     },
     {
       "name": "Monserrat Xcaret Miranda Olivas",
@@ -2572,9 +2572,9 @@
       ],
       "stories": 1,
       "done": 0,
-      "wip": 0,
+      "wip": 1,
       "blocked": 0,
-      "progress": 0.0
+      "progress": 35.0
     },
     {
       "name": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
@@ -2628,8 +2628,8 @@
       "points": 2.5,
       "stories": 22,
       "done": 20,
-      "progress": 90.9,
-      "secured_points": 2.27,
+      "progress": 92.5,
+      "secured_points": 2.31,
       "band": "green"
     },
     {
@@ -3656,6 +3656,52 @@
         }
       },
       {
+        "name": "Marina García del Buey",
+        "cell": "Célula 3",
+        "engagement": 90.7,
+        "commits": 51,
+        "prs_merged": 16,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S6": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S7": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          }
+        }
+      },
+      {
         "name": "Diana Aracely Alvarez Varela",
         "cell": "Célula 5",
         "engagement": 87.5,
@@ -3693,52 +3739,6 @@
             "n": 0,
             "done": 0,
             "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Marina García del Buey",
-        "cell": "Célula 3",
-        "engagement": 85.7,
-        "commits": 51,
-        "prs_merged": 16,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S6": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
           },
           "S7": {
             "n": 1,
@@ -3797,9 +3797,9 @@
         "name": "Edgar Edmundo Coronel Navarrete",
         "cell": "Célula 6",
         "engagement": 81.4,
-        "commits": 572,
-        "prs_merged": 45,
-        "prs_open": 1,
+        "commits": 573,
+        "prs_merged": 46,
+        "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
@@ -3986,11 +3986,11 @@
         "cell": "Célula 6",
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
-        "prs_merged": 45,
-        "devlogs": 58,
+        "prs_merged": 46,
+        "devlogs": 59,
         "active_us": 7,
-        "activity": 110,
-        "signal": "45 PR · 58 DevLog · 7 US activas"
+        "activity": 112,
+        "signal": "46 PR · 59 DevLog · 7 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
@@ -4043,9 +4043,9 @@
         "active": true,
         "prs_merged": 16,
         "devlogs": 17,
-        "active_us": 6,
-        "activity": 39,
-        "signal": "16 PR · 17 DevLog · 6 US activas"
+        "active_us": 7,
+        "activity": 40,
+        "signal": "16 PR · 17 DevLog · 7 US activas"
       },
       {
         "name": "Manuel Alejandro Serranía Reinada",
@@ -4246,15 +4246,6 @@
       "su_turno": true
     },
     {
-      "id": "US-621",
-      "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
-      "owner": "Marina García del Buey",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-631",
       "objective": "Coordinar el resultado colectivo de E4 · ML-03",
       "owner": "Estefany Lucero Hernández Loredo",
@@ -4280,6 +4271,15 @@
       "sprint": "S7",
       "status": "planned",
       "su_turno": true
+    },
+    {
+      "id": "US-621",
+      "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
+      "owner": "Marina García del Buey",
+      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
+      "sprint": "S7",
+      "status": "in_progress",
+      "su_turno": false
     },
     {
       "id": "US-654",
@@ -4310,7 +4310,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 90.9
+      "progress": 92.5
     },
     {
       "criterion": "3 · Tres modelos ML vía API",
@@ -4524,9 +4524,23 @@
   "git_activity": {
     "available": true,
     "repository": "edgarcoroneln/escuela-concausa-bi",
-    "generated_at": "2026-09-10T19:02:52+00:00",
+    "generated_at": "2026-09-10T21:09:22+00:00",
     "scope": "Todos los PR del repositorio, hasta 2,000 por ejecución",
     "prs": [
+      {
+        "number": 299,
+        "title": "[Edgar Coronel] - Autoriza rediseño UX/UI narrativo (US-621, US-641) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "edgarcoroneln",
+        "created_at": "2026-09-10T18:40:16Z",
+        "merged_at": "2026-09-10T21:08:22Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/299",
+        "story_ids": [
+          "US-621",
+          "US-641",
+          "US-651"
+        ]
+      },
       {
         "number": 298,
         "title": "[Andrés González Habib] - Fase 1 del plan de mejora del chat (US-304a, US-304b, US-305) - [sync|CI|DoF|DevLog]",
@@ -4539,20 +4553,6 @@
           "US-304a",
           "US-304b",
           "US-305"
-        ]
-      },
-      {
-        "number": 299,
-        "title": "[Edgar Coronel] - Autoriza rediseño UX/UI narrativo (US-621, US-641) - [sync|CI|DoF|DevLog]",
-        "state": "open",
-        "author": "edgarcoroneln",
-        "created_at": "2026-09-10T18:40:16Z",
-        "merged_at": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/299",
-        "story_ids": [
-          "US-621",
-          "US-641",
-          "US-651"
         ]
       },
       {
@@ -8665,13 +8665,13 @@
     "commits": [
       {
         "author": "edgarcoroneln",
-        "count": 572,
-        "last_at": "2026-09-10T19:01:59Z"
+        "count": 573,
+        "last_at": "2026-09-10T21:08:22Z"
       },
       {
         "author": "github-actions[bot]",
-        "count": 253,
-        "last_at": "2026-09-10T18:27:17Z"
+        "count": 252,
+        "last_at": "2026-09-10T19:02:52Z"
       },
       {
         "author": "LuisTellez03",
@@ -8781,6 +8781,54 @@
     ],
     "ci": [
       {
+        "name": "CI",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530477827"
+      },
+      {
+        "name": "Refresh PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530477758"
+      },
+      {
+        "name": "Update Project Graph",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530477737"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530477730"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530258960"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530215725"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530215715"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34530215713"
+      },
+      {
         "name": "PM Dashboard",
         "status": "completed",
         "conclusion": "success",
@@ -8788,8 +8836,8 @@
       },
       {
         "name": "Refresh PM Dashboard",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34517951998"
       },
       {
@@ -8800,8 +8848,8 @@
       },
       {
         "name": "CI",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34517951928"
       },
       {
@@ -8851,54 +8899,6 @@
         "status": "completed",
         "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34514332967"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34514332906"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34514332774"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34512020024"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34512020012"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34512020011"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34510960218"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34510960161"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "failure",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34510960132"
       }
     ],
     "note": "Actividad agregada; no determina Done ni se usa como ranking individual."
@@ -9200,10 +9200,10 @@
     {
       "date": "2026-09-10",
       "remaining": 8,
-      "weighted_remaining": 7.3,
+      "weighted_remaining": 6.9,
       "done": 91,
       "scope": 99,
-      "wip": 2,
+      "wip": 3,
       "blocked": 0
     }
   ]

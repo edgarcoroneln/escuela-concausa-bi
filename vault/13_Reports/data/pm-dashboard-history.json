@@ -295,10 +295,10 @@
   {
     "date": "2026-09-10",
     "remaining": 8,
-    "weighted_remaining": 7.3,
+    "weighted_remaining": 6.9,
     "done": 91,
     "scope": 99,
-    "wip": 2,
+    "wip": 3,
     "blocked": 0
   }
 ]
