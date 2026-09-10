@@ -97,3 +97,56 @@ python vault/_Meta/scripts/vault_lint.py .   → Vault limpio
 Avisar al Equipo 3 antes de las 18:00: Juan tiene que quitar "Watson" de sus rutas visuales, Monserrat
 cambia la etiqueta a nivel de atención, y Oscar añade el estado de streaming y los tres errores del
 Asistente. Y pasarle al Equipo 5 las dos notas de la §3.quater y la §13 antes de que implementen.
+
+---
+
+## Addendum — misma sesión, revisión de Monserrat Miranda
+
+Monserrat revisó el paquete antes de cerrar su documento y levantó cuatro puntos. Tres eran
+correctos y se aplican aquí; el primero tenía la premisa invertida pero destapó un defecto real.
+
+### El nombre: la premisa estaba al revés, el hallazgo no
+
+Preguntó si el nombre visible es *Agente FARO* «aunque el `ADR` diga otra cosa», y si había que
+pedirle a Edgar corregir el `ADR`. **No hay nada que corregir:** este paquete dice **Asistente FARO**
+en sus 13 apariciones, exactamente como `ADR-011` §6. Documentos y fuente de verdad coinciden.
+
+De dónde salió *Agente FARO*: del producto vivo. `src/frontend/pages/3_Chat.py:33` imprime
+`st.title("Agente FARO")`. Lo vio en pantalla, no en el documento.
+
+Su distinción técnico/producto sí es correcta y se adopta tal cual: `src/agente/**` y
+`/api/v1/agente/consulta` son nombres técnicos y **no se tocan**; sólo cambia la cadena visible.
+
+**El hallazgo que ella no alcanzó a ver y que hace la diferencia:** además de esa línea,
+`tests/test_frontend_chat_streamlit.py` **afirma el literal viejo** en las líneas **77** y **114**.
+Quien cambie el título sin tocar las pruebas rompe CI. Queda escrito en la nueva §10.ter del plan,
+para el Equipo 5 (dueño de `src/frontend/**`) o el Equipo 2. Hay además 8 documentos del vault con el
+nombre viejo; son técnicos o históricos y no corren prisa.
+
+### Defecto del plan que ella encontró, y es mío
+
+El §8 ponía sus ejemplos de visualización y los 7 mockups de Juan en el **mismo corte** del viernes
+15:00, y a la vez decía que ella le entrega a él para que los integre. Las dos cosas no caben.
+Corregido: entrega intermedia **hoy tras el gate**, con el formato que defina Juan, que es quien
+integra.
+
+### Carpeta nueva
+
+`ejemplos_graficas/` dentro del paquete: sus ejemplos no tenían ubicación en la estructura original.
+Dada de alta en el `_index` por la regla 4, para que ella no tuviera que tocar el índice.
+
+### Su aviso sobre el contrato, con un matiz que abarata la implementación
+
+Verificó que `/api/v1/escuelas` **no tiene filtro por `indice_riesgo`** y que **no existe endpoint de
+Top 3 agregado**. Las dos son ciertas y quedan en la nueva §10.bis.
+
+El matiz: no hace falta recorrer las 45 276 escuelas. El endpoint acepta `order_by=indice_riesgo` con
+`order=desc`, así que **una sola llamada con `size=100`** trae las de mayor riesgo y se corta al bajar
+de `0.50`. El Top 3 se calcula sobre ese conjunto. Es bastante más barato de implementar que la
+lectura que ella traía.
+
+### Confirmaciones que pidió
+
+Ratificado el nivel de atención con alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`, y que
+**no** es el campo `prioridad` de la API. Su lectura es correcta: `P-01` y `P-02` se cierran sin que
+nadie exponga un campo nuevo, y **la petición al Equipo 5 para mañana 12:00 queda cancelada**.

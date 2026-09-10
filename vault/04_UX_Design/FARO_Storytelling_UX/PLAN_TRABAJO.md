@@ -319,17 +319,36 @@ cuándo la especificación deja de moverse, no cuándo empieza la implementació
 - Juan: `03_Visual_Identity.md` final, 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf`.
 
 ```text
-mockups/
-├── 00_Login.png
-├── 01_Entrada.png
-├── 02_Panorama_Escuelas_Riesgo.png
-├── 03_Seleccion_Caso.png
-├── 04_Expediente_Escuela.png
-├── 05_Conclusion_Top3.png
-└── 06_Explorador.png
+FARO_Storytelling_UX/
+├── ejemplos_graficas/          Monserrat — ejemplos de visualización que integra Juan
+└── mockups/
+    ├── 00_Login.png
+    ├── 01_Entrada.png
+    ├── 02_Panorama_Escuelas_Riesgo.png
+    ├── 03_Seleccion_Caso.png
+    ├── 04_Expediente_Escuela.png
+    ├── 05_Conclusion_Top3.png
+    └── 06_Explorador.png
 ```
 
+`ejemplos_graficas/` se da de alta a petición de Monserrat: sus ejemplos no tenían ubicación en la
+estructura anterior. Queda registrada en
+[[vault/04_UX_Design/FARO_Storytelling_UX/_index]] (regla 4 del vault).
+
 Escritorio es obligatorio. Móvil queda como evolución futura.
+
+### Jueves 10 por la noche — entrega intermedia de Monserrat a Juan
+
+**Corregido el 2026-09-10 a petición de Monserrat Miranda.** La versión anterior de este plan ponía
+sus ejemplos de visualización y los 7 mockups de Juan en el **mismo corte** del viernes 15:00, y a la
+vez decía que ella le entrega a él para que los integre a la identidad. Las dos cosas no caben: si
+los recibe a las 15:00 no le alcanza.
+
+Monserrat entrega sus ejemplos **hoy después del gate**, y **Juan define el formato**, porque es quien
+integra. Esa entrega es un intercambio interno del frente, no un hito del proyecto: no se espera a
+que esté completa para seguir.
+
+---
 
 ### Sábado 12 a lunes 14 — acompañamiento
 
@@ -388,7 +407,30 @@ guardarraíl de §3: lo que no está aquí, no se dibuja.
 | Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante` |
 | Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
 | Filtros de la exploración | parámetros de `/escuelas` y `/kpis` | `ciclo`, `cve_ent`, `cve_mun`, `nivel` |
-| Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2 |
+| Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2. **Nombre técnico**, no de producto: lo que ve el usuario es *Asistente FARO* |
+
+### 10.bis Dos cosas que el contrato no hace, y cómo se resuelven
+
+Reportadas por Monserrat Miranda el 2026-09-10 al verificar el contrato. Van escritas para que el
+Equipo 5 no las descubra al implementar:
+
+1. **`/api/v1/escuelas` no tiene filtro por `indice_riesgo`.** El corte en la línea de alerta se hace
+   **del lado del cliente**. No obliga a recorrer las 45 276 escuelas: el endpoint sí acepta
+   `order_by=indice_riesgo` con `order=desc`, así que **una sola llamada con `size=100`** trae las de
+   mayor riesgo y se corta en cuanto el valor baja de `0.50`.
+2. **No existe endpoint que devuelva el Top 3 agregado.** Se calcula en Front sobre el conjunto que
+   devuelve esa misma llamada.
+
+### 10.ter El nombre visible del chat todavía no está en el código
+
+`src/frontend/pages/3_Chat.py:33` imprime hoy `st.title("Agente FARO")`, que es el nombre **técnico**
+del módulo (`src/agente/**`, `/api/v1/agente/consulta`) y no el de producto que fija `ADR-011` §6.
+
+Cambiarlo toca tres líneas, y las dos últimas son la trampa: `tests/test_frontend_chat_streamlit.py`
+**afirma el literal viejo** en las líneas **77** y **114**. Quien cambie el título sin tocar las
+pruebas rompe CI. Es trabajo del Equipo 5, dueño de `src/frontend/**`, o del Equipo 2.
+
+Los nombres técnicos **no se tocan**: sólo cambia la cadena que ve el usuario.
 
 | Nivel de atención | se **deriva** en Front de `indice_riesgo` | ver §3.quater |
 
