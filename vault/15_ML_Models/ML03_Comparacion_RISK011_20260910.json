@@ -1,0 +1,92 @@
+{
+  "riesgo": "RISK-011",
+  "estado": "evidencia_para_revision",
+  "fuente": {
+    "tabla": "gold.features_escuela",
+    "dump_sha256": "07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE",
+    "base_aislada": "faro_gold_bug048_final1_review_20260905",
+    "solo_lectura": true,
+    "filas_totales": 136046,
+    "filas_entrenadas": 114200,
+    "filas_excluidas": 21846
+  },
+  "protocolo": {
+    "semilla": 42,
+    "n_init": 20,
+    "valores_k": [2, 3, 4, 5, 6],
+    "ciclos_entrenamiento": ["2022-2023", "2023-2024"],
+    "ciclo_prueba": "2024-2025",
+    "orden_entrada": ["id_ciclo", "cct"]
+  },
+  "variantes": [
+    {
+      "nombre": "D1-D4",
+      "features": [
+        "d1_pobreza",
+        "d2_inseguridad",
+        "d3_infraestructura",
+        "d4_conectividad"
+      ],
+      "k_seleccionado": 2,
+      "silhouette_temporal": {
+        "2": 0.4620526551,
+        "3": 0.4079969602,
+        "4": 0.3865740499,
+        "5": 0.4004979814,
+        "6": 0.3623481227
+      },
+      "clusters": [
+        {
+          "cluster": 0,
+          "observaciones": 83275,
+          "d6_ok": 501,
+          "d6_sin_dato": 82774,
+          "perfil": "Presion principal: inseguridad; secundaria: brecha de conectividad"
+        },
+        {
+          "cluster": 1,
+          "observaciones": 30925,
+          "d6_ok": 1147,
+          "d6_sin_dato": 29778,
+          "perfil": "Presion principal: brecha de conectividad; secundaria: carencias de infraestructura"
+        }
+      ],
+      "estabilidad": {
+        "semillas": [7, 21, 42, 84, 2026],
+        "ari_minimo": 1.0,
+        "ari_promedio": 1.0
+      }
+    },
+    {
+      "nombre": "D1-D4+completitud",
+      "evidencia_origen": "ML03_Evidencia_20260908.json",
+      "features": [
+        "d1_pobreza",
+        "d2_inseguridad",
+        "d3_infraestructura",
+        "d4_conectividad",
+        "indice_completitud_drivers"
+      ],
+      "k_seleccionado": 3,
+      "silhouette_temporal": {
+        "2": 0.4588341487,
+        "3": 0.4644549058,
+        "4": 0.413970491,
+        "5": 0.3939472663,
+        "6": 0.4067550465
+      },
+      "cluster_cobertura_d6": {
+        "cluster": 2,
+        "observaciones": 1648,
+        "d6_ok": 1648,
+        "completitud_promedio": 0.8333333333
+      }
+    }
+  ],
+  "conclusion_tecnica": "D1-D4 conserva una separacion temporal comparable y estable sin crear un cluster equivalente a la disponibilidad de D6.",
+  "recomendacion": "Retirar indice_completitud_drivers del vector y conservarlo solo como atributo de auditoria de los perfiles.",
+  "decision_formal": "pendiente_revision_estefany_y_decision_edgar",
+  "mlflow_run_id": null,
+  "publicacion_gold": false,
+  "commit_base": "914af0198faf587a4becc6b4aebb765bd0523c6b"
+}
