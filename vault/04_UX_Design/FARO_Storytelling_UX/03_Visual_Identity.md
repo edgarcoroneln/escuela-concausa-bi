@@ -18,11 +18,11 @@ tags: [ui, identidad-visual, design-system, s7, us-621]
 
 **Estado:** borrador.
 
-> **Convivencia con lo existente.** Este documento **propone sustituir**
-> [[vault/04_UX_Design/UX_Guidelines]] como sistema de diseño de la nueva experiencia. Esa
-> sustitución la decide el PO (petición **P-06** del plan): hasta entonces `UX_Guidelines` sigue
-> vigente y este documento es una propuesta. [[vault/04_UX_Design/Accessibility]] **no se sustituye
-> en ningún caso**: la identidad nueva debe cumplirlo.
+> **Convivencia con lo existente.** `DEC-023` resolvió **P-06**: este documento sustituirá a
+> [[vault/04_UX_Design/UX_Guidelines]] como sistema visual de la nueva experiencia cuando complete
+> su contenido y pase el gate de Marina. `UX_Guidelines` conserva el baseline histórico del 9-sep.
+> [[vault/04_UX_Design/Accessibility]] **no se sustituye en ningún caso**: la identidad nueva debe
+> cumplirlo.
 
 ## 1. Concepto
 

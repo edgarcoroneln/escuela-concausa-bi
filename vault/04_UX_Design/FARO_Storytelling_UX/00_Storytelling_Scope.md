@@ -16,8 +16,9 @@ tags: [ux, storytelling, s7, us-621]
 > → [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]] ·
 > [[vault/04_UX_Design/FARO_Storytelling_UX/_index]]
 
-**Estado:** borrador formal del gate del jueves. La propuesta completa sigue pendiente de la
-aprobación del PO descrita en la §14 del plan.
+**Estado:** borrador formal del contenido. La dirección de diseño y su uso como contexto S7 fueron
+aprobados por el PO mediante PR #297 y `DEC-023`; este documento todavía debe superar el gate de
+Marina y la aceptación de QA.
 
 > **Jerarquía.** Si algo de este documento contradice al
 > [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO|plan]], **manda el plan**. La §10 del plan
@@ -228,18 +229,18 @@ Este documento agrega cuatro que nacen de la narrativa y que conviene que QA (`U
 
 ---
 
-## 8. Dependencias abiertas
+## 8. Dependencias y decisiones
 
-Las seis peticiones de la §11 del plan. Su efecto sobre la historia:
+Las seis peticiones de la §11 del plan y su efecto sobre la historia:
 
 | Petición | Si no se resuelve, la historia pierde |
 |---|---|
 | `P-01` `prioridad` en la API + corte de `BUG-063` | El expediente y la conclusión dejan de decir por dónde empezar |
 | `P-02` bandas Alto / Medio / Bajo | El índice se muestra sin etiqueta, sólo el número |
 | `P-03` nombre del chat | El chat se queda sin nombre propio en la narrativa |
-| `P-04` ADR que retire Superset | El Equipo 5 no puede construir estas pantallas sin contradecir `US-206` |
+| `P-04` resuelta por `ADR-011` | El Equipo 5 puede construir gráficas nativas; Superset queda como respaldo |
 | `P-05` confirmar `escuelas_en_riesgo` en `/api/v1/kpis` | La frase central no puede fijar el número |
-| `P-06` qué documento manda en UX | La identidad visual nueva no puede sustituir a `UX_Guidelines` |
+| `P-06` resuelta por `DEC-023` | Este paquete gobierna el rediseño S7 |
 
-Ninguna detiene el trabajo de esta semana. Lo que no llegue se documenta como **recorte explícito**
-en vez de dibujarse como si existiera.
+Ninguna detiene el trabajo de esta semana. Una dependencia aún no integrada se representa como
+estado explícito y sigue en el plan de cierre; nunca se inventa ni se elimina silenciosamente.

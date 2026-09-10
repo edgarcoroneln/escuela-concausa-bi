@@ -35,6 +35,11 @@ reabierto del jueves 10 al domingo 13; el corte del 8-sep se conserva sólo como
 | Explicación ML | Demasiado básica | Faltan narrativa, métricas, limitaciones, interpretación y vínculo con decisiones | `REQ-003` | Equipo 4 · `US-631` |
 | QA | La aceptación previa no representó la experiencia evaluada | Se necesitan criterios por equipo y una pasada integral sobre la candidata de entrega | `REQ-007` | Equipo 6 · `US-651` |
 
+> **Decisión del PO, 10-sep:** el PR #297 fue aprobado y mergeado. `DEC-023` y `ADR-011` autorizan
+> que los Equipos 3 y 5 redefinan UX/UI, storytelling, navegación y gráficas sin conservar el
+> frontend rechazado ni Superset como experiencia principal. Los contratos de datos, seguridad,
+> accesibilidad, PRD y QA permanecen obligatorios.
+
 ## Corrección del dictamen anterior
 
 Las cifras **91/92 `done`** eran un cierre administrativo y no una prueba de satisfacción externa.

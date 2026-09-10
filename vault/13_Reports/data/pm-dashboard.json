@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-10T06:50:32+00:00",
+    "generated_at": "2026-09-10T18:31:22+00:00",
     "generated_date": "2026-09-10",
-    "commit": "8e3aaa4",
-    "branch": "main",
-    "working_tree": "clean",
-    "source_fingerprint": "703e18cd28a7",
+    "commit": "04261b9",
+    "branch": "dev/edgar-coronel",
+    "working_tree": "modified",
+    "source_fingerprint": "a78c4a28239f",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -13,13 +13,13 @@
   "summary": {
     "total": 99,
     "done": 91,
-    "planned": 6,
-    "in_progress": 2,
+    "planned": 5,
+    "in_progress": 3,
     "in_review": 0,
     "blocked": 0,
-    "wip": 2,
+    "wip": 3,
     "descoped": 0,
-    "progress": 92.6,
+    "progress": 93.0,
     "days_to_demo": 4
   },
   "delivery": {
@@ -1730,10 +1730,10 @@
       "sprint": "S7",
       "req": "REQ-002",
       "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "status": "planned",
-      "started": "—",
+      "status": "in_progress",
+      "started": "2026-09-10",
       "blocked_since": "—",
-      "evidence": "Frente colectivo E3; Marina coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
+      "evidence": "PR #297 aprobado y mergeado: estructura, storytelling inicial, contratos de visualización e identidad en vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO. DEC-023 y ADR-011 autorizan el rediseño sin conservar Superset como experiencia principal. Pendientes: completar entregables 00–03, mockups, handoff a E5 y aceptación de QA",
       "updated": "2026-09-10",
       "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
       "deliverable": "Propuesta visual, gráficas, pantallas y storytelling",
@@ -2395,9 +2395,9 @@
       "pr_merged": 15,
       "stories": 7,
       "done": 6,
-      "wip": 0,
+      "wip": 1,
       "blocked": 0,
-      "progress": 85.7
+      "progress": 90.7
     },
     {
       "name": "Monserrat Xcaret Miranda Olivas",
@@ -2572,9 +2572,9 @@
       ],
       "stories": 1,
       "done": 0,
-      "wip": 0,
+      "wip": 1,
       "blocked": 0,
-      "progress": 0.0
+      "progress": 35.0
     },
     {
       "name": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
@@ -2628,8 +2628,8 @@
       "points": 2.5,
       "stories": 22,
       "done": 20,
-      "progress": 90.9,
-      "secured_points": 2.27,
+      "progress": 92.5,
+      "secured_points": 2.31,
       "band": "green"
     },
     {
@@ -3656,6 +3656,52 @@
         }
       },
       {
+        "name": "Marina García del Buey",
+        "cell": "Célula 3",
+        "engagement": 90.7,
+        "commits": 49,
+        "prs_merged": 15,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S6": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S7": {
+            "n": 1,
+            "done": 0,
+            "state": "wip"
+          }
+        }
+      },
+      {
         "name": "Diana Aracely Alvarez Varela",
         "cell": "Célula 5",
         "engagement": 87.5,
@@ -3693,52 +3739,6 @@
             "n": 0,
             "done": 0,
             "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Marina García del Buey",
-        "cell": "Célula 3",
-        "engagement": 85.7,
-        "commits": 49,
-        "prs_merged": 15,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S6": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
           },
           "S7": {
             "n": 1,
@@ -3987,10 +3987,10 @@
         "cell_group": "Célula 0 · PO — Dirección de Proyecto",
         "active": true,
         "prs_merged": 45,
-        "devlogs": 58,
+        "devlogs": 59,
         "active_us": 7,
-        "activity": 110,
-        "signal": "45 PR · 58 DevLog · 7 US activas"
+        "activity": 111,
+        "signal": "45 PR · 59 DevLog · 7 US activas"
       },
       {
         "name": "Luis Téllez Domínguez",
@@ -4037,6 +4037,17 @@
         "signal": "22 PR · 30 DevLog · 3 US activas"
       },
       {
+        "name": "Marina García del Buey",
+        "cell": "Célula 3",
+        "cell_group": "Célula 2 · Analytics & Business Intelligence",
+        "active": true,
+        "prs_merged": 15,
+        "devlogs": 17,
+        "active_us": 7,
+        "activity": 39,
+        "signal": "15 PR · 17 DevLog · 7 US activas"
+      },
+      {
         "name": "Manuel Alejandro Serranía Reinada",
         "cell": "Célula 1",
         "cell_group": "Célula 2 · Analytics & Business Intelligence",
@@ -4057,17 +4068,6 @@
         "active_us": 5,
         "activity": 37,
         "signal": "15 PR · 17 DevLog · 5 US activas"
-      },
-      {
-        "name": "Marina García del Buey",
-        "cell": "Célula 3",
-        "cell_group": "Célula 2 · Analytics & Business Intelligence",
-        "active": true,
-        "prs_merged": 15,
-        "devlogs": 16,
-        "active_us": 6,
-        "activity": 37,
-        "signal": "15 PR · 16 DevLog · 6 US activas"
       },
       {
         "name": "Deni Garrido Fragoso",
@@ -4246,15 +4246,6 @@
       "su_turno": true
     },
     {
-      "id": "US-621",
-      "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
-      "owner": "Marina García del Buey",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-631",
       "objective": "Coordinar el resultado colectivo de E4 · ML-03",
       "owner": "Estefany Lucero Hernández Loredo",
@@ -4280,6 +4271,15 @@
       "sprint": "S7",
       "status": "planned",
       "su_turno": true
+    },
+    {
+      "id": "US-621",
+      "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
+      "owner": "Marina García del Buey",
+      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
+      "sprint": "S7",
+      "status": "in_progress",
+      "su_turno": false
     },
     {
       "id": "US-654",
@@ -4310,7 +4310,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 90.9
+      "progress": 92.5
     },
     {
       "criterion": "3 · Tres modelos ML vía API",
@@ -9159,10 +9159,10 @@
     {
       "date": "2026-09-10",
       "remaining": 8,
-      "weighted_remaining": 7.3,
+      "weighted_remaining": 6.9,
       "done": 91,
       "scope": 99,
-      "wip": 2,
+      "wip": 3,
       "blocked": 0
     }
   ]
