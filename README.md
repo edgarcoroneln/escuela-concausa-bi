@@ -49,7 +49,17 @@ Carpetas de soporte: `vault/_Templates` (plantillas), `vault/_DevLog` (bitácora
 
 ### URL de Producción
 
-**API Principal:** [https://faro-api-eanzfglvyq-uc.a.run.app](https://faro-api-eanzfglvyq-uc.a.run.app)
+**Aplicación principal (FARO Web):**
+[https://faro-frontend-eanzfglvyq-uc.a.run.app](https://faro-frontend-eanzfglvyq-uc.a.run.app)
+
+**Business Intelligence (Superset):**
+[https://faro-superset-eanzfglvyq-uc.a.run.app](https://faro-superset-eanzfglvyq-uc.a.run.app)
+
+**API:** [https://faro-api-eanzfglvyq-uc.a.run.app](https://faro-api-eanzfglvyq-uc.a.run.app)
+
+Las tres superficies se verificaron con HTTP 200 el 8 de septiembre de 2026. FARO Web, los
+tableros y las rutas de datos requieren sesión de Google; el healthcheck y la documentación de la
+API son públicos.
 
 **Endpoints disponibles** (todos bajo el prefijo `/api/v1/`):
 - `GET /api/v1/health` — Health check
@@ -70,10 +80,10 @@ Carpetas de soporte: `vault/_Templates` (plantillas), `vault/_DevLog` (bitácora
 **Deploy manual:**
 ```bash
 # Build y push
-./08_CICD_DevOps/scripts/build-and-push.sh v0.1.0-s1
+./vault/08_CICD_DevOps/scripts/build-and-push.sh v0.1.0-s1
 
 # Deploy a Cloud Run
-./08_CICD_DevOps/scripts/deploy-cloud-run.sh v0.1.0-s1
+./vault/08_CICD_DevOps/scripts/deploy-cloud-run.sh v0.1.0-s1
 ```
 
 Ver procedimiento completo: [[vault/08_CICD_DevOps/Cloud_Run_Deploy]]

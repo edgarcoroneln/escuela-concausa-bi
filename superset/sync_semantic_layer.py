@@ -68,6 +68,7 @@ FORMATO_D3 = {
     "decimal_2": ",.2f",
     "porcentaje_0": ",.0%",
     "porcentaje_1": ",.1%",
+    "porcentaje_3": ",.3%",
     # "fecha": sin esta entrada, FORMATO_D3.get("fecha", "") caia a cadena
     # vacia y Superset rechazaba el PUT del dataset completo (d3format exige
     # 1-128 caracteres) -- NINGUNA metrica del dataset se aplicaba, no solo

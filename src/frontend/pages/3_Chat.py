@@ -33,7 +33,17 @@ PREGUNTAS_SUGERIDAS = [
 st.title("Agente FARO")
 st.caption("Pregunta en lenguaje natural sobre los datos del proyecto.")
 
-encabezado()  # sesion + boton de cerrar sesion (antes solo vivian en app.py)
+usuario = encabezado()  # sesion + boton de cerrar sesion (antes solo vivian en app.py)
+# BUG-071: `encabezado()` NO decide quien entra -- su docstring lo dice -- solo pinta el
+# estado. Hasta hoy la pagina lo llamaba e ignoraba el retorno, asi que el chat completo se
+# renderizaba sin sesion y la primera pregunta moria en un 401 de la API. Se para aqui.
+if usuario is None:
+	st.info(
+		"Inicia sesion para preguntarle a los datos: el agente consulta la API con tu "
+		"sesion, y desde DEC-018 la lectura exige una (`AUTH_LECTURA_PUBLICA=false`)."
+	)
+	st.stop()
+
 # `token_de_acceso()` refresca si esta por expirar; leer la clave directo devolvia
 # el token guardado aunque ya hubiera vencido (dura 15 min, menos que una demo).
 access_token = token_de_acceso()

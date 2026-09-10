@@ -276,11 +276,29 @@
   },
   {
     "date": "2026-09-08",
-    "remaining": 14,
-    "weighted_remaining": 10.2,
-    "done": 75,
-    "scope": 89,
-    "wip": 10,
+    "remaining": 1,
+    "weighted_remaining": 0.6,
+    "done": 91,
+    "scope": 92,
+    "wip": 1,
+    "blocked": 0
+  },
+  {
+    "date": "2026-09-09",
+    "remaining": 1,
+    "weighted_remaining": 0.6,
+    "done": 91,
+    "scope": 92,
+    "wip": 1,
+    "blocked": 0
+  },
+  {
+    "date": "2026-09-10",
+    "remaining": 8,
+    "weighted_remaining": 7.3,
+    "done": 91,
+    "scope": 99,
+    "wip": 2,
     "blocked": 0
   }
 ]

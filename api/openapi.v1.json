@@ -4,6 +4,16 @@
       "AgenteConsultaIn": {
         "additionalProperties": false,
         "properties": {
+          "contexto": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContextoConversacionalIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "pregunta": {
             "maxLength": 500,
             "minLength": 3,
@@ -44,6 +54,58 @@
           "respuesta"
         ],
         "title": "AgenteRespuestaOut",
+        "type": "object"
+      },
+      "ContextoConversacionalIn": {
+        "additionalProperties": false,
+        "description": "Contexto estructurado del turno anterior del chat (US-305).\n\nExiste para que *\"¿cuáles son las recomendaciones para **esas** escuelas?\"* pueda resolverse\nsin que el LLM invente CCTs. C3 lo consume en `construir_prompt_sistema()`.\n\n**Este objeto es entrada del cliente, no estado de confianza.** Quien llame a la API puede\nescribir aquí lo que quiera —el endpoint es público bajo `require_lectura`—, así que se trata\ncomo hostil:\n\n- `extra=\"forbid\"` (heredado): un `sql`, `sql_generado` o `rol` en el cuerpo se rechaza con 422\n  en vez de ignorarse. **El frontend no puede colar SQL por esta puerta.**\n- Los CCT se validan por forma, así que no pueden transportar saltos de línea ni comillas.\n- `resumen` es el único campo de texto libre y por eso es el más peligroso: entra literal al\n  prompt, donde un salto de línea permitiría falsificar la estructura del bloque de contexto.\n  Se rechazan los caracteres de control.\n- Todo está acotado en tamaño: un contexto no puede empujar el prompt hasta desplazar las\n  instrucciones de seguridad.\n\nNada de esto sustituye a los guardarraíles de C3 (`preparar_sql_seguro`, solo `SELECT`/`WITH`\nsobre Gold, `LIMIT 1000`). Es la capa de antes: lo que nunca debió llegar al LLM.",
+        "properties": {
+          "ccts": {
+            "description": "CCTs que el turno anterior identificó. La API no verifica que existan.",
+            "items": {
+              "pattern": "^[0-9A-Z]{10}$",
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Ccts",
+            "type": "array"
+          },
+          "ciclo": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{4}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ciclo del turno anterior, p. ej. `2024-2025`.",
+            "title": "Ciclo"
+          },
+          "filtros": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Filtros del turno anterior (entidad, nivel...). Solo texto plano.",
+            "title": "Filtros",
+            "type": "object"
+          },
+          "resumen": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Resumen del turno anterior. **Dato no confiable**: entra literal al prompt.",
+            "title": "Resumen"
+          }
+        },
+        "title": "ContextoConversacionalIn",
         "type": "object"
       },
       "EscuelaDetalleOut": {
@@ -993,7 +1055,7 @@
     },
     "/api/v1/agente/consulta": {
       "post": {
-        "description": "Consulta en lenguaje natural sobre Gold (rol mínimo: ciudadano).\n\nAplica los guardarraíles reales del agente. Equivale a `procesar_consulta_con_rag()` con el\nrecuperador inyectable, de modo que Andrés (C3) pueda enchufar su LLM/ejecutor por dependencias.",
+        "description": "Consulta en lenguaje natural sobre Gold (rol mínimo: ciudadano).\n\nAplica los guardarraíles reales del agente. Equivale a `procesar_consulta_con_rag()` con el\nrecuperador inyectable, de modo que Andrés (C3) pueda enchufar su LLM/ejecutor por dependencias.\n\n**`contexto` (opcional, US-305)** permite resolver preguntas de seguimiento —*\"¿y las\nrecomendaciones para **esas** escuelas?\"*— sin que el LLM invente CCTs. Es opcional y\nretrocompatible: un cuerpo sin `contexto` se comporta exactamente como antes.\n\nEl contexto lo manda el cliente, así que **se valida como entrada hostil, no como estado de\nconfianza** (`ContextoConversacionalIn`): forma de los CCT, cotas de tamaño, sin caracteres de\ncontrol, y `extra=\"forbid\"` para que no se pueda colar un `sql` por esta puerta. Ver el\ndocstring del esquema. Lo que llega al servicio de C3 es siempre un objeto ya validado.",
         "operationId": "consulta_api_v1_agente_consulta_post",
         "requestBody": {
           "content": {
@@ -1494,7 +1556,7 @@
     },
     "/api/v1/kpis": {
       "get": {
-        "description": "KPIs agregados del tablero (rol mínimo: ciudadano).\n\nFórmulas tomadas literalmente de `vault/04_UX_Design/Screen_Specs.md` (KPI-02 variación ponderada,\nKPI-04 escuelas en riesgo vía JOIN a `gold.predicciones` con umbral 0.6 ratificado, KPI-05\ncompletitud promedio) — no son agregaciones inventadas para este endpoint.",
+        "description": "KPIs agregados del tablero (rol mínimo: ciudadano).\n\nFórmulas tomadas literalmente de `vault/04_UX_Design/Screen_Specs.md` (KPI-02 variación ponderada,\nKPI-04 escuelas en riesgo vía JOIN a `gold.predicciones` con la línea de alerta de 0.50\n(`DEC-019`, distinta del ancla 0.60 de la sigmoide -- ver `repositorio_gold.LINEA_DE_ALERTA`), KPI-05\ncompletitud promedio) — no son agregaciones inventadas para este endpoint.",
         "operationId": "obtener_kpis_api_v1_kpis_get",
         "parameters": [
           {
