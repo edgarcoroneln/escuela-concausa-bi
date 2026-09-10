@@ -1161,7 +1161,7 @@
     },
     "/api/v1/auth/exchange": {
       "post": {
-        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.",
+        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.\n\n**Desde ADR-012 tambien siembra la sesion por cookie `httpOnly`**, para que el frontend de React\n—que es estatico y no tiene servidor donde guardar el token— no tenga que tocarlo. El cuerpo\n**sigue trayendo el par**: el cambio es aditivo y el shell de Streamlit no se entera.",
         "operationId": "exchange_api_v1_auth_exchange_post",
         "requestBody": {
           "content": {
@@ -1249,6 +1249,21 @@
         ]
       }
     },
+    "/api/v1/auth/logout": {
+      "post": {
+        "description": "Cierra la sesión borrando **las dos** cookies (ADR-012).\n\nNo exige token: cerrar sesión con una credencial ya vencida tiene que funcionar igual, o la\npersona se queda con cookies muertas y sin forma de deshacerse de ellas. Y borra la de refresco\nademás de la de acceso — olvidarla dejaría la sesión viva 7 días.\n\nLos clientes que administran el token ellos mismos (Streamlit, pruebas) no necesitan llamarlo:\npara ellos cerrar sesión sigue siendo descartar el par que tienen guardado.",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Logout",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
     "/api/v1/auth/me": {
       "get": {
         "description": "Devuelve el usuario autenticado (requiere access token válido; 401 en caso contrario).",
@@ -1278,17 +1293,24 @@
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "description": "Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.",
+        "description": "Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.\n\nEl token puede venir en el cuerpo (clientes que lo administran ellos mismos) **o** en la cookie\n`faro_refresco` (frontend de React, ADR-012). El cuerpo tiene precedencia; si no trae nada, se\nintenta la cookie. Sin ninguno de los dos, 401 igual que con uno inválido.",
         "operationId": "refresh_api_v1_auth_refresh_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RefreshIn"
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RefreshIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {

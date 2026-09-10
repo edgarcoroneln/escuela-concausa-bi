@@ -32,6 +32,7 @@ from src.api.security.codigos_login import (
     IdentidadSesion,
     get_almacen_codigos,
 )
+from src.api.security.cookies import COOKIE_REFRESCO, borrar_sesion, sembrar_sesion
 from src.api.security.deps import get_current_user, get_google_verifier
 from src.api.security.google import (
     GoogleNotConfigured,
@@ -177,10 +178,24 @@ def callback(
 
 
 @router.post("/refresh", response_model=TokenPair)
-def refresh(body: RefreshIn) -> TokenPair:
-    """Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente."""
+def refresh(
+    request: Request,
+    respuesta: Response,
+    body: RefreshIn | None = None,
+) -> TokenPair:
+    """Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.
+
+    El token puede venir en el cuerpo (clientes que lo administran ellos mismos) **o** en la cookie
+    `faro_refresco` (frontend de React, ADR-012). El cuerpo tiene precedencia; si no trae nada, se
+    intenta la cookie. Sin ninguno de los dos, 401 igual que con uno inválido.
+    """
+    token = body.refresh_token if body is not None else request.cookies.get(COOKIE_REFRESCO)
+    if not token:
+        raise HTTPException(
+            status.HTTP_401_UNAUTHORIZED, detail="Falta el refresh token."
+        )
     try:
-        claims = verify_refresh_token(body.refresh_token)
+        claims = verify_refresh_token(token)
     except AuthError as exc:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, detail="Refresh token inválido o expirado."
@@ -188,13 +203,34 @@ def refresh(body: RefreshIn) -> TokenPair:
     email = claims.get("email", "")
     role = resolve_role(email)
     # El `name` viaja tambien en el refresh: al renovar no hay id_token de Google que reconsultar.
-    return create_token_pair(
+    par = create_token_pair(
         sub=claims["sub"], role=role, email=email, name=claims.get("name", "")
     )
+    sembrar_sesion(respuesta, par, request)
+    return par
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(request: Request, respuesta: Response) -> None:
+    """Cierra la sesión borrando **las dos** cookies (ADR-012).
+
+    No exige token: cerrar sesión con una credencial ya vencida tiene que funcionar igual, o la
+    persona se queda con cookies muertas y sin forma de deshacerse de ellas. Y borra la de refresco
+    además de la de acceso — olvidarla dejaría la sesión viva 7 días.
+
+    Los clientes que administran el token ellos mismos (Streamlit, pruebas) no necesitan llamarlo:
+    para ellos cerrar sesión sigue siendo descartar el par que tienen guardado.
+    """
+    # Se mutan las cabeceras de la respuesta inyectada en vez de construir una nueva: `dict()` sobre
+    # las cabeceras **colapsa los `Set-Cookie` repetidos en uno solo**, y así se borraba la cookie de
+    # sesión pero no la de refresco -- dejando la sesión reconstruible 7 días.
+    borrar_sesion(respuesta, request)
 
 
 @router.post("/exchange", response_model=TokenPair)
 def exchange(
+    request: Request,
+    respuesta: Response,
     body: ExchangeIn,
     almacen: AlmacenCodigos = Depends(get_almacen_codigos),
 ) -> TokenPair:
@@ -207,18 +243,24 @@ def exchange(
 
     El rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:
     si `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.
+
+    **Desde ADR-012 tambien siembra la sesion por cookie `httpOnly`**, para que el frontend de React
+    —que es estatico y no tiene servidor donde guardar el token— no tenga que tocarlo. El cuerpo
+    **sigue trayendo el par**: el cambio es aditivo y el shell de Streamlit no se entera.
     """
     identidad = almacen.canjear(body.code)
     if identidad is None:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, detail="Codigo de sesion invalido o expirado."
         )
-    return create_token_pair(
+    par = create_token_pair(
         sub=identidad.sub,
         role=resolve_role(identidad.email),
         email=identidad.email,
         name=identidad.name,
     )
+    sembrar_sesion(respuesta, par, request)
+    return par
 
 
 @router.get("/me", response_model=UserOut)
