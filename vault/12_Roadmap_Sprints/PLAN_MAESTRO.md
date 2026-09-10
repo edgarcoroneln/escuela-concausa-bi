@@ -3,12 +3,12 @@ id: PLAN-MAESTRO
 title: "Plan Maestro del Proyecto FARO"
 owner: "Edgar Edmundo Coronel Navarrete"
 status: approved
-version: "1.3"
+version: "1.4"
 source_of_truth: true
 traces_up: ["vault/01_Product/PRD"]
-last_reviewed: "2026-08-06"
-delivery_date: "2026-09-09"
-delivery_label: "Demo en vivo y entrega final"
+last_reviewed: "2026-09-10"
+delivery_date: "2026-09-14"
+delivery_label: "Entrega de recuperación al profesor (primera hora)"
 delivery_timezone: "America/Mexico_City"
 tags: [roadmap, plan, sprints]
 ---
@@ -17,9 +17,13 @@ tags: [roadmap, plan, sprints]
 ## Plan Maestro de Proyecto · Inteligencia de Negocios · MTIIA Anáhuac
 
 > **Repositorio sugerido:** `escuela-concausa-bi`
-> **Equipo:** 21 integrantes en 5 células + PO
-> **Ventana:** lunes 3 de agosto → **demo en vivo miércoles 9 de septiembre de 2026**
+> **Equipo:** 21 integrantes en 6 equipos de recuperación; Edgar participa en QA y conserva el rol PO
+> **Ventana vigente:** jueves 10 → domingo 13 de septiembre; **entrega lunes 14 a primera hora**
 > **Profesor:** Dr. José Gustavo Fuentes
+
+> [!IMPORTANT] Desarrollo reabierto
+> La revisión del 9-sep no aceptó satisfactoriamente la entrega. `DEC-022` supera el cierre de
+> `DEC-021`; el plan vigente es [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]].
 
 ---
 
@@ -470,3 +474,40 @@ bloquean mutuamente.
 ---
 
 *Plan maestro · Proyecto FARO · Maestría MTIIA · Universidad Anáhuac*
+## 10. S7 — Recuperación posterior a la revisión del profesor
+
+> Esta sección es posterior y **supera para S7** la asignación histórica de la sección 4. El detalle,
+> los criterios y las dependencias están en [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]].
+
+| Integrante | Nivel | Célula | Rol | Plan individual |
+|---|---|---|---|---|
+| Héctor Rafael Morales Marbán | **Medio** | Célula 1 | Líder · Componentes y memoria técnica | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Manuel Alejandro Serranía Reinada | **Alto** | Célula 1 | Integrante · Componentes y memoria técnica | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Carlos Guillermo Mayorga Tapia | **Bajo** | Célula 1 | Integrante · Componentes y memoria técnica | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Andrés González Habib | **Alto** | Célula 2 | Líder · Chat IA natural | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Karla Alejandra Monter Benitez | **Medio** | Célula 2 | Integrante · Chat IA natural | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Alejandro Velázquez Mendoza | **Bajo** | Célula 2 | Integrante · Chat IA natural | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Marina García del Buey | **Medio** | Célula 3 | Líder · UX/UI | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Oscar Antonio Quiroz Lázaro | **Bajo** | Célula 3 | Integrante · UX/UI y storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Juan Carlos Macías Mayen | **Medio** | Célula 3 | Integrante · UX/UI y storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Monserrat Xcaret Miranda Olivas | **Medio** | Célula 3 | Integrante · Storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Estefany Lucero Hernández Loredo | **Bajo** | Célula 4 | Líder · ML-03 | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Deni Garrido Fragoso | **Medio** | Célula 4 | Integrante · ML-03 y explicación ML | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Luis Enrique García Vázquez | **Bajo** | Célula 4 | Integrante · ML-03 y explicación ML | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Diana Aracely Alvarez Varela | **Alto** | Célula 5 | Líder · Frontend e integración | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Luis Téllez Domínguez | **Medio** | Célula 5 | Integrante · Frontend y deploy | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Christian Imanol Ruiz Hurtado | **Medio** | Célula 5 | Integrante · Frontend y deploy | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Edward Ulysses Ruiz Bustillos | **Bajo** | Célula 6 | Líder · QA integral | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Emilio Galnares Ruiz | **Bajo** | Célula 6 | Integrante · QA | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Edgar Ulises Jiménez López | **Bajo** | Célula 6 | Integrante · QA | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Eloisa González Rubio | **Bajo** | Célula 6 | Integrante · QA | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Edgar Edmundo Coronel Navarrete | **Medio** | Célula 6 | PO · comodín QA y go/no-go | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+
+### Calendario S7
+
+| Sprint | Inicio | Fin | Foco | Entrega |
+|---|---|---|---|---|
+| S7 | 2026-09-10 | 2026-09-13 | Recuperación integral posterior a evaluación | Lunes 14, primera hora |
+
+Revisión diaria a las **18:00**. *Code freeze* de la candidata: domingo 13 a las **20:00**, después
+del ensayo y dictamen QA. No se recorta alcance sin una nueva decisión del PO.
