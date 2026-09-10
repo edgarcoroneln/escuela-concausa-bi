@@ -104,6 +104,21 @@ ESQUEMA_GOLD = [
             "completo en SIN_DATO porque la fuente DS-06 (CONAGUA) aún no tiene descarga "
             "verificada."
         )
+    },
+    {
+        "id": "cobertura_geografica",
+        "texto": (
+            "Cobertura geográfica del proyecto (alcance intencional de diseño, NO un hueco de "
+            "datos). Gold, los modelos de ML y este agente cubren EXCLUSIVAMENTE 4 entidades "
+            "(SCOPE_ENTIDADES): Ciudad de México (cve_ent '09'), Estado de México (cve_ent "
+            "'15'), Nuevo León (cve_ent '19') y Jalisco (cve_ent '14'). Bronze y Silver son "
+            "nacionales, pero el filtro a estas 4 entidades se aplica en la frontera hacia Gold "
+            "vía dim_escuela/dim_municipio.cve_ent. Si una pregunta menciona otra entidad (por "
+            "ejemplo Oaxaca, Chiapas, Puebla, Yucatán), no hay datos porque esa entidad está "
+            "fuera del alcance del proyecto por diseño — no es un error del sistema ni un hueco "
+            "de cobertura de driver. La respuesta debe explicar esta limitación de alcance en "
+            "vez de solo decir 'no hay datos disponibles' sin contexto."
+        )
     }
 ]
 

@@ -39,6 +39,11 @@ reabierto del jueves 10 al domingo 13; el corte del 8-sep se conserva sólo como
 > redefinir UX/UI, storytelling, navegación y gráficas sin conservar el frontend rechazado ni
 > Superset como experiencia principal. PRD, datos, seguridad, accesibilidad y QA siguen obligatorios.
 
+> **Ejecución acelerada, `DEC-024`:** los seis frentes construyen y prueban en paralelo contra
+> contratos versionados. No esperan una entrega completa de otro equipo para crear componentes,
+> fixtures, pruebas contractuales o integración incremental. P-01…P-06 quedan resueltas; sólo PR,
+> CI, una aprobación humana y QA sobre la candidata pueden detener una integración.
+
 ## Corrección del dictamen anterior
 
 Las cifras **91/92 `done`** eran un cierre administrativo y no una prueba de satisfacción externa.

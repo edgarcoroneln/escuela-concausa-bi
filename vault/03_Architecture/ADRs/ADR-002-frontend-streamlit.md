@@ -5,6 +5,7 @@ owner: "Edgar Edmundo Coronel Navarrete"
 status: accepted
 traces_up: ["REQ-002", "REQ-004", "REQ-006"]
 supersedes: []
+superseded_by: ["ADR-011 (parcial: experiencia principal y gráficas nativas)"]
 tags: [architecture, adr, frontend]
 date: "2026-08-07"
 ---
@@ -37,6 +38,11 @@ Construir **FARO Web**, una app **Streamlit** en `src/frontend/` que:
   GCP/Docker.
 - **Negativas / trade-offs:** agrega carga a C2/C4/C3; el guest token requiere coordinación con
   Superset (C2) y el despliegue (C5).
+
+> **Actualización S7 — 2026-09-10:** [[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]]
+> reemplaza parcialmente esta decisión. Streamlit, autenticación, API y Superset pueden conservarse
+> como infraestructura o respaldo, pero el embebido de Superset deja de ser la experiencia principal
+> obligatoria. La UX narrativa y las gráficas nativas gobiernan la remediación.
 
 ## Trazabilidad
 - Requisitos: REQ-002, REQ-004, REQ-006 · Historias: US-206, US-207 (C2), US-405 (C4), US-305 (C3)

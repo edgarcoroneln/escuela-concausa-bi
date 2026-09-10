@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 
 from src.api.app import API_PREFIX, app
 from src.api.v1 import agente as agente_mod
+from src.agente.recuperacion import ContextoNoEncontrado
 
 # Respuesta fija del stub anterior (BUG-025): no debe volver a aparecer nunca.
 _RESPUESTA_STUB_VIEJO = "En el alcance actual hay 4 escuelas; 2 superan el umbral de riesgo (0.5)."
@@ -34,7 +35,18 @@ def _post(client: TestClient, pregunta: str) -> dict:
 
 
 def test_pregunta_fuera_de_alcance_se_rechaza(client: TestClient) -> None:
-    """Una pregunta ajena al dominio se marca fuera_de_alcance (guardarraíl NL real)."""
+    """Una pregunta ajena al dominio se marca fuera_de_alcance (guardarraíl NL real).
+
+    Fase 1 (puerta híbrida): el vocabulario no reconoce el tema, así que se intenta el respaldo
+    semántico del RAG antes de rechazar. Para un tema realmente ajeno, el RAG confirma "no
+    relevante" (`ContextoNoEncontrado`); sin este override usaría el RAG real (sin ChromaDB en
+    CI) y fallaría con `ErrorRecuperacion` (servicio caído), un caso distinto y no lo que prueba
+    este test.
+    """
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: (_ for _ in ()).throw(ContextoNoEncontrado("sin contexto relevante"))
+    )
+
     cuerpo = _post(client, "¿cuál es la capital de Francia?")
     assert cuerpo["fuera_de_alcance"] is True
     assert cuerpo["sql_generado"] is None
