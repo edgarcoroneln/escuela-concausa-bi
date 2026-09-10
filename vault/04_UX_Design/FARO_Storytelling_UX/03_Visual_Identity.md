@@ -18,11 +18,16 @@ tags: [ui, identidad-visual, design-system, s7, us-621]
 
 **Estado:** borrador.
 
-> **Convivencia con lo existente.** Este documento **propone sustituir**
-> [[vault/04_UX_Design/UX_Guidelines]] como sistema de diseño de la nueva experiencia. Esa
-> sustitución la decide el PO (petición **P-06** del plan): hasta entonces `UX_Guidelines` sigue
-> vigente y este documento es una propuesta. [[vault/04_UX_Design/Accessibility]] **no se sustituye
-> en ningún caso**: la identidad nueva debe cumplirlo.
+> **Convivencia con lo existente — ya resuelta.** `ADR-011` y `DEC-023` (2026-09-10) declararon que
+> este paquete gobierna el diseño de S7, y [[vault/04_UX_Design/UX_Guidelines]] pasó a `superseded`.
+> Este documento **es** el sistema de diseño de la nueva experiencia; la identidad se rediseña desde
+> cero sin atarse a lo anterior.
+>
+> Lo que **no** se sustituye: [[vault/04_UX_Design/Accessibility]] y **WCAG 2.1 AA**, que `ADR-011`
+> §4 declara no negociables. La identidad nueva debe cumplirlos.
+>
+> El asistente conversacional se llama **Asistente FARO**. No se usa "Watson" en ninguna ruta visual.
+> Un cambio total de framework sólo se acepta si conserva despliegue, autenticación, pruebas y plazo.
 
 ## 1. Concepto
 
