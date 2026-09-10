@@ -341,6 +341,15 @@ Ninguna la resuelve este frente. Cada una tiene dueño y bloquea una parte concr
 La regla 1 del vault prohíbe duplicar. Este frente **no borra ni edita** los documentos existentes;
 propone que, a partir de la aprobación del PO, éstos sean la referencia para la nueva experiencia:
 
+> **Lo que espera aprobación es la sustitución, no el trabajo.** Los cuatro entregables se redactan
+> desde ya y con libertad completa: la identidad visual se rediseña desde cero, las pantallas son
+> nuevas y las visualizaciones se reorganizan sin atarse a lo anterior. Lo que el PO decide en `P-06`
+> es a partir de qué momento estos documentos **mandan** sobre los de la tabla de abajo. Dos
+> consecuencias prácticas mientras `P-06` siga abierta: nadie edita `UX_Guidelines.md` —el gate lo
+> permitiría, porque `vault/04_UX_Design/**` está en el verde de este equipo, pero su frontmatter lo
+> declara `source_of_truth` con el PO como owner—, y el Equipo 5 no debería implementar la paleta
+> nueva en producción hasta que la ratificación exista.
+
 | Documento existente | Estado | Relación propuesta |
 |---|---|---|
 | [[vault/04_UX_Design/UX_Guidelines]] | `approved`, `source_of_truth`, owner Edgar Coronel | `03_Visual_Identity.md` lo **sustituye** como sistema de diseño de la nueva experiencia. Sólo el PO puede decidirlo |
