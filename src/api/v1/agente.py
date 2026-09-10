@@ -41,6 +41,24 @@ class AgenteNoConfigurado(RuntimeError):
     """Una colaboración del agente (LLM/ejecutor) no está configurada en este entorno."""
 
 
+def _construir_contexto_conversacional(body: AgenteConsultaIn) -> dict | None:
+    """Arma el `Mapping` que espera `procesar_consulta`, con `contexto` e `historial` fusionados.
+
+    `procesar_consulta` (Célula 3, `src/agente/servicio.py`) ya acepta un único parámetro
+    `contexto_conversacional: Mapping[str, object] | None`. En vez de pedirle a C3 una firma
+    nueva, el `historial` de turnos (rediseño del chat, 2026-09-10) viaja bajo la clave
+    `"historial"` de ese mismo mapping — `construir_prompt_sistema` deberá leerla igual que ya
+    lee `ccts`/`ciclo`/`filtros`/`resumen` (coordinado con Andrés, C3).
+
+    Devuelve `None` cuando no hay ni `contexto` ni `historial`, para no romper la
+    retrocompatibilidad de un cuerpo sin ninguno de los dos.
+    """
+    contexto = body.contexto.model_dump() if body.contexto else {}
+    if body.historial:
+        contexto["historial"] = [turno.model_dump() for turno in body.historial]
+    return contexto or None
+
+
 # --------------------------------------------------------------------------- #
 # Proveedores inyectables (defaults seguros; C3/Andrés y C5 los sobreescriben)
 # --------------------------------------------------------------------------- #
@@ -99,6 +117,11 @@ def consulta(
     confianza** (`ContextoConversacionalIn`): forma de los CCT, cotas de tamaño, sin caracteres de
     control, y `extra="forbid"` para que no se pueda colar un `sql` por esta puerta. Ver el
     docstring del esquema. Lo que llega al servicio de C3 es siempre un objeto ya validado.
+
+    **`historial` (opcional, rediseño del chat 2026-09-10)** son los turnos previos de la
+    conversación (pregunta/respuesta), tal como los guarda el widget. Igual que `contexto`, es
+    opcional, retrocompatible y se valida como entrada hostil (`HistorialTurnoIn`): acotado en
+    cantidad de turnos y en tamaño por turno, sin caracteres de control.
     """
     try:
         resultado = procesar_consulta(
@@ -107,7 +130,7 @@ def consulta(
             generar_sql=generar_sql,
             ejecutar_sql=ejecutar_sql,
             redactar_respuesta=redactar_respuesta,
-            contexto_conversacional=body.contexto.model_dump() if body.contexto else None,
+            contexto_conversacional=_construir_contexto_conversacional(body),
         )
     except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
         return AgenteRespuestaOut(
