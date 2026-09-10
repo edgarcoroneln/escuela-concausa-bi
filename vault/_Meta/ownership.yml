@@ -69,16 +69,6 @@ personas:
       - "dags/**"
       - "vault/14_Data_Sources/**"
       - "vault/03_Architecture/Data_Model.md"
-      # Hueco real hallado 2026-09-10 (Diana Alvarez, PR del gate E5): el rol ya
-      # decía "Líder S7 · Frontend e integración" desde DEC-022, pero el verde
-      # se quedó en el de Célula 1 (pre-reapertura) y nunca sumó las rutas del
-      # frontend nuevo -- el gate reprobaba a la propia líder de E5 por tocar
-      # su propio frente. Mismo patrón que docker/**+08_CICD_DevOps/** de Luis
-      # Téllez (líneas arriba), que sí se actualizó.
-      - "frontend/**"
-      - "docker/**"
-      - "docker-compose.yml"
-      - "vault/08_CICD_DevOps/**"
     amarillo:
       - "vault/03_Architecture/_index.md"
       - "tests/**"
