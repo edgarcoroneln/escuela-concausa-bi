@@ -4,8 +4,14 @@
 //   - prod:   .env.production -> https://faro-api-eanzfglvyq-uc.a.run.app
 //
 // Todas las funciones devuelven { data, error }. Nunca lanzan (throw) para que
-// las páginas puedan hacer fallback a mock data mientras el resto de los
-// equipos (C3 agente, C4 auth) termina su parte, sin romper la demo.
+// la página decida cómo mostrar el error.
+//
+// OJO -- corregido 10-sep (revisión de Edgar, PR #302): antes este comentario
+// decía que las páginas podían caer a mock data en error para "no romper la
+// demo". Eso es justo el patrón que se pidió eliminar: un error real de red
+// NUNCA debe disfrazarse de dato de ejemplo en silencio. El único mock
+// permitido es el modo demo explícito de ./demoMode.js (VITE_USE_MOCK=true).
+// Ver useApiResource.js para el patrón de carga recomendado.
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
@@ -30,6 +36,21 @@ export const getKpis = () => request("/api/v1/kpis");
 export const getEscuelas = (params = {}) =>
   request(`/api/v1/escuelas?${new URLSearchParams(params)}`);
 export const getEscuela = (cct) => request(`/api/v1/escuelas/${cct}`);
+
+// "Los 7 casos" -- escuelas en riesgo. El endpoint NO admite un filtro
+// indice_riesgo_min (revisión de Edgar en PR #302, 10-sep): el contrato
+// disponible es ordenar. Se pide el catálogo ordenado desc por indice_riesgo
+// y se valida/recorta contra el conteo real de KpisOut.escuelas_en_riesgo.
+//
+// OJO -- gap de contrato encontrado al implementar esto: EscuelaOut (la
+// forma real de cada fila) trae cct/nombre/nivel/indice_riesgo/
+// driver_dominante/matricula_total/tiene_prediccion, pero NO latitud/
+// longitud, NO nombre de municipio/entidad (solo cve_mun) y NO variación de
+// matrícula por escuela. El mapa (MapaRiesgo/MapaCasos) y esos 2 campos NO
+// se pueden conectar al API real todavía -- falta que alguien (DS/API) los
+// agregue al contrato. Documentado también en PLAN_TRABAJO_E5.md.
+export const getEscuelasEnRiesgo = (size = 50) =>
+  request(`/api/v1/escuelas?${new URLSearchParams({ order_by: "indice_riesgo", order: "desc", size: String(size) })}`);
 export const getMunicipios = (params = {}) =>
   request(`/api/v1/municipios?${new URLSearchParams(params)}`);
 export const getMunicipio = (cveMun) => request(`/api/v1/municipios/${cveMun}`);

@@ -33,7 +33,7 @@ date: "2026-09-10"
 
 | Pieza | Elección | Por qué |
 |---|---|---|
-| Framework | **React 18 + Vite** | Angular quedaba descartado por curva de aprendizaje (TS obligatorio, DI, RxJS, Zone.js) contra 2.5 días y JS nivel medio sin experiencia previa en React/Angular. |
+| Framework | **React 19 + Vite** | Angular quedaba descartado por curva de aprendizaje (TS obligatorio, DI, RxJS, Zone.js) contra 2.5 días y JS nivel medio sin experiencia previa en React/Angular. |
 | Estilos | **Tailwind CSS v4** (`@tailwindcss/vite`) | Cero CSS a mano, tokens de color centralizados en `src/index.css`, ya alineados con el mockup de storytelling que mandó UX/UI. |
 | Gráficas estándar | **Recharts** | Barras, donas — cubren la mayoría de los ~103 charts sin reinventar cada una. |
 | Gráfica flagship + mapa | **D3.js** (targeted) | El Dr. pidió D3 explícitamente. Se usa donde de verdad aporta: el gauge radial de riesgo (`RiskGauge.jsx`) y el mapa de México (`MapaRiesgo.jsx`, `d3-geo` + geojson real de estados). |
@@ -196,12 +196,33 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
 ## 9. Qué falta
 
 **De E5 (ingeniería, no depende de nadie más):**
-- **"Nivel de atención" derivado de `indice_riesgo`** (resuelto 10-sep por el PO, `ADR-011`/`DEC-024`):
-  alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`. Se calcula en el frontend a partir del
-  `indice_riesgo` que el API ya expone — **no se consume `gold.recomendaciones.prioridad`** (sigue
-  anclada a 0.60, sin republicar). Cierra `BUG-063`/P-01 sin tocar el backend.
+- **"Nivel de atención" derivado de `indice_riesgo`** — **implementado 10-sep** en
+  `frontend/src/data/mock.js` (función `nivelRiesgo`, corregida de los umbrales viejos del mockup de
+  UX a `ADR-011`/`DEC-024`: alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`). Se calcula en el
+  frontend a partir del `indice_riesgo` que el API ya expone — **no se consume
+  `gold.recomendaciones.prioridad`** (sigue anclada a 0.60, sin republicar). Cierra `BUG-063`/P-01 sin
+  tocar el backend.
 - Gráfica de predicción con tramo punteado (forecast) y tab de Recomendación dentro del expediente.
-- Conectar cada pantalla a `src/lib/api.js` en vez de `mock.js`.
+- **Conectar cada pantalla a `src/lib/api.js` en vez de `mock.js`** — en progreso, 10-sep (revisión de
+  Edgar en PR #302). Se agregó el mecanismo (`src/lib/demoMode.js` + `useApiResource.js` +
+  `DemoBadge.jsx`): por default se llama al API real; el mock solo aparece con `VITE_USE_MOCK=true`
+  y siempre rotulado — nunca como fallback silencioso de un error. `Home.jsx` (KPIs) ya corre así, de
+  punta a punta. **Gap de contrato real encontrado al implementarlo**, pendiente de que alguien lo
+  resuelva del lado de datos/API antes de poder conectar el resto de las pantallas:
+  - `EscuelaOut` (lista de escuelas) no trae **latitud/longitud** ni **variación de matrícula por
+    escuela** → bloquea conectar el mapa (`MapaRiesgo`/`MapaCasos`) y el dato de variación en
+    "Los 7 casos"/expediente.
+  - `EscuelaOut`/`MunicipioOut` no traen **nombre de municipio/entidad**, solo `cve_mun` → mismo
+    hueco ya anotado abajo para `MunicipioOut` (ranking municipal).
+  - `KpisOut` no trae un **índice de riesgo promedio** (se sustituyó esa tarjeta por variación de
+    matrícula, que sí es real, en `Home.jsx`).
+  - No existe endpoint de **serie histórica de matrícula por ciclo**, ni de **matriz de drivers en
+    lote** (solo por escuela individual vía `EscuelaDetalleOut`).
+  - Mientras tanto, `VistaGeneral`, `LosSieteCasos`, `MapaCasos`, `ExpedienteEscuela`,
+    `MatrizDrivers`, `ComparacionTerritorial` y `Comparativa` siguen en `mock.js` — pendiente
+    rotularlos con `DemoBadge` y decidir, por pantalla, qué se conecta ya (identidad/orden/driver de
+    cada escuela sí se puede, ver `getEscuelasEnRiesgo()` en `api.js`) contra qué espera al gap de
+    arriba.
 - Code-splitting por ruta (`React.lazy`) si sobra tiempo — el bundle pesa ~940KB, no bloqueante para
   la demo pero señalado por Vite en el build.
 

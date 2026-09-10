@@ -40,7 +40,7 @@ no pueden implementar su diseño sin contradecir `US-206`, que sigue cerrada tal
 ## Decisión
 
 Se retira el embebido de Superset/Streamlit como interfaz del producto. `FARO Web` deja de ser una
-app Streamlit; el frontend pasa a ser una **SPA en React 18 + Vite**, servida como estático (nginx)
+app Streamlit; el frontend pasa a ser una **SPA en React 19 + Vite**, servida como estático (nginx)
 en Cloud Run, que consume el API real (`api/openapi.v1.json`) directamente desde el navegador.
 
 - Gráficas estándar del catálogo: **Recharts**.

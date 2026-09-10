@@ -59,7 +59,7 @@ construida hoy (stack, componentes, arquitectura, ADR).
 
 ### 2.1 Stack
 
-Combo #1: **React 18 + Vite + Recharts + D3 dirigido** (gauge de riesgo, mapa). Probado en código
+Combo #1: **React 19 + Vite + Recharts + D3 dirigido** (gauge de riesgo, mapa). Probado en código
 real contra otras 4 combinaciones — [[vault/03_Architecture/ADRs/ADR-012-retiro-streamlit-frontend-nativo|ADR-012]]
 (`supersedes: ADR-002`), pendiente de ratificación del PO.
 
@@ -120,8 +120,9 @@ continuamente**.
 | Auth | **Cerrado 10-sep** — cookie httpOnly de un solo origen vía proxy (ver §2.2) | Luis (proxy+CSP) / Christian (cookie+headers) / Diana (Dockerfile non-root) | Hoy |
 | P-05 (de E3) | Confirmar `escuelas_en_riesgo=7` en `/api/v1/kpis` en vivo | Diana + Luis | Hoy 18:00 |
 | Docker build | **Validado 10-sep** — `docker build` corre limpio (17/17), fix aplicado: `npm ci` necesitaba `--legacy-peer-deps` (mismo choque de peers que en local, `react-simple-maps` vs React 19) | Diana/Luis | Cerrado — falta probar el contenedor corriendo (`docker run`) y luego push a Artifact Registry |
-| `prioridad`/`BUG-063` | **Resuelto 10-sep por el PO — `ADR-011` (Edgar) + `DEC-024`.** No se toca `gold.recomendaciones.prioridad` (sigue en 0.60, sin republicar). El frontend deriva su propio "nivel de atención" directo de `indice_riesgo`: alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30` (reutiliza `LINEA_DE_ALERTA`/`RIESGO_ESTABLE`, cero cambios de backend). Pendiente: implementarlo en `frontend/src/lib/api.js` o un util nuevo — ver §9 | Diana/E5 (implementación, no decisión) | Antes del viernes, no bloqueante hoy |
-| Reconciliación de páginas | 9 rutas construidas vs. 7 pantallas del plan de E3 | Diana | Con el borrador de E3 de hoy 18:00 |
+| `prioridad`/`BUG-063` | **Resuelto 10-sep por el PO (`ADR-011`/`DEC-024`) — implementado 10-sep.** No se toca `gold.recomendaciones.prioridad` (sigue en 0.60, sin republicar). `nivelRiesgo()` en `frontend/src/data/mock.js` ya deriva "nivel de atención" directo de `indice_riesgo`: alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30` (reutiliza `LINEA_DE_ALERTA`/`RIESGO_ESTABLE`, cero cambios de backend) | Diana/E5 | Cerrado |
+| Mocks en recorrido productivo | **En progreso 10-sep (revisión de Edgar, PR #302).** Se agregó modo demo explícito (`VITE_USE_MOCK`, nunca fallback silencioso por error) + `getEscuelasEnRiesgo()` real (orden desc por `indice_riesgo`, sin `indice_riesgo_min` que el API no admite). `Home.jsx` ya corre 100% contra el API real. Bloqueante para conectar el resto: `EscuelaOut` no trae lat/lon ni variación por escuela; no hay endpoint de serie histórica ni de matriz de drivers en lote — ver §9 de `Arquitectura_Frontend_React` | Diana/E5 (implementación) + dueño de datos/API (el gap de contrato) | Resto de pantallas antes del viernes |
+| Reconciliación de páginas | 9 rutas construidas vs. 7 pantallas del plan de E3 — **ojo:** varias de las rutas con el gap de arriba (`ComparacionTerritorial`/ranking, `Comparativa`/histórico) podrían no sobrevivir la reconciliación; conviene esperar el borrador de E3 antes de invertir en conectarlas al API real | Diana | Con el borrador de E3 de hoy 18:00 |
 | `/municipios` sin `nombre_entidad`/`cve_ent` en el schema | Fix de minutos en `MunicipioOut` | Christian | Solo si el plan de 7 pantallas de E3 sigue necesitando ranking/comparador municipal — **confirmar primero, no construir a ciegas** |
 | Rollback | No existe runbook específico de frontend (el genérico es de Edgar, `Rollback_Runbook.md`) | Diana/Luis | Ver §6 |
 

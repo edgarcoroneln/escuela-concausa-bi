@@ -80,12 +80,17 @@ export const driverIcons = {
   D6: "🌫️",
 };
 
-// Nivel de riesgo por umbral, para el semáforo del mockup de UX/UI
-// (Alto ≥ 0.65 rojo, Medio 0.50-0.64 ámbar).
+// Nivel de atención por umbral -- ADR-011 (Edgar) / DEC-024, no el semáforo
+// original del mockup de UX/UI. Reutiliza LINEA_DE_ALERTA (DEC-019, =0.50,
+// src/api/repositorio_gold.py) y RIESGO_ESTABLE del backend: el frontend
+// deriva su propio nivel directo de indice_riesgo y NO consume/reinterpreta
+// gold.recomendaciones.prioridad (esa columna sigue anclada a 0.60, ver
+// ADR-011). Corrige el corte anterior (Alto ≥0.65/Medio 0.50-0.64), que no
+// estaba alineado con el resto del sistema.
 export function nivelRiesgo(indice) {
-  if (indice >= 0.65) return { label: "Alto", color: "var(--color-risk-high)" };
-  if (indice >= 0.5) return { label: "Medio", color: "var(--color-risk-mid)" };
-  return { label: "Bajo", color: "var(--color-risk-low)" };
+  if (indice >= 0.5) return { label: "Alta", color: "var(--color-risk-high)" };
+  if (indice >= 0.3) return { label: "Media", color: "var(--color-risk-mid)" };
+  return { label: "Baja", color: "var(--color-risk-low)" };
 }
 
 // "Los 7 casos" — escuelas con índice de riesgo ≥ 0.50 (DEC-019).

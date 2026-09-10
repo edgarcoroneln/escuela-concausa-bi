@@ -3,28 +3,41 @@ import { Link, useParams } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import RiskGauge from "../components/RiskGauge.jsx";
-import { driverColors, driverNombres, escuelasEnRiesgo, nivelRiesgo } from "../data/mock.js";
+import DemoBadge from "../components/DemoBadge.jsx";
+import { driverColors, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
+import { getEscuela } from "../lib/api.js";
+import { useApiResource } from "../lib/useApiResource.js";
 
 const TABS = ["Resumen", "Drivers", "Comparación", "Predicción", "Recomendación"];
 
-// Expediente individual — una escuela, con tabs (calca los paneles 07-11 del
-// mockup de UX/UI: son las 5 vistas de un mismo expediente, no pantallas
-// sueltas). Todavía usa mock data; en la siguiente fase cada tab se conecta
-// a su endpoint real:
-//   Resumen/Drivers -> getEscuela(cct)          (EscuelaDetalleOut: d1..d6)
-//   Predicción      -> getPrediccion(cct)
-//   Recomendación   -> getPrediccionExplicacion(cct)
+// Conectado al API real 10-sep (revisión de Edgar, PR #302) vía getEscuela(cct)
+// (EscuelaDetalleOut: sí trae latitud/longitud, a diferencia de la lista --
+// ver getEscuelasEnRiesgo en lib/api.js -- pero sigue sin variación de
+// matrícula ni nombre de municipio/entidad, solo cve_mun). Con
+// VITE_USE_MOCK=true se usa el mock, siempre rotulado.
 export default function ExpedienteEscuela() {
   const { cct } = useParams();
   const [tab, setTab] = useState(TABS[0]);
-  const i = escuelasEnRiesgo.findIndex((e) => e.cct === cct);
-  const escuela = escuelasEnRiesgo[i];
+  const { status, data, error } = useApiResource(() => getEscuela(cct), {
+    mock: escuelasMock.find((e) => e.cct === cct) ?? null,
+    deps: [cct],
+  });
 
-  if (!escuela) {
+  if (status === "loading") {
+    return (
+      <PageContainer>
+        <p className="text-sm" style={{ color: "var(--color-ink-faint)" }}>Cargando expediente…</p>
+      </PageContainer>
+    );
+  }
+
+  if (status === "error" || !data) {
     return (
       <PageContainer>
         <Card title="No encontrado">
-          <p className="text-sm mb-3">No hay datos mock para el CCT {cct}.</p>
+          <p className="text-sm mb-3">
+            {status === "error" ? `No se pudo cargar el CCT ${cct} (${error}).` : `No hay datos para el CCT ${cct}.`}
+          </p>
           <Link to="/casos" className="text-sm font-semibold" style={{ color: "var(--color-primary)" }}>
             ← Volver a los 7 casos
           </Link>
@@ -33,8 +46,10 @@ export default function ExpedienteEscuela() {
     );
   }
 
+  const escuela = data;
   const color = driverColors[escuela.driver_dominante] ?? "var(--color-primary)";
   const riesgo = nivelRiesgo(escuela.indice_riesgo);
+  const esReal = status === "ok";
 
   return (
     <PageContainer>
@@ -44,9 +59,11 @@ export default function ExpedienteEscuela() {
 
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <p className="kicker mb-1">Expediente {String(i + 1).padStart(2, "0")} de {escuelasEnRiesgo.length}</p>
+          {status === "demo" && <div className="mb-2"><DemoBadge /></div>}
           <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>{escuela.nombre}</h1>
-          <p className="text-sm mt-1" style={{ color: "var(--color-ink-faint)" }}>{escuela.cct} · {escuela.municipio}, {escuela.entidad}</p>
+          <p className="text-sm mt-1" style={{ color: "var(--color-ink-faint)" }}>
+            {escuela.cct}{esReal ? ` · matrícula ${escuela.matricula_total.toLocaleString("es-MX")}` : ` · ${escuela.municipio}, ${escuela.entidad}`}
+          </p>
         </div>
         <div
           className="px-4 py-2.5 rounded-xl text-right"
@@ -81,9 +98,13 @@ export default function ExpedienteEscuela() {
               <tbody>
                 {[
                   ["Nivel educativo", escuela.nivel],
-                  ["Municipio", escuela.municipio],
-                  ["Entidad", escuela.entidad],
-                  ["Variación último ciclo", `${escuela.variacion}%`],
+                  ...(esReal
+                    ? [["Matrícula total", escuela.matricula_total.toLocaleString("es-MX")]]
+                    : [
+                        ["Municipio", escuela.municipio],
+                        ["Entidad", escuela.entidad],
+                        ["Variación último ciclo", `${escuela.variacion}%`],
+                      ]),
                 ].map(([k, v]) => (
                   <tr key={k} style={{ borderBottom: "1px solid var(--color-border)" }}>
                     <td className="py-2 pr-4" style={{ color: "var(--color-ink-faint)" }}>{k}</td>
