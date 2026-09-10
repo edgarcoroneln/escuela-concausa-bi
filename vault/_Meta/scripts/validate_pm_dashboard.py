@@ -11,7 +11,7 @@ from pathlib import Path
 
 VALID_STATES = {"planned", "in_progress", "in_review", "blocked", "done", "descoped"}
 # Historias del catálogo (vault/02_Requirements/User_Stories.md), en alcance o recortadas.
-CATALOGO_US = 113  # 92 históricas + 21 de recuperación S7, DEC-022
+CATALOGO_US = 99  # 92 históricas + 6 frentes colectivos S7 + US-654, DEC-022
 
 
 def fail(message: str, failures: list[str]) -> None:

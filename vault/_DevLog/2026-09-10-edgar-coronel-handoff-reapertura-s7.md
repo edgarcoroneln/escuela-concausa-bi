@@ -18,9 +18,9 @@ tags: [devlog, handoff, sprint-7, recovery]
 - **Latest graph status:** `graphify-out/GRAPH_REPORT.md` presente; consulta realizada el 10-sep.
 - **Relevant Graphify queries:** `qué documentos controlan la reapertura del desarrollo, el code freeze, las células, los sprints, las historias y el tablero PM`.
 - **Files changed:** decisión, revisión del profesor, plan S7, catálogo/estado/RACI, requisitos, ownership, índices, contexto de agentes, generador/validador y artefactos PM.
-- **IDs touched:** `DEC-022`, `US-006`, `US-601`…`US-655`, `REQ-001`…`REQ-007`, `PLAN-RECUPERACION-2026-09-09`.
+- **IDs touched:** `DEC-022`, `US-006`, seis historias colectivas `US-601/611/621/631/641/651`, gobernanza `US-654`, `REQ-001`…`REQ-007`, `PLAN-RECUPERACION-2026-09-09`.
 - **Decisions made:** `DEC-021` queda superada desde el 9-sep; S7 corre 10–13 sep; entrega 14-sep primera hora; seis equipos consecutivos; freeze domingo 20:00; Edward lidera QA y Eloisa es integrante confirmada.
 - **Open questions:** Confirmar la hora exacta del lunes; migrar y después cerrar la rama remota no conforme `componentes-back` si contiene trabajo útil. Edward como líder QA y Eloisa como integrante quedaron ratificados por el PO.
 - **Risks:** Ventana menor a cuatro días; ruta crítica converge en frontend; aceptación debe medirse en la misma candidata desplegada; rama temática fuera de política.
-- **Tests executed:** generador PM 113 US/21 personas/8 fuentes ✅; validador TEST-002 ✅; `vault_lint` ✅; Ruff ✅; 52 pruebas específicas ✅; suite completa: 1,113 pasan y 4 se omiten en sandbox, 5 pruebas de frontend que requieren puerto local se reejecutaron fuera del sandbox y pasaron (total efectivo 1,118 pass, 4 skip, 0 fallas).
+- **Tests executed:** `generate_pm_dashboard.py` (99 US, 21 personas, 8 fuentes), `validate_pm_dashboard.py`, `vault_lint.py`, Ruff y 52 pruebas enfocadas (`test_check_ownership.py` + `test_generate_pm_dashboard.py`), todo satisfactorio. El modelo final registra 6 frentes colectivos + 1 US de gobernanza; no crea tareas individuales sin acuerdo de cada equipo.
 - **Next recommended action:** aprobar y mergear el PR de gobernanza; cada integrante sincroniza su `dev/*`, trabaja su US S7 y presenta evidencia a las 18:00.

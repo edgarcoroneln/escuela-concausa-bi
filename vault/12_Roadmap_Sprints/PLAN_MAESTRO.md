@@ -482,25 +482,25 @@ bloquean mutuamente.
 | Integrante | Nivel | Célula | Rol | Plan individual |
 |---|---|---|---|---|
 | Héctor Rafael Morales Marbán | **Medio** | Célula 1 | Líder · Componentes y memoria técnica | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Manuel Alejandro Serranía Reinada | **Alto** | Célula 1 | Documentación de datos, capas, cubos y ER | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Carlos Guillermo Mayorga Tapia | **Bajo** | Célula 1 | Memoria técnica y entrada narrativa | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Manuel Alejandro Serranía Reinada | **Alto** | Célula 1 | Integrante · Componentes y memoria técnica | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Carlos Guillermo Mayorga Tapia | **Bajo** | Célula 1 | Integrante · Componentes y memoria técnica | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 | Andrés González Habib | **Alto** | Célula 2 | Líder · Chat IA natural | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Karla Alejandra Monter Benitez | **Medio** | Célula 2 | Contrato e integración del chat | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Alejandro Velázquez Mendoza | **Bajo** | Célula 2 | Runtime RAG y observabilidad | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Karla Alejandra Monter Benitez | **Medio** | Célula 2 | Integrante · Chat IA natural | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Alejandro Velázquez Mendoza | **Bajo** | Célula 2 | Integrante · Chat IA natural | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 | Marina García del Buey | **Medio** | Célula 3 | Líder · UX/UI | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Oscar Antonio Quiroz Lázaro | **Bajo** | Célula 3 | Selección de gráficas | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Juan Carlos Macías Mayen | **Medio** | Célula 3 | Flujos y wireframes | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Monserrat Xcaret Miranda Olivas | **Medio** | Célula 3 | Storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Oscar Antonio Quiroz Lázaro | **Bajo** | Célula 3 | Integrante · UX/UI y storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Juan Carlos Macías Mayen | **Medio** | Célula 3 | Integrante · UX/UI y storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Monserrat Xcaret Miranda Olivas | **Medio** | Célula 3 | Integrante · Storytelling | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 | Estefany Lucero Hernández Loredo | **Bajo** | Célula 4 | Líder · ML-03 | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Deni Garrido Fragoso | **Medio** | Célula 4 | Datos y features para ML-03 | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Luis Enrique García Vázquez | **Bajo** | Célula 4 | Explicación de modelos | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Deni Garrido Fragoso | **Medio** | Célula 4 | Integrante · ML-03 y explicación ML | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Luis Enrique García Vázquez | **Bajo** | Célula 4 | Integrante · ML-03 y explicación ML | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 | Diana Aracely Alvarez Varela | **Alto** | Célula 5 | Líder · Frontend e integración | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Luis Téllez Domínguez | **Medio** | Célula 5 | Despliegue, observabilidad y rollback | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Christian Imanol Ruiz Hurtado | **Medio** | Célula 5 | Integración API/Auth | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Luis Téllez Domínguez | **Medio** | Célula 5 | Integrante · Frontend y deploy | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Christian Imanol Ruiz Hurtado | **Medio** | Célula 5 | Integrante · Frontend y deploy | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 | Edward Ulysses Ruiz Bustillos | **Bajo** | Célula 6 | Líder · QA integral | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Emilio Galnares Ruiz | **Bajo** | Célula 6 | QA de datos y ML | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Edgar Ulises Jiménez López | **Bajo** | Célula 6 | Automatización E2E | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
-| Eloisa González Rubio | **Bajo** | Célula 6 | QA API/chat/Auth | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Emilio Galnares Ruiz | **Bajo** | Célula 6 | Integrante · QA | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Edgar Ulises Jiménez López | **Bajo** | Célula 6 | Integrante · QA | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
+| Eloisa González Rubio | **Bajo** | Célula 6 | Integrante · QA | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 | Edgar Edmundo Coronel Navarrete | **Medio** | Célula 6 | PO · comodín QA y go/no-go | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] |
 
 ### Calendario S7

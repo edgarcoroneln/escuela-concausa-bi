@@ -26,14 +26,14 @@ reabierto del jueves 10 al domingo 13; el corte del 8-sep se conserva sólo como
 
 | Área | Observación del profesor | Brecha verificable | REQ reabierto | Trabajo de recuperación |
 |---|---|---|---|---|
-| Frontend | La experiencia visual no fue satisfactoria | FARO Web no guía al usuario por una narrativa ni integra con suficiente calidad las superficies | `REQ-002` | `US-621`…`US-624`, `US-641`…`US-643` |
-| Gráficas | Las visualizaciones de Superset no comunicaron valor | Selección y composición de gráficas sin narrativa ejecutiva convincente | `REQ-002` | `US-622`, `US-641` |
-| Storytelling | No hubo una historia de negocio/datos | Falta un recorrido problema→datos→hallazgo→predicción→acción | `REQ-002`, `REQ-007` | `US-603`, `US-624`, `US-641` |
-| Componentes | Faltó explicar cómo funciona el backend | No se presentó de forma clara el paso Bronze→Silver→Gold, filtros, cubos, componentes y modelo E-R | `REQ-001`, `REQ-004`, `REQ-007` | `US-601`…`US-603` |
-| Chat IA | No responde como conversación en lenguaje natural | El cierre anterior ya reconocía una UI *single-turn*; la explicación no debe reducirse a mostrar SQL | `REQ-006` | `US-611`…`US-613` |
-| ML-03 | No funciona en el producto | El cierre anterior lo declaró entrenado pero sin promoción a Gold/API/UI | `REQ-003` | `US-631`, `US-632` |
-| Explicación ML | Demasiado básica | Faltan narrativa, métricas, limitaciones, interpretación y vínculo con decisiones | `REQ-003` | `US-633` |
-| QA | La aceptación previa no representó la experiencia evaluada | Se necesitan criterios por equipo y una pasada integral sobre la candidata de entrega | `REQ-007` | `US-651`…`US-655` |
+| Frontend | La experiencia visual no fue satisfactoria | FARO Web no guía al usuario por una narrativa ni integra con suficiente calidad las superficies | `REQ-002` | Equipos 3/5 · `US-621`, `US-641` |
+| Gráficas | Las visualizaciones de Superset no comunicaron valor | Selección y composición de gráficas sin narrativa ejecutiva convincente | `REQ-002` | Equipo 3 · `US-621` |
+| Storytelling | No hubo una historia de negocio/datos | Falta un recorrido problema→datos→hallazgo→predicción→acción | `REQ-002`, `REQ-007` | Equipos 1/3/5 · `US-601`, `US-621`, `US-641` |
+| Componentes | Faltó explicar cómo funciona el backend | No se presentó de forma clara el paso Bronze→Silver→Gold, filtros, cubos, componentes y modelo E-R | `REQ-001`, `REQ-004`, `REQ-007` | Equipo 1 · `US-601` |
+| Chat IA | No responde como conversación en lenguaje natural | El cierre anterior ya reconocía una UI *single-turn*; la explicación no debe reducirse a mostrar SQL | `REQ-006` | Equipo 2 · `US-611` |
+| ML-03 | No funciona en el producto | El cierre anterior lo declaró entrenado pero sin promoción a Gold/API/UI | `REQ-003` | Equipo 4 · `US-631` |
+| Explicación ML | Demasiado básica | Faltan narrativa, métricas, limitaciones, interpretación y vínculo con decisiones | `REQ-003` | Equipo 4 · `US-631` |
+| QA | La aceptación previa no representó la experiencia evaluada | Se necesitan criterios por equipo y una pasada integral sobre la candidata de entrega | `REQ-007` | Equipo 6 · `US-651` |
 
 ## Corrección del dictamen anterior
 

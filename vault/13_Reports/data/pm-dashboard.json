@@ -1,25 +1,25 @@
 {
   "meta": {
-    "generated_at": "2026-09-10T06:20:05+00:00",
+    "generated_at": "2026-09-10T06:44:36+00:00",
     "generated_date": "2026-09-10",
-    "commit": "0627d1d",
+    "commit": "cae3bc9",
     "branch": "dev/edgar-coronel",
     "working_tree": "modified",
-    "source_fingerprint": "49bc93d6ac82",
+    "source_fingerprint": "703e18cd28a7",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
   },
   "summary": {
-    "total": 113,
+    "total": 99,
     "done": 91,
-    "planned": 20,
+    "planned": 6,
     "in_progress": 2,
     "in_review": 0,
     "blocked": 0,
     "wip": 2,
     "descoped": 0,
-    "progress": 81.2,
+    "progress": 92.6,
     "days_to_demo": 4
   },
   "delivery": {
@@ -1687,27 +1687,9 @@
     },
     {
       "id": "US-601",
-      "title": "Documentar arquitectura y funcionamiento de componentes backend",
+      "title": "Documentar en equipo componentes backend, datos, capas, cubos, ER y memoria técnica",
       "owner": "Héctor Rafael Morales Marbán",
       "owner_short": "Héctor M.",
-      "level": "Alto",
-      "sprint": "S7",
-      "req": "REQ-004",
-      "cell": "Célula 1 · Recuperación — Componentes y memoria técnica",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · gate inicial 10-sep 18:00",
-      "updated": "2026-09-10",
-      "objective": "Dirigir la documentación de componentes",
-      "deliverable": "Arquitectura de componentes y recorrido backend",
-      "age_days": 0
-    },
-    {
-      "id": "US-602",
-      "title": "Documentar datos, filtros Bronze/Silver/Gold, cubos y modelo E-R",
-      "owner": "Manuel Alejandro Serranía Reinada",
-      "owner_short": "Manuel S.",
       "level": "Alto",
       "sprint": "S7",
       "req": "REQ-001",
@@ -1715,33 +1697,15 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · gate inicial 10-sep 18:00",
+      "evidence": "Frente colectivo E1; Héctor coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
       "updated": "2026-09-10",
-      "objective": "Explicar datos y transformación",
-      "deliverable": "Bronze→Silver→Gold, filtros, cubos y ER",
-      "age_days": 0
-    },
-    {
-      "id": "US-603",
-      "title": "Consolidar memoria técnica como entrada del storytelling",
-      "owner": "Carlos Guillermo Mayorga Tapia",
-      "owner_short": "Carlos M.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-007",
-      "cell": "Célula 1 · Recuperación — Componentes y memoria técnica",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · gate inicial 10-sep 18:00",
-      "updated": "2026-09-10",
-      "objective": "Consolidar memoria técnica",
-      "deliverable": "Memoria y resumen narrativo del backend",
+      "objective": "Coordinar el resultado colectivo de E1 · Componentes",
+      "deliverable": "Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica",
       "age_days": 0
     },
     {
       "id": "US-611",
-      "title": "Implementar respuestas conversacionales naturales y evaluables",
+      "title": "Mejorar en equipo el Chat IA para conversar en lenguaje natural",
       "owner": "Andrés González Habib",
       "owner_short": "Andrés G.",
       "level": "Alto",
@@ -1751,51 +1715,15 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · chat natural en URL candidata",
+      "evidence": "Frente colectivo E2; Andrés coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
       "updated": "2026-09-10",
-      "objective": "Naturalizar la respuesta del agente",
-      "deliverable": "Orquestación conversacional y set de respuestas aceptado",
-      "age_days": 0
-    },
-    {
-      "id": "US-612",
-      "title": "Integrar contrato, contexto y manejo de errores del chat",
-      "owner": "Karla Alejandra Monter Benitez",
-      "owner_short": "Karla M.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-006",
-      "cell": "Célula 2 · Recuperación — Chat IA natural",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · contrato y contexto del chat",
-      "updated": "2026-09-10",
-      "objective": "Integrar contrato del chat",
-      "deliverable": "Contrato API, contexto y errores validados",
-      "age_days": 0
-    },
-    {
-      "id": "US-613",
-      "title": "Operar RAG, observabilidad y smoke del chat desplegado",
-      "owner": "Alejandro Velázquez Mendoza",
-      "owner_short": "Alejandro V.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-006",
-      "cell": "Célula 2 · Recuperación — Chat IA natural",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · runtime/observabilidad del chat",
-      "updated": "2026-09-10",
-      "objective": "Operar el chat",
-      "deliverable": "Runtime, índices RAG, logs y smoke reproducible",
+      "objective": "Coordinar el resultado colectivo de E2 · Chat IA",
+      "deliverable": "Chat natural, contextual, seguro y demostrable",
       "age_days": 0
     },
     {
       "id": "US-621",
-      "title": "Diseñar el sistema visual y prototipo de pantallas",
+      "title": "Diseñar en equipo UX/UI, visualizaciones y storytelling del producto",
       "owner": "Marina García del Buey",
       "owner_short": "Marina d.",
       "level": "Alto",
@@ -1805,69 +1733,15 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · prototipo antes de código",
+      "evidence": "Frente colectivo E3; Marina coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
       "updated": "2026-09-10",
-      "objective": "Dirigir experiencia visual",
-      "deliverable": "Sistema visual y prototipo de pantallas",
-      "age_days": 0
-    },
-    {
-      "id": "US-622",
-      "title": "Seleccionar y especificar visualizaciones que comuniquen valor",
-      "owner": "Oscar Antonio Quiroz Lázaro",
-      "owner_short": "Oscar Q.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-002",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · catálogo gráfico justificado",
-      "updated": "2026-09-10",
-      "objective": "Seleccionar visualizaciones",
-      "deliverable": "Catálogo gráfico justificado y especificaciones",
-      "age_days": 0
-    },
-    {
-      "id": "US-623",
-      "title": "Diseñar wireframes, navegación, controles y estados",
-      "owner": "Juan Carlos Macías Mayen",
-      "owner_short": "Juan M.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-002",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · wireframes y estados",
-      "updated": "2026-09-10",
-      "objective": "Diseñar flujos y pantallas",
-      "deliverable": "Wireframes, navegación, controles y estados",
-      "age_days": 0
-    },
-    {
-      "id": "US-624",
-      "title": "Construir el storytelling problema-datos-hallazgo-acción",
-      "owner": "Monserrat Xcaret Miranda Olivas",
-      "owner_short": "Monserrat M.",
-      "level": "Alto",
-      "sprint": "S7",
-      "req": "REQ-002",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · storyboard integral",
-      "updated": "2026-09-10",
-      "objective": "Construir storytelling",
-      "deliverable": "Storyboard problema→datos→hallazgos→acción",
+      "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
+      "deliverable": "Propuesta visual, gráficas, pantallas y storytelling",
       "age_days": 0
     },
     {
       "id": "US-631",
-      "title": "Corregir y promover ML-03 hasta Gold, API y frontend",
+      "title": "Corregir en equipo ML-03, sus datos y la explicación de los modelos",
       "owner": "Estefany Lucero Hernández Loredo",
       "owner_short": "Estefany H.",
       "level": "Alto",
@@ -1877,51 +1751,15 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · ML-03 Gold/API/UI",
+      "evidence": "Frente colectivo E4; Estefany coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
       "updated": "2026-09-10",
-      "objective": "Corregir ML-03",
-      "deliverable": "Entrenamiento, publicación e integración Gold/API/UI",
-      "age_days": 0
-    },
-    {
-      "id": "US-632",
-      "title": "Preparar features, cobertura y calidad reproducible para ML-03",
-      "owner": "Deni Garrido Fragoso",
-      "owner_short": "Deni G.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-003",
-      "cell": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · features y cobertura ML-03",
-      "updated": "2026-09-10",
-      "objective": "Preparar datos de ML-03",
-      "deliverable": "Features/cobertura y prueba de calidad reproducible",
-      "age_days": 0
-    },
-    {
-      "id": "US-633",
-      "title": "Documentar los tres modelos con métricas, límites e interpretación",
-      "owner": "Luis Enrique García Vázquez",
-      "owner_short": "Luis G.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-003",
-      "cell": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · fichas explicativas ML",
-      "updated": "2026-09-10",
-      "objective": "Mejorar explicación ML",
-      "deliverable": "Fichas de tres modelos con métricas, límites e interpretación",
+      "objective": "Coordinar el resultado colectivo de E4 · ML-03",
+      "deliverable": "ML-03 funcional y explicación mejorada de los tres modelos",
       "age_days": 0
     },
     {
       "id": "US-641",
-      "title": "Integrar frontend, UX y storytelling en una experiencia coherente",
+      "title": "Programar y desplegar en equipo el nuevo frontend integrado",
       "owner": "Diana Aracely Alvarez Varela",
       "owner_short": "Diana A.",
       "level": "Alto",
@@ -1931,51 +1769,15 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · frontend integrado",
+      "evidence": "Frente colectivo E5; Diana coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
       "updated": "2026-09-10",
-      "objective": "Integrar el frontend",
-      "deliverable": "Arquitectura y frontend coherente con UX/storytelling",
-      "age_days": 0
-    },
-    {
-      "id": "US-642",
-      "title": "Desplegar, observar y preparar rollback de la candidata final",
-      "owner": "Luis Téllez Domínguez",
-      "owner_short": "Luis T.",
-      "level": "Alto",
-      "sprint": "S7",
-      "req": "REQ-005",
-      "cell": "Célula 5 · Recuperación — Frontend y despliegue",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · release/URL/rollback",
-      "updated": "2026-09-10",
-      "objective": "Desplegar candidata",
-      "deliverable": "Release, URLs, observabilidad y rollback",
-      "age_days": 0
-    },
-    {
-      "id": "US-643",
-      "title": "Integrar frontend con API, sesión, Auth y errores",
-      "owner": "Christian Imanol Ruiz Hurtado",
-      "owner_short": "Christian R.",
-      "level": "Alto",
-      "sprint": "S7",
-      "req": "REQ-004",
-      "cell": "Célula 5 · Recuperación — Frontend y despliegue",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · integración API/Auth",
-      "updated": "2026-09-10",
-      "objective": "Integrar frontend/API/Auth",
-      "deliverable": "Contratos, sesión y manejo de errores E2E",
+      "objective": "Coordinar el resultado colectivo de E5 · Frontend y deploy",
+      "deliverable": "Frontend integrado y candidata desplegada en producción",
       "age_days": 0
     },
     {
       "id": "US-651",
-      "title": "Definir estrategia, matriz de aceptación y dictamen QA",
+      "title": "Definir y ejecutar en equipo la metodología y aceptación integral de QA",
       "owner": "Edward Ulysses Ruiz Bustillos",
       "owner_short": "Edward R.",
       "level": "Alto",
@@ -1985,46 +1787,10 @@
       "status": "planned",
       "started": "—",
       "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · matriz QA y dictamen",
+      "evidence": "Frente colectivo E6; Edward coordina y el desglose permanece pendiente de acuerdo del equipo. vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09",
       "updated": "2026-09-10",
-      "objective": "Dirigir QA",
-      "deliverable": "Estrategia, matriz de aceptación y dictamen",
-      "age_days": 0
-    },
-    {
-      "id": "US-652",
-      "title": "Validar integridad de datos, reproducibilidad y métricas ML",
-      "owner": "Emilio Galnares Ruiz",
-      "owner_short": "Emilio G.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-007",
-      "cell": "Célula 6 · Recuperación — QA integral",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · pruebas datos/ML",
-      "updated": "2026-09-10",
-      "objective": "Validar datos y ML",
-      "deliverable": "Pruebas de integridad, reproducibilidad y métricas",
-      "age_days": 0
-    },
-    {
-      "id": "US-653",
-      "title": "Automatizar regresión E2E de frontend, chat y despliegue",
-      "owner": "Edgar Ulises Jiménez López",
-      "owner_short": "Edgar J.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-007",
-      "cell": "Célula 6 · Recuperación — QA integral",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · regresión E2E",
-      "updated": "2026-09-10",
-      "objective": "Automatizar E2E",
-      "deliverable": "Regresión de frontend/chat/deploy",
+      "objective": "Coordinar el resultado colectivo de E6 · QA",
+      "deliverable": "Metodología, criterios, ejecución y dictamen integral",
       "age_days": 0
     },
     {
@@ -2041,26 +1807,8 @@
       "blocked_since": "—",
       "evidence": "Reapertura, renumeración, trazabilidad y gobierno de S7 mediante DEC-022; cierra con PR aprobado y primer corte de las 18:00",
       "updated": "2026-09-10",
-      "objective": "Gobernar recuperación",
-      "deliverable": "Trazabilidad, revisiones diarias y go/no-go",
-      "age_days": 0
-    },
-    {
-      "id": "US-655",
-      "title": "Ejecutar regresión de API, chat y autenticación",
-      "owner": "Eloisa González Rubio",
-      "owner_short": "Eloisa G.",
-      "level": "Medio",
-      "sprint": "S7",
-      "req": "REQ-007",
-      "cell": "Célula 6 · Recuperación — QA integral",
-      "status": "planned",
-      "started": "—",
-      "blocked_since": "—",
-      "evidence": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09 · asignación a QA ratificada por el PO; Edward lidera el frente",
-      "updated": "2026-09-10",
-      "objective": "Regresión API/chat/Auth",
-      "deliverable": "Suite y evidencia 200/401/403/422/conversación",
+      "objective": "Coordinar el resultado colectivo de Gobierno",
+      "deliverable": "Trazabilidad, revisiones diarias y decisión go/no-go",
       "age_days": 0
     }
   ],
@@ -2071,12 +1819,12 @@
       "level": "Bajo",
       "cell": "Célula 2",
       "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
-      "role": "Runtime RAG y observabilidad",
-      "mission": "S7 · Operar el chat",
-      "inputs": "entrega a Luis/QA",
-      "outputs": "Runtime, índices RAG, logs y smoke reproducible",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Chat IA natural",
+      "mission": "S7 · Integrante de E2 · Chat IA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Chat natural, contextual, seguro y demostrable",
+      "reviewer": "Andrés González Habib · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "avmxk01",
       "github_status": "Confirmado",
@@ -2086,17 +1834,16 @@
         "US-522a",
         "US-523a",
         "US-524a",
-        "US-525a",
-        "US-613"
+        "US-525a"
       ],
       "pr_count": 5,
       "pr_open": 0,
       "pr_merged": 5,
-      "stories": 6,
+      "stories": 5,
       "done": 5,
       "wip": 0,
       "blocked": 0,
-      "progress": 83.3
+      "progress": 100.0
     },
     {
       "name": "Andrés González Habib",
@@ -2104,11 +1851,11 @@
       "cell": "Célula 2",
       "cell_group": "Célula 3 · Machine Learning & Agente IA",
       "role": "Líder · Chat IA natural",
-      "mission": "S7 · Naturalizar la respuesta del agente",
-      "inputs": "recibe API/RAG; entrega a E5/E6",
-      "outputs": "Orquestación conversacional y set de respuestas aceptado",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Líder de E2 · Chat IA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Chat natural, contextual, seguro y demostrable",
+      "reviewer": "Andrés González Habib · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "Agh28",
       "github_status": "Confirmado",
@@ -2135,12 +1882,12 @@
       "level": "Bajo",
       "cell": "Célula 1",
       "cell_group": "Célula 3 · Machine Learning & Agente IA",
-      "role": "Memoria técnica y entrada narrativa",
-      "mission": "S7 · Consolidar memoria técnica",
-      "inputs": "entrega a Monserrat",
-      "outputs": "Memoria y resumen narrativo del backend",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Componentes y memoria técnica",
+      "mission": "S7 · Integrante de E1 · Componentes; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica",
+      "reviewer": "Héctor Rafael Morales Marbán · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "cmayorgat44",
       "github_status": "Confirmado",
@@ -2148,29 +1895,28 @@
       "assigned_story_ids": [
         "US-304b",
         "US-323",
-        "US-324",
-        "US-603"
+        "US-324"
       ],
       "pr_count": 3,
       "pr_open": 0,
       "pr_merged": 3,
-      "stories": 4,
+      "stories": 3,
       "done": 3,
       "wip": 0,
       "blocked": 0,
-      "progress": 75.0
+      "progress": 100.0
     },
     {
       "name": "Christian Imanol Ruiz Hurtado",
       "level": "Medio",
       "cell": "Célula 5",
       "cell_group": "Célula 4 · Backend, API & Seguridad",
-      "role": "Integración API/Auth",
-      "mission": "S7 · Integrar frontend/API/Auth",
-      "inputs": "entrega a Diana/QA",
-      "outputs": "Contratos, sesión y manejo de errores E2E",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Frontend y deploy",
+      "mission": "S7 · Integrante de E5 · Frontend y deploy; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Frontend integrado y candidata desplegada en producción",
+      "reviewer": "Diana Aracely Alvarez Varela · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "ImanolRuiz00",
       "github_status": "Confirmado",
@@ -2180,29 +1926,28 @@
         "US-402",
         "US-403",
         "US-404",
-        "US-405",
-        "US-643"
+        "US-405"
       ],
       "pr_count": 15,
       "pr_open": 0,
       "pr_merged": 15,
-      "stories": 6,
+      "stories": 5,
       "done": 5,
       "wip": 0,
       "blocked": 0,
-      "progress": 83.3
+      "progress": 100.0
     },
     {
       "name": "Deni Garrido Fragoso",
       "level": "Medio",
       "cell": "Célula 4",
       "cell_group": "Célula 1 · Data Engineering & Quality",
-      "role": "Datos y features para ML-03",
-      "mission": "S7 · Preparar datos de ML-03",
-      "inputs": "entrega a Estefany",
-      "outputs": "Features/cobertura y prueba de calidad reproducible",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · ML-03 y explicación ML",
+      "mission": "S7 · Integrante de E4 · ML-03; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "ML-03 funcional y explicación mejorada de los tres modelos",
+      "reviewer": "Estefany Lucero Hernández Loredo · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "dgdeni",
       "github_status": "Confirmado",
@@ -2210,17 +1955,16 @@
       "assigned_story_ids": [
         "US-111",
         "US-112",
-        "US-113",
-        "US-632"
+        "US-113"
       ],
       "pr_count": 9,
       "pr_open": 1,
       "pr_merged": 8,
-      "stories": 4,
+      "stories": 3,
       "done": 3,
       "wip": 0,
       "blocked": 0,
-      "progress": 75.0
+      "progress": 100.0
     },
     {
       "name": "Diana Aracely Alvarez Varela",
@@ -2228,11 +1972,11 @@
       "cell": "Célula 5",
       "cell_group": "Célula 1 · Data Engineering & Quality",
       "role": "Líder · Frontend e integración",
-      "mission": "S7 · Integrar el frontend",
-      "inputs": "recibe E1–E4; entrega a QA",
-      "outputs": "Arquitectura y frontend coherente con UX/storytelling",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Líder de E5 · Frontend y deploy; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Frontend integrado y candidata desplegada en producción",
+      "reviewer": "Diana Aracely Alvarez Varela · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "DianaVarela96",
       "github_status": "Confirmado",
@@ -2262,11 +2006,11 @@
       "cell": "Célula 6",
       "cell_group": "Célula 0 · PO — Dirección de Proyecto",
       "role": "PO · comodín QA y go/no-go",
-      "mission": "S7 · Gobernar recuperación",
-      "inputs": "integra todo y decide entrega",
-      "outputs": "Trazabilidad, revisiones diarias y go/no-go",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Comodín QA y PO de E6 · QA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Metodología, criterios, ejecución y dictamen integral",
+      "reviewer": "Edward Ulysses Ruiz Bustillos · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "edgarcoroneln",
       "github_status": "Confirmado",
@@ -2294,12 +2038,12 @@
       "level": "Bajo",
       "cell": "Célula 6",
       "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
-      "role": "Automatización E2E",
-      "mission": "S7 · Automatizar E2E",
-      "inputs": "entrega a Edward",
-      "outputs": "Regresión de frontend/chat/deploy",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · QA",
+      "mission": "S7 · Integrante de E6 · QA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Metodología, criterios, ejecución y dictamen integral",
+      "reviewer": "Edward Ulysses Ruiz Bustillos · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "EJ-by-Me",
       "github_status": "Confirmado",
@@ -2309,17 +2053,16 @@
         "US-522b",
         "US-523b",
         "US-524b",
-        "US-525b",
-        "US-653"
+        "US-525b"
       ],
       "pr_count": 6,
       "pr_open": 0,
       "pr_merged": 6,
-      "stories": 6,
+      "stories": 5,
       "done": 5,
       "wip": 0,
       "blocked": 0,
-      "progress": 83.3
+      "progress": 100.0
     },
     {
       "name": "Edward Ulysses Ruiz Bustillos",
@@ -2327,11 +2070,11 @@
       "cell": "Célula 6",
       "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
       "role": "Líder · QA integral",
-      "mission": "S7 · Dirigir QA",
-      "inputs": "recibe de todos; entrega al PO",
-      "outputs": "Estrategia, matriz de aceptación y dictamen",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Líder de E6 · QA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Metodología, criterios, ejecución y dictamen integral",
+      "reviewer": "Edward Ulysses Ruiz Bustillos · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "Dr4wde064",
       "github_status": "Confirmado",
@@ -2357,12 +2100,12 @@
       "level": "Bajo",
       "cell": "Célula 6",
       "cell_group": "Célula 4 · Backend, API & Seguridad",
-      "role": "QA API/chat/Auth",
-      "mission": "S7 · Regresión API/chat/Auth",
-      "inputs": "entrega a Edward",
-      "outputs": "Suite y evidencia 200/401/403/422/conversación",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · QA",
+      "mission": "S7 · Integrante de E6 · QA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Metodología, criterios, ejecución y dictamen integral",
+      "reviewer": "Edward Ulysses Ruiz Bustillos · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "EloisaGonzalezRubio",
       "github_status": "Confirmado",
@@ -2370,29 +2113,28 @@
       "assigned_story_ids": [
         "US-421",
         "US-422",
-        "US-423",
-        "US-655"
+        "US-423"
       ],
       "pr_count": 3,
       "pr_open": 1,
       "pr_merged": 2,
-      "stories": 4,
+      "stories": 3,
       "done": 3,
       "wip": 0,
       "blocked": 0,
-      "progress": 75.0
+      "progress": 100.0
     },
     {
       "name": "Emilio Galnares Ruiz",
       "level": "Bajo",
       "cell": "Célula 6",
       "cell_group": "Célula 1 · Data Engineering & Quality",
-      "role": "QA de datos y ML",
-      "mission": "S7 · Validar datos y ML",
-      "inputs": "entrega a Edward",
-      "outputs": "Pruebas de integridad, reproducibilidad y métricas",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · QA",
+      "mission": "S7 · Integrante de E6 · QA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Metodología, criterios, ejecución y dictamen integral",
+      "reviewer": "Edward Ulysses Ruiz Bustillos · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "Starcrossedboy",
       "github_status": "Confirmado",
@@ -2401,17 +2143,16 @@
         "US-121a",
         "US-122a",
         "US-123a",
-        "US-124a",
-        "US-652"
+        "US-124a"
       ],
       "pr_count": 3,
       "pr_open": 0,
       "pr_merged": 2,
-      "stories": 5,
+      "stories": 4,
       "done": 4,
       "wip": 0,
       "blocked": 0,
-      "progress": 80.0
+      "progress": 100.0
     },
     {
       "name": "Estefany Lucero Hernández Loredo",
@@ -2419,11 +2160,11 @@
       "cell": "Célula 4",
       "cell_group": "Célula 3 · Machine Learning & Agente IA",
       "role": "Líder · ML-03",
-      "mission": "S7 · Corregir ML-03",
-      "inputs": "entrega a Diana/QA",
-      "outputs": "Entrenamiento, publicación e integración Gold/API/UI",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Líder de E4 · ML-03; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "ML-03 funcional y explicación mejorada de los tres modelos",
+      "reviewer": "Estefany Lucero Hernández Loredo · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "stephi-coder",
       "github_status": "Confirmado",
@@ -2449,11 +2190,11 @@
       "cell": "Célula 1",
       "cell_group": "Célula 3 · Machine Learning & Agente IA",
       "role": "Líder · Componentes y memoria técnica",
-      "mission": "S7 · Dirigir la documentación de componentes",
-      "inputs": "recibe repo; entrega a E3/E5/E6",
-      "outputs": "Arquitectura de componentes y recorrido backend",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Líder de E1 · Componentes; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica",
+      "reviewer": "Héctor Rafael Morales Marbán · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "hector677-mm",
       "github_status": "Confirmado",
@@ -2478,12 +2219,12 @@
       "level": "Medio",
       "cell": "Célula 3",
       "cell_group": "Célula 4 · Backend, API & Seguridad",
-      "role": "Flujos y wireframes",
-      "mission": "S7 · Diseñar flujos y pantallas",
-      "inputs": "entrega a Marina/Diana",
-      "outputs": "Wireframes, navegación, controles y estados",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · UX/UI y storytelling",
+      "mission": "S7 · Integrante de E3 · UX/UI y storytelling; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Propuesta visual, gráficas, pantallas y storytelling",
+      "reviewer": "Marina García del Buey · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "juanmmayen98-pixel",
       "github_status": "Confirmado. Corregido el 2026-09-05: decía juanmmayen98, handle que no existe en GitHub, y el tablero lee esta tabla —no ownership.yml— para contar PRs, así que le marcaba 0 teniendo 3 mergeados (#95, #101, #191)",
@@ -2491,29 +2232,28 @@
       "assigned_story_ids": [
         "US-412",
         "US-415",
-        "US-416",
-        "US-623"
+        "US-416"
       ],
       "pr_count": 3,
       "pr_open": 0,
       "pr_merged": 3,
-      "stories": 4,
+      "stories": 3,
       "done": 3,
       "wip": 0,
       "blocked": 0,
-      "progress": 75.0
+      "progress": 100.0
     },
     {
       "name": "Karla Alejandra Monter Benitez",
       "level": "Medio",
       "cell": "Célula 2",
       "cell_group": "Célula 4 · Backend, API & Seguridad",
-      "role": "Contrato e integración del chat",
-      "mission": "S7 · Integrar contrato del chat",
-      "inputs": "entrega a Andrés/Diana",
-      "outputs": "Contrato API, contexto y errores validados",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Chat IA natural",
+      "mission": "S7 · Integrante de E2 · Chat IA; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Chat natural, contextual, seguro y demostrable",
+      "reviewer": "Andrés González Habib · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "marlakonter",
       "github_status": "Confirmado",
@@ -2521,29 +2261,28 @@
       "assigned_story_ids": [
         "US-411",
         "US-413",
-        "US-414",
-        "US-612"
+        "US-414"
       ],
       "pr_count": 3,
       "pr_open": 0,
       "pr_merged": 3,
-      "stories": 4,
+      "stories": 3,
       "done": 3,
       "wip": 0,
       "blocked": 0,
-      "progress": 75.0
+      "progress": 100.0
     },
     {
       "name": "Luis Enrique García Vázquez",
       "level": "Bajo",
       "cell": "Célula 4",
       "cell_group": "Célula 1 · Data Engineering & Quality",
-      "role": "Explicación de modelos",
-      "mission": "S7 · Mejorar explicación ML",
-      "inputs": "entrega a E3/demo",
-      "outputs": "Fichas de tres modelos con métricas, límites e interpretación",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · ML-03 y explicación ML",
+      "mission": "S7 · Integrante de E4 · ML-03; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "ML-03 funcional y explicación mejorada de los tres modelos",
+      "reviewer": "Estefany Lucero Hernández Loredo · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "LuisEGarciaV",
       "github_status": "Confirmado",
@@ -2552,29 +2291,28 @@
         "US-121b",
         "US-122b",
         "US-123b",
-        "US-124b",
-        "US-633"
+        "US-124b"
       ],
       "pr_count": 5,
       "pr_open": 0,
       "pr_merged": 5,
-      "stories": 5,
+      "stories": 4,
       "done": 4,
       "wip": 0,
       "blocked": 0,
-      "progress": 80.0
+      "progress": 100.0
     },
     {
       "name": "Luis Téllez Domínguez",
       "level": "Medio",
       "cell": "Célula 5",
       "cell_group": "Célula 5 · Cloud Infrastructure & DevOps",
-      "role": "Despliegue, observabilidad y rollback",
-      "mission": "S7 · Desplegar candidata",
-      "inputs": "recibe E2/E4/E5; entrega a QA",
-      "outputs": "Release, URLs, observabilidad y rollback",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Frontend y deploy",
+      "mission": "S7 · Integrante de E5 · Frontend y deploy; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Frontend integrado y candidata desplegada en producción",
+      "reviewer": "Diana Aracely Alvarez Varela · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "LuisTellez03",
       "github_status": "Confirmado",
@@ -2585,29 +2323,28 @@
         "US-503",
         "US-504",
         "US-505",
-        "US-526",
-        "US-642"
+        "US-526"
       ],
       "pr_count": 54,
       "pr_open": 0,
       "pr_merged": 53,
-      "stories": 7,
+      "stories": 6,
       "done": 6,
       "wip": 0,
       "blocked": 0,
-      "progress": 85.7
+      "progress": 100.0
     },
     {
       "name": "Manuel Alejandro Serranía Reinada",
       "level": "Alto",
       "cell": "Célula 1",
       "cell_group": "Célula 2 · Analytics & Business Intelligence",
-      "role": "Documentación de datos, capas, cubos y ER",
-      "mission": "S7 · Explicar datos y transformación",
-      "inputs": "entrega a E1/E3/E5",
-      "outputs": "Bronze→Silver→Gold, filtros, cubos y ER",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Componentes y memoria técnica",
+      "mission": "S7 · Integrante de E1 · Componentes; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica",
+      "reviewer": "Héctor Rafael Morales Marbán · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "mserraniaa-png",
       "github_status": "Confirmado",
@@ -2618,17 +2355,16 @@
         "US-203",
         "US-204",
         "US-205",
-        "US-206",
-        "US-602"
+        "US-206"
       ],
       "pr_count": 16,
       "pr_open": 0,
       "pr_merged": 15,
-      "stories": 7,
+      "stories": 6,
       "done": 6,
       "wip": 0,
       "blocked": 0,
-      "progress": 85.7
+      "progress": 100.0
     },
     {
       "name": "Marina García del Buey",
@@ -2636,11 +2372,11 @@
       "cell": "Célula 3",
       "cell_group": "Célula 2 · Analytics & Business Intelligence",
       "role": "Líder · UX/UI",
-      "mission": "S7 · Dirigir experiencia visual",
-      "inputs": "entrega a Diana",
-      "outputs": "Sistema visual y prototipo de pantallas",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "mission": "S7 · Líder de E3 · UX/UI y storytelling; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Propuesta visual, gráficas, pantallas y storytelling",
+      "reviewer": "Marina García del Buey · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "marina-gdb",
       "github_status": "Confirmado",
@@ -2668,12 +2404,12 @@
       "level": "Medio",
       "cell": "Célula 3",
       "cell_group": "Célula 2 · Analytics & Business Intelligence",
-      "role": "Storytelling",
-      "mission": "S7 · Construir storytelling",
-      "inputs": "recibe E1; entrega a E5/demo",
-      "outputs": "Storyboard problema→datos→hallazgos→acción",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · Storytelling",
+      "mission": "S7 · Integrante · storytelling de E3 · UX/UI y storytelling; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Propuesta visual, gráficas, pantallas y storytelling",
+      "reviewer": "Marina García del Buey · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "monserratxmiranda",
       "github_status": "Confirmado",
@@ -2682,29 +2418,28 @@
         "US-211b",
         "US-213",
         "US-214b",
-        "US-215b",
-        "US-624"
+        "US-215b"
       ],
       "pr_count": 8,
       "pr_open": 0,
       "pr_merged": 8,
-      "stories": 5,
+      "stories": 4,
       "done": 4,
       "wip": 0,
       "blocked": 0,
-      "progress": 80.0
+      "progress": 100.0
     },
     {
       "name": "Oscar Antonio Quiroz Lázaro",
       "level": "Bajo",
       "cell": "Célula 3",
       "cell_group": "Célula 2 · Analytics & Business Intelligence",
-      "role": "Selección de gráficas",
-      "mission": "S7 · Seleccionar visualizaciones",
-      "inputs": "entrega a Marina/Diana",
-      "outputs": "Catálogo gráfico justificado y especificaciones",
-      "reviewer": "Líder del equipo S7 · QA · PO",
-      "delivery": "PR desde dev/{identidad} con prueba, DevLog y trazabilidad",
+      "role": "Integrante · UX/UI y storytelling",
+      "mission": "S7 · Integrante de E3 · UX/UI y storytelling; desglose interno pendiente",
+      "inputs": "Acuerdos del equipo y revisión diaria de las 18:00",
+      "outputs": "Propuesta visual, gráficas, pantallas y storytelling",
+      "reviewer": "Marina García del Buey · QA · PO",
+      "delivery": "Contribución al resultado común mediante su rama dev/* y PR",
       "plan_path": "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09.md",
       "github_user": "oscarqlazaro-lab",
       "github_status": "Confirmado",
@@ -2713,17 +2448,16 @@
         "US-221",
         "US-222",
         "US-223",
-        "US-224",
-        "US-622"
+        "US-224"
       ],
       "pr_count": 10,
       "pr_open": 0,
       "pr_merged": 10,
-      "stories": 5,
+      "stories": 4,
       "done": 4,
       "wip": 0,
       "blocked": 0,
-      "progress": 80.0
+      "progress": 100.0
     }
   ],
   "cells": [
@@ -2812,11 +2546,9 @@
     {
       "name": "Célula 1 · Recuperación — Componentes y memoria técnica",
       "members": [
-        "Carlos Guillermo Mayorga Tapia",
-        "Héctor Rafael Morales Marbán",
-        "Manuel Alejandro Serranía Reinada"
+        "Héctor Rafael Morales Marbán"
       ],
-      "stories": 3,
+      "stories": 1,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2825,11 +2557,9 @@
     {
       "name": "Célula 2 · Recuperación — Chat IA natural",
       "members": [
-        "Alejandro Velázquez Mendoza",
-        "Andrés González Habib",
-        "Karla Alejandra Monter Benitez"
+        "Andrés González Habib"
       ],
-      "stories": 3,
+      "stories": 1,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2838,12 +2568,9 @@
     {
       "name": "Célula 3 · Recuperación — UX/UI y storytelling",
       "members": [
-        "Juan Carlos Macías Mayen",
-        "Marina García del Buey",
-        "Monserrat Xcaret Miranda Olivas",
-        "Oscar Antonio Quiroz Lázaro"
+        "Marina García del Buey"
       ],
-      "stories": 4,
+      "stories": 1,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2852,11 +2579,9 @@
     {
       "name": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
       "members": [
-        "Deni Garrido Fragoso",
-        "Estefany Lucero Hernández Loredo",
-        "Luis Enrique García Vázquez"
+        "Estefany Lucero Hernández Loredo"
       ],
-      "stories": 3,
+      "stories": 1,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2865,11 +2590,9 @@
     {
       "name": "Célula 5 · Recuperación — Frontend y despliegue",
       "members": [
-        "Christian Imanol Ruiz Hurtado",
-        "Diana Aracely Alvarez Varela",
-        "Luis Téllez Domínguez"
+        "Diana Aracely Alvarez Varela"
       ],
-      "stories": 3,
+      "stories": 1,
       "done": 0,
       "wip": 0,
       "blocked": 0,
@@ -2879,16 +2602,13 @@
       "name": "Célula 6 · Recuperación — QA integral",
       "members": [
         "Edgar Edmundo Coronel Navarrete",
-        "Edgar Ulises Jiménez López",
-        "Edward Ulysses Ruiz Bustillos",
-        "Eloisa González Rubio",
-        "Emilio Galnares Ruiz"
+        "Edward Ulysses Ruiz Bustillos"
       ],
-      "stories": 5,
+      "stories": 2,
       "done": 0,
       "wip": 1,
       "blocked": 0,
-      "progress": 7.0
+      "progress": 17.5
     }
   ],
   "rubric": [
@@ -2906,60 +2626,60 @@
       "req": "REQ-002",
       "name": "Analytics & BI",
       "points": 2.5,
-      "stories": 25,
+      "stories": 22,
       "done": 20,
-      "progress": 80.0,
-      "secured_points": 2.0,
+      "progress": 90.9,
+      "secured_points": 2.27,
       "band": "green"
     },
     {
       "req": "REQ-003",
       "name": "Modelos ML",
       "points": 1.5,
-      "stories": 13,
+      "stories": 11,
       "done": 10,
-      "progress": 76.9,
-      "secured_points": 1.15,
+      "progress": 90.9,
+      "secured_points": 1.36,
       "band": "green"
     },
     {
       "req": "REQ-004",
       "name": "Backend/API/Auth",
       "points": 1.5,
-      "stories": 16,
+      "stories": 14,
       "done": 14,
-      "progress": 87.5,
-      "secured_points": 1.31,
+      "progress": 100.0,
+      "secured_points": 1.5,
       "band": "green"
     },
     {
       "req": "REQ-005",
       "name": "Deploy GCP",
       "points": 1.0,
-      "stories": 14,
+      "stories": 13,
       "done": 13,
-      "progress": 92.9,
-      "secured_points": 0.93,
+      "progress": 100.0,
+      "secured_points": 1.0,
       "band": "green"
     },
     {
       "req": "REQ-006",
       "name": "Agente",
       "points": 0.5,
-      "stories": 7,
+      "stories": 5,
       "done": 4,
-      "progress": 57.1,
-      "secured_points": 0.29,
+      "progress": 80.0,
+      "secured_points": 0.4,
       "band": "green"
     },
     {
       "req": "REQ-007",
       "name": "Equipo/Git/Docs",
       "points": 0.5,
-      "stories": 19,
+      "stories": 15,
       "done": 12,
-      "progress": 66.8,
-      "secured_points": 0.33,
+      "progress": 84.7,
+      "secured_points": 0.42,
       "band": "green"
     }
   ],
@@ -3292,6 +3012,650 @@
     "current_sprint": "S7",
     "people": [
       {
+        "name": "Alejandro Velázquez Mendoza",
+        "cell": "Célula 2",
+        "engagement": 100.0,
+        "commits": 24,
+        "prs_merged": 5,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Carlos Guillermo Mayorga Tapia",
+        "cell": "Célula 1",
+        "engagement": 100.0,
+        "commits": 7,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Christian Imanol Ruiz Hurtado",
+        "cell": "Célula 5",
+        "engagement": 100.0,
+        "commits": 28,
+        "prs_merged": 15,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Deni Garrido Fragoso",
+        "cell": "Célula 4",
+        "engagement": 100.0,
+        "commits": 39,
+        "prs_merged": 8,
+        "prs_open": 1,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Edgar Ulises Jiménez López",
+        "cell": "Célula 6",
+        "engagement": 100.0,
+        "commits": 12,
+        "prs_merged": 6,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Eloisa González Rubio",
+        "cell": "Célula 6",
+        "engagement": 100.0,
+        "commits": 13,
+        "prs_merged": 2,
+        "prs_open": 1,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Emilio Galnares Ruiz",
+        "cell": "Célula 6",
+        "engagement": 100.0,
+        "commits": 20,
+        "prs_merged": 2,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Juan Carlos Macías Mayen",
+        "cell": "Célula 3",
+        "engagement": 100.0,
+        "commits": 8,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Karla Alejandra Monter Benitez",
+        "cell": "Célula 2",
+        "engagement": 100.0,
+        "commits": 3,
+        "prs_merged": 3,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S5": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Luis Enrique García Vázquez",
+        "cell": "Célula 4",
+        "engagement": 100.0,
+        "commits": 9,
+        "prs_merged": 5,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Luis Téllez Domínguez",
+        "cell": "Célula 5",
+        "engagement": 100.0,
+        "commits": 131,
+        "prs_merged": 53,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S3": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S6": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Manuel Alejandro Serranía Reinada",
+        "cell": "Célula 1",
+        "engagement": 100.0,
+        "commits": 36,
+        "prs_merged": 15,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 3,
+            "done": 3,
+            "state": "done"
+          },
+          "S5": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Monserrat Xcaret Miranda Olivas",
+        "cell": "Célula 3",
+        "engagement": 100.0,
+        "commits": 37,
+        "prs_merged": 8,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
+        "name": "Oscar Antonio Quiroz Lázaro",
+        "cell": "Célula 3",
+        "engagement": 100.0,
+        "commits": 28,
+        "prs_merged": 10,
+        "prs_open": 0,
+        "risk": "en_tiempo",
+        "by_sprint": {
+          "S1": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S2": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S3": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S4": {
+            "n": 1,
+            "done": 1,
+            "state": "done"
+          },
+          "S5": {
+            "n": 2,
+            "done": 2,
+            "state": "done"
+          },
+          "S6": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          },
+          "S7": {
+            "n": 0,
+            "done": 0,
+            "state": "idle"
+          }
+        }
+      },
+      {
         "name": "Diana Aracely Alvarez Varela",
         "cell": "Célula 5",
         "engagement": 87.5,
@@ -3323,98 +3687,6 @@
           "S5": {
             "n": 2,
             "done": 2,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Luis Téllez Domínguez",
-        "cell": "Célula 5",
-        "engagement": 85.7,
-        "commits": 131,
-        "prs_merged": 53,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Manuel Alejandro Serranía Reinada",
-        "cell": "Célula 1",
-        "engagement": 85.7,
-        "commits": 36,
-        "prs_merged": 15,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
             "state": "done"
           },
           "S6": {
@@ -3476,52 +3748,6 @@
         }
       },
       {
-        "name": "Alejandro Velázquez Mendoza",
-        "cell": "Célula 2",
-        "engagement": 83.3,
-        "commits": 24,
-        "prs_merged": 5,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
         "name": "Andrés González Habib",
         "cell": "Célula 2",
         "engagement": 83.3,
@@ -3559,98 +3785,6 @@
             "n": 0,
             "done": 0,
             "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Christian Imanol Ruiz Hurtado",
-        "cell": "Célula 5",
-        "engagement": 83.3,
-        "commits": 28,
-        "prs_merged": 15,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Edgar Ulises Jiménez López",
-        "cell": "Célula 6",
-        "engagement": 83.3,
-        "commits": 12,
-        "prs_merged": 6,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
           },
           "S7": {
             "n": 1,
@@ -3752,328 +3886,6 @@
         }
       },
       {
-        "name": "Emilio Galnares Ruiz",
-        "cell": "Célula 6",
-        "engagement": 80.0,
-        "commits": 20,
-        "prs_merged": 2,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Luis Enrique García Vázquez",
-        "cell": "Célula 4",
-        "engagement": 80.0,
-        "commits": 9,
-        "prs_merged": 5,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S2": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Monserrat Xcaret Miranda Olivas",
-        "cell": "Célula 3",
-        "engagement": 80.0,
-        "commits": 37,
-        "prs_merged": 8,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Oscar Antonio Quiroz Lázaro",
-        "cell": "Célula 3",
-        "engagement": 80.0,
-        "commits": 28,
-        "prs_merged": 10,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Carlos Guillermo Mayorga Tapia",
-        "cell": "Célula 1",
-        "engagement": 75.0,
-        "commits": 7,
-        "prs_merged": 3,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 3,
-            "done": 3,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Deni Garrido Fragoso",
-        "cell": "Célula 4",
-        "engagement": 75.0,
-        "commits": 39,
-        "prs_merged": 8,
-        "prs_open": 1,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S3": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S5": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Eloisa González Rubio",
-        "cell": "Célula 6",
-        "engagement": 75.0,
-        "commits": 13,
-        "prs_merged": 2,
-        "prs_open": 1,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
         "name": "Estefany Lucero Hernández Loredo",
         "cell": "Célula 4",
         "engagement": 75.0,
@@ -4147,98 +3959,6 @@
             "n": 1,
             "done": 1,
             "state": "done"
-          },
-          "S5": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Juan Carlos Macías Mayen",
-        "cell": "Célula 3",
-        "engagement": 75.0,
-        "commits": 8,
-        "prs_merged": 3,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S4": {
-            "n": 2,
-            "done": 2,
-            "state": "done"
-          },
-          "S5": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S6": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S7": {
-            "n": 1,
-            "done": 0,
-            "state": "risk"
-          }
-        }
-      },
-      {
-        "name": "Karla Alejandra Monter Benitez",
-        "cell": "Célula 2",
-        "engagement": 75.0,
-        "commits": 3,
-        "prs_merged": 3,
-        "prs_open": 0,
-        "risk": "retraso",
-        "by_sprint": {
-          "S1": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S2": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
-          },
-          "S3": {
-            "n": 1,
-            "done": 1,
-            "state": "done"
-          },
-          "S4": {
-            "n": 0,
-            "done": 0,
-            "state": "idle"
           },
           "S5": {
             "n": 2,
@@ -4509,7 +4229,7 @@
     },
     {
       "id": "US-601",
-      "objective": "Dirigir la documentación de componentes",
+      "objective": "Coordinar el resultado colectivo de E1 · Componentes",
       "owner": "Héctor Rafael Morales Marbán",
       "cell": "Célula 1 · Recuperación — Componentes y memoria técnica",
       "sprint": "S7",
@@ -4517,26 +4237,8 @@
       "su_turno": true
     },
     {
-      "id": "US-602",
-      "objective": "Explicar datos y transformación",
-      "owner": "Manuel Alejandro Serranía Reinada",
-      "cell": "Célula 1 · Recuperación — Componentes y memoria técnica",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-603",
-      "objective": "Consolidar memoria técnica",
-      "owner": "Carlos Guillermo Mayorga Tapia",
-      "cell": "Célula 1 · Recuperación — Componentes y memoria técnica",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-611",
-      "objective": "Naturalizar la respuesta del agente",
+      "objective": "Coordinar el resultado colectivo de E2 · Chat IA",
       "owner": "Andrés González Habib",
       "cell": "Célula 2 · Recuperación — Chat IA natural",
       "sprint": "S7",
@@ -4544,26 +4246,8 @@
       "su_turno": true
     },
     {
-      "id": "US-612",
-      "objective": "Integrar contrato del chat",
-      "owner": "Karla Alejandra Monter Benitez",
-      "cell": "Célula 2 · Recuperación — Chat IA natural",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-613",
-      "objective": "Operar el chat",
-      "owner": "Alejandro Velázquez Mendoza",
-      "cell": "Célula 2 · Recuperación — Chat IA natural",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-621",
-      "objective": "Dirigir experiencia visual",
+      "objective": "Coordinar el resultado colectivo de E3 · UX/UI y storytelling",
       "owner": "Marina García del Buey",
       "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
       "sprint": "S7",
@@ -4571,35 +4255,8 @@
       "su_turno": true
     },
     {
-      "id": "US-622",
-      "objective": "Seleccionar visualizaciones",
-      "owner": "Oscar Antonio Quiroz Lázaro",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-623",
-      "objective": "Diseñar flujos y pantallas",
-      "owner": "Juan Carlos Macías Mayen",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-624",
-      "objective": "Construir storytelling",
-      "owner": "Monserrat Xcaret Miranda Olivas",
-      "cell": "Célula 3 · Recuperación — UX/UI y storytelling",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-631",
-      "objective": "Corregir ML-03",
+      "objective": "Coordinar el resultado colectivo de E4 · ML-03",
       "owner": "Estefany Lucero Hernández Loredo",
       "cell": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
       "sprint": "S7",
@@ -4607,26 +4264,8 @@
       "su_turno": true
     },
     {
-      "id": "US-632",
-      "objective": "Preparar datos de ML-03",
-      "owner": "Deni Garrido Fragoso",
-      "cell": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-633",
-      "objective": "Mejorar explicación ML",
-      "owner": "Luis Enrique García Vázquez",
-      "cell": "Célula 4 · Recuperación — ML-03 y explicación de modelos",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-641",
-      "objective": "Integrar el frontend",
+      "objective": "Coordinar el resultado colectivo de E5 · Frontend y deploy",
       "owner": "Diana Aracely Alvarez Varela",
       "cell": "Célula 5 · Recuperación — Frontend y despliegue",
       "sprint": "S7",
@@ -4634,26 +4273,8 @@
       "su_turno": true
     },
     {
-      "id": "US-642",
-      "objective": "Desplegar candidata",
-      "owner": "Luis Téllez Domínguez",
-      "cell": "Célula 5 · Recuperación — Frontend y despliegue",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-643",
-      "objective": "Integrar frontend/API/Auth",
-      "owner": "Christian Imanol Ruiz Hurtado",
-      "cell": "Célula 5 · Recuperación — Frontend y despliegue",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-651",
-      "objective": "Dirigir QA",
+      "objective": "Coordinar el resultado colectivo de E6 · QA",
       "owner": "Edward Ulysses Ruiz Bustillos",
       "cell": "Célula 6 · Recuperación — QA integral",
       "sprint": "S7",
@@ -4661,35 +4282,8 @@
       "su_turno": true
     },
     {
-      "id": "US-652",
-      "objective": "Validar datos y ML",
-      "owner": "Emilio Galnares Ruiz",
-      "cell": "Célula 6 · Recuperación — QA integral",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-653",
-      "objective": "Automatizar E2E",
-      "owner": "Edgar Ulises Jiménez López",
-      "cell": "Célula 6 · Recuperación — QA integral",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
-      "id": "US-655",
-      "objective": "Regresión API/chat/Auth",
-      "owner": "Eloisa González Rubio",
-      "cell": "Célula 6 · Recuperación — QA integral",
-      "sprint": "S7",
-      "status": "planned",
-      "su_turno": true
-    },
-    {
       "id": "US-654",
-      "objective": "Gobernar recuperación",
+      "objective": "Coordinar el resultado colectivo de Gobierno",
       "owner": "Edgar Edmundo Coronel Navarrete",
       "cell": "Célula 6 · Recuperación — QA integral",
       "sprint": "S7",
@@ -4716,7 +4310,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 80.0
+      "progress": 90.9
     },
     {
       "criterion": "3 · Tres modelos ML vía API",
@@ -4726,7 +4320,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 76.9
+      "progress": 90.9
     },
     {
       "criterion": "4 · Backend + Auth OAuth2/RBAC",
@@ -4735,8 +4329,8 @@
       "reference": "PRD §13-8",
       "design": "Cubierto",
       "exec_band": "green",
-      "exec_label": "En ejecución",
-      "progress": 87.5
+      "exec_label": "Cerrado administrativamente",
+      "progress": 100.0
     },
     {
       "criterion": "5 · Deploy GCP + Docker + URL",
@@ -4746,7 +4340,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "URL pública viva",
-      "progress": 92.9
+      "progress": 100.0
     },
     {
       "criterion": "6 · Agente conversacional",
@@ -4756,7 +4350,7 @@
       "design": "Cubierto",
       "exec_band": "green",
       "exec_label": "En ejecución",
-      "progress": 57.1
+      "progress": 80.0
     },
     {
       "criterion": "7 · Equipo, Git & Docs",
@@ -4766,7 +4360,7 @@
       "design": "Cubierto",
       "exec_band": "amber",
       "exec_label": "Pendiente demo/entrega",
-      "progress": 66.8
+      "progress": 84.7
     }
   ],
   "current_sprint": "S7",
@@ -9545,10 +9139,10 @@
     },
     {
       "date": "2026-09-10",
-      "remaining": 22,
-      "weighted_remaining": 21.2,
+      "remaining": 8,
+      "weighted_remaining": 7.3,
       "done": 91,
-      "scope": 113,
+      "scope": 99,
       "wip": 2,
       "blocked": 0
     }

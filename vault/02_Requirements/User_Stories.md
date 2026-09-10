@@ -3,9 +3,10 @@ id: US-CATALOG
 title: "Catálogo de User Stories — FARO"
 owner: "Edgar Edmundo Coronel Navarrete"
 status: in_review
-version: "1.1"
+version: "1.2"
 source_of_truth: true
 traces_up: ["vault/02_Requirements/Requirements_Detailed"]
+last_reviewed: "2026-09-10"
 tags: [requirements, user-stories, catalogo]
 ---
 
@@ -16,9 +17,10 @@ tags: [requirements, user-stories, catalogo]
 > Cada `US-###` mapea al `REQ-###` que satisface (ver [[vault/02_Requirements/Requirements_Detailed]]).
 > → [[vault/02_Requirements/_index]]
 
-**91 historias únicas · 91 asignaciones** (1 responsable por historia). Las historias que antes
-compartían ID entre varias personas se **partieron con sufijo de letra** (a/b/c), dando a cada quien un
-alcance distinto y verificable. Sprints S1–S7 (3 ago → 13 sep 2026); nueva entrega 14-sep.
+**99 historias únicas:** 92 del baseline S1–S6, seis frentes colectivos S7 y una historia de
+gobernanza. Cada US tiene un responsable canónico; en S7 el nombre del líder representa la
+coordinación del equipo y **no equivale a una tarea individual** para los demás integrantes.
+Sprints S1–S7 (3 ago → 13 sep 2026); nueva entrega 14-sep.
 
 ---
 
@@ -177,54 +179,42 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 
 | ID | Historia | Responsable | Nivel | Sprint | REQ |
 |---|---|---|---|---|---|
-| US-601 | Documentar arquitectura y funcionamiento de componentes backend | Héctor Rafael Morales Marbán | Alto | S7 | REQ-004 |
-| US-602 | Documentar datos, filtros Bronze/Silver/Gold, cubos y modelo E-R | Manuel Alejandro Serranía Reinada | Alto | S7 | REQ-001 |
-| US-603 | Consolidar memoria técnica como entrada del storytelling | Carlos Guillermo Mayorga Tapia | Medio | S7 | REQ-007 |
+| US-601 | Documentar en equipo componentes backend, datos, capas, cubos, ER y memoria técnica | Héctor Rafael Morales Marbán | Alto | S7 | REQ-001 |
 
 ## Célula 2 · Recuperación — Chat IA natural
 
 | ID | Historia | Responsable | Nivel | Sprint | REQ |
 |---|---|---|---|---|---|
-| US-611 | Implementar respuestas conversacionales naturales y evaluables | Andrés González Habib | Alto | S7 | REQ-006 |
-| US-612 | Integrar contrato, contexto y manejo de errores del chat | Karla Alejandra Monter Benitez | Medio | S7 | REQ-006 |
-| US-613 | Operar RAG, observabilidad y smoke del chat desplegado | Alejandro Velázquez Mendoza | Medio | S7 | REQ-006 |
+| US-611 | Mejorar en equipo el Chat IA para conversar en lenguaje natural | Andrés González Habib | Alto | S7 | REQ-006 |
 
 ## Célula 3 · Recuperación — UX/UI y storytelling
 
 | ID | Historia | Responsable | Nivel | Sprint | REQ |
 |---|---|---|---|---|---|
-| US-621 | Diseñar el sistema visual y prototipo de pantallas | Marina García del Buey | Alto | S7 | REQ-002 |
-| US-622 | Seleccionar y especificar visualizaciones que comuniquen valor | Oscar Antonio Quiroz Lázaro | Medio | S7 | REQ-002 |
-| US-623 | Diseñar wireframes, navegación, controles y estados | Juan Carlos Macías Mayen | Medio | S7 | REQ-002 |
-| US-624 | Construir el storytelling problema-datos-hallazgo-acción | Monserrat Xcaret Miranda Olivas | Alto | S7 | REQ-002 |
+| US-621 | Diseñar en equipo UX/UI, visualizaciones y storytelling del producto | Marina García del Buey | Alto | S7 | REQ-002 |
 
 ## Célula 4 · Recuperación — ML-03 y explicación de modelos
 
 | ID | Historia | Responsable | Nivel | Sprint | REQ |
 |---|---|---|---|---|---|
-| US-631 | Corregir y promover ML-03 hasta Gold, API y frontend | Estefany Lucero Hernández Loredo | Alto | S7 | REQ-003 |
-| US-632 | Preparar features, cobertura y calidad reproducible para ML-03 | Deni Garrido Fragoso | Medio | S7 | REQ-003 |
-| US-633 | Documentar los tres modelos con métricas, límites e interpretación | Luis Enrique García Vázquez | Medio | S7 | REQ-003 |
+| US-631 | Corregir en equipo ML-03, sus datos y la explicación de los modelos | Estefany Lucero Hernández Loredo | Alto | S7 | REQ-003 |
 
 ## Célula 5 · Recuperación — Frontend y despliegue
 
 | ID | Historia | Responsable | Nivel | Sprint | REQ |
 |---|---|---|---|---|---|
-| US-641 | Integrar frontend, UX y storytelling en una experiencia coherente | Diana Aracely Alvarez Varela | Alto | S7 | REQ-002 |
-| US-642 | Desplegar, observar y preparar rollback de la candidata final | Luis Téllez Domínguez | Alto | S7 | REQ-005 |
-| US-643 | Integrar frontend con API, sesión, Auth y errores | Christian Imanol Ruiz Hurtado | Alto | S7 | REQ-004 |
+| US-641 | Programar y desplegar en equipo el nuevo frontend integrado | Diana Aracely Alvarez Varela | Alto | S7 | REQ-002 |
 
 ## Célula 6 · Recuperación — QA integral
 
 | ID | Historia | Responsable | Nivel | Sprint | REQ |
 |---|---|---|---|---|---|
-| US-651 | Definir estrategia, matriz de aceptación y dictamen QA | Edward Ulysses Ruiz Bustillos | Alto | S7 | REQ-007 |
-| US-652 | Validar integridad de datos, reproducibilidad y métricas ML | Emilio Galnares Ruiz | Medio | S7 | REQ-007 |
-| US-653 | Automatizar regresión E2E de frontend, chat y despliegue | Edgar Ulises Jiménez López | Medio | S7 | REQ-007 |
+| US-651 | Definir y ejecutar en equipo la metodología y aceptación integral de QA | Edward Ulysses Ruiz Bustillos | Alto | S7 | REQ-007 |
 | US-654 | Gobernar recuperación, trazabilidad y decisión go/no-go | Edgar Edmundo Coronel Navarrete | Alto | S7 | REQ-007 |
-| US-655 | Ejecutar regresión de API, chat y autenticación | Eloisa González Rubio | Medio | S7 | REQ-007 |
 
-> `US-655` fue ratificada por el PO el 10-sep: Edward lidera QA y Eloisa integra formalmente el Equipo 6.
+> Las seis US de frente tienen un responsable de coordinación por exigencia del catálogo, pero el
+> trabajo pertenece al **equipo completo**. No asignan tareas individuales a sus demás integrantes.
+> `US-654` registra únicamente la gobernanza de esta reapertura y del PR del PO.
 
 ---
 
@@ -238,8 +228,8 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | S4 | Lun 24 – Dom 30 ago | 22 |
 | S5 | Lun 31 ago – Dom 6 sep | 25 |
 | S6 | Lun 7 – Mié 9 sep | 6 |
-| S7 | Jue 10 – Dom 13 sep | 21 |
-| **Total** | | **113** |
+| S7 | Jue 10 – Dom 13 sep | 7 |
+| **Total** | | **99** |
 
 ---
 
@@ -248,13 +238,13 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | REQ | Módulo de rúbrica | Puntos | # historias | Cubierto |
 |---|---|---|---|---|
 | REQ-001 | Data Engineering y pipelines multi-fuente | 2.5 | 19 | 🔄 Reabierto |
-| REQ-002 | Frontend BI interactivo | 2.5 | 24 | 🔄 Reabierto |
-| REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 13 (+3 de apoyo ᵃ) | 🔄 Reabierto |
-| REQ-004 | Backend, API y autenticación avanzada | 1.5 | 16 | 🔄 Reabierto |
-| REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 14 | 🔄 Reabierto |
-| REQ-006 | Agente conversacional | 0.5 | 7 | 🔄 Reabierto |
-| REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 19 | 🔄 Reabierto |
-| **Total** | | **10.0** | **113** | **7/7 en recuperación** |
+| REQ-002 | Frontend BI interactivo | 2.5 | 22 | 🔄 Reabierto |
+| REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 11 (+3 de apoyo ᵃ) | 🔄 Reabierto |
+| REQ-004 | Backend, API y autenticación avanzada | 1.5 | 14 | 🔄 Reabierto por validación cruzada |
+| REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 13 | 🔄 Reabierto por validación cruzada |
+| REQ-006 | Agente conversacional | 0.5 | 5 | 🔄 Reabierto |
+| REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 15 | 🔄 Reabierto |
+| **Total** | | **10.0** | **99** | **7/7 en recuperación** |
 
 **Ningún REQ queda sin historias.** Los siete módulos están reabiertos por `DEC-022`; cobertura de
 planeación no equivale a aceptación hasta cerrar S7.
@@ -263,8 +253,8 @@ planeación no equivale a aceptación hasta cerrar S7.
 
 ## Resumen C · Historias por persona (IDs)
 
-> El detalle siguiente conserva la distribución histórica hasta S6. Para S7, cada una de las 21
-> personas tiene exactamente una nueva historia; la fuente vigente es
+> El detalle siguiente conserva la distribución histórica hasta S6. Para S7 no se inventan tareas
+> personales: cada integrante participa en el frente de su equipo, según
 > [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]].
 
 | Persona | Célula | Nivel | # | IDs |

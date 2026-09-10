@@ -80,7 +80,7 @@ personas:
     github: dgdeni
     rama: dev/deni-garrido
     celula: 4
-    rol: "Datos y features para ML-03"
+    rol: "Integrante S7 · ML-03 y explicación ML"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/1-deni-garrido-fragoso.md
     verde:
@@ -102,7 +102,7 @@ personas:
     github: LuisEGarciaV
     rama: dev/luis-garcia
     celula: 4
-    rol: "Explicación y documentación de modelos"
+    rol: "Integrante S7 · ML-03 y explicación ML"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/1-luis-enrique-garcia-vazquez.md
     verde:
@@ -124,7 +124,7 @@ personas:
     github: Starcrossedboy
     rama: dev/emilio-galnares
     celula: 6
-    rol: "QA de datos y ML"
+    rol: "Integrante S7 · QA"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/1-emilio-galnares-ruiz.md
     verde:
@@ -144,7 +144,7 @@ personas:
     github: mserraniaa-png
     rama: dev/manuel-serrania
     celula: 1
-    rol: "Documentación de datos, capas, cubos y ER"
+    rol: "Integrante S7 · Componentes y memoria técnica"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/2-manuel-alejandro-serrania-reinada.md
     verde:
@@ -180,7 +180,7 @@ personas:
     github: monserratxmiranda
     rama: dev/monserrat-miranda
     celula: 3
-    rol: "Storytelling"
+    rol: "Integrante S7 · UX/UI y storytelling"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/2-monserrat-xcaret-miranda-olivas.md
     verde:
@@ -195,7 +195,7 @@ personas:
     github: oscarqlazaro-lab
     rama: dev/oscar-quiroz
     celula: 3
-    rol: "Selección y especificación de gráficas"
+    rol: "Integrante S7 · UX/UI y storytelling"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/2-oscar-antonio-quiroz-lazaro.md
     verde:
@@ -264,7 +264,7 @@ personas:
     github: cmayorgat44
     rama: dev/carlos-mayorga
     celula: 1
-    rol: "Memoria técnica y entrada narrativa"
+    rol: "Integrante S7 · Componentes y memoria técnica"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/3-carlos-guillermo-mayorga-tapia.md
     verde:
@@ -282,7 +282,7 @@ personas:
     github: ImanolRuiz00
     rama: dev/christian-ruiz
     celula: 5
-    rol: "Integración frontend, API y Auth"
+    rol: "Integrante S7 · Frontend y deploy"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/4-christian-imanol-ruiz-hurtado.md
     verde:
@@ -301,7 +301,7 @@ personas:
     github: marlakonter
     rama: dev/karla-monter
     celula: 2
-    rol: "Contrato e integración del chat"
+    rol: "Integrante S7 · Chat IA natural"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/4-karla-alejandra-monter-benitez.md
     verde:
@@ -319,7 +319,7 @@ personas:
     github: juanmmayen98-pixel
     rama: dev/juan-macias
     celula: 3
-    rol: "Flujos UX, wireframes y estados"
+    rol: "Integrante S7 · UX/UI y storytelling"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/4-juan-carlos-macias-mayen.md
     verde:
@@ -336,7 +336,7 @@ personas:
     github: EloisaGonzalezRubio
     rama: dev/eloisa-gonzalez
     celula: 6
-    rol: "QA API, chat y Auth"
+    rol: "Integrante S7 · QA"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/4-eloisa-gonzalez-rubio.md
     verde:
@@ -351,7 +351,7 @@ personas:
     github: LuisTellez03
     rama: dev/luis-tellez
     celula: 5
-    rol: "Despliegue, observabilidad y rollback"
+    rol: "Integrante S7 · Frontend y deploy"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/5-luis-tellez-dominguez.md
     verde:
@@ -372,7 +372,7 @@ personas:
     github: EJ-by-Me
     rama: dev/edgar-jimenez
     celula: 6
-    rol: "Automatización E2E"
+    rol: "Integrante S7 · QA"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/5-edgar-ulises-jimenez-lopez.md
     verde:
@@ -399,7 +399,7 @@ personas:
     github: avmxk01
     rama: dev/alejandro-velazquez
     celula: 2
-    rol: "Runtime RAG y observabilidad del chat"
+    rol: "Integrante S7 · Chat IA natural"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/5-alejandro-velazquez-mendoza.md
     verde:

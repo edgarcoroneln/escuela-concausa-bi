@@ -47,13 +47,13 @@ tags: [requirements, traceability, matrix]
 
 | REQ | Historias S7 | Criterio de recuperación | Test / DevLog / Release | Estado |
 |---|---|---|---|---|
-| `REQ-001` | `US-602` | Explicación verificable Bronze→Silver→Gold, filtros, cubos y ER | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-002` | `US-621`, `US-622`, `US-623`, `US-624`, `US-641` | UX, gráficas y storytelling aceptados e integrados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-003` | `US-631`, `US-632`, `US-633` | ML-03 en Gold/API/UI y explicación completa de tres modelos | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-004` | `US-601`, `US-643` | Componentes documentados e integración frontend/API/Auth aprobada | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-005` | `US-642` | Candidata desplegada, observable y con rollback | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-006` | `US-611`, `US-612`, `US-613` | Chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-007` | `US-603`, `US-651`, `US-652`, `US-653`, `US-654`, `US-655`, `US-006` | Memoria, QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
+| `REQ-001` | `US-601` | Equipo 1: explicación verificable Bronze→Silver→Gold, filtros, cubos, ER y componentes | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-002` | `US-621`, `US-641` | Equipos 3 y 5: UX, gráficas, storytelling y frontend aceptados e integrados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-004` | `US-601`, `US-611`, `US-641` | Componentes e integraciones backend/chat/frontend revalidados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-005` | `US-641` | Equipo 5: candidata desplegada, observable y recuperable | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-007` | `US-651`, `US-654`, `US-006` | Equipo 6/PO: QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
 
 ## Evidencia incremental — 2026-08-26
 

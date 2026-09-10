@@ -136,31 +136,17 @@ tags: [roadmap, execution, status, dashboard]
 | US-525b | done | — | — | **Cierre administrativo `DEC-021`.** [[vault/11_Operations/Runbook_SLA_MLflow]] enlaza el procedimiento de rollback y distingue fallas de modelo frente a infraestructura. **Residual:** el runbook general sigue `draft` y no hay ejecución de rollback de Airflow/jobs ML registrada | 2026-09-08 |
 | US-525c | done | — | — | **Cierre administrativo `DEC-021`.** El PR #294 registra revisiones exactas de rollback para agente/API y FARO Web; Superset conserva su servicio/revisiones Cloud Run. **Residual:** no existe el runbook dedicado de Superset/agente que se había reasignado a Marina ni una prueba documentada de reversión de Superset | 2026-09-08 |
 | US-526 | done | — | — | **Dada de alta el 2026-09-05 por decisión del PO.** El hueco existía desde que se decidió contenerizar FARO Web y **la historia nunca se creó**: `US-206` (shell y embebido, Manuel Serranía) y `US-207` (panel de ML, Marina García) están construidas y **no se pueden mostrar**, porque la raíz de la URL pública devuelve `404`, no existe `docker/frontend.Dockerfile` y no hay servicio de frontend en `docker-compose.yml`. **Alcance**: Dockerfile del frontend, servicio en compose, despliegue a Cloud Run y el **CORS de Superset** para que acepte el embebido desde ese origen — sin eso, `AC-002.1` no se cumple por más que la página exista. **Riesgo asumido al darla de alta a 3 días de la demo**: si no alcanza, el plan B ya está escrito en [[vault/01_Product/Guion_Demo_US006]] — la demo corre sobre Superset y la API por separado, y se les avisa a Manuel y a Marina **antes del ensayo del lunes**, no en la sala · **Cerrada 2026-09-06.** FARO Web está desplegado y sirviendo: la raíz responde, las tres páginas cargan y el embebido de Superset pinta tras el parche de `query_context` de C5 (PR #266, 20 charts *timeseries* de 403 a 200). La fila decía `planned` mientras la superficie llevaba horas viva — era la contradicción más visible del tablero. | 2026-09-06 |
-| US-601 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · gate inicial 10-sep 18:00 | 2026-09-10 |
-| US-602 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · gate inicial 10-sep 18:00 | 2026-09-10 |
-| US-603 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · gate inicial 10-sep 18:00 | 2026-09-10 |
-| US-611 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · chat natural en URL candidata | 2026-09-10 |
-| US-612 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · contrato y contexto del chat | 2026-09-10 |
-| US-613 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · runtime/observabilidad del chat | 2026-09-10 |
-| US-621 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · prototipo antes de código | 2026-09-10 |
-| US-622 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · catálogo gráfico justificado | 2026-09-10 |
-| US-623 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · wireframes y estados | 2026-09-10 |
-| US-624 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · storyboard integral | 2026-09-10 |
-| US-631 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · ML-03 Gold/API/UI | 2026-09-10 |
-| US-632 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · features y cobertura ML-03 | 2026-09-10 |
-| US-633 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · fichas explicativas ML | 2026-09-10 |
-| US-641 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · frontend integrado | 2026-09-10 |
-| US-642 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · release/URL/rollback | 2026-09-10 |
-| US-643 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · integración API/Auth | 2026-09-10 |
-| US-651 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · matriz QA y dictamen | 2026-09-10 |
-| US-652 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · pruebas datos/ML | 2026-09-10 |
-| US-653 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · regresión E2E | 2026-09-10 |
+| US-601 | planned | — | — | Frente colectivo E1; Héctor coordina y el desglose permanece pendiente de acuerdo del equipo. [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | 2026-09-10 |
+| US-611 | planned | — | — | Frente colectivo E2; Andrés coordina y el desglose permanece pendiente de acuerdo del equipo. [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | 2026-09-10 |
+| US-621 | planned | — | — | Frente colectivo E3; Marina coordina y el desglose permanece pendiente de acuerdo del equipo. [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | 2026-09-10 |
+| US-631 | planned | — | — | Frente colectivo E4; Estefany coordina y el desglose permanece pendiente de acuerdo del equipo. [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | 2026-09-10 |
+| US-641 | planned | — | — | Frente colectivo E5; Diana coordina y el desglose permanece pendiente de acuerdo del equipo. [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | 2026-09-10 |
+| US-651 | planned | — | — | Frente colectivo E6; Edward coordina y el desglose permanece pendiente de acuerdo del equipo. [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | 2026-09-10 |
 | US-654 | in_progress | 2026-09-10 | — | Reapertura, renumeración, trazabilidad y gobierno de S7 mediante `DEC-022`; cierra con PR aprobado y primer corte de las 18:00 | 2026-09-10 |
-| US-655 | planned | — | — | [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] · asignación a QA ratificada por el PO; Edward lidera el frente | 2026-09-10 |
 
 ## Interpretación actual — recuperación abierta el 10 de septiembre
 
-- **113 historias en catálogo:** 91 `done`, 2 `in_progress` (`US-006`, `US-654`) y 20 `planned`.
+- **99 historias en catálogo:** 91 `done`, 2 `in_progress` (`US-006`, `US-654`) y 6 `planned`.
 - Las 91 cerradas son el **baseline histórico S1–S6**; no prueban aceptación de la nueva entrega.
 - `DEC-022` supera el *code freeze* de `DEC-021` y abre S7 del 10 al 13-sep.
 - Las URLs verificadas el 8-sep son baseline, no candidata final; deben revalidarse tras el despliegue.

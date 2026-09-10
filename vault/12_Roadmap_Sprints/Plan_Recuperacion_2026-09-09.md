@@ -38,31 +38,47 @@ migrarse a la rama personal de su autor mediante un PR trazable.
 > **Confirmación del PO, 10-sep:** Edward dirige QA. Eloisa queda incorporada al Equipo 6 por
 > continuidad con sus pruebas de API/chat/Auth; Edgar Coronel participa como comodín y conserva el go/no-go.
 
-## Historias S7: una persona, una responsabilidad
+## Historias de control por equipo
 
-| US | Responsable | Objetivo | Entregable verificable | Dependencia / entrega a |
+> Estas historias representan **frentes colectivos**, no tareas personales. El nombre del líder
+> aparece como responsable para cumplir la regla de un dueño por US; el desglose interno se agregará
+> sólo cuando cada equipo lo acuerde y lo presente en una sesión de las 18:00.
+
+| US | Equipo | Responsable de coordinación | Resultado común esperado | Dependencia / entrega a |
 |---|---|---|---|---|
-| `US-601` | Héctor Rafael Morales Marbán | Dirigir la documentación de componentes | Arquitectura de componentes y recorrido backend | recibe repo; entrega a E3/E5/E6 |
-| `US-602` | Manuel Alejandro Serranía Reinada | Explicar datos y transformación | Bronze→Silver→Gold, filtros, cubos y ER | entrega a E1/E3/E5 |
-| `US-603` | Carlos Guillermo Mayorga Tapia | Consolidar memoria técnica | Memoria y resumen narrativo del backend | entrega a Monserrat |
-| `US-611` | Andrés González Habib | Naturalizar la respuesta del agente | Orquestación conversacional y set de respuestas aceptado | recibe API/RAG; entrega a E5/E6 |
-| `US-612` | Karla Alejandra Monter Benitez | Integrar contrato del chat | Contrato API, contexto y errores validados | entrega a Andrés/Diana |
-| `US-613` | Alejandro Velázquez Mendoza | Operar el chat | Runtime, índices RAG, logs y smoke reproducible | entrega a Luis/QA |
-| `US-621` | Marina García del Buey | Dirigir experiencia visual | Sistema visual y prototipo de pantallas | entrega a Diana |
-| `US-622` | Oscar Antonio Quiroz Lázaro | Seleccionar visualizaciones | Catálogo gráfico justificado y especificaciones | entrega a Marina/Diana |
-| `US-623` | Juan Carlos Macías Mayen | Diseñar flujos y pantallas | Wireframes, navegación, controles y estados | entrega a Marina/Diana |
-| `US-624` | Monserrat Xcaret Miranda Olivas | Construir storytelling | Storyboard problema→datos→hallazgos→acción | recibe E1; entrega a E5/demo |
-| `US-631` | Estefany Lucero Hernández Loredo | Corregir ML-03 | Entrenamiento, publicación e integración Gold/API/UI | entrega a Diana/QA |
-| `US-632` | Deni Garrido Fragoso | Preparar datos de ML-03 | Features/cobertura y prueba de calidad reproducible | entrega a Estefany |
-| `US-633` | Luis Enrique García Vázquez | Mejorar explicación ML | Fichas de tres modelos con métricas, límites e interpretación | entrega a E3/demo |
-| `US-641` | Diana Aracely Alvarez Varela | Integrar el frontend | Arquitectura y frontend coherente con UX/storytelling | recibe E1–E4; entrega a QA |
-| `US-642` | Luis Téllez Domínguez | Desplegar candidata | Release, URLs, observabilidad y rollback | recibe E2/E4/E5; entrega a QA |
-| `US-643` | Christian Imanol Ruiz Hurtado | Integrar frontend/API/Auth | Contratos, sesión y manejo de errores E2E | entrega a Diana/QA |
-| `US-651` | Edward Ulysses Ruiz Bustillos | Dirigir QA | Estrategia, matriz de aceptación y dictamen | recibe de todos; entrega al PO |
-| `US-652` | Emilio Galnares Ruiz | Validar datos y ML | Pruebas de integridad, reproducibilidad y métricas | entrega a Edward |
-| `US-653` | Edgar Ulises Jiménez López | Automatizar E2E | Regresión de frontend/chat/deploy | entrega a Edward |
-| `US-654` | Edgar Edmundo Coronel Navarrete | Gobernar recuperación | Trazabilidad, revisiones diarias y go/no-go | integra todo y decide entrega |
-| `US-655` | Eloisa González Rubio | Regresión API/chat/Auth | Suite y evidencia 200/401/403/422/conversación | entrega a Edward |
+| `US-601` | E1 · Componentes | Héctor Rafael Morales Marbán | Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica | entrega a E3/E5/E6 |
+| `US-611` | E2 · Chat IA | Andrés González Habib | Chat natural, contextual, seguro y demostrable | entrega a E5/E6 |
+| `US-621` | E3 · UX/UI y storytelling | Marina García del Buey | Propuesta visual, gráficas, pantallas y storytelling | recibe E1; entrega a E5/E6 |
+| `US-631` | E4 · ML-03 | Estefany Lucero Hernández Loredo | ML-03 funcional y explicación mejorada de los tres modelos | entrega a E3/E5/E6 |
+| `US-641` | E5 · Frontend y deploy | Diana Aracely Alvarez Varela | Frontend integrado y candidata desplegada en producción | recibe E1–E4; entrega a E6 |
+| `US-651` | E6 · QA | Edward Ulysses Ruiz Bustillos | Metodología, criterios, ejecución y dictamen integral | recibe de E1–E5; entrega al PO |
+| `US-654` | Gobierno | Edgar Edmundo Coronel Navarrete | Trazabilidad, revisiones diarias y decisión go/no-go | integra el estado de E1–E6 |
+
+## Padrón operativo S7 — participación, no asignación de tareas
+
+| Persona | Equipo | Participación acordada |
+|---|---|---|
+| Héctor Rafael Morales Marbán | E1 · Componentes | Líder |
+| Manuel Alejandro Serranía Reinada | E1 · Componentes | Integrante |
+| Carlos Guillermo Mayorga Tapia | E1 · Componentes | Integrante |
+| Andrés González Habib | E2 · Chat IA | Líder |
+| Karla Alejandra Monter Benitez | E2 · Chat IA | Integrante |
+| Alejandro Velázquez Mendoza | E2 · Chat IA | Integrante |
+| Marina García del Buey | E3 · UX/UI y storytelling | Líder |
+| Oscar Antonio Quiroz Lázaro | E3 · UX/UI y storytelling | Integrante |
+| Juan Carlos Macías Mayen | E3 · UX/UI y storytelling | Integrante |
+| Monserrat Xcaret Miranda Olivas | E3 · UX/UI y storytelling | Integrante · storytelling |
+| Estefany Lucero Hernández Loredo | E4 · ML-03 | Líder |
+| Deni Garrido Fragoso | E4 · ML-03 | Integrante |
+| Luis Enrique García Vázquez | E4 · ML-03 | Integrante |
+| Diana Aracely Alvarez Varela | E5 · Frontend y deploy | Líder |
+| Luis Téllez Domínguez | E5 · Frontend y deploy | Integrante |
+| Christian Imanol Ruiz Hurtado | E5 · Frontend y deploy | Integrante |
+| Edward Ulysses Ruiz Bustillos | E6 · QA | Líder |
+| Emilio Galnares Ruiz | E6 · QA | Integrante |
+| Edgar Ulises Jiménez López | E6 · QA | Integrante |
+| Eloisa González Rubio | E6 · QA | Integrante |
+| Edgar Edmundo Coronel Navarrete | E6 · QA | Comodín QA y PO |
 
 ## Cadencia diaria y ruta crítica
 
