@@ -7,8 +7,12 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from src.agente.guardrails import pregunta_en_alcance, preparar_sql_seguro
-from src.agente.prompt import construir_prompt_sistema
+from src.agente.guardrails import (
+    RAZON_SOLO_LECTURA,
+    pregunta_en_alcance,
+    preparar_sql_seguro,
+)
+from src.agente.prompt import NO_SQL_NECESARIO, construir_prompt_sistema
 from src.agente.recuperacion import (
     ContextoNoEncontrado,
     ErrorRecuperacion,
@@ -24,6 +28,11 @@ PREGUNTA_REFERENCIAL = re.compile(
     re.IGNORECASE,
 )
 
+# Reintentos de auto-corrección (Fase 1, plan 2026-09-09): si el SQL ya validado falla al
+# ejecutarse (columna/tabla mal referenciada, etc.), se le devuelve el error al LLM para que
+# regenere una versión corregida, acotado para no disparar costo/latencia sin límite.
+MAX_REINTENTOS_SQL = 1
+
 
 @dataclass(frozen=True)
 class ResultadoConsulta:
@@ -32,6 +41,22 @@ class ResultadoConsulta:
     respuesta: str
     sql_generado: str | None
     fuera_de_alcance: bool
+
+
+def _responder_sin_sql(
+    pregunta: str, contexto: str, redactar_respuesta: RedactarRespuesta
+) -> ResultadoConsulta:
+    """Responde una pregunta conceptual/metodológica directo desde el contexto RAG, sin SQL."""
+    respuesta = redactar_respuesta(
+        pregunta,
+        [
+            {
+                "contexto_faro": contexto,
+                "nota": "Respuesta conceptual basada en documentación de FARO, sin consulta SQL.",
+            }
+        ],
+    )
+    return ResultadoConsulta(respuesta=respuesta, sql_generado=None, fuera_de_alcance=False)
 
 
 def procesar_consulta(
@@ -44,12 +69,14 @@ def procesar_consulta(
 ) -> ResultadoConsulta:
     """Procesa una pregunta sin acoplarse a RAG, LLM, base de datos ni API."""
     alcance = pregunta_en_alcance(pregunta)
-    if not alcance.permitido:
+    if not alcance.permitido and alcance.razon == RAZON_SOLO_LECTURA:
+        # Intención de escritura: se corta aquí, sin tocar RAG ni LLM (P-13, defensa en profundidad).
         return ResultadoConsulta(
-            respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
+            respuesta=alcance.razon,
             sql_generado=None,
             fuera_de_alcance=True,
         )
+
     if PREGUNTA_REFERENCIAL.search(pregunta) and not contexto_conversacional:
         return ResultadoConsulta(
             respuesta=(
@@ -60,23 +87,44 @@ def procesar_consulta(
             fuera_de_alcance=False,
         )
 
-    try:
-        contexto = recuperar_contexto(pregunta)
-    except ContextoNoEncontrado:
-        return ResultadoConsulta(
-            respuesta="No encontré contexto de Gold para responder esa pregunta.",
-            sql_generado=None,
-            fuera_de_alcance=False,
-        )
-    except ErrorRecuperacion:
-        return ResultadoConsulta(
-            respuesta="El contexto de FARO no está disponible temporalmente.",
-            sql_generado=None,
-            fuera_de_alcance=False,
-        )
+    if not alcance.permitido:
+        # El vocabulario no reconoció el tema: antes de rechazar, se le da una segunda oportunidad
+        # a la pregunta vía la señal semántica del RAG (Fase 1). No es un hueco de seguridad: la
+        # intención de escritura ya se descartó arriba, y el SQL sigue pasando por
+        # `preparar_sql_seguro` + el rol read-only pase lo que pase aquí.
+        try:
+            contexto = recuperar_contexto(pregunta)
+        except ContextoNoEncontrado:
+            return ResultadoConsulta(
+                respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
+                sql_generado=None,
+                fuera_de_alcance=True,
+            )
+        except ErrorRecuperacion:
+            return ResultadoConsulta(
+                respuesta="El contexto de FARO no está disponible temporalmente.",
+                sql_generado=None,
+                fuera_de_alcance=False,
+            )
+    else:
+        try:
+            contexto = recuperar_contexto(pregunta)
+        except ContextoNoEncontrado:
+            return ResultadoConsulta(
+                respuesta="No encontré contexto de Gold para responder esa pregunta.",
+                sql_generado=None,
+                fuera_de_alcance=False,
+            )
+        except ErrorRecuperacion:
+            return ResultadoConsulta(
+                respuesta="El contexto de FARO no está disponible temporalmente.",
+                sql_generado=None,
+                fuera_de_alcance=False,
+            )
+
     prompt = construir_prompt_sistema(contexto, contexto_conversacional)
     try:
-        sql_seguro = preparar_sql_seguro(generar_sql(prompt, pregunta))
+        sql_crudo = generar_sql(prompt, pregunta)
     except ValueError as exc:
         return ResultadoConsulta(
             respuesta=f"La consulta generada fue rechazada: {exc}",
@@ -84,10 +132,73 @@ def procesar_consulta(
             fuera_de_alcance=False,
         )
 
-    filas = ejecutar_sql(sql_seguro)
+    if sql_crudo.strip() == NO_SQL_NECESARIO:
+        return _responder_sin_sql(pregunta, contexto, redactar_respuesta)
+
+    try:
+        sql_actual = preparar_sql_seguro(sql_crudo)
+    except ValueError as exc:
+        return ResultadoConsulta(
+            respuesta=f"La consulta generada fue rechazada: {exc}",
+            sql_generado=None,
+            fuera_de_alcance=False,
+        )
+
+    intentos = 0
+    while True:
+        try:
+            filas = ejecutar_sql(sql_actual)
+            break
+        except AssertionError:
+            raise  # nunca ocultar fallas de las propias pruebas/scaffolding
+        except Exception as exc:  # noqa: BLE001 - ejecutar_sql es un callable inyectado (real:
+            # SQLAlchemyError envuelto por ejecutor_gold.py; en pruebas, cualquier Exception de
+            # prueba); cualquier fallo de ejecución dispara el mismo reintento de auto-corrección.
+            intentos += 1
+            if intentos > MAX_REINTENTOS_SQL:
+                return ResultadoConsulta(
+                    respuesta=(
+                        "No pude construir una consulta que se ejecutara correctamente para esa "
+                        "pregunta; intenta reformularla."
+                    ),
+                    sql_generado=None,
+                    fuera_de_alcance=False,
+                )
+            prompt_reintento = (
+                f"{prompt}\n\nTu consulta anterior no se pudo ejecutar (intento {intentos}):\n"
+                f"{sql_actual}\n"
+                f"Error: {exc}\n"
+                "Revisa el esquema (columnas, tablas, filtros de grano/modelo) y genera una "
+                "nueva consulta SELECT/WITH corregida sobre gold.*."
+            )
+            try:
+                sql_crudo_reintento = generar_sql(prompt_reintento, pregunta)
+            except AssertionError:
+                raise
+            except Exception:  # noqa: BLE001 - generar_sql es un callable inyectado (real:
+                # ErrorLLM u otra falla del LLM); si tampoco puede regenerar, se degrada igual.
+                return ResultadoConsulta(
+                    respuesta=(
+                        "No pude construir una consulta que se ejecutara correctamente para esa "
+                        "pregunta; intenta reformularla."
+                    ),
+                    sql_generado=None,
+                    fuera_de_alcance=False,
+                )
+            if sql_crudo_reintento.strip() == NO_SQL_NECESARIO:
+                return _responder_sin_sql(pregunta, contexto, redactar_respuesta)
+            try:
+                sql_actual = preparar_sql_seguro(sql_crudo_reintento)
+            except ValueError as exc2:
+                return ResultadoConsulta(
+                    respuesta=f"La consulta generada fue rechazada: {exc2}",
+                    sql_generado=None,
+                    fuera_de_alcance=False,
+                )
+
     return ResultadoConsulta(
         respuesta=redactar_respuesta(pregunta, filas),
-        sql_generado=sql_seguro,
+        sql_generado=sql_actual,
         fuera_de_alcance=False,
     )
 

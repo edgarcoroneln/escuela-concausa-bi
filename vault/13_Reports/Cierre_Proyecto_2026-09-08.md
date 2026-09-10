@@ -2,15 +2,22 @@
 id: RPT-CIERRE-PROYECTO-2026-09-08
 title: "Cierre del proyecto y cumplimiento del PRD — 8 de septiembre de 2026"
 owner: "Edgar Edmundo Coronel Navarrete"
-status: approved
+status: archived
 version: "1.0"
 traces_up: ["PRD", "PRD-GENERAL", "PLAN-EXEC-STATUS", "DEC-021"]
 traces_down: ["US-006", "vault/01_Product/Guion_Demo_US006"]
-last_reviewed: "2026-09-08"
+last_reviewed: "2026-09-10"
 tags: [reports, closure, prd, delivery, demo, code-freeze]
 ---
 
 # Cierre del proyecto y cumplimiento del PRD — 8 de septiembre de 2026
+
+> [!WARNING] Corte histórico superado
+> La revisión del profesor del 9-sep no aceptó la entrega como satisfactoria. `DEC-022` reabrió el
+> desarrollo hasta el 13-sep y movió la entrega al 14-sep. El estado vigente está en
+> [[vault/13_Reports/Revision_Profesor_2026-09-09]] y
+> [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]]. Las cifras de este reporte no deben
+> presentarse como estado actual.
 
 > Corte ejecutivo previo a la demo. Las fuentes canónicas siguen siendo
 > [[vault/01_Product/PRD]], [[vault/01_Product/PRD_General_Materia]],

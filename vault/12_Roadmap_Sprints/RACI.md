@@ -2,11 +2,11 @@
 id: DOC-RACI
 title: "RACI de entregables — FARO"
 owner: "Edgar Edmundo Coronel Navarrete"
-status: in_review
+status: approved
 source_of_truth: true
 traces_up: ["vault/12_Roadmap_Sprints/PLAN_MAESTRO", "vault/02_Requirements/User_Stories"]
 traces_down: ["vault/13_Reports/PM_Dashboard_Spec"]
-last_reviewed: "2026-08-05"
+last_reviewed: "2026-09-10"
 tags: [roadmap, raci, governance, dashboard]
 ---
 
@@ -22,15 +22,15 @@ tags: [roadmap, raci, governance, dashboard]
 - **C:** Consulted — participa antes de decidir.
 - **I:** Informed — recibe el resultado.
 
-| Entregable | R | A | C | I | Fecha gate |
+| Entregable S7 | R | A | C | I | Fecha gate |
 |---|---|---|---|---|---|
-| Gobierno, requisitos y trazabilidad | PO | Edgar Edmundo Coronel Navarrete | Tech Leads | Equipo | 2026-08-09 |
-| Fuentes, Bronze, Silver y Gold | Célula 1 | Diana Aracely Alvarez Varela | Células 2, 3 y 4 | PO · Célula 5 | 2026-08-23 |
-| Dashboards y experiencia BI | Célula 2 | Manuel Alejandro Serranía Reinada | Células 1, 3 y 4 | PO | 2026-08-30 |
-| Modelos ML y agente | Célula 3 | Andrés González Habib | Células 1 y 4 | PO · Célula 2 | 2026-09-06 |
-| API, autenticación y seguridad | Célula 4 | Christian Imanol Ruiz Hurtado | Células 1 y 3 | PO · Célula 2 | 2026-08-30 |
-| Contenedores, CI/CD y GCP | Célula 5 | Luis Téllez Domínguez | Todos los Tech Leads | PO · Equipo | 2026-09-08 |
-| Demo, pitch y plan de contingencia | PO | Edgar Edmundo Coronel Navarrete | Tech Leads | Equipo | 2026-09-08 |
+| Componentes, datos y memoria técnica | Equipo 1 | Héctor Rafael Morales Marbán | Equipos 3, 5 y 6 | PO · equipo | 2026-09-10 18:00 |
+| Chat IA natural y auditable | Equipo 2 | Andrés González Habib | Equipos 5 y 6 | PO · equipo | 2026-09-11 18:00 |
+| UX/UI, visualizaciones y storytelling | Equipo 3 | Marina García del Buey | Equipos 1, 5 y 6 | PO · equipo | 2026-09-11 18:00 |
+| ML-03 y explicación de los tres modelos | Equipo 4 | Estefany Lucero Hernández Loredo | Equipos 1, 5 y 6 | PO · equipo | 2026-09-11 18:00 |
+| Frontend integrado y candidata desplegada | Equipo 5 | Diana Aracely Alvarez Varela | Equipos 1–4 y 6 | PO · equipo | 2026-09-12 18:00 |
+| Estrategia, ejecución y dictamen QA | Equipo 6 | Edward Ulysses Ruiz Bustillos | Líderes de Equipos 1–5 | PO · equipo | 2026-09-13 18:00 |
+| Go/no-go, freeze y entrega | Edgar Edmundo Coronel Navarrete | Edgar Edmundo Coronel Navarrete | Edward + líderes | Equipo · profesor | 2026-09-13 20:00 / 2026-09-14 primera hora |
 
 ## Regla de escalamiento
 
