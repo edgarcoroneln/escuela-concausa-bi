@@ -2,11 +2,10 @@
 id: DOC-FRONTEND-ARCH
 title: "Frontend Architecture — FARO Web"
 owner: "Manuel Alejandro Serranía Reinada"
-status: superseded
-superseded_by: "ADR-011"
+status: draft
 traces_up: ["REQ-002", "vault/01_Product/PRD"]
 traces_down: ["US-206", "US-207", "US-305", "US-405"]
-last_reviewed: "2026-09-10"
+last_reviewed: "2026-08-07"
 tags: [architecture, frontend, streamlit]
 ---
 
@@ -14,11 +13,6 @@ tags: [architecture, frontend, streamlit]
 
 > Capa web integrada del proyecto. → [[vault/03_Architecture/_index]] · Decisión:
 > [[vault/03_Architecture/ADRs/ADR-002-frontend-streamlit]] · Contrato de API: [[vault/03_Architecture/API_Specification]]
-
-> **Arquitectura histórica de la entrega del 9-sep.** `ADR-011` sustituye la obligación de usar el
-> embebido de Superset como experiencia principal. Se conservan los límites útiles de integración
-> con API, autenticación y despliegue; la arquitectura S7 se define en
-> [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]].
 
 ## 1. Objetivo
 Una sola aplicación web (**Streamlit**, `src/frontend/`) que integra todo lo que ve el usuario final y

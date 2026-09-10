@@ -2,13 +2,12 @@
 id: DOC-FARO-UX-PLAN
 title: "Plan de trabajo — UX/UI y storytelling FARO (Equipo 3, S7)"
 owner: "Marina García del Buey"
-status: approved
-version: "1.2"
-source_of_truth: true
-traces_up: ["US-621", "REQ-002", "DEC-023", "ADR-011", "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09", "vault/13_Reports/Revision_Profesor_2026-09-09"]
+status: draft
+version: "1.1"
+traces_up: ["US-621", "REQ-002", "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09", "vault/13_Reports/Revision_Profesor_2026-09-09"]
 traces_down: ["vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope", "vault/04_UX_Design/FARO_Storytelling_UX/01_UX_Architecture", "vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
 last_reviewed: "2026-09-10"
-tags: [ux, storytelling, s7, us-621, celula-3, approved]
+tags: [ux, storytelling, s7, us-621, celula-3, propuesta]
 ---
 
 # Plan de trabajo — UX/UI y storytelling FARO
@@ -18,7 +17,7 @@ tags: [ux, storytelling, s7, us-621, celula-3, approved]
 > [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] ·
 > [[vault/13_Reports/Revision_Profesor_2026-09-09]]
 
-**Estado:** aprobado por el PO el 10-sep mediante PR #297 y `DEC-023` (§14).
+**Estado:** propuesta, pendiente de aprobación del PO (§14).
 **Líder:** Marina García del Buey — UX/UI & Storytelling Lead.
 **Equipo:** Oscar Antonio Quiroz Lázaro · Monserrat Xcaret Miranda Olivas · Juan Carlos Macías Mayen.
 **Aprobador:** Edgar Edmundo Coronel Navarrete — PO.
@@ -322,36 +321,40 @@ ni `ExplicacionSHAPOut`. Es la razón de la petición **P-01**.
 
 ---
 
-## 11. Peticiones y decisiones
+## 11. Peticiones abiertas
 
-P-04 y P-06 fueron resueltas por el PO tras aprobar el PR #297. Las demás no impiden diseñar, pero
-sí condicionan qué datos o etiquetas pueden llegar a la candidata.
+Ninguna la resuelve este frente. Cada una tiene dueño y bloquea una parte concreta del entregable.
 
 | # | Petición | A quién | Qué bloquea si no se resuelve |
 |---|---|---|---|
 | **P-01** | Exponer `prioridad` en el contrato de la API, y decidir el corte de `BUG-063` (hoy `ALTA` usa `0.60` y el máximo real es `0.5717`, así que ninguna de las 45 276 escuelas la alcanza) | Equipo 5 (Diana Alvarez / Christian Ruiz) para el contrato · Equipo 4 y PO para el corte | Se cae "prioridad" de las Pantallas 4 y 5 y del criterio 8 |
 | **P-02** | Definición oficial de las bandas Alto / Medio / Bajo, como `DEC-###` | PO | Las Pantallas 3 y 4 muestran sólo el valor numérico, sin etiqueta |
 | **P-03** | Rebautizar el chat como **Watson** en producto y documentación | Equipo 2 (Andrés González) + PO | Los entregables lo llaman "el chat" |
-| **P-04** | ~~ADR que retire el embebido de Superset de la experiencia y adopte gráficas nativas en Front~~ | **Resuelta: `ADR-011`** | Front puede implementar §5; Superset queda como superficie secundaria |
+| **P-04** | ADR que retire el embebido de Superset de la experiencia y adopte gráficas nativas en Front | Equipo 5 (dueño de `src/frontend/**`) + PO | El Equipo 5 no puede implementar §5 sin contradecir `US-206` |
 | **P-05** | Confirmar que `GET /api/v1/kpis` devuelve el mismo `escuelas_en_riesgo = 7` que ya se verificó en DB-02 el 2026-09-08. Los tableros están confirmados; la API, que es lo que consume Front, no | Equipo 5 (Luis Téllez / Christian Ruiz) | Los mockups no pueden fijar el número |
-| **P-06** | ~~Ratificar que este plan y sus 4 documentos son el contexto oficial de UX/UI~~ | **Resuelta: `DEC-023`** | Este plan gobierna S7; §12 registra la convivencia documental |
+| **P-06** | Ratificar que este plan y sus 4 documentos son el contexto oficial de UX/UI, y cómo conviven con `UX_Guidelines.md`, `Screen_Specs.md` y `Manual_Usuario_Dashboards.md` | PO | §12 y §14 |
 
 ---
 
 ## 12. Relación con los documentos canónicos de UX
 
-La regla 1 del vault prohíbe duplicar. El PO aprobó la nueva jerarquía en `DEC-023` y `ADR-011`:
+La regla 1 del vault prohíbe duplicar. Este frente **no borra ni edita** los documentos existentes;
+propone que, a partir de la aprobación del PO, éstos sean la referencia para la nueva experiencia:
 
-> **P-06 está resuelta.** Este plan manda para S7; los cuatro entregables se desarrollan con libertad
-> completa dentro de PRD, datos, seguridad, accesibilidad y QA. La identidad se rediseña desde cero,
-> las pantallas son nuevas y las visualizaciones no están obligadas a conservar Superset. Los
-> documentos anteriores permanecen como baseline histórico o contrato de datos, según esta tabla.
+> **Lo que espera aprobación es la sustitución, no el trabajo.** Los cuatro entregables se redactan
+> desde ya y con libertad completa: la identidad visual se rediseña desde cero, las pantallas son
+> nuevas y las visualizaciones se reorganizan sin atarse a lo anterior. Lo que el PO decide en `P-06`
+> es a partir de qué momento estos documentos **mandan** sobre los de la tabla de abajo. Dos
+> consecuencias prácticas mientras `P-06` siga abierta: nadie edita `UX_Guidelines.md` —el gate lo
+> permitiría, porque `vault/04_UX_Design/**` está en el verde de este equipo, pero su frontmatter lo
+> declara `source_of_truth` con el PO como owner—, y el Equipo 5 no debería implementar la paleta
+> nueva en producción hasta que la ratificación exista.
 
 | Documento existente | Estado | Relación propuesta |
 |---|---|---|
-| [[vault/04_UX_Design/UX_Guidelines]] | `superseded`, baseline histórico | `03_Visual_Identity.md` lo sustituirá como sistema visual cuando su contenido pase el gate de Marina |
+| [[vault/04_UX_Design/UX_Guidelines]] | `approved`, `source_of_truth`, owner Edgar Coronel | `03_Visual_Identity.md` lo **sustituye** como sistema de diseño de la nueva experiencia. Sólo el PO puede decidirlo |
 | [[vault/04_UX_Design/Screen_Specs]] | `in_review`, owner Manuel Serranía | `01_UX_Architecture.md` cubre la nueva navegación. `Screen_Specs` conserva el catálogo de KPIs y el detalle de los 10 tableros |
-| [[vault/04_UX_Design/Manual_Usuario_Dashboards]] | `approved`, owner Oscar Quiroz | Evidencia y manual histórico de Superset; no gobierna la experiencia principal de S7 |
+| [[vault/04_UX_Design/Manual_Usuario_Dashboards]] | `approved`, owner Oscar Quiroz | Se revisa después de **P-04**: si Superset sale de la experiencia, el manual queda como documentación histórica |
 | [[vault/04_UX_Design/Accessibility]] | owner Edgar Coronel | **Sigue vigente y aplica**. La nueva identidad debe cumplirlo, no reemplazarlo |
 | `Cube_Specs_*`, `US221_KPIs_Base` | `approved` | Siguen vigentes: son contratos de datos, no de presentación |
 
@@ -370,11 +373,12 @@ La regla 1 del vault prohíbe duplicar. El PO aprobó la nueva jerarquía en `DE
 
 ---
 
-## 14. Aprobación y condición de promoción
+## 14. Condición de aprobación
 
-**Aprobado por Edgar Edmundo Coronel Navarrete, PO, el 10-sep-2026 en el PR #297.** `DEC-023`
-resuelve P-06 y `ADR-011` resuelve P-04: este plan es utilizable como contexto oficial del equipo.
+Este documento entra al repositorio como **propuesta** (`status: draft`).
 
-Los documentos `00`–`03` conservan su estado propio (`draft`/`in_review`) hasta completar contenido,
-revisión de Marina y aceptación de QA. Aprobar el plan no declara terminadas las pantallas ni permite
-inventar datos que no existan en los contratos.
+Se considera aprobado y utilizable como contexto oficial para los LLM del equipo únicamente después
+de la aprobación del PO, **Edgar Edmundo Coronel Navarrete**, y del cierre de la petición **P-06**.
+
+Hasta entonces no modifica los lineamientos canónicos existentes del proyecto: los documentos de
+§12 siguen siendo la referencia vigente.

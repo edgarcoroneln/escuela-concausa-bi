@@ -2,7 +2,7 @@
 id: MOC-04-FARO-UX
 title: "FARO_Storytelling_UX"
 owner: "Marina García del Buey"
-status: active
+status: draft
 tags: [moc, ux, storytelling, s7, us-621]
 ---
 
@@ -11,9 +11,8 @@ tags: [moc, ux, storytelling, s7, us-621]
 > Entregables del **Equipo 3 · UX/UI y storytelling** de S7 (`US-621`, `REQ-002`).
 > → [[vault/04_UX_Design/_index]] · [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]]
 
-**Estado: frente activo.** `PLAN_TRABAJO` fue aprobado por el PO mediante PR #297 y `DEC-023`; es el
-contexto canónico de S7. Los entregables `00`–`03` conservan su estado propio hasta superar los gates
-de contenido, implementación y QA. Ver §12–§14 del plan y `ADR-011`.
+**Estado: propuesta.** Mientras `PLAN_TRABAJO` siga en `draft`, nada de esta carpeta desplaza a los
+documentos canónicos de `vault/04_UX_Design/`. Ver §13 del plan.
 
 | Documento | Dueño | Contenido |
 |---|---|---|

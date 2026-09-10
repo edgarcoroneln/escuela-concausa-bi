@@ -12,8 +12,7 @@ tags: [moc, ux]
 
 | Documento | Contenido |
 |---|---|
-| [[vault/04_UX_Design/FARO_Storytelling_UX/_index]] | **Contexto canónico S7:** storytelling, arquitectura UX, visualizaciones e identidad del rediseño (`US-621`, `DEC-023`, `ADR-011`) |
-| [[vault/04_UX_Design/UX_Guidelines]] | Baseline histórico de la entrega del 9-sep; sustituido para S7 por `DEC-023` |
+| [[vault/04_UX_Design/UX_Guidelines]] | Colores, tipografía, componentes, animaciones |
 | [[vault/04_UX_Design/Screen_Specs]] | Portafolio de los 10 dashboards: arquitectura de información, árbol de navegación y catálogo de KPIs con SQL (US-201) |
 | [[vault/04_UX_Design/Cube_Specs_DB03_DB04]] | Contrato semántico de los cubos de DB-03 y DB-04: métricas, jerarquías, granos y SQL de referencia (US-211a) |
 | [[vault/04_UX_Design/Cube_Specs_DB05_DB08]] | Contrato semántico de los cubos de DB-05 y DB-08: métricas, jerarquías, granos y SQL de referencia (US-211b) |
