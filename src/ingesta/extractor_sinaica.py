@@ -11,6 +11,17 @@ Produce dos tablas Bronze independientes (así las espera
 `dbt/models/silver/aire_estacion.sql`):
   - `sinaica_estaciones`: catálogo de estaciones (identidad + georreferencia).
   - `sinaica_observaciones`: lecturas horarias por estación y parámetro.
+
+Backfill histórico (D6, resuelve la cobertura temporal corta de la ingesta horaria):
+`extraer_sinaica_observaciones_historico()` recorre, por estación, desde su
+`fechaIniDatos` real (catálogo de estaciones) hasta hoy, en ventanas de `rango=6`
+(~21 meses reales por llamada, confirmado empírico el 2026-09-10 contra
+`datGrafs.php` -- NO son exactamente 2 años calendario pese a lo que dice la
+ficha DS-05 §2). `fechaIni` es el INICIO de la ventana: la API avanza hacia
+adelante desde ahí y la recorta sola en "hoy" si la ventana cruzaría al futuro
+(verificado: `fechaIni=2026-01-01, rango=6` no devolvió fechas futuras). Antes
+de este hallazgo, `_extraer_dato_horario` tenía `rango=1` fijo en el código --
+por eso la ingesta horaria nunca traía más que el día en curso.
 """
 import json
 import logging
@@ -18,7 +29,7 @@ import os
 import random
 import re
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import pandas as pd
 import requests
@@ -67,20 +78,11 @@ def _estaciones_activas() -> list[int]:
     return _parsear_estaciones_activas(response.json())
 
 
-def extraer_sinaica_estaciones() -> str:
-    """
-    Descarga el catálogo de estaciones de SINAICA (nombre, red, lat/lon, municipioId)
-    y lo guarda en Bronze.
-
-    Returns:
-        Ruta del archivo Parquet generado.
-
-    Raises:
-        requests.RequestException: si falla la descarga.
-        ValueError: si la respuesta viene vacía.
-    """
-    logger.info("Iniciando extracción de catálogo de estaciones de %s", SOURCE_NAME)
-
+def _catalogo_estaciones() -> list[dict]:
+    """Catálogo completo de estaciones (identidad, red, lat/lon, municipioId,
+    fechaIniDatos) tal cual lo entrega `getData.php`. Factorizado de
+    `extraer_sinaica_estaciones` para que el backfill histórico pueda leer
+    `fechaIniDatos` por estación sin repetir la llamada HTTP."""
     fields = (
         "e.id, e.nombre, e.codigo, e.redesId, r.nombre as nombre_red, "
         "r.codigo as codigo_red, e.municipioId, e.estadoId, e.latitud, e.longitud, "
@@ -100,6 +102,24 @@ def extraer_sinaica_estaciones() -> str:
     data = response.json()
     if not data:
         raise ValueError(f"{SOURCE_NAME}: catálogo de estaciones vacío, no se guarda nada")
+    return data
+
+
+def extraer_sinaica_estaciones() -> str:
+    """
+    Descarga el catálogo de estaciones de SINAICA (nombre, red, lat/lon, municipioId)
+    y lo guarda en Bronze.
+
+    Returns:
+        Ruta del archivo Parquet generado.
+
+    Raises:
+        requests.RequestException: si falla la descarga.
+        ValueError: si la respuesta viene vacía.
+    """
+    logger.info("Iniciando extracción de catálogo de estaciones de %s", SOURCE_NAME)
+
+    data = _catalogo_estaciones()
 
     df = pd.DataFrame(data)
     df["_ingested_at"] = datetime.now(timezone.utc)
@@ -138,15 +158,24 @@ def _parsear_respuesta_datos(texto: str, estacion_id: int, parametro: str) -> pd
     return df[["fecha", "hora", "valor", "val", "id_estacion", "parametro"]]
 
 
-def _extraer_dato_horario(estacion_id: int, parametro: str, fecha_ini: str) -> pd.DataFrame:
-    """Descarga los datos horarios de un parámetro/estación desde `datGrafs.php`."""
+def _extraer_dato_horario(
+    estacion_id: int, parametro: str, fecha_ini: str, rango: int = 1
+) -> pd.DataFrame:
+    """Descarga los datos horarios de un parámetro/estación desde `datGrafs.php`.
+
+    `rango` (1-6, ver DS-05 doc) define el tamaño de la ventana hacia ADELANTE desde
+    `fecha_ini` -- confirmado empírico el 2026-09-10: `fechaIni` es el inicio, no el
+    fin, de la ventana, y la API la recorta sola en "hoy" si cruzaría al futuro. Antes
+    este valor estaba fijo en 1 (un día); por eso la ingesta horaria nunca acumulaba
+    historia. El backfill (`extraer_sinaica_observaciones_historico`) usa `rango=6`.
+    """
     response = requests.post(
         DATOS_URL,
         data={
             "estacionId": estacion_id,
             "param": parametro,
             "fechaIni": fecha_ini,
-            "rango": 1,  # 1 = 1 día (ver DS-05 doc para el resto de los códigos)
+            "rango": rango,
             "tipoDatos": "",  # "" = Cruda, "V" = Validada, "M" = Manual
             "datoBase": 1,
         },
@@ -209,6 +238,112 @@ def extraer_sinaica_observaciones(
 
     output_path = _guardar_parquet(df, BRONZE_PATH_OBSERVACIONES, "sinaica_observaciones")
     logger.info("Guardado %s (%d registros)", output_path, len(df))
+
+    return output_path
+
+
+FECHA_PISO_BACKFILL = "2013-01-01"  # arranque de red SINAICA razonable si fechaIniDatos falta
+PASO_DIAS_BACKFILL = 700  # menor al máximo observado (~21 meses) para no dejar huecos
+
+
+def _fechas_backfill(fecha_inicio: date, fecha_fin: date, paso_dias: int = PASO_DIAS_BACKFILL):
+    """`fechaIni` de cada ventana de backfill, de `fecha_inicio` a `fecha_fin` inclusive."""
+    actual = fecha_inicio
+    while actual <= fecha_fin:
+        yield actual.strftime("%Y-%m-%d")
+        actual += timedelta(days=paso_dias)
+
+
+def extraer_sinaica_observaciones_historico(
+    estacion_ids: list[int] | None = None,
+    parametro: str = "PM2.5",
+    rango: int = 6,
+    paso_dias: int = PASO_DIAS_BACKFILL,
+) -> str:
+    """
+    Backfill histórico de un parámetro (PM2.5 por defecto, D6) para todas las
+    estaciones del catálogo: por cada una, descarga desde su `fechaIniDatos` real
+    hasta hoy, en ventanas de `rango` (ver `_extraer_dato_horario` para la dirección
+    de la ventana). A diferencia de `extraer_sinaica_observaciones` (incremental, un
+    día), esta función cubre toda la serie disponible por estación.
+
+    Si una estación no trae `fechaIniDatos` válida, se omite con una advertencia --
+    no se inventa una fecha de arranque (regla SIN_DATO del proyecto).
+
+    Args:
+        estacion_ids: estaciones a recorrer. Si es None, usa TODAS las del catálogo
+            completo (no solo las "activas recientes" de `_estaciones_activas`) --
+            una estación hoy inactiva puede tener años de historia real útil para D6.
+        parametro: parámetro a descargar (PM2.5 por defecto).
+        rango: tamaño de ventana por llamada hacia adelante desde `fechaIni`.
+        paso_dias: avance entre ventanas. Se solapa a propósito con la ventana real
+            observada (~21 meses) para no dejar huecos; el solape se deduplica antes
+            de guardar.
+
+    Returns:
+        Ruta del archivo Parquet generado.
+
+    Raises:
+        ValueError: si no se obtuvo ningún registro en toda la corrida.
+    """
+    logger.info(
+        "Iniciando backfill histórico de %s para %s (rango=%d, paso=%d días)",
+        parametro, SOURCE_NAME, rango, paso_dias,
+    )
+
+    catalogo = _catalogo_estaciones()
+    if estacion_ids is not None:
+        ids_pedidos = set(estacion_ids)
+        catalogo = [e for e in catalogo if int(e["id"]) in ids_pedidos]
+
+    hoy = datetime.now(timezone.utc).date()
+    frames = []
+    estaciones_con_datos = 0
+
+    for estacion in catalogo:
+        estacion_id = int(estacion["id"])
+        fecha_ini_raw = estacion.get("fechaIniDatos")
+        try:
+            fecha_inicio = date.fromisoformat(str(fecha_ini_raw))
+        except (TypeError, ValueError):
+            logger.warning(
+                "Estación %s sin fechaIniDatos válida (%r) -- se omite del backfill, "
+                "no se inventa fecha de arranque",
+                estacion_id, fecha_ini_raw,
+            )
+            continue
+
+        estaciones_con_datos += 1
+        for fecha_ini in _fechas_backfill(fecha_inicio, hoy, paso_dias):
+            try:
+                frames.append(
+                    _extraer_dato_horario(estacion_id, parametro, fecha_ini, rango=rango)
+                )
+            except (requests.RequestException, ValueError) as exc:
+                logger.warning(
+                    "Fallo backfill estación=%s parametro=%s fechaIni=%s: %s",
+                    estacion_id, parametro, fecha_ini, exc,
+                )
+            time.sleep(random.uniform(0, 0.5))
+
+    frames = [f for f in frames if not f.empty]
+    if not frames:
+        raise ValueError(f"{SOURCE_NAME}: backfill no descargó ningún registro, no se guarda nada")
+
+    df = pd.concat(frames, ignore_index=True)
+    # Las ventanas se solapan a propósito (ver paso_dias) -- el mismo dato puede venir
+    # en dos llamadas consecutivas; se conserva una sola copia por llave natural.
+    df = df.drop_duplicates(subset=["id_estacion", "parametro", "fecha", "hora"])
+
+    df["_ingested_at"] = datetime.now(timezone.utc)
+    df["_source"] = SOURCE_NAME
+    df["_source_url"] = DATOS_URL
+
+    output_path = _guardar_parquet(df, BRONZE_PATH_OBSERVACIONES, "sinaica_observaciones")
+    logger.info(
+        "Guardado %s (%d registros históricos, %d/%d estaciones con fechaIniDatos válida)",
+        output_path, len(df), estaciones_con_datos, len(catalogo),
+    )
 
     return output_path
 
