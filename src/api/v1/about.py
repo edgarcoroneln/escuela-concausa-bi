@@ -73,6 +73,14 @@ class BloqueMarkdown(BaseModel):
 class BloqueMermaid(BaseModel):
     tipo: Literal["mermaid"] = "mermaid"
     codigo: str
+    #: Alto sugerido en px para el contenedor del frontend. `components.html` de Streamlit no
+    #: tiene mecanismo de auto-resize (verificado: ignora `postMessage({type:
+    #: "streamlit:setFrameHeight"})` fuera de un custom component registrado), así que el alto es
+    #: fijo por diagrama, elegido a mano por quien lo redactó -- un mismo valor para los 4 E-R
+    #: dejaba mucho espacio en blanco bajo Bronze/Silver (mucho más chicos que Gold) o, si se
+    #: encogía para ajustarlos a ellos, dejaba a Gold ilegible sin hacer zoom primero. `None` usa
+    #: el alto por defecto del cliente.
+    alto: int | None = None
 
 
 class BloqueTabla(BaseModel):
@@ -339,7 +347,23 @@ def _seccion_modelo_datos(_repo: RepositorioAbout) -> SeccionOut:
                     "confundir \"lo que se midió\" con \"lo que el modelo predijo\"."
                 )
             ),
-            BloqueMermaid(codigo=_ER_GOLD_MERMAID),
+            # Gold es el más grande de los 4 E-R (8 entidades, esquema estrella completo) --
+            # alto generoso para que se lea sin tener que hacer zoom primero.
+            BloqueMermaid(codigo=_ER_GOLD_MERMAID, alto=540),
+            BloqueMarkdown(
+                texto=(
+                    "### Diccionario de columnas — `gold.fact_escuela_ciclo`\n"
+                    "La tabla de abajo **no es todo Gold**: son solo las columnas del hecho central "
+                    "que se acaba de dibujar arriba (el recuadro `fact_escuela_ciclo` del E-R), "
+                    "copiadas de `Data_Model.md §6` — cada dimensión (`dim_escuela`, "
+                    "`dim_municipio`, `dim_tiempo`, `dim_driver`) tiene su propio diccionario en ese "
+                    "mismo documento, no repetido aquí. Sirve para responder, columna por columna, "
+                    "la pregunta de arriba: qué es un hecho medido (`matricula_total`, "
+                    "`variacion_matricula`, `d1`…`d6`) y qué falta explícitamente marcado "
+                    "(`d1_cobertura`…`d6_cobertura`, `indice_completitud_drivers`) — nunca una "
+                    "predicción."
+                )
+            ),
             BloqueTabla(
                 columnas=["Columna", "Tipo", "Descripción"],
                 filas=[
@@ -516,7 +540,11 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
                     "  conagua_presas {\n"
                     "    string estado \"SIN_DATO en este ambiente (DB-10)\"\n"
                     "  }"
-                )
+                ),
+                # Medido en vivo con Playwright: Bronze renderiza a ~110px de alto natural, muy
+                # por debajo de lo que Silver/Gold necesitan -- un alto compartido dejaba mucho
+                # espacio en blanco aquí.
+                alto=220,
             ),
             BloqueMarkdown(
                 texto=(
@@ -540,7 +568,9 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
                     "  poblacion_municipio ||--o{ delitos_municipio : cve_mun\n"
                     '  escuela }o..o{ aire_estacion : "IDW ADR-006, no FK"\n'
                     '  escuela }o..o{ agua_region : "IDW ADR-006, no FK"'
-                )
+                ),
+                # Medido en vivo con Playwright: Silver renderiza a ~260px de alto natural.
+                alto=340,
             ),
             BloqueMarkdown(
                 texto=(
@@ -553,7 +583,9 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
                     "columnas y diccionario completo en la sección **Modelo de datos**."
                 )
             ),
-            BloqueMermaid(codigo=_ER_GOLD_MERMAID),
+            # Gold es el más grande de los 4 E-R (8 entidades, esquema estrella completo) --
+            # alto generoso para que se lea sin tener que hacer zoom primero.
+            BloqueMermaid(codigo=_ER_GOLD_MERMAID, alto=540),
             BloqueMetricas(items=metricas),
             tabla_detalle,
         ],

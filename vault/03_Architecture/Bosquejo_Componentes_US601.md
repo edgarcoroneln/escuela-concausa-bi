@@ -121,7 +121,8 @@ como *follow-up* anotado, no bloquea esta entrega).
 **Ronda 1 — MVP del hotfix.** Diseño del contrato manifest + sobre genérico (4 tipos de bloque:
 `markdown`/`mermaid`/`tabla`/`metricas`), las 7 secciones con contenido fijo copiado de las fuentes
 canónicas de cada dueño, `repositorio_about.py` con el único dato vivo (conteos por capa). Excepción
-de alcance autorizada por el usuario para tocar `src/api/**` (verde de Christian/C4). DevLog inicial.
+de alcance autorizada por el usuario para tocar `src/api/**` (entonces verde de Christian/C4;
+**superada por la Ronda 5** — ver abajo, ya no aplica esa lectura de ownership). DevLog inicial.
 
 **Ronda 2 — datos reales + E-R de bronze/silver.** Se siguió el runbook del equipo para poblar
 Postgres local con fixtures (bronze 1,016 filas, silver 515, gold 3,297). Se corrigió un hallazgo
@@ -178,19 +179,30 @@ El contenido técnico de las Rondas 1-4 no cambia.
 
 ## Verificación
 
-- `ruff check` limpio en todos los archivos tocados.
-- 54 pruebas automatizadas en verde (contrato + cliente).
-- `api/openapi.v1.json` regenerado y sincronizado.
+- `ruff check` limpio en todos los archivos tocados (backend, frontend, script de geografía).
+- 54 pruebas propias en verde: `pytest tests/test_api_contract.py tests/test_about_client.py -q`.
+- Suite completa del repo corrida tras sincronizar `dev/manuel-serrania` con `origin/main` y
+  mergear `componentes-back`: sin regresiones nuevas. Las 20 fallas de `test_validacion_*`
+  (`test_cache_predicciones.py`, `test_validacion_coneval.py`, `test_validacion_sinaica.py` y
+  familia) son preexistentes — una librería `great_expectations` desalineada en este ambiente
+  local, ajena a este trabajo y fuera del alcance de Equipo 1.
+- `api/openapi.v1.json` regenerado con `scripts/export_openapi.py` (no editado a mano).
+- `python vault/_Meta/scripts/vault_lint.py .` sin bloqueantes nuevos (los 3 que reporta —
+  `PLAN_US206_EMBEBIDO.md`, `avisosequipo.md`, `plan7diasporpersona.md` — son preexistentes de
+  `componentes-back`, ajenos a `US-601`).
 - Verificado por estructura (curl contra la API real, point-in-polygon contra ciudades reales para
   la silueta) — **no verificado visualmente en navegador por el agente** (sin herramienta de
-  captura de pantalla en esta sesión); pendiente de confirmación del usuario tras la ronda 4.
+  captura de pantalla en esta sesión); pendiente de confirmación del usuario.
+- `dev/manuel-serrania` pusheado a `origin` (commits `19df7f4`, `ad50fc9`). **El PR queda
+  pendiente a propósito** — el usuario pidió dejar solo el commit + push por ahora, no abrirlo
+  todavía.
 
 ## Pendiente (no bloquea lo ya construido)
 
-- **Gobernanza — resuelto parcialmente por la Ronda 5 (ver más abajo)**: la historia ya tiene alta
-  oficial como `US-601` (`Héctor Morales`, Equipo 1), así que ya no falta el alta — falta que Héctor
-  confirme el bosquejo y que se reporte a Edgar la inconsistencia de `ownership.yml` encontrada en
-  Equipo 1 (ver Ronda 5).
+- **Abrir el PR** `dev/manuel-serrania` → `main` cuando el usuario lo indique (ver "Verificación").
+- **Gobernanza**: la historia ya tiene alta oficial como `US-601` (`Héctor Morales`, Equipo 1) —
+  falta que Héctor confirme el bosquejo y que reporte a Edgar la inconsistencia de `ownership.yml`
+  encontrada en Equipo 1 (ver Ronda 5).
 - **Follow-up de contenido dinámico** (anotado desde la ronda 1, no se hizo): sustituir el
   contenido fijo de `arquitectura`, `modelo-datos`, `cubos`, `stack`, `decisiones` y `modelos-ml`
   por lectura en vivo de sus fuentes — ADRs y Model Cards son los candidatos más urgentes por lo
@@ -198,3 +210,5 @@ El contenido técnico de las Rondas 1-4 no cambia.
 - **Decisión pendiente**: si Christian apaga `auth_lectura_publica` antes de la demo, decidir
   explícitamente si "Cómo funciona" se queda pública o hereda el candado (el usuario pidió no
   tocarlo por ahora — bloqueada la autenticación en localhost).
+- **Retroalimentación en curso (post-Ronda 5)**: mapa estático (sin pan/zoom) y el E-R de
+  `modelo-datos` sale con demasiado zoom/incompleto — en revisión, ver DevLog cuando se resuelva.

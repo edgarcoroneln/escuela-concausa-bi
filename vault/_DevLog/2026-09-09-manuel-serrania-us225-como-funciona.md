@@ -258,3 +258,53 @@ no como excepción personal — Manuel lo comparte con Héctor para que decida s
   crear trabajo nuevo ahí) a la rama permanente `dev/manuel-serrania`, sincronizada primero con
   `origin/main` y verificada con la suite completa de pruebas antes de abrir PR.
 - El contenido técnico de las Rondas 1-3 (arriba) no cambió — sólo gobernanza y ubicación.
+
+## Ronda 6 — bug real de renderizado de los E-R + ajustes de legibilidad (2026-09-10)
+
+El usuario reportó que los diagramas E-R "no se visualizan". Diagnosticado con **Playwright real**
+contra la página corriendo (no adivinado): `st.tabs` monta las 7 secciones de una vez; las pestañas
+inactivas quedan en `display:none`, y un iframe dentro de un `display:none` tiene
+`clientWidth/clientHeight = 0` — confirmado inyectando JS en los iframes reales. `mermaid.run()`
+corría de inmediato al cargar, sin esperar a que su pestaña estuviera visible, y calculaba el
+enrutado de las relaciones contra ese viewport de tamaño cero: rutas SVG degeneradas,
+`getPointAtLength` sobre un `<path>` vacío truena internamente, y mermaid **no rechaza la
+promesa** — renderiza su propio ícono "Syntax error in text" como si fuera un resultado normal, por
+eso parecía un problema de contenido y no lo era. Fix real: esperar a que `clientWidth > 0`
+(`requestAnimationFrame`, que el navegador pausa solo mientras el iframe está oculto y retoma solo
+al mostrarla) antes del primer `mermaid.run()`, con reintento por contenido como red de seguridad
+adicional. Verificado repetidamente contra la página real: 0 "Syntax error" en los 4 E-R (Gold en
+Modelo de datos; Bronze, Silver, Gold en Capas).
+
+**Mismo patrón de bug, encontrado también en las barras de Capas** ("se sale de la pantalla los
+datos de Gold"): el ancho se medía con `clientWidth || 760` en el mismo instante potencialmente
+oculto, horneando un ancho supuesto que no coincidía con el contenedor real una vez visible — la
+barra de Gold (el valor máximo) es la que menos margen deja al borde derecho. Mismo fix: esperar
+visibilidad antes de medir. Se amplió además el margen reservado para la etiqueta de valor (90→110px)
+para que nunca quede pegada al borde. Verificado en 900/1000/1280px de ancho de ventana.
+
+**Espacio en blanco bajo Bronze/Silver:** medido en vivo con Playwright, Bronze renderiza a ~110px
+de alto natural y Silver a ~260px, muy por debajo de los 560px que usaba un único alto compartido
+para los 4 E-R (elegido pensando en Gold, el más grande). Streamlit `components.html` no tiene
+mecanismo de auto-resize (se probó explícitamente `postMessage({type:
+"streamlit:setFrameHeight"})`: lo ignora fuera de un custom component registrado), así que la
+solución no es "ajustar automático" sino que cada `BloqueMermaid` ahora trae su propio campo
+`alto` (nuevo, opcional, retrocompatible) con el valor medido para su diagrama específico —
+Bronze 220px, Silver 340px, Gold 540px. Espacio muerto casi eliminado sin sacrificar la legibilidad
+de Gold.
+
+**Diccionario de columnas de `gold.fact_escuela_ciclo` sin explicar:** el usuario señaló que la
+tabla de columnas en "Modelo de datos" aparecía sin contexto, sin quedar claro de dónde salía. Se
+agregó un `markdown` de título antes de la tabla explicando que son solo las columnas del hecho
+central (no de todo Gold — las dimensiones tienen su propio diccionario en `Data_Model.md §6`, no
+repetido aquí), de dónde sale (`Data_Model.md §6`), y qué responde en relación al E-R justo arriba.
+
+**Nota operativa:** ni `uvicorn` ni `streamlit` corrían con `--reload` en esta máquina, así que los
+cambios en `src/api/v1/about.py`/`about_client.py` no se reflejaban solos — se reiniciaron ambos
+procesos manualmente en cada cambio de contrato, incluyendo restaurar `POSTGRES_HOST=localhost`
+(se había perdido en un reinicio) para que "Capas" volviera a mostrar datos reales en vez de
+`SIN_DATO`.
+
+Suite completa verificada de nuevo tras estos cambios: 1103 passed / 4 skipped (las fallas de
+`test_validacion_*` son preexistentes, por una versión de `great_expectations` desalineada en este
+ambiente local, ajenas a este trabajo). `ruff` limpio, `api/openapi.v1.json` regenerado con
+`scripts/export_openapi.py`.

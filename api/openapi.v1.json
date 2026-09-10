@@ -172,6 +172,17 @@
       },
       "BloqueMermaid": {
         "properties": {
+          "alto": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alto"
+          },
           "codigo": {
             "title": "Codigo",
             "type": "string"

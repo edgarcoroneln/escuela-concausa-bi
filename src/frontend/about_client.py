@@ -41,6 +41,7 @@ class BloqueMarkdown:
 @dataclass(frozen=True)
 class BloqueMermaid:
     codigo: str
+    alto: int | None = None
 
 
 @dataclass(frozen=True)
@@ -148,7 +149,11 @@ def _parsear_bloque(payload: dict) -> Bloque:
         if tipo == "markdown":
             return BloqueMarkdown(texto=str(payload["texto"]))
         if tipo == "mermaid":
-            return BloqueMermaid(codigo=str(payload["codigo"]))
+            alto = payload.get("alto")
+            return BloqueMermaid(
+                codigo=str(payload["codigo"]),
+                alto=int(alto) if alto is not None else None,
+            )
         if tipo == "tabla":
             return BloqueTabla(
                 columnas=[str(c) for c in payload["columnas"]],
