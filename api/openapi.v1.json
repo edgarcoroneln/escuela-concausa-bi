@@ -14,6 +14,14 @@
               }
             ]
           },
+          "historial": {
+            "items": {
+              "$ref": "#/components/schemas/HistorialTurnoIn"
+            },
+            "maxItems": 10,
+            "title": "Historial",
+            "type": "array"
+          },
           "pregunta": {
             "maxLength": 500,
             "minLength": 3,
@@ -426,6 +434,30 @@
           }
         },
         "title": "HealthOut",
+        "type": "object"
+      },
+      "HistorialTurnoIn": {
+        "additionalProperties": false,
+        "description": "Un turno previo del chat (pregunta del usuario + respuesta del agente).\n\nExiste para que el agente sostenga una conversación real en vez de tratar cada pregunta\ncomo independiente (rediseño del chat, 2026-09-10). A diferencia de `ContextoConversacionalIn`\n(un resumen estructurado del turno anterior para resolver referencias como \"esas escuelas\"),\n`historial` es la transcripción literal de los turnos previos, tal como el widget de chat la\nguarda en `st.session_state`.\n\n**Mismo criterio de entrada hostil que `ContextoConversacionalIn`**: quien llama al endpoint\npúblico puede escribir aquí lo que quiera, así que se acota en tamaño y se rechazan\ncaracteres de control (evita que un turno inyecte saltos de línea para falsificar la\nestructura del bloque de historial dentro del prompt).",
+        "properties": {
+          "pregunta": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Pregunta",
+            "type": "string"
+          },
+          "respuesta": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Respuesta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pregunta",
+          "respuesta"
+        ],
+        "title": "HistorialTurnoIn",
         "type": "object"
       },
       "KpisOut": {
@@ -1055,7 +1087,7 @@
     },
     "/api/v1/agente/consulta": {
       "post": {
-        "description": "Consulta en lenguaje natural sobre Gold (rol mínimo: ciudadano).\n\nAplica los guardarraíles reales del agente. Equivale a `procesar_consulta_con_rag()` con el\nrecuperador inyectable, de modo que Andrés (C3) pueda enchufar su LLM/ejecutor por dependencias.\n\n**`contexto` (opcional, US-305)** permite resolver preguntas de seguimiento —*\"¿y las\nrecomendaciones para **esas** escuelas?\"*— sin que el LLM invente CCTs. Es opcional y\nretrocompatible: un cuerpo sin `contexto` se comporta exactamente como antes.\n\nEl contexto lo manda el cliente, así que **se valida como entrada hostil, no como estado de\nconfianza** (`ContextoConversacionalIn`): forma de los CCT, cotas de tamaño, sin caracteres de\ncontrol, y `extra=\"forbid\"` para que no se pueda colar un `sql` por esta puerta. Ver el\ndocstring del esquema. Lo que llega al servicio de C3 es siempre un objeto ya validado.",
+        "description": "Consulta en lenguaje natural sobre Gold (rol mínimo: ciudadano).\n\nAplica los guardarraíles reales del agente. Equivale a `procesar_consulta_con_rag()` con el\nrecuperador inyectable, de modo que Andrés (C3) pueda enchufar su LLM/ejecutor por dependencias.\n\n**`contexto` (opcional, US-305)** permite resolver preguntas de seguimiento —*\"¿y las\nrecomendaciones para **esas** escuelas?\"*— sin que el LLM invente CCTs. Es opcional y\nretrocompatible: un cuerpo sin `contexto` se comporta exactamente como antes.\n\nEl contexto lo manda el cliente, así que **se valida como entrada hostil, no como estado de\nconfianza** (`ContextoConversacionalIn`): forma de los CCT, cotas de tamaño, sin caracteres de\ncontrol, y `extra=\"forbid\"` para que no se pueda colar un `sql` por esta puerta. Ver el\ndocstring del esquema. Lo que llega al servicio de C3 es siempre un objeto ya validado.\n\n**`historial` (opcional, rediseño del chat 2026-09-10)** son los turnos previos de la\nconversación (pregunta/respuesta), tal como los guarda el widget. Igual que `contexto`, es\nopcional, retrocompatible y se valida como entrada hostil (`HistorialTurnoIn`): acotado en\ncantidad de turnos y en tamaño por turno, sin caracteres de control.",
         "operationId": "consulta_api_v1_agente_consulta_post",
         "requestBody": {
           "content": {
