@@ -18,3 +18,4 @@ tags: [moc, architecture]
 | [[vault/03_Architecture/Frontend_Architecture]] | **FARO Web** (Streamlit): capa web integrada que embebe Superset y hospeda panel ML, chat y auth. Implementa REQ-002/004/006 (US-206, US-207, US-305, US-405). |
 | [[vault/03_Architecture/Technical_Guide]] | Stack y decisiones técnicas |
 | [[vault/03_Architecture/ADRs/_index]] | Architecture Decision Records |
+| [[vault/03_Architecture/Bosquejo_Componentes_US601]] | **Bosquejo enlazado de Equipo 1** (`US-601`, S7): componentes por célula, filtros Bronze/Silver/Gold, cubos y su composición, y memoria técnica — enlaza los documentos de arriba con la evidencia viva de la sección "Cómo funciona" de FARO Web. Alimenta a Equipo 3 (storytelling) y Equipo 5 (frontend). |
