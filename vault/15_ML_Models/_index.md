@@ -55,3 +55,4 @@ reciban recomendaciones distintas.
 | [[vault/15_ML_Models/Cobertura_Parcial_US325]] | Auditoría de `SIN_DATO`, completitud y concentración territorial por entidad y municipio (US-325) |
 | [[vault/15_ML_Models/ML03_Entrenamiento_US321]] | KMeans temporal, selección de `k` por Silhouette y perfiles auditables; política provisional sin imputación (US-321) |
 | [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]] | Propuesta post-PR #197 y prompt maestro para llevar US-321/322/325 de fixtures a evidencia reproducible sobre Gold real |
+| [[vault/15_ML_Models/Diagnostico_Chat_Agente_2026-09-09]] | Diagnóstico pre-demo del chat del agente (por qué se sintió "roto") y plan priorizado P0-P3 para que responda preguntas libres en lenguaje natural (US-304/US-305) |
