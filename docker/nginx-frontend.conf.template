@@ -1,0 +1,32 @@
+worker_processes auto;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+  sendfile      on;
+  gzip          on;
+  gzip_types    text/css application/javascript application/json image/svg+xml;
+
+  server {
+    listen ${PORT};
+    server_name _;
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # Assets con hash de Vite -> cache largo
+    location /assets/ {
+      expires 1y;
+      add_header Cache-Control "public, immutable";
+    }
+
+    # SPA: cualquier ruta que no sea un archivo real cae a index.html
+    # (necesario para /casos/:cct, /mapa, etc. con React Router)
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "frontend-angular-poc",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "serve:ssr:frontend-angular-poc": "node dist/frontend-angular-poc/server/server.mjs"
+  },
+  "private": true,
+  "packageManager": "npm@11.19.1",
+  "dependencies": {
+    "@angular/animations": "^20.1.8",
+    "@angular/cdk": "^22.1.6",
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/platform-server": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "@angular/ssr": "^22.1.7",
+    "@swimlane/ngx-charts": "^25.0.2",
+    "d3": "^7.9.0",
+    "express": "^5.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.7",
+    "@angular/cli": "^22.1.7",
+    "@angular/compiler-cli": "^22.1.0",
+    "@types/express": "^5.0.1",
+    "@types/node": "^20.17.19",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2"
+  }
+}

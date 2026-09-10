@@ -1,0 +1,23 @@
+<div class="page">
+  <header>
+    <span class="kicker">Combo #4 — Angular + ngx-charts + D3</span>
+    <h1>Gráfica de matrícula</h1>
+    <p>Misma data que las otras 3 variantes (React), construida aquí con ngx-charts sobre Angular.</p>
+  </header>
+
+  <div class="card">
+    <h2>#4 — ngx-charts</h2>
+    <p class="subtitle">Librería declarativa sobre D3 (usa d3-shape/d3-scale internamente)</p>
+    <ngx-charts-bar-vertical
+      [view]="view"
+      [results]="data"
+      [scheme]="colorScheme"
+      [xAxis]="true"
+      [yAxis]="true"
+      [showYAxisLabel]="false"
+      [showXAxisLabel]="false"
+      [roundEdges]="false"
+      [gradient]="false">
+    </ngx-charts-bar-vertical>
+  </div>
+</div>
