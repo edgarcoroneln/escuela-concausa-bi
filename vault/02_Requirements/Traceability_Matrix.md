@@ -53,7 +53,7 @@ tags: [requirements, traceability, matrix]
 | `REQ-004` | `US-601`, `US-643` | Componentes documentados e integración frontend/API/Auth aprobada | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-005` | `US-642` | Candidata desplegada, observable y con rollback | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-006` | `US-611`, `US-612`, `US-613` | Chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-007` | `US-603`, `US-651`, `US-652`, `US-653`, `US-654`, `US-655`, `US-006` | Memoria, QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
+| `REQ-007` | `US-603`, `US-651`, `US-652`, `US-653`, `US-654`, `US-655`, `US-006` | Memoria, QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
 
 ## Evidencia incremental — 2026-08-26
 

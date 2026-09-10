@@ -51,6 +51,7 @@ personas:
       # `UX_Guidelines.md` me declara owner en su frontmatter y ningun alcance lo cubria.
       # Sexta aparicion del mismo hueco -- ver vault/_Meta/Vault_Steward.
       - "vault/04_UX_Design/UX_Guidelines.md"
+      - "vault/09_AI_Governance/Agent_Contexts/_index.md"
       - ".github/**"
 
   diana-alvarez:

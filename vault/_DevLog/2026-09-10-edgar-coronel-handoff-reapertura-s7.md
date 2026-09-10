@@ -1,5 +1,5 @@
 ---
-id: DEVLOG-2026-09-10-REAPERTURA-S7
+id: DEVLOG-2026-09-10-EDGAR-CORONEL-REAPERTURA-S7
 title: "Handoff — reapertura y Sprint 7 de recuperación"
 owner: "Edgar Edmundo Coronel Navarrete"
 status: active
