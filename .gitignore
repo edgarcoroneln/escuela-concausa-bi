@@ -95,3 +95,8 @@ _local/
 *.patch
 /gold_dec019*.sql
 *.canvas
+
+# ---- Config local de herramientas de IA/agentes (no son artefactos del proyecto BI) ----
+/.agents/
+/.claude/
+/skills-lock.json
