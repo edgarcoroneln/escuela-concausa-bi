@@ -105,7 +105,7 @@ services:
       LOG_LEVEL: ${LOG_LEVEL}
       # Variables del Agente Conversacional (Fase 4 / Célula 5)
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      AGENTE_MODELO: ${AGENTE_MODELO:-}
+      AGENTE_MODELO: ${AGENTE_MODELO:-claude-sonnet-5}
       DATABASE_URL_READ_ONLY: ${DATABASE_URL_READ_ONLY:-}
       CHROMA_HOST: ${CHROMA_HOST:-chromadb}
       CHROMA_PORT: ${CHROMA_PORT:-8000}
