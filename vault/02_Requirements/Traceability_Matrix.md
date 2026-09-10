@@ -6,7 +6,7 @@ status: in_review
 version: "1.0"
 source_of_truth: true
 traces_up: ["vault/02_Requirements/Requirements_Detailed", "vault/02_Requirements/User_Stories"]
-last_reviewed: "2026-09-08"
+last_reviewed: "2026-09-10"
 tags: [requirements, traceability, matrix]
 ---
 
@@ -38,6 +38,22 @@ tags: [requirements, traceability, matrix]
 | [[vault/02_Requirements/Requirements_Detailed\|REQ-005]] · Deploy GCP | AC-005.1…AC-005.5 (5) | [[vault/02_Requirements/User_Stories\|13 US]]: US-501, US-502, US-504, US-505, US-522a/b/c, US-524a/b/c, US-525a/b/c | — | — | [[vault/08_CICD_DevOps/Cloud_Run_Deploy\|Cloud Run Deploy ✅]] · [[vault/03_Architecture/ADRs/ADR-008-contenerizacion-airflow-sqlalchemy\|ADR-008]] | ⬜ | [[vault/_DevLog/2026-08-09-luis-tellez-us501-cloud-run-deploy\|2026-08-09]] · [[vault/_DevLog/2026-08-15-luis-tellez-us502-docker-compose-ml-services\|2026-08-15]] · US-502 · [[vault/_DevLog/2026-08-25-alejandro-velazquez-us522a\|2026-08-25]] · [[vault/_DevLog/2026-08-25-edgar-us522b-contenerizar-airflow\|2026-08-25]] · [[vault/_DevLog/2026-08-27-alejandro-velazquez-us524a\|2026-08-27]] · [[vault/_DevLog/2026-08-29-luis-tellez-us502-compose-sin-container-name\|2026-08-29 · US-502]] · [[vault/_DevLog/2026-08-29-luis-tellez-us504-provision-gcp-fase1\|2026-08-29 · US-504]] · [[vault/_DevLog/2026-08-29-luis-tellez-us505-fase2-gold-cloudsql-redeploy\|2026-08-29 · US-505 · BUG-020 prod ✅]] · [[vault/_DevLog/2026-08-29-luis-tellez-security-docs-cis-usids-genkeys\|2026-08-29 · docs seguridad CIS/US IDs]] · [[vault/_DevLog/2026-08-29-luis-tellez-bug025-redeploy-agente-prod\|2026-08-29 · BUG-025 deploy prod]] · [[vault/_DevLog/2026-08-30-luis-tellez-cierre-s4-devops\|2026-08-30 · cierre S4 · prod ✅]] · [[vault/_DevLog/2026-08-30-luis-tellez-oauth-creds-deploy\|2026-08-30 · credenciales OAuth Google en Cloud Run, desbloquea US-402]] | ⬜ | 🟡 En progreso |
 | [[vault/02_Requirements/Requirements_Detailed\|REQ-006]] · Agente | AC-006.1…AC-006.4 (4) | [[vault/02_Requirements/User_Stories\|4 US]]: US-304a, US-304b, US-305, US-323 | — (vía Gold) | — (RAG sobre Gold) | [[vault/03_Architecture/API_Specification\|API_Spec]] (`/agente`) · [[vault/03_Architecture/Data_Model\|Data_Model]] | `test_agente_recuperacion` ✅ (US-304b, 3) · `test_agente_evaluacion` ✅ (US-323, 2) | [[vault/_DevLog/2026-08-26-andres-gonzalez-plan-registry-guardrails\|2026-08-26]] · [[vault/_DevLog/2026-08-26-andres-gonzalez-us305-apptest\|2026-08-26]] · [[vault/_DevLog/2026-08-27-andres-gonzalez-us305-jwt-client\|2026-08-27]] · [[vault/_DevLog/2026-08-27-carlos-mayorga-us304b-us323\|2026-08-27]] | ⬜ | 🟡 En progreso |
 | [[vault/02_Requirements/Requirements_Detailed\|REQ-007]] · Equipo/Git/Docs | AC-007.1…AC-007.5 (5) | [[vault/02_Requirements/User_Stories\|13 US]]: US-001–006, US-503, US-521a/b/c, US-523a/b/c | — | — | [[AGENTS\|AGENTS.md]] · [[vault/_Meta/Vault_Rules\|vault]] · [[vault/13_Reports/PM_Dashboard_Spec\|Tablero PM]] | [[vault/06_Quality_Testing/Automated/_index\|TEST-002 ✅]] | [[vault/_DevLog/2026-08-05-edgar-tablero-control-pm-v2\|2026-08-05]] · [[vault/_DevLog/2026-08-06-edgar-directorio-github-codeowners\|2026-08-06]] · [[vault/_DevLog/2026-08-12-alejandro-velazquez-mendoza\|2026-08-12]] · [[vault/_DevLog/2026-08-15-luis-tellez-us503-ci-pipeline\|2026-08-15]] · US-503 · [[vault/_DevLog/2026-08-25-alejandro-velazquez-us522a\|2026-08-25]] · [[vault/_DevLog/2026-08-31-edgar-jimenez-us523b-ci-quality-gate|2026-08-31 · US-523b]] · [[vault/_DevLog/2026-09-01-edgar-coronel-rama-fija-consolidacion-vault|2026-09-01 · US-001]]| ⬜ | 🟡 En progreso |
+
+## Reapertura S7 — evaluación del profesor del 9-sep
+
+> `DEC-022` reabre los siete REQ. Las filas históricas anteriores conservan evidencia S1–S6; esta
+> tabla registra el trabajo adicional y queda en progreso hasta que cada equipo agregue prueba,
+> DevLog, PR y revisión desplegada. → [[vault/13_Reports/Revision_Profesor_2026-09-09]]
+
+| REQ | Historias S7 | Criterio de recuperación | Test / DevLog / Release | Estado |
+|---|---|---|---|---|
+| `REQ-001` | `US-601` | Equipo 1: explicación verificable Bronze→Silver→Gold, filtros, cubos, ER y componentes | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-002` | `US-621`, `US-641` | Equipos 3 y 5: UX, gráficas, storytelling y frontend aceptados e integrados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-004` | `US-601`, `US-611`, `US-641` | Componentes e integraciones backend/chat/frontend revalidados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-005` | `US-641` | Equipo 5: candidata desplegada, observable y recuperable | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-007` | `US-651`, `US-654`, `US-006` | Equipo 6/PO: QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
 
 ## Evidencia incremental — 2026-08-26
 

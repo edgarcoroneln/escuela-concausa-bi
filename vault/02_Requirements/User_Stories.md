@@ -3,9 +3,10 @@ id: US-CATALOG
 title: "Catálogo de User Stories — FARO"
 owner: "Edgar Edmundo Coronel Navarrete"
 status: in_review
-version: "1.1"
+version: "1.2"
 source_of_truth: true
 traces_up: ["vault/02_Requirements/Requirements_Detailed"]
+last_reviewed: "2026-09-10"
 tags: [requirements, user-stories, catalogo]
 ---
 
@@ -16,9 +17,10 @@ tags: [requirements, user-stories, catalogo]
 > Cada `US-###` mapea al `REQ-###` que satisface (ver [[vault/02_Requirements/Requirements_Detailed]]).
 > → [[vault/02_Requirements/_index]]
 
-**91 historias únicas · 91 asignaciones** (1 responsable por historia). Las historias que antes
-compartían ID entre varias personas se **partieron con sufijo de letra** (a/b/c), dando a cada quien un
-alcance distinto y verificable. Sprints S1–S6 (3 ago → 8 sep 2026).
+**99 historias únicas:** 92 del baseline S1–S6, seis frentes colectivos S7 y una historia de
+gobernanza. Cada US tiene un responsable canónico; en S7 el nombre del líder representa la
+coordinación del equipo y **no equivale a una tarea individual** para los demás integrantes.
+Sprints S1–S7 (3 ago → 13 sep 2026); nueva entrega 14-sep.
 
 ---
 
@@ -173,6 +175,49 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 
 ---
 
+## Célula 1 · Recuperación — Componentes y memoria técnica
+
+| ID | Historia | Responsable | Nivel | Sprint | REQ |
+|---|---|---|---|---|---|
+| US-601 | Documentar en equipo componentes backend, datos, capas, cubos, ER y memoria técnica | Héctor Rafael Morales Marbán | Alto | S7 | REQ-001 |
+
+## Célula 2 · Recuperación — Chat IA natural
+
+| ID | Historia | Responsable | Nivel | Sprint | REQ |
+|---|---|---|---|---|---|
+| US-611 | Mejorar en equipo el Chat IA para conversar en lenguaje natural | Andrés González Habib | Alto | S7 | REQ-006 |
+
+## Célula 3 · Recuperación — UX/UI y storytelling
+
+| ID | Historia | Responsable | Nivel | Sprint | REQ |
+|---|---|---|---|---|---|
+| US-621 | Diseñar en equipo UX/UI, visualizaciones y storytelling del producto | Marina García del Buey | Alto | S7 | REQ-002 |
+
+## Célula 4 · Recuperación — ML-03 y explicación de modelos
+
+| ID | Historia | Responsable | Nivel | Sprint | REQ |
+|---|---|---|---|---|---|
+| US-631 | Corregir en equipo ML-03, sus datos y la explicación de los modelos | Estefany Lucero Hernández Loredo | Alto | S7 | REQ-003 |
+
+## Célula 5 · Recuperación — Frontend y despliegue
+
+| ID | Historia | Responsable | Nivel | Sprint | REQ |
+|---|---|---|---|---|---|
+| US-641 | Programar y desplegar en equipo el nuevo frontend integrado | Diana Aracely Alvarez Varela | Alto | S7 | REQ-002 |
+
+## Célula 6 · Recuperación — QA integral
+
+| ID | Historia | Responsable | Nivel | Sprint | REQ |
+|---|---|---|---|---|---|
+| US-651 | Definir y ejecutar en equipo la metodología y aceptación integral de QA | Edward Ulysses Ruiz Bustillos | Alto | S7 | REQ-007 |
+| US-654 | Gobernar recuperación, trazabilidad y decisión go/no-go | Edgar Edmundo Coronel Navarrete | Alto | S7 | REQ-007 |
+
+> Las seis US de frente tienen un responsable de coordinación por exigencia del catálogo, pero el
+> trabajo pertenece al **equipo completo**. No asignan tareas individuales a sus demás integrantes.
+> `US-654` registra únicamente la gobernanza de esta reapertura y del PR del PO.
+
+---
+
 ## Resumen A · Historias por sprint
 
 | Sprint | Fechas | # historias |
@@ -182,8 +227,9 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | S3 | Lun 17 – Dom 23 ago | 20 |
 | S4 | Lun 24 – Dom 30 ago | 22 |
 | S5 | Lun 31 ago – Dom 6 sep | 25 |
-| S6 | Lun 7 – Mar 8 sep | 5 |
-| **Total** | | **91** |
+| S6 | Lun 7 – Mié 9 sep | 6 |
+| S7 | Jue 10 – Dom 13 sep | 7 |
+| **Total** | | **99** |
 
 ---
 
@@ -191,23 +237,25 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 
 | REQ | Módulo de rúbrica | Puntos | # historias | Cubierto |
 |---|---|---|---|---|
-| REQ-001 | Data Engineering y pipelines multi-fuente | 2.5 | 18 | ✅ |
-| REQ-002 | Frontend BI interactivo | 2.5 | 19 | ✅ |
-| REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 10 (+3 de apoyo ᵃ) | ✅ |
-| REQ-004 | Backend, API y autenticación avanzada | 1.5 | 14 | ✅ |
-| REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 13 | ✅ |
-| REQ-006 | Agente conversacional | 0.5 | 4 | ✅ |
-| REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 13 | ✅ |
-| **Total** | | **10.0** | **91** | **7/7** |
+| REQ-001 | Data Engineering y pipelines multi-fuente | 2.5 | 19 | 🔄 Reabierto |
+| REQ-002 | Frontend BI interactivo | 2.5 | 22 | 🔄 Reabierto |
+| REQ-003 | Tres modelos de ML integrados vía API | 1.5 | 11 (+3 de apoyo ᵃ) | 🔄 Reabierto |
+| REQ-004 | Backend, API y autenticación avanzada | 1.5 | 14 | 🔄 Reabierto por validación cruzada |
+| REQ-005 | Despliegue en GCP dockerizado con URL pública | 1.0 | 13 | 🔄 Reabierto por validación cruzada |
+| REQ-006 | Agente conversacional | 0.5 | 5 | 🔄 Reabierto |
+| REQ-007 | Trabajo en equipo, Git y documentación | 0.5 | 15 | 🔄 Reabierto |
+| **Total** | | **10.0** | **99** | **7/7 en recuperación** |
 
-**Ningún REQ quedó sin historias.** Los 7 módulos de la rúbrica tienen cobertura.
+**Ningún REQ queda sin historias.** Los siete módulos están reabiertos por `DEC-022`; cobertura de
+planeación no equivale a aceptación hasta cerrar S7.
 
 ---
 
 ## Resumen C · Historias por persona (IDs)
 
-> Tras la partición y el rebalanceo de la Célula 3: **87 historias únicas = 87 asignaciones**
-> (1 responsable por historia).
+> El detalle siguiente conserva la distribución histórica hasta S6. Para S7 no se inventan tareas
+> personales: cada integrante participa en el frente de su equipo, según
+> [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]].
 
 | Persona | Célula | Nivel | # | IDs |
 |---|---|---|---|---|
@@ -232,7 +280,7 @@ documentación (REQ-007): CI, branch protection, quality gates y guía de ambien
 | Alejandro Velázquez Mendoza | C5 | Bajo | 5 | US-521a, US-522a, US-523a, US-524a, US-525a |
 | Edgar Ulises Jiménez López | C5 | Bajo | 5 | US-521b, US-522b, US-523b, US-524b, US-525b |
 | Edward Ulysses Ruiz Bustillos | C5 | Bajo | 4 | US-521c, US-522c, US-523c, US-524c |
-| **Total** | | | **91** | |
+| **Total histórico S1–S6** | | | **92** | |
 
 > **Célula 3 rebalanceada:** al partir US-304 (diseño → Andrés / recuperación → Carlos) y añadir
 > US-325 (Estefany) y US-324 (Carlos), Estefany y Carlos quedan con **3 historias cada uno**, en línea

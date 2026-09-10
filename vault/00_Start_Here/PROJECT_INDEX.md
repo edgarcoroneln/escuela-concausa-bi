@@ -5,7 +5,7 @@ owner: "Edgar Edmundo Coronel Navarrete"
 status: active
 version: "1.0"
 source_of_truth: true
-last_reviewed: "2026-09-08"
+last_reviewed: "2026-09-10"
 tags: [index, moc]
 ---
 
@@ -13,6 +13,11 @@ tags: [index, moc]
 
 > Punto de entrada único al vault. Desde aquí llegas a todo.
 > **Nuestro Faro:** Que ninguna escuela pierda alumnos por una causa que pudimos anticipar y nombrar · **PM:** Edgar Edmundo Coronel Navarrete
+
+> [!IMPORTANT] Recuperación activa — entrega lunes 14, primera hora
+> La revisión del profesor del 9-sep no aceptó la entrega. `DEC-022` reabrió S7 hasta el domingo 13.
+> Empieza por [[vault/13_Reports/Revision_Profesor_2026-09-09]] y
+> [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]].
 
 ## 🚀 Empieza aquí
 - [[vault/00_Start_Here/Developer_Onboarding]] — configurar entorno y flujo
@@ -25,7 +30,7 @@ tags: [index, moc]
 - `.github/copilot-instructions.md` — apuntador equivalente para **GitHub Copilot** (redirige a AGENTS.md; sin frontmatter porque no es `.md` del vault)
 - [[vault/00_Start_Here/Vault_Changelog]] — cambios del vault
 
-## 🌐 URLs públicas (demo del 9 de septiembre)
+## 🌐 URLs públicas (baseline; deben revalidarse para la entrega del 14)
 
 > **Es lo primero que mira quien evalúa.** La rúbrica exige URL pública viva; sin ella el techo es 6.0.
 > Las tres superficies se re-verificaron el **2026-09-08**, después del despliegue final
@@ -88,12 +93,12 @@ tags: [index, moc]
 - [[vault/_DevLog/_index]] — bitácora única
 - [[vault/_Meta/_index]] — reglas del vault y trazabilidad
 
-## 🎯 Salud del proyecto — corte de entrega
+## 🎯 Salud del proyecto — recuperación S7
 | Objetivo | Métrica | Meta | Actual |
 |---|---|---|---|
-| Historias cerradas | `done` / total | 92 / 92 tras la demo | **91 / 92**; sólo `US-006` en progreso |
-| Superficies públicas | Healthcheck HTTP 200 | 3 / 3 | **3 / 3**: FARO Web, API y Superset |
-| Cumplimiento del PRD interno | Criterios de éxito | 11 / 11 | **10 cumplidos + 1 parcial** (SHAP productivo) |
-| Rúbrica del profesor | Módulos con evidencia completa | 7 / 7 | **6 completos + 1 parcial** (`REQ-003`, ML-03 sin Gold/API/UI) |
+| Historias cerradas | `done` / total | 99 / 99 al entregar | **91 / 99**; 2 en progreso y 6 frentes colectivos planeados |
+| Superficies públicas | Healthcheck y prueba funcional en candidata | 3 / 3 | Baseline 8-sep: 3/3; candidata S7 pendiente |
+| Cumplimiento del PRD interno | Criterios de éxito revalidados | 11 / 11 | **Reabierto**; siete REQ en progreso |
+| Evaluación del profesor | Brechas observadas corregidas | 7 / 7 frentes | **0 / 7 aceptados aún**; valida QA el domingo |
 
-> Dictamen, evidencia y residuales: [[vault/13_Reports/Cierre_Proyecto_2026-09-08]].
+> Dictamen vigente: [[vault/13_Reports/Revision_Profesor_2026-09-09]]. El cierre del 8-sep es histórico.

@@ -16,4 +16,5 @@ tags: [moc, roadmap, sprint]
 | [[vault/12_Roadmap_Sprints/Roadmap]] | Fases del producto |
 | [[vault/12_Roadmap_Sprints/Execution_Status]] | Estado operativo canónico por historia; alimenta el tablero PM |
 | [[vault/12_Roadmap_Sprints/RACI]] | Responsabilidad R/A/C/I por entregable y fecha gate |
+| [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] | ⭐ S7: seis equipos renumerados, entregables diarios, criterios y ruta crítica hacia el 14-sep |
 | [[vault/12_Roadmap_Sprints/Sprints/_index]] | Planes de trabajo individuales de los 21 integrantes |
