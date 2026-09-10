@@ -731,6 +731,17 @@ anclas no existen en el DOM hasta hacer scroll.
 | `REQ-003` | `US-321` | PR #292: corrida real ML-03, `k=3`, Silhouette 0.4644549058, perfiles y cobertura documentados | `RISK-011`: no se promueve a Gold/API/UI. El módulo de tres modelos sigue **parcial bajo la letra estricta del profesor** | accepted_with_residual |
 | `REQ-004` · `REQ-005` · `REQ-006` | `US-305`, `US-404`, `US-423`, `US-505` | OAuth/RBAC 401/403/200 real, hardening revisado, agente completo en `faro-api-00018-gjx`, frontend `faro-frontend-00009-way` y smoke integral verde | UI del agente single-turn; sesión >16 min se repite en el checklist del día | ready |
 
+## Evidencia incremental — 2026-09-10 · rediseño del chat, Fase 2 (historial de turnos, post-cierre)
+
+> Reapertura autorizada del agente conversacional pese al `DEC-021` (código congelado el 8-sep):
+> el chat quedó calificado de "basura" en la revisión del profesor y se relanza en 4 fases, sin
+> fecha fija. Ver [[vault/15_ML_Models/Agente_Guardrails_US304a]] y el diagnóstico de Andrés
+> González (`DOC-DIAGNOSTICO-AGENTE-CHAT-2026-09-09`, aún sin filed en el vault). Esta entrada
+> cubre solo la Fase 2 (memoria conversacional), alcance de Karla Monter en `src/api/**`.
+
+| REQ | Historias | Evidencia | Residual / siguiente gate | Estado |
+|---|---|---|---|---|
+| `REQ-004` · `REQ-006` | `US-305` | `HistorialTurnoIn` + campo `historial` (opcional, retrocompatible, máx. 10 turnos) en `AgenteConsultaIn` (`src/api/schemas.py`), mismo criterio de entrada hostil que `ContextoConversacionalIn`: `extra="forbid"`, cotas de tamaño, sin caracteres de control. El endpoint (`src/api/v1/agente.py::_construir_contexto_conversacional`) lo fusiona con `contexto` en el `Mapping` que `procesar_consulta` ya acepta, bajo la clave `"historial"`. 20 pruebas nuevas ✅ (`tests/test_agente_historial.py`), `openapi.v1.json` regenerado, suite completa (1161 casos) y `ruff` en verde | `construir_prompt_sistema` (`src/agente/prompt.py`, alcance de Andrés) todavía no lee la clave `"historial"`: el campo llega validado a la API pero sin efecto end-to-end hasta que C3 lo consuma. Fases 3 (streaming) y 4 (robustez/observabilidad) del plan siguen pendientes | 🟡 En progreso (contrato listo, consumo pendiente de C3) |
 ## Evidencia incremental — 2026-09-10 · estructura del frente de UX/UI y storytelling (E3, Marina García)
 
 | REQ | Historias | Evidencia entregada | Pendiente / a quién | Estado |
