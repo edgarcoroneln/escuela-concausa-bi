@@ -196,6 +196,10 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
 ## 9. Qué falta
 
 **De E5 (ingeniería, no depende de nadie más):**
+- **"Nivel de atención" derivado de `indice_riesgo`** (resuelto 10-sep por el PO, `ADR-011`/`DEC-024`):
+  alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`. Se calcula en el frontend a partir del
+  `indice_riesgo` que el API ya expone — **no se consume `gold.recomendaciones.prioridad`** (sigue
+  anclada a 0.60, sin republicar). Cierra `BUG-063`/P-01 sin tocar el backend.
 - Gráfica de predicción con tramo punteado (forecast) y tab de Recomendación dentro del expediente.
 - Conectar cada pantalla a `src/lib/api.js` en vez de `mock.js`.
 - Code-splitting por ruta (`React.lazy`) si sobra tiempo — el bundle pesa ~940KB, no bloqueante para

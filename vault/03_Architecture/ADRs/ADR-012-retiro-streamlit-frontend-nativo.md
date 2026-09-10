@@ -3,7 +3,7 @@ id: ADR-012
 title: "ADR-012 — Retiro del embebido de Superset/Streamlit: frontend nativo en React"
 owner: "Diana Álvarez / Luis Téllez (Equipo 5: Frontend y despliegue)"
 status: proposed
-traces_up: ["REQ-002", "REQ-004", "REQ-006", "REQ-005"]
+traces_up: ["REQ-002", "REQ-004", "REQ-006", "REQ-005", "ADR-011-rediseno-ux-graficas-nativas"]
 supersedes: ["ADR-002"]
 traces_down: ["US-206", "US-207", "US-305", "US-405"]
 date: "2026-09-10"
@@ -13,7 +13,14 @@ tags: [architecture, adr, frontend, react, streamlit, equipo-5]
 # ADR-012 — Retiro del embebido de Superset/Streamlit: frontend nativo en React
 
 → [[vault/03_Architecture/ADRs/_index|Volver a ADRs]] · [[vault/03_Architecture/ADRs/ADR-002-frontend-streamlit|ADR-002]] ·
+[[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas|ADR-011]] ·
 [[vault/08_CICD_DevOps/Arquitectura_Frontend_React|Arquitectura_Frontend_React]]
+
+> Este ADR opera bajo `ADR-011` (Edgar, `accepted`, 10-sep): ese ADR autoriza el rediseño narrativo
+> con gráficas nativas como experiencia principal a nivel de producto; éste cubre la decisión técnica
+> específica de E5 (retirar el embebido de Streamlit/Superset, stack React) y su implementación. No
+> hay conflicto entre los dos `supersedes: ADR-002` — el de Edgar es parcial (solo la obligación de
+> embeber Superset como principal), el de este ADR es sobre la herramienta que reemplaza esa capa.
 
 ## Contexto
 
