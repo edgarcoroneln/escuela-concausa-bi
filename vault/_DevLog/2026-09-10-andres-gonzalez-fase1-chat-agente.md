@@ -94,3 +94,13 @@ Fase 1 (100% en `src/agente/**`) implementa las correcciones:
 - Avisar a Karla que puede arrancar la Fase 2: el soporte interno de `contexto_conversacional` ya
   existe en `servicio.py`/`prompt.py`, solo falta que el contrato de la API (`src/api/schemas.py`,
   `src/api/v1/agente.py`) lo reciba y se lo pase.
+
+## Integración posterior — resolución del conflicto del PR #298
+
+- **Responsable de la integración:** Edgar Coronel (PM), durante la revisión del PR.
+- **Acción:** `git merge origin/main` sobre `dev/andres-gonzalez`, sin rebase ni force push.
+- **Conflicto resuelto:** `vault/02_Requirements/Traceability_Matrix.md`.
+- **Criterio:** conservar completas tanto la evidencia UX de Marina ya presente en `main` como la
+  evidencia de la Fase 1 del chat aportada por Andrés; no se modificó código productivo.
+- **Validación requerida antes del push:** ausencia de marcadores de conflicto, `vault_lint.py`,
+  pruebas del agente, Ruff y control de ownership del PR.
