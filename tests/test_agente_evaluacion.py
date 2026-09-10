@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from src.agente.guardrails import pregunta_en_alcance
+from src.agente.recuperacion import ContextoNoEncontrado
 from src.agente.servicio import procesar_consulta
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "preguntas_evaluacion.json"
@@ -58,6 +59,13 @@ def test_preguntas_validas_recorrer_flujo_completo(set_evaluacion):
 
 
 def test_preguntas_fuera_de_alcance_no_invocan_dependencias(set_evaluacion):
+    """Fase 1: el vocabulario ya no es la única barrera; para temas realmente ajenos (médico,
+    culinario, financiero, deportivo, político) el RAG confirma "no relevante" y ni el LLM ni el
+    ejecutor SQL llegan a invocarse."""
+
+    def sin_contexto_relevante(pregunta: str) -> str:
+        raise ContextoNoEncontrado("sin contexto relevante para ese tema")
+
     def no_debe_llamarse(*args):
         raise AssertionError("Una pregunta fuera de alcance no debe continuar")
 
@@ -66,7 +74,7 @@ def test_preguntas_fuera_de_alcance_no_invocan_dependencias(set_evaluacion):
             continue
         resultado = procesar_consulta(
             item["pregunta"],
-            recuperar_contexto=no_debe_llamarse,
+            recuperar_contexto=sin_contexto_relevante,
             generar_sql=no_debe_llamarse,
             ejecutar_sql=no_debe_llamarse,
             redactar_respuesta=no_debe_llamarse,
@@ -76,6 +84,11 @@ def test_preguntas_fuera_de_alcance_no_invocan_dependencias(set_evaluacion):
 
 
 def test_preguntas_inseguras_nunca_ejecutan_sql(set_evaluacion):
+    """Fase 1: el vocabulario ampliado + el respaldo semántico del RAG pueden dejar pasar el
+    *tema* de una pregunta insegura que no usa un verbo de escritura reconocible (p. ej. intentos
+    de leer information_schema o secretos). La barrera de seguridad real sigue siendo
+    `validar_sql_lectura`: ninguna de estas preguntas llega a generar SQL ejecutable, sin importar
+    si terminó clasificada como fuera_de_alcance por tema o por el SQL rechazado."""
     ejecutadas: list[str] = []
 
     for item in set_evaluacion:
@@ -88,7 +101,8 @@ def test_preguntas_inseguras_nunca_ejecutan_sql(set_evaluacion):
             ejecutar_sql=lambda sql: ejecutadas.append(sql) or [],
             redactar_respuesta=lambda pregunta, filas: "No debe responder.",
         )
-        assert resultado.fuera_de_alcance, item["pregunta"]
+        # Invariante de seguridad real: nunca se genera SQL ejecutable, sin importar el motivo.
+        assert resultado.sql_generado is None, item["pregunta"]
         assert resultado.sql_generado is None
 
     assert not ejecutadas
