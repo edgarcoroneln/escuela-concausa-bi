@@ -4,7 +4,7 @@ title: "Agent Context — Diana Aracely Alvarez Varela"
 owner: "Diana Aracely Alvarez Varela"
 status: approved
 traces_up: ["vault/12_Roadmap_Sprints/Sprints/1-diana-aracely-alvarez-varela"]
-tags: [ai, agent-context, ownership, celula-1]
+tags: [ai, agent-context, ownership, celula-1, celula-5, sprint-7, frontend]
 ---
 
 # Agent Context — Diana Aracely Alvarez Varela
@@ -22,20 +22,22 @@ tags: [ai, agent-context, ownership, celula-1]
 | **Nombre** | Diana Aracely Alvarez Varela |
 | **Identidad** | `diana-alvarez` |
 | **Rama fija** | `dev/diana-alvarez` — permanente, no se borra al mergear |
-| **Célula** | Celula 1 — Data Engineering & Quality |
+| **Célula** | Equipo 5 — Frontend e integración (S7); conserva stewardship histórico de Data Engineering |
 | **Nivel** | Alto |
-| **Rol** | Tech Lead · Data Engineering |
+| **Rol** | Líder S7 · Frontend e integración |
 | **Tech Lead de la célula** | Diana Aracely Alvarez Varela |
-| **Quién revisa su código** | Edgar Edmundo Coronel Navarrete (PM) — compuerta única (DEC-003). Diana Aracely Alvarez Varela (Tech Lead) revisa como apoyo, no bloquea |
-| **Requisito(s) que cubre** | REQ-001 (Data Engineering y pipelines multi-fuente) |
+| **Quién revisa su código** | Edgar Edmundo Coronel Navarrete (PM) — compuerta única (DEC-003). Luis Téllez revisa cambios de Docker/CI-CD; Marina García valida conformidad con UX/storytelling |
+| **Requisito(s) que cubre** | REQ-001 (stewardship histórico) · REQ-002/004/005/006 (Frontend S7 e integración) |
 
 ---
 
 ## 2. 🟢 Alcance permitido (crear y modificar con IA libremente)
 
+- `frontend/**` — aplicación nativa nueva autorizada por `DEC-022`/`DEC-023`.
 - `src/ingesta/**`
 - `dbt/**`
 - `dags/**`
+- `src/frontend/**` — shell Streamlit histórico mientras siga versionado.
 - `vault/14_Data_Sources/**`
 - `vault/03_Architecture/Data_Model.md`
 - Su propio plan de sprint y su DevLog en `vault/_DevLog/`.
@@ -49,6 +51,10 @@ tags: [ai, agent-context, ownership, celula-1]
 
 | Archivo / artefacto | Dueño | Protocolo |
 |---|---|---|
+| `docker/frontend-entrypoint.sh` | Luis Téllez (C5/DevOps) | sólo empaquetado del frontend; revisión explícita de Luis |
+| `docker/frontend-react.Dockerfile` | Luis Téllez (C5/DevOps) | sólo imagen del frontend; revisión explícita de Luis |
+| `docker/nginx-frontend.conf.template` | Luis Téllez (C5/DevOps) | proxy y seguridad de borde; revisión explícita de Luis |
+| `vault/08_CICD_DevOps/**` | Luis Téllez (C5/DevOps) | documentar/build/deploy del frontend; revisión explícita de Luis |
 | `tests/**` | dueño del área | cambio acotado; avisar en el PR |
 | `great_expectations/**` | dueño del área | cambio acotado; avisar en el PR |
 | `requirements/celula-1.txt` | dueño del área | cambio acotado; avisar en el PR |
@@ -68,7 +74,8 @@ tags: [ai, agent-context, ownership, celula-1]
 | `src/api/**` | C4 — Christian Ruiz | pedir a Backend |
 | `src/modelos/**` | C3 — Andrés González Habib | pedir a ML |
 | `superset/**` | C2 — Manuel Serranía | pedir a BI |
-| `.github/**` (CI/CD) | C5 — Luis Téllez | pedir a DevOps |
+| `.github/**` (workflows) | C5 — Luis Téllez | pedir a DevOps |
+| `docker/**` fuera de los tres archivos de frontend autorizados | C5 — Luis Téllez | pedir a DevOps |
 | `vault/_Meta/**` | PM — Edgar Coronel | pedir al PO |
 | `vault/07_Security/**` | C4 — Christian Ruiz | pedir a Seguridad |
 
@@ -87,6 +94,7 @@ tags: [ai, agent-context, ownership, celula-1]
 | US-104 | S3 | `gold.features_escuela`: los 6 drivers normalizados + banderas de cobertura. Contrato cerrado y versionado con la Celula 3. |
 | US-105 | S3 | Interpolacion IDW para SINAICA dentro de radio valido; fuera de radio, marcar `SIN_DATO` explicito (nunca cero ni nulo silencioso). Calcular `indice_completitud_drivers` por escuela. |
 | US-106 | S5 | Diagrama fuente->bronze->silver->gold->feature->modelo->dashboard. Freeze el 6 de septiembre. |
+| US-641 | S7 | Implementar e integrar el nuevo frontend narrativo conforme a ADR-011 y al paquete FARO Storytelling UX. |
 
 ---
 
@@ -107,6 +115,17 @@ tags: [ai, agent-context, ownership, celula-1]
 
 ## 7. Contexto técnico específico
 
+### Sprint 7 — Frontend e integración
+
+- `DEC-023` permite reemplazar la experiencia anterior; Superset queda como evidencia y respaldo.
+- La fuente de diseño es `vault/04_UX_Design/FARO_Storytelling_UX/**` y la arquitectura se rige por `ADR-011`.
+- Las bandas de atención son: alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30` (`DEC-024`). No usar la columna Gold `prioridad` como sustituto.
+- Los datos visibles deben venir de la API/Gold; fixtures y mocks sólo pueden usarse en construcción o pruebas y deben señalarse como tales.
+- Nginx debe mantener el acceso same-origin a la API y la sesión segura; cualquier cambio de proxy o despliegue requiere revisión de Luis Téllez.
+- El entregable no se cierra sin pruebas de integración y aceptación de QA sobre la misma candidata desplegable.
+
+### Stewardship histórico — Data Engineering
+
 - Medallón: Bronze (raw + `_ingested_at`/`_source`/`_source_url`, idempotente) → Silver (tipado, CCT homologado, Great Expectations) → Gold (estrella + cubos + `features_escuela`).
 - `SCOPE_ENTIDADES = ["09","15","19","14"]` (Gold y modelos); Bronze/Silver nacionales.
 - Regla **`SIN_DATO`** explícito (nunca cero ni nulo). Se calcula `indice_completitud_drivers`.
@@ -122,7 +141,7 @@ tags: [ai, agent-context, ownership, celula-1]
 
 **Contexto para pegar al inicio de la sesión:**
 ```
-Soy de Data Engineering en FARO (bronze/silver/gold en Postgres, Airflow, dbt, Great Expectations). Alcance Gold: CDMX, Edomex, Nuevo Leon, Jalisco. Llaves: CCT y clave INEGI de municipio a 5 digitos. SIN_DATO explicito (nunca cero ni nulo). Responde en espanol con codigo comentado.
+Lidero Frontend e integracion de S7 en FARO. Implemento en frontend/** contra los contratos versionados de la API, siguiendo ADR-011 y FARO_Storytelling_UX. Nivel de atencion: alta >=0.50, media >=0.30, baja <0.30. No presento mocks como datos reales; SIN_DATO es explicito. Los tres archivos Docker autorizados requieren revision de Luis Tellez. Responde en espanol con codigo comentado.
 ```
 
 **Modelo medallón:**
