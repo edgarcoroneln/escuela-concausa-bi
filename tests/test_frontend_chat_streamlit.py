@@ -31,12 +31,15 @@ class AgenteHTTPFake(BaseHTTPRequestHandler):
         )
         sql_generado = None if fuera_de_alcance else "SELECT count(*) FROM gold.dim_escuela"
         eventos = [
-            "event: meta\n"
-            f"data: {json.dumps({'sql_generado': sql_generado, 'fuera_de_alcance': fuera_de_alcance})}\n\n",
-            "event: fragmento\n"
-            f"data: {json.dumps({'texto': respuesta})}\n\n",
-            "event: fin\n"
-            "data: {}\n\n",
+            (
+                "event: meta\n"
+                f"data: {json.dumps({'sql_generado': sql_generado, 'fuera_de_alcance': fuera_de_alcance})}\n\n"
+            ),
+            (
+                "event: fragmento\n"
+                f"data: {json.dumps({'texto': respuesta})}\n\n"
+            ),
+            ("event: fin\n" "data: {}\n\n"),
         ]
         cuerpo = "".join(eventos).encode("utf-8")
         self.send_response(200)
