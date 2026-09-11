@@ -39,31 +39,56 @@ Este runbook documenta cómo monitorear, auditar e inspeccionar los eventos y er
    ```
 
 ### Vía gcloud CLI
-```powershell
-& "C:\Users\Alejandro\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd" logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="faro-api"' --limit=50 --format="json" --project=faro-escuela-sensor
+```bash
+gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="faro-api"' \
+  --limit=50 \
+  --format="json" \
+  --project=faro-escuela-sensor
 ```
 
 ---
 
-## 3. Filtros Operativos Útiles (`jsonPayload`)
+## 3. Consultas y Filtros Operativos en Cloud Logging
 
-Los siguientes campos estructurados son los definidos como campos esperados para la instrumentación en `src/agente/servicio.py` y `src/api/v1/agente.py`:
+### A. Filtros Activos Hoy (Disponibles en Producción)
 
-| Evento a Monitorear | Consulta en Cloud Logging | Severidad | Propósito / Acción |
+Los siguientes filtros operan sobre los logs emitidos actualmente por Uvicorn y FastAPI mediante `docker/log_config.json`:
+
+| Caso Operativo | Consulta en Logs Explorer | Severidad | Propósito / Acción |
 |---|---|---|---|
-| **Rechazos por Guardrail** | `resource.labels.service_name="faro-api"`<br>`jsonPayload.event_type="guardrail_blocked"` | `WARNING` / `INFO` | Intentos de órdenes destructivas de escritura o preguntas fuera de alcance de FARO. |
-| **Reintentos Auto-corrección SQL** | `resource.labels.service_name="faro-api"`<br>`jsonPayload.event_type="sql_retry"` | `WARNING` | Fallas iniciales de ejecución SQL que el agente intentó corregir automáticamente devolviendo el error al LLM. |
-| **Consultas Exitosas** | `resource.labels.service_name="faro-api"`<br>`jsonPayload.event_type="query_success"` | `INFO` | Monitoreo de uso y métricas de satisfacción del chat. |
-| **Errores de Infraestructura/LLM** | `resource.labels.service_name="faro-api"`<br>`severity>=ERROR` | `ERROR` | Caídas de ChromaDB sidecar, timeouts con Anthropic API o errores no controlados. |
+| **Errores no controlados / LLM / ChromaDB** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`severity>=ERROR` | `ERROR` / `CRITICAL` | Detecta caídas de conexión a ChromaDB, fallos de Anthropic API o excepciones 500 no capturadas. |
+| **Peticiones HTTP fallidas (4xx / 5xx)** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`jsonPayload.status_code>=400` | `WARNING` / `ERROR` | Acceso a endpoints del agente con error de cliente o servidor en Uvicorn. |
+| **Búsqueda por texto libre en logs** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`textPayload =~ "(guardrail|retry|fallback|chroma)"` | Todas | Rastreo de eventos clave en el cuerpo del mensaje mientras no haya campos estructurados dedicados. |
+
+Comando rápido en terminal:
+```bash
+gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="faro-api" AND severity>=ERROR' \
+  --limit=20 \
+  --format="table(timestamp,severity,textPayload,jsonPayload.message)" \
+  --project=faro-escuela-sensor
+```
+
+### B. Contrato Objetivo (Pendiente Instrumentación en Código)
+
+> ⚠️ **Nota para guardia / On-Call:** Los filtros por `jsonPayload.event_type` listados a continuación corresponden al **contrato estructurado objetivo** definido para la Fase 4. Actualmente `src/agente/servicio.py` no emite estos campos todavía (en desarrollo por Karla y Andrés). **No usar `event_type` en incidentes en vivo hasta que se complete la instrumentación de aplicación**, ya que la consulta retornará 0 resultados.
+
+| Evento Objetivo | Filtro Futuro (`jsonPayload`) | Severidad Prevista | Propósito |
+|---|---|---|---|
+| **Guardrail Bloqueado** | `resource.labels.service_name="faro-api"`<br>`jsonPayload.event_type="guardrail_blocked"` | `WARNING` / `INFO` | Preguntas destructivas o fuera de alcance de FARO. |
+| **Auto-corrección SQL** | `resource.labels.service_name="faro-api"`<br>`jsonPayload.event_type="sql_retry"` | `WARNING` | Reintentos automáticos tras error de PostgreSQL devolviendo el error al LLM. |
+| **Consulta Exitosa** | `resource.labels.service_name="faro-api"`<br>`jsonPayload.event_type="query_success"` | `INFO` | Métrica de satisfacción y uso de consultas resueltas satisfactoriamente. |
 
 ---
 
 ## 4. Estructura y Significado de Campos
 
-Cada entrada de log en Cloud Logging contiene:
-* **`severity`:** Nivel del evento (`INFO`, `WARNING`, `ERROR`).
-* **`timestamp`:** Momento exacto de la petición.
-* **`message`:** Descripción legible del evento (sin exponer secretos, tokens ni PII).
+### Campos activos hoy en producción:
+* **`severity`:** Nivel del evento transformado por `docker/log_config.json` a partir de `levelname` (`INFO`, `WARNING`, `ERROR`, `CRITICAL`).
+* **`timestamp`:** Marca temporal ISO 8601 con zona horaria (`%Y-%m-%dT%H:%M:%S%z`).
+* **`jsonPayload.message` / `textPayload`:** Descripción textual del evento o línea de log de Uvicorn (sin secretos).
+* **`jsonPayload.status_code`:** Código de respuesta HTTP registrado en logs de acceso de Uvicorn.
+
+### Campos del contrato objetivo (al instrumentar con `extra={...}` en código Python):
 * **`jsonPayload.event_type`:** Tipo canónico del evento (`guardrail_blocked`, `sql_retry`, `query_success`, `rag_error`).
 * **`jsonPayload.reason`:** Causa del bloqueo o fallo (ej. `solo_lectura`, `pregunta_referencial_sin_contexto`, `tabla_no_existe`).
 * **`jsonPayload.attempt`:** Número de intento en auto-corrección (1 o 2).
