@@ -5,7 +5,12 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from src.frontend.agente_client import ErrorAutorizacionAgente, consultar_agente
+from src.frontend.agente_client import (
+    ErrorAutorizacionAgente,
+    consultar_agente,
+    consultar_agente_stream,
+    preparar_historial,
+)
 
 
 class RespuestaHTTPFake:
@@ -112,3 +117,156 @@ def test_distingue_errores_de_autorizacion(status_code: int, mensaje: str) -> No
 
     with pytest.raises(ErrorAutorizacionAgente, match=mensaje):
         consultar_agente("http://api:8000", "Pregunta valida", post=post)
+
+
+def test_consulta_stream_parsea_meta_fragmentos_y_fin() -> None:
+    class RespuestaStreamFake:
+        def __init__(self) -> None:
+            self._lineas = [
+                b"event: meta",
+                b'data: {"sql_generado":"SELECT 1","fuera_de_alcance":false}',
+                b"",
+                b"event: fragmento",
+                b'data: {"texto":"1 escuela "}',
+                b"event: fragmento",
+                b'data: {"texto":"encontrada."}',
+                b"event: fin",
+                b"data: {}",
+            ]
+
+        def raise_for_status(self) -> None:
+            return None
+
+        def iter_lines(self):
+            return iter(self._lineas)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback) -> None:
+            return None
+
+    fragmentos: list[str] = []
+
+    def stream(method: str, url: str, **kwargs) -> RespuestaStreamFake:
+        assert method == "POST"
+        assert url == "http://api:8000/api/v1/agente/consulta/stream"
+        assert kwargs["json"] == {"pregunta": "Cuantas escuelas hay?"}
+        assert kwargs["timeout"] == 15.0
+        return RespuestaStreamFake()
+
+    respuesta = consultar_agente_stream(
+        "http://api:8000/",
+        " Cuantas escuelas hay? ",
+        stream=stream,
+        on_fragment=lambda texto: fragmentos.append(texto),
+    )
+
+    assert respuesta.respuesta == "1 escuela encontrada."
+    assert respuesta.sql_generado == "SELECT 1"
+    assert respuesta.fuera_de_alcance is False
+    assert fragmentos == ["1 escuela ", "encontrada."]
+
+
+def test_consulta_stream_retrocede_al_endpoint_sincrono_si_no_existe() -> None:
+    def stream(method: str, url: str, **kwargs):
+        request = httpx.Request(method, url)
+        response = httpx.Response(404, request=request)
+        raise httpx.HTTPStatusError("ruta inexistente", request=request, response=response)
+
+    def post(url: str, **kwargs) -> RespuestaHTTPFake:
+        assert url == "http://api:8000/api/v1/agente/consulta"
+        assert kwargs["json"] == {
+            "pregunta": "Pregunta nueva",
+            "historial": [{"pregunta": "Anterior", "respuesta": "Respuesta anterior"}],
+        }
+        return RespuestaHTTPFake(
+            {
+                "respuesta": "Respuesta síncrona",
+                "sql_generado": None,
+                "fuera_de_alcance": False,
+            }
+        )
+
+    respuesta = consultar_agente_stream(
+        "http://api:8000",
+        "Pregunta nueva",
+        stream=stream,
+        post=post,
+        historial=[
+            {"pregunta": "Anterior", "respuesta": "Respuesta anterior"},
+        ],
+    )
+
+    assert respuesta.respuesta == "Respuesta síncrona"
+
+
+def test_prepara_historial_con_turnos_completos_y_acotados() -> None:
+    mensajes = [
+        {"rol": "user", "contenido": "¿Cuántas escuelas hay?\n"},
+        {"rol": "assistant", "contenido": "Hay 4 escuelas.\t"},
+        {"rol": "user", "contenido": "Pregunta sin respuesta"},
+    ]
+
+    assert preparar_historial(mensajes) == [
+        {"pregunta": "¿Cuántas escuelas hay?", "respuesta": "Hay 4 escuelas."}
+    ]
+
+
+def test_prepara_historial_conserva_los_diez_turnos_mas_recientes() -> None:
+    mensajes = []
+    for indice in range(12):
+        mensajes.extend(
+            [
+                {"rol": "user", "contenido": f"Pregunta {indice}"},
+                {"rol": "assistant", "contenido": f"Respuesta {indice}"},
+            ]
+        )
+    mensajes.append({"rol": "user", "contenido": "Pregunta actual"})
+
+    historial = preparar_historial(mensajes)
+
+    assert len(historial) == 10
+    assert historial[0] == {"pregunta": "Pregunta 2", "respuesta": "Respuesta 2"}
+    assert historial[-1] == {"pregunta": "Pregunta 11", "respuesta": "Respuesta 11"}
+    assert all(turno["pregunta"] != "Pregunta actual" for turno in historial)
+
+
+def test_consulta_stream_envia_historial_sin_la_pregunta_actual() -> None:
+    class RespuestaStreamFake:
+        def raise_for_status(self) -> None:
+            return None
+
+        def iter_lines(self):
+            return iter(
+                [
+                    "event: fragmento",
+                    'data: {"texto":"Respuesta"}',
+                    "event: fin",
+                    "data: {}",
+                ]
+            )
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback) -> None:
+            return None
+
+    def stream(method: str, url: str, **kwargs) -> RespuestaStreamFake:
+        assert kwargs["json"] == {
+            "pregunta": "Pregunta nueva",
+            "historial": [{"pregunta": "Anterior", "respuesta": "Respuesta anterior"}],
+        }
+        return RespuestaStreamFake()
+
+    respuesta = consultar_agente_stream(
+        "http://api:8000",
+        "Pregunta nueva",
+        stream=stream,
+        historial=[
+            {"pregunta": "Anterior", "respuesta": "Respuesta anterior"},
+        ],
+    )
+
+    assert respuesta.respuesta == "Respuesta"

@@ -18,24 +18,32 @@ FRONTEND_DIR = str(RAIZ_REPO / "src/frontend")
 
 
 class AgenteHTTPFake(BaseHTTPRequestHandler):
-    """Servidor determinista del contrato `POST /api/v1/agente/consulta`."""
+    """Servidor determinista del contrato `POST /api/v1/agente/consulta/stream`."""
 
     def do_POST(self) -> None:
         longitud = int(self.headers["Content-Length"])
         pregunta = json.loads(self.rfile.read(longitud))["pregunta"]
         fuera_de_alcance = "borra" in pregunta.lower()
-        payload = {
-            "respuesta": (
-                "Esa operación no está permitida."
-                if fuera_de_alcance
-                else "Hay cuatro escuelas en el alcance actual."
+        respuesta = (
+            "Esa operación no está permitida."
+            if fuera_de_alcance
+            else "Hay cuatro escuelas en el alcance actual."
+        )
+        sql_generado = None if fuera_de_alcance else "SELECT count(*) FROM gold.dim_escuela"
+        eventos = [
+            (
+                "event: meta\n"
+                f"data: {json.dumps({'sql_generado': sql_generado, 'fuera_de_alcance': fuera_de_alcance})}\n\n"
             ),
-            "sql_generado": None if fuera_de_alcance else "SELECT count(*) FROM gold.dim_escuela",
-            "fuera_de_alcance": fuera_de_alcance,
-        }
-        cuerpo = json.dumps(payload).encode("utf-8")
+            (
+                "event: fragmento\n"
+                f"data: {json.dumps({'texto': respuesta})}\n\n"
+            ),
+            ("event: fin\n" "data: {}\n\n"),
+        ]
+        cuerpo = "".join(eventos).encode("utf-8")
         self.send_response(200)
-        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Type", "text/event-stream")
         self.send_header("Content-Length", str(len(cuerpo)))
         self.end_headers()
         self.wfile.write(cuerpo)

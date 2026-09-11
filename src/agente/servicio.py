@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -23,6 +23,9 @@ RecuperarContexto = Callable[[str], str]
 GenerarSQL = Callable[[str, str], str]
 EjecutarSQL = Callable[[str], Sequence[Mapping[str, Any]]]
 RedactarRespuesta = Callable[[str, Sequence[Mapping[str, Any]]], str]
+# Fase 3 (streaming, plan 2026-09-09): la generación de SQL no se transmite en streaming útil al
+# usuario (un SQL a medias no sirve de nada); solo la redacción final cede texto según llega.
+RedactarRespuestaStream = Callable[[str, Sequence[Mapping[str, Any]]], Iterator[str]]
 PREGUNTA_REFERENCIAL = re.compile(
     r"\b(estas|esas|los anteriores|las anteriores|ese grupo|esa lista|sus recomendaciones)\b",
     re.IGNORECASE,
@@ -43,31 +46,64 @@ class ResultadoConsulta:
     fuera_de_alcance: bool
 
 
-def _responder_sin_sql(
-    pregunta: str, contexto: str, redactar_respuesta: RedactarRespuesta
-) -> ResultadoConsulta:
-    """Responde una pregunta conceptual/metodológica directo desde el contexto RAG, sin SQL."""
-    respuesta = redactar_respuesta(
-        pregunta,
-        [
+@dataclass(frozen=True)
+class PreparacionRedaccion:
+    """Todo lo necesario para la etapa final de redacción, ya lista para invocarse.
+
+    Es el punto de corte entre "todo lo que decide SI se responde" (guardarraíles, RAG, SQL con
+    auto-corrección) y "cómo se entrega el texto final". `filas` ya trae la forma que espera el
+    redactor tanto para resultados de SQL como para el caso conceptual sin SQL (`contexto_faro`) —
+    la única etapa que Fase 3 transmite en streaming, porque un SQL a medias no sirve de nada.
+    """
+
+    pregunta: str
+    filas: Sequence[Mapping[str, Any]]
+    sql_generado: str | None
+
+
+@dataclass(frozen=True)
+class ResultadoConsultaStream:
+    """Resultado en streaming: o hay fragmentos que transmitir, o una respuesta fija ya resuelta.
+
+    `fragmentos` es `None` cuando la pregunta se resolvió sin llegar a la redacción (rechazada o
+    degradada) — en ese caso `respuesta_fija` trae el texto completo, igual que `ResultadoConsulta`.
+    """
+
+    fragmentos: Iterator[str] | None
+    respuesta_fija: str | None
+    sql_generado: str | None
+    fuera_de_alcance: bool
+
+
+def _preparacion_sin_sql(pregunta: str, contexto: str) -> PreparacionRedaccion:
+    """Fila de contexto conceptual (`NO_SQL_NECESARIO`), ya lista para la etapa de redacción."""
+    return PreparacionRedaccion(
+        pregunta=pregunta,
+        filas=[
             {
                 "contexto_faro": contexto,
                 "nota": "Respuesta conceptual basada en documentación de FARO, sin consulta SQL.",
             }
         ],
+        sql_generado=None,
     )
-    return ResultadoConsulta(respuesta=respuesta, sql_generado=None, fuera_de_alcance=False)
 
 
-def procesar_consulta(
+def _preparar_para_redaccion(
     pregunta: str,
     recuperar_contexto: RecuperarContexto,
     generar_sql: GenerarSQL,
     ejecutar_sql: EjecutarSQL,
-    redactar_respuesta: RedactarRespuesta,
     contexto_conversacional: Mapping[str, object] | None = None,
-) -> ResultadoConsulta:
-    """Procesa una pregunta sin acoplarse a RAG, LLM, base de datos ni API."""
+) -> ResultadoConsulta | PreparacionRedaccion:
+    """Corre guardarraíles, RAG, generación y ejecución de SQL (con auto-corrección).
+
+    Devuelve un `ResultadoConsulta` ya resuelto si la pregunta se rechaza o falla antes de llegar
+    a redactar (fuera de alcance, error de recuperación, SQL rechazado, fallo tras reintentos), o
+    una `PreparacionRedaccion` con las filas listas para la llamada final al redactor. Compartida
+    por `procesar_consulta` (síncrono) y `procesar_consulta_stream` (Fase 3): los guardarraíles no
+    tienen una versión "en streaming", son los mismos para las dos rutas.
+    """
     alcance = pregunta_en_alcance(pregunta)
     if not alcance.permitido and alcance.razon == RAZON_SOLO_LECTURA:
         # Intención de escritura: se corta aquí, sin tocar RAG ni LLM (P-13, defensa en profundidad).
@@ -133,7 +169,7 @@ def procesar_consulta(
         )
 
     if sql_crudo.strip() == NO_SQL_NECESARIO:
-        return _responder_sin_sql(pregunta, contexto, redactar_respuesta)
+        return _preparacion_sin_sql(pregunta, contexto)
 
     try:
         sql_actual = preparar_sql_seguro(sql_crudo)
@@ -186,7 +222,7 @@ def procesar_consulta(
                     fuera_de_alcance=False,
                 )
             if sql_crudo_reintento.strip() == NO_SQL_NECESARIO:
-                return _responder_sin_sql(pregunta, contexto, redactar_respuesta)
+                return _preparacion_sin_sql(pregunta, contexto)
             try:
                 sql_actual = preparar_sql_seguro(sql_crudo_reintento)
             except ValueError as exc2:
@@ -196,9 +232,64 @@ def procesar_consulta(
                     fuera_de_alcance=False,
                 )
 
+    return PreparacionRedaccion(pregunta=pregunta, filas=filas, sql_generado=sql_actual)
+
+
+def procesar_consulta(
+    pregunta: str,
+    recuperar_contexto: RecuperarContexto,
+    generar_sql: GenerarSQL,
+    ejecutar_sql: EjecutarSQL,
+    redactar_respuesta: RedactarRespuesta,
+    contexto_conversacional: Mapping[str, object] | None = None,
+) -> ResultadoConsulta:
+    """Procesa una pregunta sin acoplarse a RAG, LLM, base de datos ni API."""
+    preparacion = _preparar_para_redaccion(
+        pregunta, recuperar_contexto, generar_sql, ejecutar_sql, contexto_conversacional
+    )
+    if isinstance(preparacion, ResultadoConsulta):
+        return preparacion
     return ResultadoConsulta(
-        respuesta=redactar_respuesta(pregunta, filas),
-        sql_generado=sql_actual,
+        respuesta=redactar_respuesta(preparacion.pregunta, preparacion.filas),
+        sql_generado=preparacion.sql_generado,
+        fuera_de_alcance=False,
+    )
+
+
+def procesar_consulta_stream(
+    pregunta: str,
+    recuperar_contexto: RecuperarContexto,
+    generar_sql: GenerarSQL,
+    ejecutar_sql: EjecutarSQL,
+    redactar_respuesta_stream: RedactarRespuestaStream,
+    contexto_conversacional: Mapping[str, object] | None = None,
+) -> ResultadoConsultaStream:
+    """Igual que `procesar_consulta`, pero la redacción final se transmite en fragmentos (Fase 3).
+
+    Los guardarraíles, el RAG y la generación/ejecución de SQL corren igual de estrictos y de
+    forma síncrona antes de devolver algo — lo único que cambia es la última llamada.
+    `redactar_respuesta_stream(...)` se invoca aquí (para que la firma sea simétrica con
+    `procesar_consulta`), pero si es una función generadora, su cuerpo no ejecuta nada (ninguna
+    llamada de red al LLM) hasta que quien reciba `fragmentos` empiece a iterarlo.
+    """
+    preparacion = _preparar_para_redaccion(
+        pregunta, recuperar_contexto, generar_sql, ejecutar_sql, contexto_conversacional
+    )
+    if isinstance(preparacion, ResultadoConsulta):
+        return ResultadoConsultaStream(
+            fragmentos=None,
+            respuesta_fija=preparacion.respuesta,
+            sql_generado=preparacion.sql_generado,
+            fuera_de_alcance=preparacion.fuera_de_alcance,
+        )
+
+    def iterar_redaccion():
+        yield from redactar_respuesta_stream(preparacion.pregunta, preparacion.filas)
+
+    return ResultadoConsultaStream(
+        fragmentos=iterar_redaccion(),
+        respuesta_fija=None,
+        sql_generado=preparacion.sql_generado,
         fuera_de_alcance=False,
     )
 
@@ -217,5 +308,23 @@ def procesar_consulta_con_rag(
         generar_sql=generar_sql,
         ejecutar_sql=ejecutar_sql,
         redactar_respuesta=redactar_respuesta,
+        contexto_conversacional=contexto_conversacional,
+    )
+
+
+def procesar_consulta_con_rag_stream(
+    pregunta: str,
+    generar_sql: GenerarSQL,
+    ejecutar_sql: EjecutarSQL,
+    redactar_respuesta_stream: RedactarRespuestaStream,
+    contexto_conversacional: Mapping[str, object] | None = None,
+) -> ResultadoConsultaStream:
+    """Versión en streaming de `procesar_consulta_con_rag` (Fase 3)."""
+    return procesar_consulta_stream(
+        pregunta,
+        recuperar_contexto=recuperar_contexto,
+        generar_sql=generar_sql,
+        ejecutar_sql=ejecutar_sql,
+        redactar_respuesta_stream=redactar_respuesta_stream,
         contexto_conversacional=contexto_conversacional,
     )
