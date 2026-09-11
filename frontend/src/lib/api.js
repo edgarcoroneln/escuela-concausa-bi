@@ -69,5 +69,10 @@ export const postAgenteConsulta = (pregunta) =>
 // --- Auth (US-402, C4) ---
 export const getAuthMe = () => request("/api/v1/auth/me");
 export const getAuthLoginUrl = () => `${BASE_URL}/api/v1/auth/login`;
+// Cierre de sesión (agregado 11-sep, revisión de seguridad de Christian):
+// el frontend no guarda ni refresca tokens -- solo pide logout y la cookie
+// httpOnly la borra el API. Falta el botón/UI que lo dispare (Topbar.jsx
+// hoy no tiene ningún estado de sesión todavía).
+export const postAuthLogout = () => request("/api/v1/auth/logout", { method: "POST" });
 
 export const API_BASE_URL = BASE_URL;
