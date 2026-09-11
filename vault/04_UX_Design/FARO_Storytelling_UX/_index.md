@@ -24,4 +24,13 @@ siguen en `draft` porque su contenido está en curso, no porque falte autorizaci
 | [[vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec]] | Monserrat Xcaret Miranda Olivas | Qué dato responde cada pregunta, gráficas por pantalla y endpoint que las sostiene |
 | [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]] | Juan Carlos Macías Mayen | Identidad visual, componentes, mockups y PDF final |
 
-`mockups/` guarda los 7 PNG de escritorio. `FARO_UX_UI_Guide.pdf` se agrega el viernes.
+## Carpetas
+
+| Carpeta | Dueño | Contenido |
+|---|---|---|
+| `ejemplos_graficas/` | Monserrat Xcaret Miranda Olivas | Ejemplos de visualización que Juan integra a la identidad. Alta el 2026-09-10 a petición suya: no tenían ubicación en la estructura original |
+| `mockups/` | Juan Carlos Macías Mayen | Los 7 PNG de escritorio |
+
+**No hay PDF.** `FARO_UX_UI_Guide.pdf` se retiró del alcance el 2026-09-11 (§7.ter del plan). La guía
+de identidad de referencia es [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]], y
+`mockups/Design_Tokens_Stitch.md` es su anexo técnico.
