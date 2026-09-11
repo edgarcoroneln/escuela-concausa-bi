@@ -207,6 +207,17 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 > fondo, siempre contorno sobre superficie clara"), no como algo que corregir.
 >
 > Reproducible por cualquiera: `contraste(a, b)` en `ejemplos_graficas/generar_ejemplos.py`.
+>
+> **Corrección de seguimiento, 2026-09-11 (hallazgo de Marina sobre el fix anterior):** el
+> reemplazo de `text-outline` no cubría `text-outline-variant` (`#c6c6cd`) usado directamente como
+> texto — token distinto, más claro (1.70:1 sobre blanco, 1.46:1 sobre `surface-container`). Un
+> caso real en los 7 mockups: "OPERATIVO EN LÍNEA" en `02_Panorama_Escuelas_Riesgo.html`,
+> corregido a `text-on-surface-variant`. **El segundo caso que se reportó (`04_Expediente_Escuela.html`)
+> no es texto**: es el `stroke` de un patrón de cuadrícula decorativo en el SVG de fondo del mapa
+> (`opacity-60`, `stroke-width 0.5`) — decorativo puro, exento de umbral de contraste bajo WCAG. No
+> se tocó, para no oscurecer un fondo que se diseñó apenas visible. Hay 6 usos más del mismo token
+> como separador de puntuación ("/", "·") en `Guia_Identidad_Visual.html` y
+> `Como_Funciona_Preview.html` — fuera de los 7 mockups auditados, anotados y sin corregir aún.
 - **Nada se codifica solo por color, por diseño desde esta corrección:** nivel de atención
   (icono + texto), dominante (contorno + icono + etiqueta), `SIN_DATO` (textura + etiqueta "S/D"
   + motivo) — ninguno depende únicamente del tono para leerse. Esto resuelve directamente el
