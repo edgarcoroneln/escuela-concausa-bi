@@ -202,7 +202,7 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
   frontend a partir del `indice_riesgo` que el API ya expone — **no se consume
   `gold.recomendaciones.prioridad`** (sigue anclada a 0.60, sin republicar). Cierra `BUG-063`/P-01 sin
   tocar el backend.
-- Gráfica de predicción con tramo punteado (forecast) y tab de Recomendación dentro del expediente.
+- **Actualizado 11-sep:** tabs Drivers, Predicción y Recomendación del expediente ya conectados al API real (`getEscuela` para `d1..d6`/`indice_completitud_drivers`, `getPrediccion(cct)` para predicción/recomendación; `SIN_DATO` explícito cuando `tiene_prediccion` es `false` o un driver no tiene valor -- nunca se muestra un cero inventado). Pendiente: la gráfica de predicción con tramo punteado (forecast) visual todavía no existe, solo la tabla de valores.
 - **Conectar cada pantalla a `src/lib/api.js` en vez de `mock.js`** — en progreso, 10-sep (revisión de
   Edgar en PR #302). Se agregó el mecanismo (`src/lib/demoMode.js` + `useApiResource.js` +
   `DemoBadge.jsx`): por default se llama al API real; el mock solo aparece con `VITE_USE_MOCK=true`
