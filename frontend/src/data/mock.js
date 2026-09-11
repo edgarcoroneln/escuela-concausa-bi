@@ -53,15 +53,6 @@ export const parDiferenciador = {
   lineaAlerta: 0.5,
 };
 
-export const driverColors = {
-  D1: "#8a5cf6", // pobreza y rezago
-  D2: "#e0483c", // inseguridad
-  D3: "#c99a2e", // infraestructura
-  D4: "#2b5aa8", // conectividad
-  D5: "#1b8a72", // estrés hídrico
-  D6: "#6b7280", // calidad del aire
-};
-
 export const driverNombres = {
   D1: "Pobreza y rezago",
   D2: "Inseguridad",
@@ -87,10 +78,15 @@ export const driverIcons = {
 // gold.recomendaciones.prioridad (esa columna sigue anclada a 0.60, ver
 // ADR-011). Corrige el corte anterior (Alto ≥0.65/Medio 0.50-0.64), que no
 // estaba alineado con el resto del sistema.
+//
+// Sin color propio (03_Visual_Identity.md S3, revisión de Marina 10-sep):
+// icono + texto únicamente -- ▲ alta · ■ media · ● baja, en tinta única
+// (var(--color-ink)). El semáforo por nivel quedó rechazado igual que el
+// color por driver -- ver src/lib/riskRamp.js.
 export function nivelRiesgo(indice) {
-  if (indice >= 0.5) return { label: "Alta", color: "var(--color-risk-high)" };
-  if (indice >= 0.3) return { label: "Media", color: "var(--color-risk-mid)" };
-  return { label: "Baja", color: "var(--color-risk-low)" };
+  if (indice >= 0.5) return { label: "Alta", icon: "▲" };
+  if (indice >= 0.3) return { label: "Media", icon: "■" };
+  return { label: "Baja", icon: "●" };
 }
 
 // "Los 7 casos" — escuelas con índice de riesgo ≥ 0.50 (DEC-019).
