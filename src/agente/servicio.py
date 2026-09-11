@@ -12,7 +12,6 @@ from src.agente.guardrails import (
     pregunta_en_alcance,
     preparar_sql_seguro,
 )
-from src.agente.llm import ErrorLLM
 from src.agente.prompt import NO_SQL_NECESARIO, construir_prompt_sistema
 from src.agente.recuperacion import (
     ContextoNoEncontrado,
@@ -162,13 +161,9 @@ def _preparar_para_redaccion(
     prompt = construir_prompt_sistema(contexto, contexto_conversacional)
     try:
         sql_crudo = generar_sql(prompt, pregunta)
-    except (ValueError, ErrorLLM) as exc:
+    except ValueError as exc:
         return ResultadoConsulta(
-            respuesta=(
-                "No pude generar una consulta segura para esa pregunta; intenta reformularla."
-                if isinstance(exc, ErrorLLM)
-                else f"La consulta generada fue rechazada: {exc}"
-            ),
+            respuesta=f"La consulta generada fue rechazada: {exc}",
             sql_generado=None,
             fuera_de_alcance=False,
         )

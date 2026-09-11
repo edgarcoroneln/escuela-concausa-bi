@@ -29,10 +29,6 @@ touches: ["US-304a", "US-304b", "US-323", "REQ-006"]
 	Las 6 preguntas inseguras se rechazaron correctamente. Las 12 preguntas válidas no produjeron SQL
 	y las 4 preguntas fuera de alcance no quedaron clasificadas como fuera de alcance; queda como
 	regresión/configuración del flujo LLM-RAG para investigar, no como cierre de Fase 4.
-- Diagnóstico posterior: `contexto_recuperado=false`, `modo_llm=no_llamado` y `etapa_error=RAG:ErrorRecuperacion`
-	en los casos afectados. Anthropic no llegó a invocarse; ChromaDB no quedó disponible desde el host
-	Windows. El runner traduce automáticamente `CHROMA_HOST=chromadb` a `localhost:8001`, que es el puerto
-	publicado por Compose, pero requiere que el servicio esté realmente levantado.
 
 ## Ejecución real
 
@@ -48,8 +44,7 @@ El runner no se ejecuta en CI por defecto porque consume el LLM y requiere servi
 
 - Diagnósticos del editor en runner y prueba: sin errores.
 - `python -m py_compile src/agente/evaluar_golden.py tests/test_agente_evaluar_golden.py`: sin salida de error.
-- La ejecución real quedó bloqueada antes del LLM por ChromaDB; primero hay que levantar y verificar
-	`chromadb` en `localhost:8001`, después repetir los 20 casos antes de corregir prompts o SQL.
+- La ejecución real ya fue realizada: 6/20 casos aprobados; falta corregir las 14 expectativas fallidas y repetirla.
 
 ## Estado y próximos responsables
 

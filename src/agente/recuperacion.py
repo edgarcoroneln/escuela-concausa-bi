@@ -14,7 +14,7 @@ except ImportError:
     SentenceTransformer = None
 
 NOMBRE_COLECCION = "faro_gold_schema"
-NOMBRE_MODELO_EMBEDDINGS = "paraphrase-multilingual-MiniLM-L12-v2"
+NOMBRE_MODELO_EMBEDDINGS = "all-MiniLM-L6-v2"
 TOP_K_DEFAULT = 5
 
 # Distancia coseno (ChromaDB, hnsw:space="cosine": 0=identico, 2=opuesto) por debajo de la cual
@@ -51,9 +51,7 @@ def _cargar_modelo() -> Any:
     if SentenceTransformer is None:
         raise ErrorRecuperacion("sentence-transformers no está instalado.")
     try:
-        _modelo_cache = SentenceTransformer(
-            os.getenv("EMBEDDING_MODEL", NOMBRE_MODELO_EMBEDDINGS)
-        )
+        _modelo_cache = SentenceTransformer(NOMBRE_MODELO_EMBEDDINGS)
         return _modelo_cache
     except Exception as exc:
         logger.exception("Falló la descarga o inicialización del modelo de embeddings %r.", NOMBRE_MODELO_EMBEDDINGS)

@@ -146,9 +146,7 @@ def indexar_esquema(
         if modelo is None:
             if SentenceTransformer is None:
                 raise ErrorIndexacion("sentence-transformers no está instalado.")
-            modelo = SentenceTransformer(
-                os.getenv("EMBEDDING_MODEL", "paraphrase-multilingual-MiniLM-L12-v2")
-            )
+            modelo = SentenceTransformer("all-MiniLM-L6-v2")
 
         coleccion = cliente.get_or_create_collection(
             name="faro_gold_schema",
