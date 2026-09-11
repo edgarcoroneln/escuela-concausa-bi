@@ -20,8 +20,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from src.agente.llm import generar_sql_con_llm, redactar_respuesta_con_llm
 from src.agente.prompt import NO_SQL_NECESARIO
+from src.agente.llm import generar_sql_con_llm, redactar_respuesta_con_llm
 from src.agente.recuperacion import recuperar_contexto
 from src.agente.servicio import procesar_consulta
 from src.api.ejecutor_gold import ejecutar_sql_read_only
@@ -81,7 +81,7 @@ def evaluar_caso(indice: int, caso: dict[str, str]) -> ResultadoGolden:
     def recuperar_contexto_instrumentado(texto: str) -> str:
         try:
             contexto = recuperar_contexto(texto)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - solo se conserva la clase, no el detalle.
             diagnostico["etapa_error"] = f"RAG:{type(exc).__name__}"
             raise
         diagnostico["contexto_recuperado"] = True
