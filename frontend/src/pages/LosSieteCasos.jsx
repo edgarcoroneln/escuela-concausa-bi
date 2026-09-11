@@ -93,7 +93,7 @@ export default function LosSieteCasos() {
                 </div>
 
                 <Link
-                  to={`/casos/${e.cct}`}
+                  to={`/escuela/${e.cct}`}
                   className="text-sm font-semibold mt-5 inline-block"
                   style={{ color: "var(--color-primary)" }}
                 >
