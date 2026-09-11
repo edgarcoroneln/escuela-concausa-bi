@@ -23,6 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# env locales (no versionar; .env.production sí se versiona por ser URL pública)
+# env locales -- ninguno se versiona (corregido 11-sep, revisión de Edgar en PR
+# #302: este comentario decía lo contrario). .env.production tampoco se versiona;
+# no hace falta -- api.js cae al mismo default ("", rutas relativas mismo origen,
+# ADR-012) si el archivo no está presente en un checkout limpio. Ver el propio
+# frontend/.env.production (local, no versionado) para el detalle.
 .env
 .env.local

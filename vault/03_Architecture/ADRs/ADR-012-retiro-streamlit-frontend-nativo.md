@@ -2,7 +2,7 @@
 id: ADR-012
 title: "ADR-012 — Retiro del embebido de Superset/Streamlit: frontend nativo en React"
 owner: "Diana Álvarez / Luis Téllez (Equipo 5: Frontend y despliegue)"
-status: proposed
+status: accepted
 traces_up: ["REQ-002", "REQ-004", "REQ-006", "REQ-005", "ADR-011-rediseno-ux-graficas-nativas"]
 supersedes: ["ADR-002"]
 traces_down: ["US-206", "US-207", "US-305", "US-405"]
@@ -100,6 +100,18 @@ cambia qué hace el navegador con la respuesta. Riesgo residual: CSRF vía cooki
 `SameSite=Lax` (bloquea POST cross-site; los POST del sistema son `/agente/consulta`, `/auth/*`,
 `/admin/*`) — documentado en `Threat_Model` como residual, no como resuelto (dueño: Christian).
 
+**Dónde arranca el login (nota agregada 11-sep, revisión de Edgar en PR #302 -- crítico para el
+viernes, no bloqueante para este merge).** En prod, `AUTH_LECTURA_PUBLICA=false` (`SEC-006`): sin
+sesión, las pantallas con dato real responden `401`. El botón "Iniciar sesión" **no** puede apuntar al
+origen del frontend (el mismo-origen de arriba es solo para `/api/*` vía `proxy_pass`, ya autenticado)
+-- tiene que enlazar directo al origen de la API: `https://<faro-api>/api/v1/auth/login?redirect=<URL
+exacta del frontend>`, saltándose el proxy de nginx. La razón es la cookie `faro_oauth_state`: Google
+redirige de vuelta al origen que inició el flujo, así que esa cookie se tiene que fijar en el origen de
+la API, no en el del frontend. En `localhost` esta distinción es invisible (el navegador no distingue
+por puerto para cookies de mismo host), lo que hizo fácil pasarlo por alto en desarrollo. Falta
+implementar el botón/UI que dispare esto (`Topbar.jsx` hoy no tiene ningún estado de sesión) --
+pendiente de E5, no bloqueante para este PR.
+
 **CORS deja de ser un bloqueante de deploy.** Con `/api/*` servido por el mismo origen vía proxy, el
 navegador nunca cruza orígenes — el punto que este ADR marcaba como "bloqueante real, no resuelto"
 queda resuelto por diseño, no por configuración de CORS en la API. Ver
@@ -116,6 +128,6 @@ queda resuelto por diseño, no por configuración de CORS en la API. Ver
 - UX: `vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO.md` (Equipo 3, Marina) — su plan asume
   este ADR como contexto oficial una vez ratificado
 
-> Pendiente de ratificación del PO (Edgar Coronel) — mientras `status: proposed`, Equipo 5 construye
-> bajo la premisa de que el pedido del Dr. es la instrucción vigente, pero la ratificación formal
-> queda pendiente como con cualquier otro ADR de este vault (mismo proceso que ADR-010).
+> **Ratificado 11-sep** por el PO (Edgar Coronel) en la revisión de PR #302 -- pidió explícitamente el
+> cambio de `status: proposed` a `accepted` como parte de esa revisión, mismo proceso que `ADR-010`
+> y que `ADR-011` (Edgar, `accepted`, 10-sep).

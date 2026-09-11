@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Inter autohospedado vía @fontsource/inter (revisión de Edgar, PR #302,
+         11-sep): antes venía de Google Fonts, bloqueado por el CSP de
+         nginx-unprivileged en prod (style-src/font-src solo 'self'). Los
+         imports viven en src/index.css -- ver ese archivo. -->
     <title>FARO — Escuela como sensor social</title>
     <meta name="description" content="Investigación de 7 casos de riesgo de pérdida de matrícula escolar." />
   </head>

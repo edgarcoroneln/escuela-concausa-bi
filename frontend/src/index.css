@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Inter autohospedado (revisión de Edgar, PR #302, 11-sep): reemplaza el
+   <link> a Google Fonts de index.html, que el CSP de nginx-unprivileged en
+   prod bloquea (style-src/font-src solo 'self'). Pesos = los mismos que ya
+   se pedían por Google Fonts (400/500/600/700/800). Requiere
+   `npm install @fontsource/inter` en frontend/. */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+
 /*
   Tokens de diseño de FARO — calcados del mockup de storytelling de UX/UI
   (Equipo 6: Marina/Oscar/Juan Macias/Monse): barra superior oscura, fondo

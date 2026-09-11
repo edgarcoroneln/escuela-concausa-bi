@@ -8,10 +8,21 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY frontend/package*.json ./
-RUN npm ci --legacy-peer-deps
+# --legacy-peer-deps retirado 11-sep (revisión de Edgar, PR #302): hacía falta
+# por el choque de react-simple-maps/@observablehq/plot/prop-types/react-is
+# contra React 19 -- las 4 se eliminaron esta misma revisión (no eran producto,
+# ver Arquitectura_Frontend_React.md §9). `npm ci` corre limpio sin la bandera
+# (verificado en local por Diana: 0 vulnerabilidades, 0 conflictos de peers).
+RUN npm ci
 
 COPY frontend/ .
-# Usa frontend/.env.production (VITE_API_BASE_URL apuntando a faro-api de prod).
+# Corregido 11-sep (revisión de Edgar, PR #302): este comentario decía que el
+# build usaba frontend/.env.production apuntando a faro-api de prod -- ya no es
+# así desde ADR-012 (proxy nginx mismo-origen). Ese archivo es local y NO se
+# versiona (frontend/.gitignore); un checkout limpio (CI/build de imagen) no lo
+# trae, y no hace falta: VITE_API_BASE_URL cae al default "" de api.js (rutas
+# relativas, mismo origen vía proxy_pass de este mismo nginx). Nada que inyectar
+# en este build-arg/ENV.
 RUN npm run build
 
 # --- Etapa 2: runtime (nginx sirviendo estáticos, non-root) ---
