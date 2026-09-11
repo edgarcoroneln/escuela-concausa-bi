@@ -60,6 +60,17 @@ def test_redactar_respuesta_serializa_filas_sin_ascii_forzado() -> None:
     assert "datos no confiables" in mensaje
 
 
+def test_redactar_respuesta_colapsa_saltos_de_linea_y_tabs() -> None:
+    """La respuesta puede reenviarse tal cual como turno de `historial` (HistorialTurnoIn
+    rechaza caracteres de control, US-305/US-611): no puede traer saltos de línea ni tabs."""
+    cliente = _cliente('{"respuesta":"Escuela A\\n- Escuela B\\r\\n\\tEscuela C"}')
+
+    respuesta = redactar_respuesta_con_llm("Que escuelas hay?", [], cliente=cliente)
+
+    assert respuesta == "Escuela A - Escuela B Escuela C"
+    assert respuesta.isprintable()
+
+
 def test_fallo_del_sdk_no_reintenta_ni_filtra_detalle() -> None:
     cliente = _cliente(RuntimeError("token secreto expuesto"))
 
