@@ -19,3 +19,5 @@ tags: [moc, cicd, devops]
 | [[vault/08_CICD_DevOps/Rollback_Runbook]] | Cómo revertir |
 | [[vault/08_CICD_DevOps/Environments]] | Dev / staging / prod |
 | [[vault/08_CICD_DevOps/Guia_Local_API_Postgres]] | ✅ Guía de ambiente local para API + Postgres (US-521a) |
+| [[vault/08_CICD_DevOps/Arquitectura_Frontend_React]] | Arquitectura del frontend React (rediseño post-feedback del Dr.) |
+| [[vault/08_CICD_DevOps/PLAN_TRABAJO_E5]] | Plan de trabajo de Equipo 5 (frontend y despliegue), S7 |
