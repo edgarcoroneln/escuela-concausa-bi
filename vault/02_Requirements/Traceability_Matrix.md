@@ -53,7 +53,7 @@ tags: [requirements, traceability, matrix]
 | `REQ-004` | `US-601`, `US-611`, `US-641` | Componentes e integraciones backend/chat/frontend revalidados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-005` | `US-641` | Equipo 5: candidata desplegada, observable y recuperable | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | `test_agente_prompt` ✅ / [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] / ⬜ | 🟡 En progreso |
-| `REQ-007` | `US-651`, `US-654`, `US-006` | Equipo 6/PO: QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
+| `REQ-007` | `US-651`, `US-654`, `US-006` | Equipo 6/PO: QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] · [[vault/_DevLog/2026-09-11-edgar-coronel-revision-prs-s7-gate-jueves]] / ⬜ | 🟡 En progreso |
 
 ## Evidencia incremental — 2026-08-26
 
