@@ -2,8 +2,8 @@
 id: DOC-FARO-UX-SCOPE
 title: "Storytelling Scope — historia oficial de FARO"
 owner: "Marina García del Buey"
-status: draft
-traces_up: ["US-621", "REQ-002", "vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO"]
+status: approved
+traces_up: ["US-621", "REQ-002", "ADR-011", "DEC-023", "DEC-024", "vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO"]
 traces_down: ["vault/04_UX_Design/FARO_Storytelling_UX/01_UX_Architecture", "vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
 last_reviewed: "2026-09-10"
 tags: [ux, storytelling, s7, us-621]
@@ -16,12 +16,11 @@ tags: [ux, storytelling, s7, us-621]
 > → [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]] ·
 > [[vault/04_UX_Design/FARO_Storytelling_UX/_index]]
 
-**Estado:** borrador formal del gate del jueves. La propuesta completa sigue pendiente de la
-aprobación del PO descrita en la §14 del plan.
+**Estado: aprobado** el 2026-09-10 por `DEC-023` y `ADR-011`, junto con el resto del paquete.
 
 > **Jerarquía.** Si algo de este documento contradice al
 > [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO|plan]], **manda el plan**. La §10 del plan
-> dice qué endpoint sostiene cada pieza, y la §11 registra lo que hace falta pedir.
+> dice qué endpoint sostiene cada pieza, y la §11 registra cómo el PO resolvió las seis peticiones.
 
 ---
 
@@ -102,9 +101,10 @@ La revelación ocurre en la **Pantalla 2**, y ahí entra la frase central:
 
 > *N escuelas están en riesgo. Tenemos N casos por investigar.*
 
-**El número sale siempre del dato en vivo, nunca escrito a mano.** En los mockups va `N` hasta que el
-Equipo 5 confirme qué devuelve `GET /api/v1/kpis` (petición `P-05`). Hoy son 7 por `DEC-019`, pero si
-cambian el ciclo o el umbral, la copy tiene que cambiar sola.
+**El número sale siempre del dato en vivo, nunca escrito a mano.** En los mockups va `N`; en
+producción lo resuelve la API. Hoy son 7 por `DEC-019`, pero si cambian el ciclo o el umbral la copy
+tiene que cambiar sola. `ADR-011` dejó la comprobación por despliegue en el smoke continuo de QA, y
+esta regla es justo lo que ese smoke no podría detectar si el número estuviera tecleado.
 
 ### 3.5 El mensaje que sostiene todo
 
@@ -125,7 +125,9 @@ lleva una sola idea, es ésta.
   calidad de la evidencia.
 - La conclusión sobre el conjunto completo: tres drivers dominantes más frecuentes, en cuántas
   escuelas aparece cada uno, concentración por municipio y cobertura de la evidencia.
-- Glosario, walkthrough único, pop-up único del explorador y el chat flotante.
+- Glosario, walkthrough único, pop-up único del explorador y el **Asistente FARO** flotante.
+- El **nivel de atención** de cada escuela: alta, media o baja, derivado del índice de riesgo
+  (§3.quater del plan).
 
 ### 4.2 Fuera
 
@@ -177,7 +179,14 @@ Quedan prohibidas porque el dato no existe, no por estilo:
 - Cualquier comparación de una escuela contra el promedio de su municipio en **inseguridad,
   infraestructura, conectividad, agua o aire**.
 
-Si se necesitan, se piden como en la §11 del plan. No se inventan.
+Si se necesitan, se piden. No se inventan.
+
+### 5.3.bis Cómo se nombra el nivel de atención
+
+Se le dice **nivel de atención**, con valores **alta**, **media** y **baja**. No se le dice
+"prioridad": esa palabra nombra una columna de Gold que usa otro corte y que el front no consume.
+El glosario tiene que explicar la diferencia, porque las dos discrepan justo en las escuelas de las
+que trata la historia (§3.quater del plan).
 
 ### 5.4 `SIN_DATO` es parte de la investigación
 
@@ -189,10 +198,14 @@ escuela y agregado.
 
 > Un buen investigador no sólo sabe qué evidencia tiene; también sabe qué evidencia le falta.
 
-### 5.5 Cómo se nombra el chat
+### 5.5 Cómo se nombra el asistente
 
-Mientras `P-03` siga abierta se le llama **"el chat"** y se reserva el lugar del nombre. La propuesta
-es *Watson* y la decide el Equipo 2 con el PO.
+**Asistente FARO**, y así en toda superficie y todo documento (`ADR-011` §6). **No se usa "Watson".**
+
+Su lógica es del Equipo 2 (`US-611`). Tres cosas suyas que sí toca la narrativa: la respuesta llega
+por *streaming* y hay que redactar para que se lea bien mientras se genera; los errores se distinguen
+en tres —fuera de alcance, sin datos, timeout— y cada uno necesita su propio texto; y ya responde
+preguntas conceptuales, así que cada término del glosario puede ofrecer preguntárselo.
 
 ---
 
@@ -228,18 +241,21 @@ Este documento agrega cuatro que nacen de la narrativa y que conviene que QA (`U
 
 ---
 
-## 8. Dependencias abiertas
+## 8. Resoluciones que fijan la historia
 
-Las seis peticiones de la §11 del plan. Su efecto sobre la historia:
+Las seis peticiones que abrió el plan quedaron cerradas el 2026-09-10 por `ADR-011`, `DEC-023` y
+`DEC-024`. Su efecto sobre la narrativa:
 
-| Petición | Si no se resuelve, la historia pierde |
+| Resolución | Qué fija en la historia |
 |---|---|
-| `P-01` `prioridad` en la API + corte de `BUG-063` | El expediente y la conclusión dejan de decir por dónde empezar |
-| `P-02` bandas Alto / Medio / Bajo | El índice se muestra sin etiqueta, sólo el número |
-| `P-03` nombre del chat | El chat se queda sin nombre propio en la narrativa |
-| `P-04` ADR que retire Superset | El Equipo 5 no puede construir estas pantallas sin contradecir `US-206` |
-| `P-05` confirmar `escuelas_en_riesgo` en `/api/v1/kpis` | La frase central no puede fijar el número |
-| `P-06` qué documento manda en UX | La identidad visual nueva no puede sustituir a `UX_Guidelines` |
+| `P-01` sin `prioridad`, con **nivel de atención** derivado | El expediente y la conclusión sí dicen por dónde empezar, con una etiqueta que el front calcula |
+| `P-02` alta `>= 0.50` · media `>= 0.30` · baja `< 0.30` | El índice se muestra con número **y** etiqueta |
+| `P-03` **Asistente FARO** | El asistente tiene nombre propio dentro de la narrativa |
+| `P-04` Superset fuera de la navegación principal | La historia puede tener sus propias pantallas y gráficas |
+| `P-05` `escuelas_en_riesgo` resuelto en contrato | La frase central se alimenta del dato, no de un literal |
+| `P-06` este paquete gobierna el diseño de S7 | La identidad nueva sustituye a `UX_Guidelines` |
 
-Ninguna detiene el trabajo de esta semana. Lo que no llegue se documenta como **recorte explícito**
-en vez de dibujarse como si existiera.
+Lo que sigue abierto es **coordinación, no bloqueo** (`DEC-024`): los cortes que el Equipo 5 debe
+importar en vez de reteclear, los estados del Asistente que trae el Equipo 2, y el recorrido técnico
+del Equipo 1 que alimenta la parte de la historia sobre cómo funciona el sistema por dentro. La §11
+del plan lleva ese registro.

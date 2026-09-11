@@ -52,6 +52,9 @@ personas:
       # Sexta aparicion del mismo hueco -- ver vault/_Meta/Vault_Steward.
       - "vault/04_UX_Design/UX_Guidelines.md"
       - "vault/09_AI_Governance/Agent_Contexts/_index.md"
+      # El PM mantiene el contexto de Diana al reasignarle formalmente el liderazgo
+      # de Frontend S7 (DEC-022/023). Ruta exacta: no abre los contextos del resto.
+      - "vault/09_AI_Governance/Agent_Contexts/diana-alvarez-agent-context.md"
       - ".github/**"
 
   diana-alvarez:
@@ -63,6 +66,10 @@ personas:
     tech_lead: true
     plan: vault/12_Roadmap_Sprints/Sprints/1-diana-aracely-alvarez-varela.md
     verde:
+      # DEC-022/023: Diana lidera la implementacion del nuevo frontend nativo en S7.
+      # `src/frontend/**` se conserva por el shell Streamlit historico; `frontend/**`
+      # es la aplicacion nueva y no concede acceso al resto de infraestructura.
+      - "frontend/**"
       - "src/frontend/**"
       - "src/ingesta/**"
       - "dbt/**"
@@ -80,6 +87,12 @@ personas:
       - "docker-compose.yml"
       - "vault/08_CICD_DevOps/**"
     amarillo:
+      # Superficie minima de empaquetado del frontend. Luis Tellez conserva la
+      # propiedad de CI/CD y debe revisar estos cambios por la regla 7.
+      - "docker/frontend-entrypoint.sh"
+      - "docker/frontend-react.Dockerfile"
+      - "docker/nginx-frontend.conf.template"
+      - "vault/08_CICD_DevOps/**"
       - "vault/03_Architecture/_index.md"
       - "tests/**"
       - "great_expectations/**"
@@ -516,8 +529,11 @@ comunes:
 # Estar en verde no basta: si no eres el dueño, necesitas su aprobación en el PR.
 criticos:
   ".github/**": luis-tellez
+  "docker/**": luis-tellez
+  "vault/08_CICD_DevOps/**": luis-tellez
   "vault/_Meta/**": edgar-coronel
   "vault/07_Security/**": christian-ruiz
+  "frontend/**": diana-alvarez
   "src/frontend/**": diana-alvarez
   "vault/02_Requirements/Traceability_Matrix.md": edgar-coronel
   "vault/10_Risk_Governance/**": edgar-coronel
