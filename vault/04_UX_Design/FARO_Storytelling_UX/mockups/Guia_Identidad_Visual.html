@@ -1,0 +1,1038 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "primary-container": "#131b2e",
+        "on-tertiary-fixed-variant": "#004c69",
+        "surface-container": "#e5eeff",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed-dim": "#7bd0ff",
+        "secondary-fixed": "#cce5ff",
+        "inverse-surface": "#213145",
+        "outline-variant": "#c6c6cd",
+        "surface-bright": "#f8f9ff",
+        "surface-container-high": "#dce9ff",
+        "error-container": "#ffdad6",
+        "on-primary": "#ffffff",
+        "secondary": "#006398",
+        "on-tertiary-fixed": "#001e2c",
+        "surface-container-low": "#eff4ff",
+        "on-background": "#0b1c30",
+        "surface-variant": "#d3e4fe",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed-variant": "#004b73",
+        "on-tertiary": "#ffffff",
+        "surface-tint": "#565e74",
+        "on-primary-fixed": "#131b2e",
+        "on-secondary-fixed": "#001d31",
+        "inverse-primary": "#bec6e0",
+        "on-surface-variant": "#45464d",
+        "background": "#f8f9ff",
+        "inverse-on-surface": "#eaf1ff",
+        "secondary-fixed-dim": "#93ccff",
+        "on-primary-fixed-variant": "#3f465c",
+        "on-surface": "#0b1c30",
+        "tertiary-fixed": "#c4e7ff",
+        "error": "#ba1a1a",
+        "tertiary-container": "#001e2c",
+        "primary-fixed": "#dae2fd",
+        "surface": "#f8f9ff",
+        "on-secondary-container": "#00476e",
+        "on-error": "#ffffff",
+        "secondary-container": "#5bb8fe",
+        "on-primary-container": "#7c839b",
+        "outline": "#76777d",
+        "surface-dim": "#cbdbf5",
+        "surface-container-lowest": "#ffffff",
+        "tertiary": "#000000",
+        "on-tertiary-container": "#008ebf",
+        "primary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-2xl": "3rem",
+        "layout-margin-desktop": "2rem",
+        "space-xs": "0.25rem",
+        "space-base": "1rem",
+        "space-sm": "0.5rem",
+        "inspector-panel-width": "26rem",
+        "layout-margin-mobile": "1rem",
+        "space-md": "0.75rem",
+        "space-xl": "2rem",
+        "layout-gutter": "1rem",
+        "sidebar-width-collapsed": "4.5rem",
+        "space-lg": "1.5rem",
+        "space-2xs": "0.125rem",
+        "sidebar-width-expanded": "17.5rem"
+      },
+      "fontFamily": {
+        "title-md": [
+          "Inter"
+        ],
+        "body-sm": [
+          "Inter"
+        ],
+        "label-data-mono": [
+          "JetBrains Mono"
+        ],
+        "headline-lg": [
+          "Space Grotesk"
+        ],
+        "headline-xl": [
+          "Space Grotesk"
+        ],
+        "headline-sm": [
+          "Space Grotesk"
+        ],
+        "headline-lg-mobile": [
+          "Space Grotesk"
+        ],
+        "headline-xl-mobile": [
+          "Space Grotesk"
+        ],
+        "label-micro-mono": [
+          "JetBrains Mono"
+        ],
+        "label-ui": [
+          "Inter"
+        ],
+        "body-md": [
+          "Inter"
+        ]
+      },
+      "fontSize": {
+        "title-md": [
+          "15px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "-0.005em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "18px",
+            "letterSpacing": "0em",
+            "fontWeight": "400"
+          }
+        ],
+        "label-data-mono": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.02em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-xl": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-sm": [
+          "18px",
+          {
+            "lineHeight": "24px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg-mobile": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-xl-mobile": [
+          "26px",
+          {
+            "lineHeight": "34px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-micro-mono": [
+          "10px",
+          {
+            "lineHeight": "14px",
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-ui": [
+          "11px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.03em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "0em",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased select-none"><aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="px-space-base pt-space-lg pb-space-md flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-headline-lg text-headline-lg tracking-tight font-bold text-on-surface">FARO</span><span class="px-space-xs py-space-2xs bg-surface-container text-secondary font-label-micro-mono text-label-micro-mono rounded-lg tracking-wider">SISTEMA SENSOR SOCIAL</span></div><div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium tracking-widest">FARO — INTELLIGENCE // VIGILANCIA TERRITORIAL</div></div><nav class="flex flex-col px-space-sm pt-space-sm gap-space-2xs" data-active-classes="bg-primary-container text-on-primary font-title-md rounded-lg shadow-sm"><div class="px-space-sm pt-space-sm pb-space-2xs font-label-ui text-label-ui text-on-surface-variant tracking-wider uppercase opacity-70">FLUJO DE INVESTIGACIÓN</div><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="iniciar-sesion" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">00</span><span class="truncate">Iniciar Sesión</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="entrada-a-faro" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">01</span><span class="truncate">Entrada a FARO</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="panorama-de-riesgo" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">02</span><span class="truncate">Panorama de Riesgo</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="seleccion-de-caso" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">03</span><span class="truncate">Selección de Caso</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="expediente-de-escuela" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">04</span><span class="truncate">Expediente de Escuela</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="conclusion-global" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">05</span><span class="truncate">Conclusión Global</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="explorador-de-escuelas" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">06</span><span class="truncate">Explorador de Escuelas</span></a><div class="px-space-sm pt-space-md pb-space-2xs font-label-ui text-label-ui text-on-surface-variant tracking-wider uppercase opacity-70">REFERENCIA TÉCNICA</div><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="como-funciona-faro" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">US</span><span class="truncate">Cómo funciona FARO</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="guia-de-identidad" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">ID</span><span class="truncate">Guía de Identidad</span></a></nav></div><div class="p-space-base m-space-sm bg-surface-container-low rounded-xl flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-title-md text-title-md text-on-surface">Analista de Políticas</span><span class="w-2 h-2 rounded-full bg-secondary"></span></div><div class="font-body-sm text-body-sm text-on-surface-variant">Coordinación Federal</div><div class="pt-space-xs flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider">4 ENTIDADES</span><span class="font-label-data-mono text-label-data-mono text-secondary bg-surface-container px-space-xs py-space-2xs rounded">09 · 15 · 19 · 14</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-14 bg-surface-container-lowest z-40 flex items-center justify-between px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface font-semibold">FARO</span><span class="text-outline-variant font-label-micro-mono text-label-micro-mono">/</span><span class="font-label-micro-mono text-label-micro-mono text-secondary tracking-wider font-semibold">SURVEILLANCE_NODE</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="font-body-sm text-body-sm text-on-surface-variant"><span class="text-on-surface font-medium">Alcance:</span> 4 Entidades · CDMX, Edomex, NL, Jalisco</div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container-low rounded-lg"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold tracking-wider">TELEMETRÍA // EN VIVO</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="flex items-center gap-space-sm"><div class="flex flex-col text-right"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">USUARIO ASIGNADO</span><span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Analista_04</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-14 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Specimen Masthead / Document Meta Header -->
+<section class="w-full bg-surface-container-lowest px-space-xl py-space-xl shadow-sm">
+<div class="max-w-[1360px] mx-auto flex flex-col gap-space-md">
+<!-- Breadcrumb & Spec Status -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary bg-surface-container px-space-sm py-space-2xs rounded-lg uppercase tracking-wider font-semibold">ESPECIFICACIÓN TÉCNICA</span>
+<span class="text-outline-variant font-label-micro-mono text-label-micro-mono">/</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">REV. 2024.11</span>
+<span class="text-outline-variant font-label-micro-mono text-label-micro-mono">/</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">US-621 &amp; US-601</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="">ESTADO: NORMA VIGENTE EN PRODUCCIÓN</span>
+</div>
+</div>
+<!-- Title & Subtitle Section -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-baseline gap-space-sm flex-wrap">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">ID-01</span>
+<h1 class="font-headline-xl text-headline-xl text-on-surface font-semibold tracking-tight">Guía de Identidad Visual y Tokens de Diseño</h1>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-4xl">
+          Sistema de diseño institucional para interfaces analíticas, gobernanza de color de datos y componentes de telemetría territorial.
+        </p>
+</div>
+<!-- Spec Header Metrics Anchor -->
+<div class="grid grid-cols-4 gap-space-base pt-space-sm">
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase">Métrica Cardinal</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Escala 0 a 1 Continua</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase">Gobernanza Categórica</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">4 Entidades Monorreferenciadas</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase">Semáforos Cromáticos</span>
+<span class="font-label-data-mono text-label-data-mono text-error font-semibold">PROHIBIDOS EN DATOS</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase">Agente Asistente</span>
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">Asistente FARO // En Línea</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Workbench Grid Container -->
+<div class="w-full px-space-xl py-space-xl max-w-[1360px] mx-auto flex flex-col gap-space-2xl">
+<!-- SECTION 1: BRAND IDENTITY & WORDMARK -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">01</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Brand Identity &amp; Wordmark</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider uppercase">US-601 §1.1 — ISOTIPO &amp; VALORES</span>
+</div>
+<div class="grid grid-cols-12 gap-space-lg">
+<!-- Wordmark Card -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-ui text-label-ui text-on-surface-variant tracking-wider uppercase">CONSTRUCCIÓN TIPOGRÁFICA PURA CSS</span>
+<span class="font-label-micro-mono text-label-micro-mono bg-surface-container text-secondary px-space-xs py-space-2xs rounded">NO RASTER</span>
+</div>
+<!-- CSS Only Wordmark Mockup -->
+<div class="bg-surface-container-low p-space-xl rounded-lg flex flex-col gap-space-xs items-start">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+<span class="w-2.5 h-2.5 rounded-full bg-surface-container-lowest shadow-sm"></span>
+</div>
+<span class="font-headline-xl text-headline-xl tracking-tight font-bold text-on-surface leading-none">FARO</span>
+<span class="text-outline-variant font-label-micro-mono text-label-micro-mono">/</span>
+<span class="font-label-micro-mono text-label-micro-mono tracking-widest text-secondary font-bold pt-1">INTELLIGENCE</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-widest uppercase pl-9">
+                PLATAFORMA DE VIGILANCIA TERRITORIAL
+              </span>
+</div>
+</div>
+<div class="pt-space-md flex flex-col gap-space-2xs">
+<span class="font-label-ui text-label-ui text-on-surface-variant">Regla tipográfica:</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+              Generado estrictamente con <code class="font-label-data-mono text-label-data-mono bg-surface-container px-space-xs rounded">Space Grotesk Bold</code>, kerning negativo (-0.02em), sin recurrir a imagotipos o marcas externas no institucionales.
+            </p>
+</div>
+</div>
+<!-- 4 Brand Attributes -->
+<div class="col-span-12 lg:col-span-7 grid grid-cols-2 gap-space-base">
+<!-- Attribute 1 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">ATTR_01</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">policy</span>
+</div>
+<div class="flex flex-col gap-space-xs pt-space-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Autoridad Diagnóstica</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Enfoque pericial y analítico. La interfaz no entretiene ni gamifica; dictamina estados de riesgo con precisión métrica y trazabilidad pública.
+              </p>
+</div>
+</div>
+<!-- Attribute 2 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">ATTR_02</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">blur_linear</span>
+</div>
+<div class="flex flex-col gap-space-xs pt-space-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Claridad Cognitiva</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Eliminación de ruido y redundancias. Celdas compactas, visualizaciones desnudadas de adornos y tipografía con variantes tabulares uniformes.
+              </p>
+</div>
+</div>
+<!-- Attribute 3 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">ATTR_03</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">radar</span>
+</div>
+<div class="flex flex-col gap-space-xs pt-space-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Vigilancia Sobria</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Tono silencioso de torre centinela. Presencia permanente de datos de telemetría sin alarmismo sensacionalista ni llamados de auxilio teatrales.
+              </p>
+</div>
+</div>
+<!-- Attribute 4 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">ATTR_04</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">balance</span>
+</div>
+<div class="flex flex-col gap-space-xs pt-space-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Neutralidad Algorítmica</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Tratamiento objetivo del dato estadístico. Rechazo activo a sesgos de urgencia subjetiva o categorizaciones morales de planteles escolares.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: INTERFACE PALETTE & SURFACES -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">02</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Paleta de Interfaz &amp; Superficies Operativas</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider uppercase">SISTEMA TONAL BASE</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-base">
+<!-- Surface 0: Canvas -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-20 w-full rounded-lg bg-[#F8FAFC] shadow-inner flex items-center justify-center">
+<span class="font-label-micro-mono text-label-micro-mono text-[#64748B]">#F8FAFC</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Canvas Foundation</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Fondo plano de trabajo</span>
+</div>
+<div class="pt-space-xs font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+            Uso: Fondo global de workbench, áreas no elevadas.
+          </div>
+</div>
+<!-- Surface 1: Card -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-20 w-full rounded-lg bg-[#FFFFFF] shadow-sm flex items-center justify-center">
+<span class="font-label-micro-mono text-label-micro-mono text-[#0F172A]">#FFFFFF</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Card Surface</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Nivel de contención primario</span>
+</div>
+<div class="pt-space-xs font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+            Uso: Paneles analíticos, expedientes, tablas.
+          </div>
+</div>
+<!-- Slate Command: Primary -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-20 w-full rounded-lg bg-[#0F172A] flex items-center justify-center">
+<span class="font-label-micro-mono text-label-micro-mono text-[#FFFFFF]">#0F172A</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Slate Command</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tinta y comando rector</span>
+</div>
+<div class="pt-space-xs font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+            Uso: Botones maestros, cabeceras, tinta máxima.
+          </div>
+</div>
+<!-- Slate Secondary -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-20 w-full rounded-lg bg-[#64748B] flex items-center justify-center">
+<span class="font-label-micro-mono text-label-micro-mono text-[#FFFFFF]">#64748B</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Slate Secondary</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Metadatos y jerarquía baja</span>
+</div>
+<div class="pt-space-xs font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+            Uso: Leyendas secundarias, timestamps, subtítulos.
+          </div>
+</div>
+<!-- Border Hairline -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-20 w-full rounded-lg bg-surface-container-low flex flex-col items-center justify-center gap-1">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">#E2E8F0 · #CBD5E1</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Border Hairline</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Delineación geométrica</span>
+</div>
+<div class="pt-space-xs font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+            Uso: Tablas estructurales y divisiones analíticas.
+          </div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: SISTEMA DE COLOR DE DATOS (CRITICAL US-621 §3) -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">03</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Sistema de Color de Datos (Gobernanza US-621 §3)</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary bg-surface-container px-space-sm py-space-2xs rounded-lg uppercase tracking-wider font-semibold">
+          VALORES HEX MANDATORIOS
+        </span>
+</div>
+<!-- Part A: Rampa Secuencial Monocromática de 5 pasos -->
+<div class="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Rampa Secuencial Monocromática (5 Pasos)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Utilizada para representar la magnitud de presión de drivers y el índice general de riesgo territorial.
+            </p>
+</div>
+<div class="bg-surface-container-low px-space-base py-space-xs rounded-lg">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface font-semibold">
+              NORMA: Escala continua 0.00 a 1.00 (0 = menor observada · 1 = mayor observada)
+            </span>
+</div>
+</div>
+<!-- Visual Swatch Grid with Strict Hex Specifications -->
+<div class="grid grid-cols-5 gap-space-sm">
+<!-- Step 1 -->
+<div class="flex flex-col rounded-lg overflow-hidden shadow-sm">
+<div class="h-28 bg-[#EEF2F7] flex flex-col justify-between p-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-[#0F172A] font-bold">PASO 01</span>
+<span class="font-label-data-mono text-title-md text-[#0F172A] font-bold self-center">0.14</span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#64748B]">0.0 — 0.2</span>
+</div>
+<div class="bg-surface-container-low p-space-sm flex flex-col gap-space-2xs">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">#EEF2F7</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Texto oscuro (#0F172A)</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col rounded-lg overflow-hidden shadow-sm">
+<div class="h-28 bg-[#C7D2E0] flex flex-col justify-between p-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-[#0F172A] font-bold">PASO 02</span>
+<span class="font-label-data-mono text-title-md text-[#0F172A] font-bold self-center">0.32</span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#0F172A]/70">0.2 — 0.4</span>
+</div>
+<div class="bg-surface-container-low p-space-sm flex flex-col gap-space-2xs">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">#C7D2E0</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Texto oscuro (#0F172A)</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col rounded-lg overflow-hidden shadow-sm">
+<div class="h-28 bg-[#93A5C0] flex flex-col justify-between p-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-[#0F172A] font-bold">PASO 03</span>
+<span class="font-label-data-mono text-title-md text-[#0F172A] font-bold self-center">0.54</span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#0F172A]/80">0.4 — 0.6</span>
+</div>
+<div class="bg-surface-container-low p-space-sm flex flex-col gap-space-2xs">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">#93A5C0</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Contraste dual adaptado</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col rounded-lg overflow-hidden shadow-sm">
+<div class="h-28 bg-[#56698C] flex flex-col justify-between p-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-[#FFFFFF] font-bold">PASO 04</span>
+<span class="font-label-data-mono text-title-md text-[#FFFFFF] font-bold self-center">0.76</span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#FFFFFF]/80">0.6 — 0.8</span>
+</div>
+<div class="bg-surface-container-low p-space-sm flex flex-col gap-space-2xs">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">#56698C</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Texto blanco (#FFFFFF)</span>
+</div>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col rounded-lg overflow-hidden shadow-sm">
+<div class="h-28 bg-[#0F172A] flex flex-col justify-between p-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-[#FFFFFF] font-bold">PASO 05</span>
+<span class="font-label-data-mono text-title-md text-[#FFFFFF] font-bold self-center">0.93</span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#FFFFFF]/80">0.8 — 1.0</span>
+</div>
+<div class="bg-surface-container-low p-space-sm flex flex-col gap-space-2xs">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">#0F172A</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Texto blanco (#FFFFFF)</span>
+</div>
+</div>
+</div>
+<!-- Strict Operational Rule Note -->
+<div class="p-space-base bg-surface-container rounded-lg flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">verified</span>
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-ui text-label-ui text-on-surface uppercase font-semibold">Regla Mandatoria de Presentación</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              El número siempre va dentro de la celda o barra. Escala de 0 a 1 (<span class="font-label-data-mono text-label-data-mono text-on-surface">"0 = menor observada · 1 = mayor observada"</span>).
+              <strong>Nunca escala de 0 a 10, nunca porcentaje (%).</strong> El gradiente monocromático asegura legibilidad matemática sin detonar asociaciones de semáforo vehicular.
+            </p>
+</div>
+</div>
+</div>
+<!-- Part B: Acento Dominante, Gris de Contexto, SIN_DATO y Nivel de Atención -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-base">
+<!-- Acento Dominante (Top Drivers) -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">ACENTO TOP DRIVER</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">#B45309</span>
+</div>
+<!-- Visual Specimen of Top Driver Badge -->
+<div class="h-20 bg-surface-container-low rounded-lg p-space-sm flex items-center justify-center">
+<div class="px-space-sm py-space-xs rounded bg-surface-container-lowest flex items-center gap-space-xs shadow-sm" style="box-shadow: 0 0 0 2px #B45309;">
+<span class="material-symbols-outlined text-[#B45309] text-[16px]">emergency_heat</span>
+<span class="font-label-data-mono text-label-data-mono font-bold text-[#B45309]">ESTRÉS HÍDRICO (0.88)</span>
+</div>
+</div>
+</div>
+<div class="pt-space-sm flex flex-col gap-space-2xs">
+<span class="font-title-md text-title-md text-on-surface">Ámbar Terracota</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Usado <strong>ÚNICAMENTE</strong> como contorno exterior o icono de driver dominante. <strong>NUNCA</strong> como relleno de la rampa secuencial.
+            </p>
+</div>
+</div>
+<!-- Gris de Contexto -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">GRIS CONTEXTO</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">#94A3B8</span>
+</div>
+<!-- Visual Specimen of Context Neutralizer -->
+<div class="h-20 bg-[#94A3B8] rounded-lg flex items-center justify-center">
+<span class="font-label-data-mono text-label-data-mono text-surface-container-lowest font-bold">LÍNEA BASE / REF</span>
+</div>
+</div>
+<div class="pt-space-sm flex flex-col gap-space-2xs">
+<span class="font-title-md text-title-md text-on-surface">Gris Neutro Analítico</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Utilizado para líneas de referencia territorial, promedios macro y elementos que no forman parte de la varianza diagnóstica de la escuela.
+            </p>
+</div>
+</div>
+<!-- Textura SIN_DATO -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">AUSENCIA DE REGISTRO</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">45° HATCH</span>
+</div>
+<!-- Diagonal Hatching Specimen -->
+<div class="h-20 rounded-lg flex items-center justify-center p-space-xs" style="background-color: #F8FAFC; background-image: repeating-linear-gradient(45deg, #CBD5E1 0, #CBD5E1 2px, transparent 2px, transparent 8px);">
+<span class="bg-surface-container-lowest px-space-xs py-space-2xs font-label-micro-mono text-label-micro-mono text-on-surface-variant rounded shadow-sm font-bold">
+                SIN DATO — PISTA NO VERIFICADA
+              </span>
+</div>
+</div>
+<div class="pt-space-sm flex flex-col gap-space-2xs">
+<span class="font-title-md text-title-md text-on-surface">Textura SIN_DATO</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Rayado a 45° con leyenda obligatoria técnica explicativa. Indica censos incompletos o variables fuera del rango de captura censal.
+            </p>
+</div>
+</div>
+<!-- Nivel de Atención -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">JERARQUÍA MONOCROMA</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">#0F172A ONLY</span>
+</div>
+<!-- Glyphs for Attention Levels -->
+<div class="h-20 bg-surface-container-low rounded-lg p-space-sm flex items-center justify-around">
+<div class="flex items-center gap-1">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">▲</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface font-bold">ALTA</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">■</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface font-bold">MEDIA</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">●</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface font-bold">BAJA</span>
+</div>
+</div>
+</div>
+<div class="pt-space-sm flex flex-col gap-space-2xs">
+<span class="font-title-md text-title-md text-on-surface">Nivel de Atención</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Sin color propio. Icono geométrico + texto en tinta #0F172A: ▲ alta (≥ 0.50), ■ media (0.30 a 0.49), ● baja (&lt; 0.30). Prohibido semáforo.
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: PALETA CATEGÓRICA DE ENTIDADES FEDERATIVAS (US-601 §4) -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">04</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Paleta Categórica de Entidades Federativas (US-601 §4)</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider uppercase">4 JURISDICCIONES DEL PILOTO</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-base">
+<!-- CDMX 09 -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-24 rounded-lg bg-[#4C72B0] p-space-sm flex flex-col justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-surface-container-lowest font-bold">ENTIDAD_09</span>
+<span class="font-headline-sm text-headline-sm text-surface-container-lowest font-bold">#4C72B0</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Ciudad de México</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">Código CCT: 09</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Matiz azul técnico asignado permanentemente para cartografía, filtros y agregaciones en la capital federal.
+          </p>
+</div>
+<!-- Edomex 15 -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-24 rounded-lg bg-[#DD8452] p-space-sm flex flex-col justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-surface-container-lowest font-bold">ENTIDAD_15</span>
+<span class="font-headline-sm text-headline-sm text-surface-container-lowest font-bold">#DD8452</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Estado de México</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">Código CCT: 15</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Matiz ocre mineral para la corona metropolitana y demarcaciones periféricas del Valle de México.
+          </p>
+</div>
+<!-- Nuevo León 19 -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-24 rounded-lg bg-[#55A868] p-space-sm flex flex-col justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-surface-container-lowest font-bold">ENTIDAD_19</span>
+<span class="font-headline-sm text-headline-sm text-surface-container-lowest font-bold">#55A868</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Nuevo León</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">Código CCT: 19</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Matiz verde salvia reservado para el nodo metropolitano de Monterrey y municipios industriales del norte.
+          </p>
+</div>
+<!-- Jalisco 14 -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="h-24 rounded-lg bg-[#C44E52] p-space-sm flex flex-col justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-surface-container-lowest font-bold">ENTIDAD_14</span>
+<span class="font-headline-sm text-headline-sm text-surface-container-lowest font-bold">#C44E52</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Jalisco</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">Código CCT: 14</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Matiz rojo ladrillo institucional aplicado al circuito occidente y Zona Metropolitana de Guadalajara.
+          </p>
+</div>
+</div>
+<!-- Rule Callout -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">palette</span>
+<span class="font-body-sm text-body-sm text-on-surface">
+<strong>Gobernanza Categórica Estricta:</strong> Un color único por entidad federativa. Prohibido utilizar degradados o escalas secuenciales entre estados.
+          </span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary bg-surface-container px-space-xs py-space-2xs rounded uppercase font-semibold">
+          US-601 CLAUSE 4
+        </span>
+</div>
+</section>
+<!-- SECTION 5: TIPOGRAFÍA Y ESCALA MODULAR -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">05</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Tipografía y Escala Modular Tabular</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider uppercase">SPACE GROTESK + INTER + MONO</span>
+</div>
+<div class="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col gap-space-xl">
+<!-- Family Distinction Overview -->
+<div class="grid grid-cols-3 gap-space-lg pb-space-base">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-ui text-label-ui text-secondary uppercase font-semibold">01 / Display &amp; Titulación</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Space Grotesk</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Geometría técnica con anclaje visual. Encabezados de diagnóstico, CCTs destacados y cifras de resumen ejecutivo.
+            </p>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-ui text-label-ui text-secondary uppercase font-semibold">02 / Datos &amp; Tabular Números</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Inter (tabular-nums)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Lectura neutra y neutralidad de línea. Todos los dígitos están configurados con espaciado monospaciado de columnas.
+            </p>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-ui text-label-ui text-secondary uppercase font-semibold">03 / Telemetría &amp; Código</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">JetBrains Mono</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Lectura pericial de identificadores alfanuméricos, CCTs, registros CIDE/SEP y coordenadas GPS territoriales.
+            </p>
+</div>
+</div>
+<!-- Specimen Table -->
+<div class="flex flex-col gap-space-sm">
+<!-- Row: Display-LG -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="w-1/4 flex flex-col">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Display-LG</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Space Grotesk · 36px / LH 44px</span>
+</div>
+<div class="w-3/4">
+<span class="font-headline-xl text-[36px] leading-[44px] tracking-tight font-bold text-on-surface">
+                Vigilancia Preventiva de Entornos Escolares
+              </span>
+</div>
+</div>
+<!-- Row: Headline-MD -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="w-1/4 flex flex-col">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Headline-MD</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Space Grotesk · 20px / LH 28px</span>
+</div>
+<div class="w-3/4">
+<span class="font-headline-sm text-[20px] leading-[28px] font-semibold text-on-surface">
+                CCT 09DPR1492Z — Escuela Primaria República de Argentina
+              </span>
+</div>
+</div>
+<!-- Row: Data-LG -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="w-1/4 flex flex-col">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Data-LG (Tabular)</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Inter (tabular-nums) · 22px / LH 28px</span>
+</div>
+<div class="w-3/4 flex items-center gap-space-xl">
+<span class="font-headline-sm text-[22px] leading-[28px] font-semibold text-on-surface [font-variant-numeric:tabular-nums]">
+                0.842 · 14,892.40 · +0.038
+              </span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+                ALINEACIÓN DE DÍGITOS PERFECTA
+              </span>
+</div>
+</div>
+<!-- Row: Body-MD -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="w-1/4 flex flex-col">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Body-MD</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Inter Regular · 14px / LH 22px</span>
+</div>
+<div class="w-3/4">
+<p class="font-body-md text-body-md text-on-surface">
+                El vector de riesgo del plantel integra registros censales CONEVAL con indicadores satelitales de estrés hídrico y reportes de proximidad a incidentes de seguridad vial.
+              </p>
+</div>
+</div>
+<!-- Row: Label-SM Uppercase -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="w-1/4 flex flex-col">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Label-SM Tracking</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Inter Bold · 11px uppercase (+0.05em)</span>
+</div>
+<div class="w-3/4 flex items-center gap-space-base">
+<span class="font-label-ui text-label-ui uppercase tracking-[0.05em] text-on-surface font-semibold">
+                TELEMETRÍA // NODO REGIONAL CENTRAL
+              </span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary bg-surface-container px-space-xs py-space-2xs rounded">
+                MONITOREADO
+              </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: COMPONENTES UI Y BOTONES OPERATIVOS -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">06</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Componentes UI, Botones &amp; Acciones de Telemetría</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider uppercase">CATÁLOGO DE ACCIONES</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-base">
+<!-- 1. Primary Action Button -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">ACCIÓN PRIMARIA</span>
+<span class="font-title-md text-title-md text-on-surface">Slate Command Trigger</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Disparador de órdenes ministeriales, confirmación de filtros y exportación de censos oficiales.
+            </p>
+</div>
+<div class="flex flex-col gap-space-sm">
+<button class="w-full h-11 px-space-base bg-primary text-on-primary rounded-lg flex items-center justify-center gap-space-sm shadow-sm hover:bg-inverse-surface transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[18px]">download_done</span>
+<span class="font-title-md text-title-md font-medium">Generar Dictamen</span>
+</button>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant text-center">
+              #0F172A · rounded-lg · text-white
+            </span>
+</div>
+</div>
+<!-- 2. Secondary / Analytical Button -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">ACCIÓN SECUNDARIA</span>
+<span class="font-title-md text-title-md text-on-surface">Exploración Analítica</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Herramienta de alternancia de vista, descarte de filtros y comparación territorial pareada.
+            </p>
+</div>
+<div class="flex flex-col gap-space-sm">
+<button class="w-full h-11 px-space-base bg-surface-container-lowest text-on-surface rounded-lg flex items-center justify-center gap-space-sm shadow-sm hover:bg-surface-container-low transition-colors cursor-pointer" type="button">
+<span class="material-symbols-outlined text-secondary text-[18px]">compare_arrows</span>
+<span class="font-title-md text-title-md font-medium">Comparar Planteles</span>
+</button>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant text-center">
+              #FFFFFF · shadow-sm · text-#0F172A
+            </span>
+</div>
+</div>
+<!-- 3. Google OAuth Single Sign-on Preview -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">AUTENTICACIÓN INSTITUCIONAL</span>
+<span class="font-title-md text-title-md text-on-surface">Acceso Federado Único</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Módulo de autenticación única vía cuenta oficial autorizada de dominio ministerial.
+            </p>
+</div>
+<div class="flex flex-col gap-space-sm">
+<button class="w-full h-11 px-space-base bg-surface-container-lowest text-on-surface rounded-lg flex items-center justify-center gap-space-sm shadow-sm hover:bg-surface-container-low transition-colors cursor-pointer" type="button">
+<!-- Inline crisp Google G SVG -->
+<svg class="w-4 h-4" viewBox="0 0 24 24">
+<path d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" fill="#4285F4"></path>
+<path d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" fill="#34A853"></path>
+<path d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.94 0 12s.45 3.84 1.25 5.42l4.03-3.15z" fill="#FBBC05"></path>
+<path d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" fill="#EA4335"></path>
+</svg>
+<span class="font-title-md text-title-md font-medium">Iniciar sesión con Google</span>
+</button>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant text-center">
+              Google Workspace OAuth 2.0
+            </span>
+</div>
+</div>
+<!-- 4. Asistente FARO Floating Node Preview -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">NODO COGNITIVO</span>
+<span class="font-title-md text-title-md text-on-surface">Asistente FARO</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Cápsula flotante persistente para consultas analíticas directas en lenguaje natural.
+            </p>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Actual Spec Capsule Demonstration -->
+<div class="flex items-center justify-between px-space-base py-space-sm bg-primary-container text-on-primary rounded-full shadow-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-micro-mono text-label-micro-mono font-semibold text-secondary-container tracking-wider">
+                  Asistente FARO // En línea
+                </span>
+</div>
+<span class="material-symbols-outlined text-secondary-container text-[16px]">terminal</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant text-center">
+              #131B2E · cyan #5BB8FE · pill
+            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- LIVE DEMONSTRATION WORKBENCH: SYNTHESIS INSPECTOR CARD -->
+<section class="flex flex-col gap-space-base">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-semibold">07</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Ejecución Integrada // Workbench Specimen</h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider uppercase">VISTA COMBINADA REAL</span>
+</div>
+<!-- High-fidelity Diagnostic Demonstration Panel -->
+<div class="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col gap-space-lg">
+<!-- Header row of the mock inspection -->
+<div class="flex items-start justify-between flex-wrap gap-space-base">
+<div class="flex flex-col gap-space-2xs">
+<div class="flex items-center gap-space-xs">
+<span class="px-space-xs py-space-2xs rounded bg-[#4C72B0] text-surface-container-lowest font-label-micro-mono text-label-micro-mono font-bold">09 CDMX</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">CCT 09DPR2811A</span>
+<span class="text-outline-variant">·</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">TURNO MATUTINO</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface font-semibold">
+              Escuela Primaria Gral. Francisco Villa
+            </h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+              Alcaldía Iztapalapa, Ciudad de México · 482 estudiantes matriculados
+            </span>
+</div>
+<!-- Overall Multi-driver Composite Metric -->
+<div class="flex items-center gap-space-base bg-surface-container-low p-space-base rounded-xl">
+<div class="flex flex-col items-end">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase">Índice Compuesto</span>
+<span class="font-label-data-mono text-headline-sm text-on-surface font-bold [font-variant-numeric:tabular-nums]">0.78</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface font-bold">▲ ALTA ATENCIÓN</span>
+</div>
+<div class="w-12 h-12 rounded-lg bg-[#56698C] flex items-center justify-center text-on-primary font-label-data-mono text-title-md font-bold">
+              0.78
+            </div>
+</div>
+</div>
+<!-- 6 Drivers Matrix Row using Strict Token Rules -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-ui text-label-ui text-on-surface-variant uppercase tracking-wider">
+              MATRIZ DE DRIVERS TERRITORIALES (ESCALA 0.00 A 1.00)
+            </span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+              * CONTORNO ÁMBAR #B45309 INDICA FACTOR DOMINANTE
+            </span>
+</div>
+<div class="grid grid-cols-6 gap-space-sm">
+<!-- Driver 1: Pobreza (Medium-High) -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col justify-between h-24">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase">1. Pobreza</span>
+<div class="w-full bg-[#93A5C0] h-6 rounded flex items-center justify-center">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">0.58</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CONEVAL 2020</span>
+</div>
+<!-- Driver 2: Inseguridad (High) -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col justify-between h-24">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase">2. Inseguridad</span>
+<div class="w-full bg-[#56698C] h-6 rounded flex items-center justify-center">
+<span class="font-label-data-mono text-label-data-mono text-on-primary font-bold">0.74</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">SESNSP R-100</span>
+</div>
+<!-- Driver 3: Infraestructura (Low) -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col justify-between h-24">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase">3. Infraestructura</span>
+<div class="w-full bg-[#EEF2F7] h-6 rounded flex items-center justify-center">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">0.19</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CENSO SEP</span>
+</div>
+<!-- Driver 4: Conectividad (Medium) -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col justify-between h-24">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase">4. Conectividad</span>
+<div class="w-full bg-[#C7D2E0] h-6 rounded flex items-center justify-center">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">0.37</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">IFT LTE-4G</span>
+</div>
+<!-- Driver 5: Estrés Hídrico (Dominant Driver with #B45309 outline) -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col justify-between h-24 shadow-sm" style="box-shadow: 0 0 0 2px #B45309;">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-[#B45309] font-bold uppercase">5. Estrés Hídrico</span>
+<span class="material-symbols-outlined text-[#B45309] text-[14px]">priority_high</span>
+</div>
+<div class="w-full bg-[#0F172A] h-6 rounded flex items-center justify-center">
+<span class="font-label-data-mono text-label-data-mono text-on-primary font-bold">0.92</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-[#B45309] font-bold">TOP DRIVER LOCAL</span>
+</div>
+<!-- Driver 6: Calidad del Aire (SIN_DATO Texture) -->
+<div class="p-space-sm rounded-lg flex flex-col justify-between h-24" style="background-color: #F8FAFC; background-image: repeating-linear-gradient(45deg, #CBD5E1 0, #CBD5E1 2px, transparent 2px, transparent 8px);">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase font-bold">6. Calidad Aire</span>
+<div class="w-full bg-surface-container-lowest h-6 rounded flex items-center justify-center shadow-sm">
+<span class="font-label-micro-mono text-[9px] text-on-surface-variant font-bold">SIN DATO</span>
+</div>
+<span class="font-label-micro-mono text-[9px] text-on-surface-variant truncate">ESTACIÓN FUERA RANGO</span>
+</div>
+</div>
+</div>
+<!-- Integrated Diagnostic Recommendation Node -->
+<div class="p-space-base bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container text-[18px]">neurology</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">DICTAMEN ASISTENTE FARO // SÍNTESIS PREDICTIVA</span>
+<span class="font-body-sm text-body-sm text-on-surface">Plantel condicionado por registro elevado en red hidráulica (<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">0.92</span>) e indicador de inseguridad perimetral (<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">0.74</span>), requiriendo verificación territorial pericial sin inferencia causal directa.</span>
+</div>
+</div>
+<button class="px-space-base py-space-xs bg-primary text-on-primary rounded-lg font-body-sm text-body-sm font-medium hover:bg-inverse-surface transition-colors cursor-pointer shrink-0" type="button">
+            Exportar Expediente
+          </button>
+</div>
+</div>
+</section>
+<!-- Footer Meta Attribution -->
+<footer class="w-full py-space-lg flex items-center justify-between font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+<span class="">FARO INTELLIGENCE PLATFORM · SISTEMA SENSOR SOCIAL TERRITORIAL</span>
+<span class="">CUMPLIMIENTO ESTRICTO DE ESPECIFICACIONES US-621 Y US-601</span>
+</footer>
+</div>
+</div></main></div><div class="fixed bottom-6 right-6 z-50"><button class="flex items-center gap-space-sm px-space-base py-space-sm bg-primary-container text-on-primary rounded-full shadow-[0_8px_24px_-4px_rgba(0,0,0,0.3)] hover:bg-inverse-surface hover:text-inverse-on-surface transition-all duration-200" type="button"><span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span><span class="font-label-micro-mono text-label-micro-mono tracking-wider font-semibold text-secondary-container">ASISTENTE FARO // EN LÍNEA</span><span class="material-symbols-outlined text-[16px] text-secondary-container">terminal</span></button></div>
+
+</body></html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>FARO Intelligence Platform</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-container":"#5bb8fe","surface-container-lowest":"#ffffff","on-tertiary-fixed-variant":"#004c69","on-secondary":"#ffffff","primary":"#000000","inverse-on-surface":"#eaf1ff","on-tertiary-container":"#008ebf","inverse-primary":"#bec6e0","secondary-fixed":"#cce5ff","on-secondary-container":"#00476e","surface-variant":"#d3e4fe","outline":"#76777d","on-surface":"#0b1c30","on-primary-fixed-variant":"#3f465c","on-error-container":"#93000a","on-secondary-fixed-variant":"#004b73","on-primary-container":"#7c839b","error-container":"#ffdad6","surface":"#f8f9ff","inverse-surface":"#213145","background":"#f8f9ff","on-secondary-fixed":"#001d31","surface-container-high":"#dce9ff","tertiary-fixed-dim":"#7bd0ff","primary-container":"#131b2e","on-tertiary-fixed":"#001e2c","surface-dim":"#cbdbf5","on-background":"#0b1c30","surface-container":"#e5eeff","on-surface-variant":"#45464d","surface-tint":"#565e74","error":"#ba1a1a","secondary-fixed-dim":"#93ccff","secondary":"#006398","surface-container-low":"#eff4ff","surface-container-highest":"#d3e4fe","tertiary":"#000000","tertiary-container":"#001e2c","on-error":"#ffffff","outline-variant":"#c6c6cd","primary-fixed":"#dae2fd","on-primary-fixed":"#131b2e","on-primary":"#ffffff","tertiary-fixed":"#c4e7ff","on-tertiary":"#ffffff","primary-fixed-dim":"#bec6e0","surface-bright":"#f8f9ff"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"sidebar-width-expanded":"17.5rem","space-xs":"0.25rem","space-lg":"1.5rem","space-2xl":"3rem","inspector-panel-width":"26rem","space-sm":"0.5rem","layout-gutter":"1rem","layout-margin-desktop":"2rem","space-xl":"2rem","space-2xs":"0.125rem","space-md":"0.75rem","layout-margin-mobile":"1rem","sidebar-width-collapsed":"4.5rem","space-base":"1rem"},fontFamily:{"body-md":["Inter"],"label-data-mono":["JetBrains Mono"],"headline-sm":["Space Grotesk"],"body-sm":["Inter"],"headline-lg":["Space Grotesk"],"label-ui":["Inter"],"headline-xl-mobile":["Space Grotesk"],"title-md":["Inter"],"headline-xl":["Space Grotesk"],"label-micro-mono":["JetBrains Mono"],"headline-lg-mobile":["Space Grotesk"]},fontSize:{"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"label-data-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-ui":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-xl-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.015em","fontWeight":"600"}],"title-md":["15px",{"lineHeight":"22px","letterSpacing":"-0.005em","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-micro-mono":["10px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-secondary selection:text-on-secondary"><aside class="fixed left-0 top-0 h-screen w-sidebar-width-expanded bg-surface-container-lowest border-r border-outline-variant/40 z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="px-space-lg py-space-lg border-b border-outline-variant/30"><div class="flex items-center gap-space-sm"><div class="w-2.5 h-2.5 rounded-none bg-secondary animate-pulse"></div><span class="font-headline-lg text-headline-lg text-primary tracking-tight">FARO</span></div><p class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold uppercase tracking-wider mt-space-2xs">INTELLIGENCE // VIGILANCIA TERRITORIAL</p><div class="mt-space-sm inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container border border-outline-variant/50 rounded"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">SISTEMA SENSOR SOCIAL</span></div></div><div class="px-space-md pt-space-md pb-space-2xs"><span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider px-space-sm">Flujo de Investigación</span></div><nav class="flex flex-col gap-space-2xs px-space-sm" data-active-classes="bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container"><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="login" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">00</span><span class="flex-1">Iniciar Sesión</span></a><a aria-current="page" class="flex items-center justify-between px-space-sm py-space-xs rounded-lg transition-colors bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container" data-path="entrada-faro" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">01</span><span class="flex-1">Entrada a FARO</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="panorama-riesgo" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">02</span><span class="flex-1">Panorama de Riesgo</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="seleccion-caso" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">03</span><span class="flex-1">Selección de Caso</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="expediente-escuela" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">04</span><span class="flex-1">Expediente de Escuela</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="conclusion-global" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">05</span><span class="flex-1">Conclusión Global</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="explorador-escuelas" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">06</span><span class="flex-1">Explorador de Escuelas</span></a></nav><div class="my-space-md border-t border-outline-variant/30"></div><div class="px-space-md pb-space-2xs"><span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider px-space-sm">Referencia Técnica</span></div><nav class="flex flex-col gap-space-2xs px-space-sm mb-space-lg" data-active-classes="bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container"><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="como-funciona" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">US</span><span class="flex-1">Cómo funciona FARO</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="guia-identidad" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">ID</span><span class="flex-1">Guía de Identidad</span></a></nav></div><div class="p-space-md border-t border-outline-variant/30 bg-surface-container-low"><div class="flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono uppercase text-on-surface-variant font-semibold">ROLES &amp; ALCANCE</span><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span></div><p class="font-label-ui text-label-ui text-on-surface font-semibold truncate">Analista de Políticas</p><p class="font-label-micro-mono text-label-micro-mono text-on-surface-variant truncate">Coordinación Federal</p><div class="mt-space-xs px-space-xs py-space-2xs bg-surface-container-lowest border border-outline-variant/60 rounded flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">4 Entidades</span><span class="font-label-micro-mono text-label-micro-mono text-outline font-normal">(09, 15, 19, 14)</span></div></div></div></aside><div class="pl-sidebar-width-expanded min-h-screen flex flex-col"><header class="fixed top-0 left-sidebar-width-expanded right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/40 z-40 flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs font-label-data-mono text-label-data-mono text-on-surface-variant"><span class="text-primary font-semibold">FARO</span><span class="text-outline">/</span><span class="text-secondary font-medium">SURVEILLANCE_NODE</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container border border-outline-variant/40 rounded-full"><span class="font-label-micro-mono text-label-micro-mono text-on-surface font-medium">Alcance: 4 Entidades · CDMX, Edomex, NL, Jalisco</span></div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container-low border border-outline-variant/40 rounded"><span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span><span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">TELEMETRÍA // EN VIVO</span></div><div class="flex items-center gap-space-sm pl-space-md border-l border-outline-variant/40"><div class="text-right hidden sm:block"><p class="font-label-ui text-label-ui text-on-surface font-semibold">ANALISTA_04</p><p class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">FEDERAL_NODE</p></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background flex-1"><div class="flex flex-col w-full">
+<div class="relative w-full overflow-hidden px-layout-margin-desktop py-space-xl">
+<div class="absolute -top-32 right-12 w-96 h-96 bg-secondary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-1/2 -left-20 w-80 h-80 bg-surface-variant/40 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 max-w-7xl mx-auto flex flex-col gap-space-2xl">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md pb-space-md border-b-0">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-xs py-space-2xs bg-primary text-on-primary font-label-micro-mono text-label-micro-mono uppercase font-semibold">
+            PANTALLA 01 // INTRODUCCIÓN INSTITUCIONAL
+          </span>
+<div class="w-1.5 h-1.5 bg-secondary rounded-full"></div>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary uppercase font-semibold tracking-wider">
+            FASE INICIAL: ARQUITECTURA SENSORIAL
+          </span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container hover:bg-surface-container-high text-on-surface font-label-ui text-label-ui rounded transition-colors shadow-sm cursor-pointer" id="btnOpenWalkthrough" type="button">
+<span class="material-symbols-outlined text-secondary" style="font-size: 16px;">help_center</span>
+<span>Guía Rápida de Investigación</span>
+</button>
+<div class="px-space-sm py-space-xs bg-surface-container-low rounded font-label-data-mono text-label-data-mono text-on-surface-variant">
+            ENTIDADES: <span class="text-secondary font-semibold">09 · 15 · 19 · 14</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<div class="lg:col-span-7 flex flex-col gap-space-lg">
+<div class="flex flex-col gap-space-xs">
+<div class="inline-flex items-center gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-secondary font-semibold tracking-widest">
+                OBSERVATORIO DE INTELIGENCIA ESTRUCTURAL
+              </span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">
+              La Escuela como Sensor Social
+            </h1>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed max-w-2xl">
+            FARO transforma el sistema educativo en una red activa de sensores territoriales de alta resolución. Cada plantel opera como un nodo activo de telemetría capaz de registrar vulnerabilidades contextuales antes de que se consoliden en fallas sistémicas.
+          </p>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider">
+                PROPÓSITO OPERATIVO DEL USUARIO
+              </span>
+<span class="font-label-data-mono text-label-data-mono text-secondary font-medium">PROTOCOLO: AUDITORÍA_EXPEDIENTES</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Como analista de formulación de política pública, su mandato en esta sesión consiste en inspeccionar la coherencia de los vectores multidimensionales, verificar la completitud de las señales sensoriales territoriales y preparar el dictamen de intervención preventiva sin sesgo institucional.
+            </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+<a class="inline-flex items-center justify-center gap-space-sm px-space-lg py-space-md bg-primary hover:bg-inverse-surface text-on-primary font-title-md text-title-md rounded-lg shadow-md transition-all group" data-path="panorama-riesgo" href="#">
+<span>Iniciar investigación de señales</span>
+<span class="material-symbols-outlined text-secondary-container group-hover:translate-x-1 transition-transform" style="font-size: 20px;">arrow_forward</span>
+</a>
+<button class="inline-flex items-center gap-space-xs px-space-md py-space-md bg-surface-container-lowest hover:bg-surface-container text-on-surface font-title-md text-title-md rounded-lg transition-colors cursor-pointer" id="btnGlosario" type="button">
+<span class="material-symbols-outlined text-outline" style="font-size: 20px;">menu_book</span>
+<span>Glosario Metodológico</span>
+</button>
+</div>
+</div>
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-primary font-semibold uppercase">INFOGRÁFICO DE ARQUITECTURA SENSORIAL</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">GEO_LAYER_v2.4</span>
+</div>
+<p class="font-title-md text-title-md text-primary">Red de Telemetría Multicapa // 4 Entidades Federativas</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Topología de acoplamiento entre centros escolares y vectores de presión física, hídrica y socioeconómica.</p>
+<div class="w-full bg-surface-container-low rounded-lg p-space-sm mt-space-xs relative">
+<svg class="w-full h-auto text-primary" fill="none" viewbox="0 0 460 270" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="gridGrad" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#006398" stop-opacity="0.1"></stop>
+<stop offset="100%" stop-color="#5bb8fe" stop-opacity="0.02"></stop>
+</lineargradient>
+<lineargradient id="nodeBeam" x1="0%" x2="0%" y1="100%" y2="0%">
+<stop offset="0%" stop-color="#006398" stop-opacity="0"></stop>
+<stop offset="100%" stop-color="#006398" stop-opacity="0.8"></stop>
+</lineargradient>
+</defs>
+<rect fill="url(#gridGrad)" height="250" rx="4" width="440" x="10" y="10"></rect>
+<path d="M 40,60 L 420,60 M 40,120 L 420,120 M 40,180 L 420,180 M 40,240 L 420,240" stroke="#c6c6cd" stroke-dasharray="3 3" stroke-opacity="0.3" stroke-width="0.75"></path>
+<path d="M 80,30 L 80,250 M 170,30 L 170,250 M 260,30 L 260,250 M 350,30 L 350,250" stroke="#c6c6cd" stroke-dasharray="3 3" stroke-opacity="0.3" stroke-width="0.75"></path>
+<ellipse cx="230" cy="200" fill="#dce9ff" fill-opacity="0.4" rx="180" ry="40"></ellipse>
+<text class="font-label-micro-mono text-[9px] font-semibold tracking-wider uppercase" fill="#00476e" text-anchor="middle" x="230" y="235">Capa 01: Territorio Operativo (CDMX · EDOMEX · NL · JAL)</text>
+<ellipse cx="230" cy="130" fill="#eff4ff" fill-opacity="0.6" rx="150" ry="32"></ellipse>
+<text class="font-label-micro-mono text-[9px] font-semibold tracking-wider uppercase" fill="#00476e" text-anchor="middle" x="230" y="152">Capa 02: Rejilla Sensorial de Planteles Educativos</text>
+<ellipse cx="230" cy="65" fill="#ffffff" fill-opacity="0.8" rx="120" ry="24"></ellipse>
+<text class="font-label-micro-mono text-[9px] font-semibold tracking-wider uppercase" fill="#00476e" text-anchor="middle" x="230" y="72">Capa 03: Telemetría de Vectores de Contexto</text>
+<path d="M 120,200 L 140,130 L 160,65" stroke="#006398" stroke-dasharray="2 2" stroke-opacity="0.6" stroke-width="1.5"></path>
+<path d="M 230,200 L 230,130 L 230,65" stroke="#006398" stroke-opacity="0.6" stroke-width="1.5"></path>
+<path d="M 340,200 L 320,130 L 300,65" stroke="#006398" stroke-dasharray="2 2" stroke-opacity="0.6" stroke-width="1.5"></path>
+<g transform="translate(140, 130)">
+<circle cx="0" cy="0" fill="#ffffff" r="8" stroke="#006398" stroke-width="2"></circle>
+<circle cx="0" cy="0" fill="#006398" r="3"></circle>
+<text class="font-label-micro-mono text-[9px] font-bold" fill="#0b1c30" x="12" y="3">NODO_JAL_04</text>
+</g>
+<g transform="translate(230, 130)">
+<circle cx="0" cy="0" fill="#ffffff" r="10" stroke="#5bb8fe" stroke-width="2"></circle>
+<circle cx="0" cy="0" fill="#006398" r="4"></circle>
+<text class="font-label-micro-mono text-[9px] font-bold" fill="#0b1c30" x="14" y="4">NODO_CDMX_09</text>
+</g>
+<g transform="translate(320, 130)">
+<circle cx="0" cy="0" fill="#ffffff" r="8" stroke="#006398" stroke-width="2"></circle>
+<circle cx="0" cy="0" fill="#006398" r="3"></circle>
+<text class="font-label-micro-mono text-[9px] font-bold" fill="#0b1c30" x="12" y="3">NODO_NL_19</text>
+</g>
+<g transform="translate(160, 65)">
+<polygon fill="#006398" points="0,-6 6,4 -6,4"></polygon>
+<text class="font-label-micro-mono text-[8px] font-medium" fill="#004b73" x="-60" y="-10">ESTRÉS_HÍDRICO</text>
+</g>
+<g transform="translate(230, 65)">
+<polygon fill="#ba1a1a" points="0,-6 6,4 -6,4"></polygon>
+<text class="font-label-micro-mono text-[8px] font-bold" fill="#ba1a1a" x="-25" y="-12">VULNERABILIDAD</text>
+</g>
+<g transform="translate(300, 65)">
+<polygon fill="#006398" points="0,-6 6,4 -6,4"></polygon>
+<text class="font-label-micro-mono text-[8px] font-medium" fill="#004b73" x="8" y="-10">CONECTIVIDAD_RED</text>
+</g>
+</svg>
+</div>
+<div class="grid grid-cols-2 gap-space-xs pt-space-xs text-on-surface-variant">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary" style="font-size: 14px;">hub</span>
+<span class="font-label-micro-mono text-label-micro-mono">Muestreo Federado</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary" style="font-size: 14px;">security_update_good</span>
+<span class="font-label-micro-mono text-label-micro-mono">Integridad Sin_Dato</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider">
+              MARCO METODOLÓGICO DE TRES ETAPAS
+            </span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CICLO ANALÍTICO HOMOLOGADO</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-bold">01 / DETECCIÓN</span>
+<span class="p-space-xs bg-surface-container rounded text-secondary material-symbols-outlined" style="font-size: 18px;">sensors</span>
+</div>
+<h3 class="font-title-md text-title-md text-primary">Sensórica Multipolar</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Captura integrada de señales de rezago hídrico, desconexión de red y degradación del entorno escolar mediante sincronización de inventarios continuos y fuentes geosatelitales.
+              </p>
+</div>
+<div class="pt-space-sm border-t-0 font-label-micro-mono text-label-micro-mono text-outline">
+              INDICADOR DE FLUJO // SEÑAL_CONTINUA
+            </div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-bold">02 / SÍNTESIS</span>
+<span class="p-space-xs bg-surface-container rounded text-secondary material-symbols-outlined" style="font-size: 18px;">memory</span>
+</div>
+<h3 class="font-title-md text-title-md text-primary">Inferencia Territorial</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Modelado estadístico cruzado para transformar registros dispersos en matrices de propensión contextual, aislando fallas locales frente a perturbaciones regionales.
+              </p>
+</div>
+<div class="pt-space-sm border-t-0 font-label-micro-mono text-label-micro-mono text-outline">
+              MATRIZ CRÍTICA // CORRELACIÓN_6_EJES
+            </div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-secondary font-bold">03 / ACCIÓN</span>
+<span class="p-space-xs bg-surface-container rounded text-secondary material-symbols-outlined" style="font-size: 18px;">assignment_turned_in</span>
+</div>
+<h3 class="font-title-md text-title-md text-primary">Dictamen Preventivo</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Priorización de despliegue institucional y presupuestal basada en evidencia empírica para mitigar el abandono antes de su registro administrativo final.
+              </p>
+</div>
+<div class="pt-space-sm border-t-0 font-label-micro-mono text-label-micro-mono text-outline">
+              SALIDA TÉCNICA // DICTAMEN_LEGISLATIVO
+            </div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-space-lg rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="p-space-sm bg-surface-container-lowest rounded-lg text-secondary">
+<span class="material-symbols-outlined" style="font-size: 24px;">lock_clock</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Criterio de Revelación Escalonada de Datos</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">
+              Por protocolo de seguridad de datos y rigor metodológico, los agregados cuantitativos y volúmenes de casos en riesgo se desbloquean en el nivel superior de triaje analítico (Pantalla 02).
+            </p>
+</div>
+</div>
+<div class="px-space-md py-space-xs bg-surface-container-lowest rounded font-label-data-mono text-label-data-mono text-outline">
+          ESTADO: SENSORES LISTOS
+        </div>
+</div>
+</div>
+</div>
+<div class="hidden fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-space-md" id="walkthroughModal">
+<div class="bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-2xl p-space-xl flex flex-col gap-space-lg relative">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">info</span>
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-secondary font-semibold">PROTOCOLO DE NAVEGACIÓN</span>
+</div>
+<button class="text-outline hover:text-on-surface p-space-2xs cursor-pointer" id="btnCloseWalkthrough" type="button">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Guía rápida de investigación</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Bienvenido al centro de telemetría escolar. Esta plataforma procesa microseñales en cuatro entidades federativas federadas (09 CDMX, 15 Estado de México, 19 Nuevo León y 14 Jalisco).
+        </p>
+</div>
+<div class="p-space-md bg-surface-container-low rounded-lg flex flex-col gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold">ALCANCE DEL AGENTE DE CONSULTA</span>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">
+          El Asistente FARO responde preguntas sobre cómo se calculan los índices y qué significa SIN_DATO.
+        </p>
+</div>
+<div class="flex justify-end gap-space-sm pt-space-xs">
+<button class="px-space-lg py-space-xs bg-primary text-on-primary font-label-ui text-label-ui rounded hover:bg-inverse-surface cursor-pointer" id="btnConfirmWalkthrough" type="button">
+          Comprendido // Continuar
+        </button>
+</div>
+</div>
+</div>
+<div class="hidden fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-space-md" id="glosarioModal">
+<div class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-2xl p-space-xl flex flex-col gap-space-lg relative max-h-[85vh] overflow-y-auto">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">auto_stories</span>
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-secondary font-semibold">GLOSARIO METODOLÓGICO</span>
+</div>
+<button class="text-outline hover:text-on-surface p-space-2xs cursor-pointer" id="btnCloseGlosario" type="button">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-md">
+<div class="p-space-sm bg-surface-container-low rounded-lg">
+<p class="font-title-md text-title-md text-primary">SIN_DATO</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-2xs">
+            Marcador técnico que certifica la ausencia de enlace sensorial directo con el plantel o la inexistencia temporal del reporte. Jamás se imputa con valor numérico cero para evitar atenuación artificial del riesgo.
+          </p>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg">
+<p class="font-title-md text-title-md text-primary">Sensor Social</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-2xs">
+            Unidad educativa pública cuyos indicadores de asistencia, infraestructura de agua, suministro eléctrico y entorno perimetral alimentan la red predictiva institucional.
+          </p>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg">
+<p class="font-title-md text-title-md text-primary">Entidades Habilitadas</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-2xs">
+            Jurisdicciones dentro del perímetro activo de FARO: 09 (Ciudad de México), 15 (Estado de México), 19 (Nuevo León) y 14 (Jalisco). Consultas sobre otros estados devuelven fuera de alcance.
+          </p>
+</div>
+</div>
+<div class="flex justify-end pt-space-xs">
+<button class="px-space-lg py-space-xs bg-primary text-on-primary font-label-ui text-label-ui rounded hover:bg-inverse-surface cursor-pointer" id="btnConfirmGlosario" type="button">
+          Cerrar Glosario
+        </button>
+</div>
+</div>
+</div>
+<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-space-sm">
+<div class="hidden w-inspector-panel-width max-w-[calc(100vw-2rem)] bg-primary-container text-on-primary rounded-xl shadow-2xl overflow-hidden flex flex-col transition-all" id="asistentePanel">
+<div class="px-space-md py-space-sm bg-surface-container-highest/10 flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary-container font-bold uppercase tracking-wider">
+            Asistente FARO // METODOLOGÍA &amp; DATOS
+          </span>
+</div>
+<button class="text-on-primary-container hover:text-on-primary cursor-pointer" id="btnMinimizeAsistente" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">expand_more</span>
+</button>
+</div>
+<div class="p-space-md flex flex-col gap-space-md max-h-96 overflow-y-auto font-body-sm text-body-sm">
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-on-primary-container">PROMPT SUGERIDO // ACCESO DIRECTO:</span>
+<div class="flex flex-wrap gap-space-2xs">
+<button class="px-space-xs py-space-2xs bg-surface-container-highest/20 hover:bg-surface-container-highest/30 rounded font-label-micro-mono text-label-micro-mono text-secondary-container text-left cursor-pointer" id="btnPreguntaSinDato" type="button">
+              ¿Qué significa SIN_DATO?
+            </button>
+<button class="px-space-xs py-space-2xs bg-surface-container-highest/20 hover:bg-surface-container-highest/30 rounded font-label-micro-mono text-label-micro-mono text-secondary-container text-left cursor-pointer" id="btnPreguntaCalculo" type="button">
+              ¿Cómo se calculan los índices?
+            </button>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono text-on-primary-container">SIMULADOR DE ESTADOS DE ERROR:</span>
+<div class="grid grid-cols-3 gap-space-2xs">
+<button class="px-space-xs py-space-2xs bg-surface-container-highest/10 hover:bg-surface-container-highest/20 rounded font-label-micro-mono text-label-micro-mono text-center cursor-pointer" id="btnTriggerErrAlcance" type="button">
+              01. Alcance
+            </button>
+<button class="px-space-xs py-space-2xs bg-surface-container-highest/10 hover:bg-surface-container-highest/20 rounded font-label-micro-mono text-label-micro-mono text-center cursor-pointer" id="btnTriggerErrSinDato" type="button">
+              02. Sin CCT
+            </button>
+<button class="px-space-xs py-space-2xs bg-surface-container-highest/10 hover:bg-surface-container-highest/20 rounded font-label-micro-mono text-label-micro-mono text-center cursor-pointer" id="btnTriggerErrTimeout" type="button">
+              03. Timeout
+            </button>
+</div>
+</div>
+<div class="p-space-sm bg-surface-container-highest/10 rounded-lg flex flex-col gap-space-xs" id="asistenteOutputBox">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary-container font-semibold">RESPUESTA DE TELEMETRÍA</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-primary-container" id="outputStateBadge">EN REPOSO</span>
+</div>
+<div class="font-label-data-mono text-label-data-mono text-inverse-on-surface leading-relaxed whitespace-pre-wrap" id="asistenteStreamingText">
+Seleccione una pregunta metodológica o pruebe los estados de error predefinidos del Asistente FARO.
+          </div>
+</div>
+</div>
+<div class="p-space-sm bg-surface-container-highest/5 flex items-center justify-between font-label-micro-mono text-label-micro-mono text-on-primary-container">
+<span>ESTADO: VIGILANCIA_ACTIVA</span>
+<span>4 ENTIDADES (09, 15, 19, 14)</span>
+</div>
+</div>
+<button class="flex items-center gap-space-sm px-space-md py-space-sm bg-primary-container text-on-primary hover:bg-inverse-surface rounded-full shadow-xl transition-all cursor-pointer" id="btnToggleAsistente" type="button">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="font-label-ui text-label-ui font-semibold">Asistente FARO</span>
+<span class="material-symbols-outlined text-secondary-container" style="font-size: 18px;">terminal</span>
+</button>
+</div>
+<script>
+    (function() {
+      const btnOpenWalkthrough = document.getElementById('btnOpenWalkthrough');
+      const btnCloseWalkthrough = document.getElementById('btnCloseWalkthrough');
+      const btnConfirmWalkthrough = document.getElementById('btnConfirmWalkthrough');
+      const walkthroughModal = document.getElementById('walkthroughModal');
+
+      const btnGlosario = document.getElementById('btnGlosario');
+      const btnCloseGlosario = document.getElementById('btnCloseGlosario');
+      const btnConfirmGlosario = document.getElementById('btnConfirmGlosario');
+      const glosarioModal = document.getElementById('glosarioModal');
+
+      const btnToggleAsistente = document.getElementById('btnToggleAsistente');
+      const btnMinimizeAsistente = document.getElementById('btnMinimizeAsistente');
+      const asistentePanel = document.getElementById('asistentePanel');
+
+      const btnPreguntaSinDato = document.getElementById('btnPreguntaSinDato');
+      const btnPreguntaCalculo = document.getElementById('btnPreguntaCalculo');
+      const btnTriggerErrAlcance = document.getElementById('btnTriggerErrAlcance');
+      const btnTriggerErrSinDato = document.getElementById('btnTriggerErrSinDato');
+      const btnTriggerErrTimeout = document.getElementById('btnTriggerErrTimeout');
+
+      const streamingTarget = document.getElementById('asistenteStreamingText');
+      const outputStateBadge = document.getElementById('outputStateBadge');
+
+      let typingInterval = null;
+
+      function simulateStreaming(text, badgeText = 'TRANSMITIENDO...') {
+        if (typingInterval) clearInterval(typingInterval);
+        streamingTarget.textContent = '';
+        outputStateBadge.textContent = badgeText;
+        outputStateBadge.className = 'font-label-micro-mono text-label-micro-mono text-secondary-container';
+
+        let index = 0;
+        typingInterval = setInterval(() => {
+          if (index < text.length) {
+            streamingTarget.textContent += text.charAt(index);
+            index++;
+          } else {
+            clearInterval(typingInterval);
+            outputStateBadge.textContent = 'COMPLETO';
+          }
+        }, 12);
+      }
+
+      function renderError(code, message) {
+        if (typingInterval) clearInterval(typingInterval);
+        outputStateBadge.textContent = 'ERROR // RECHAZADO';
+        outputStateBadge.className = 'font-label-micro-mono text-label-micro-mono text-error-container font-bold';
+        streamingTarget.innerHTML = `<span class="text-error-container font-bold">[ERR_${code}]:</span> ${message}`;
+      }
+
+      btnOpenWalkthrough?.addEventListener('click', () => {
+        walkthroughModal?.classList.remove('hidden');
+      });
+
+      [btnCloseWalkthrough, btnConfirmWalkthrough].forEach(btn => {
+        btn?.addEventListener('click', () => {
+          walkthroughModal?.classList.add('hidden');
+        });
+      });
+
+      btnGlosario?.addEventListener('click', () => {
+        glosarioModal?.classList.remove('hidden');
+      });
+
+      [btnCloseGlosario, btnConfirmGlosario].forEach(btn => {
+        btn?.addEventListener('click', () => {
+          glosarioModal?.classList.add('hidden');
+        });
+      });
+
+      btnToggleAsistente?.addEventListener('click', () => {
+        asistentePanel?.classList.toggle('hidden');
+      });
+
+      btnMinimizeAsistente?.addEventListener('click', () => {
+        asistentePanel?.classList.add('hidden');
+      });
+
+      btnPreguntaSinDato?.addEventListener('click', () => {
+        const streamMsg = "El marcador SIN_DATO no equivale a cero. Indica la imposibilidad de capturar la señal sensorial del plantel en el ciclo analizado. El motor analítico de FARO aísla el registro para no sesgar a la baja la vulnerabilidad del sector municipal correspondiente.";
+        simulateStreaming(streamMsg, "TELEMETRÍA // EN VIVO");
+      });
+
+      btnPreguntaCalculo?.addEventListener('click', () => {
+        const streamMsg = "Los índices se calculan ponderando 6 vectores estructurales: Estrés Hídrico, Conectividad Digital, Aislamiento Físico, Marginación Socioeconómica, Presión de Seguridad Perimetral y Estado de la Infraestructura Física Educativa.";
+        simulateStreaming(streamMsg, "MODELADO MATRICIAL");
+      });
+
+      btnTriggerErrAlcance?.addEventListener('click', () => {
+        renderError('FUERA_DE_ALCANCE', 'La consulta hace referencia a un municipio fuera de las 4 entidades federativas habilitadas (09 CDMX, 15 Edomex, 19 Nuevo León, 14 Jalisco).');
+      });
+
+      btnTriggerErrSinDato?.addEventListener('click', () => {
+        renderError('SIN_DATOS', 'No se dispone de sensor o registro territorial activo para la Clave de Centro de Trabajo (CCT) solicitada.');
+      });
+
+      btnTriggerErrTimeout?.addEventListener('click', () => {
+        renderError('TIMEOUT_EXPIRADO', 'Tiempo de espera agotado al consultar el repositorio analítico federado. Intente nuevamente la solicitud.');
+      });
+    })();
+  </script>
+</div></main></div></body></html>
