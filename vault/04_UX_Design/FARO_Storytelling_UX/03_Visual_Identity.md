@@ -175,14 +175,27 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 
 ## 6. Accesibilidad
 
-> **Advertencia explícita:** los pares de color de esta sección **no fueron auditados
-> formalmente contra WCAG 2.1 AA** con una herramienta de contraste — son los tokens tal como
-> quedaron tras la corrección de Marina. Antes de que Equipo 5 implemente, corresponde correr una
-> validación de contraste real (por ejemplo con los mismos criterios que ya aplica
-> [[vault/04_UX_Design/Accessibility]] o el script de Monserrat en `ejemplos_graficas/`) sobre:
-> texto `on-surface` (`#0F172A`) contra los fondos `surface-container-*`, cada paso de la rampa
-> de magnitud contra el texto que lleva encima, el acento `#B45309` contra el fondo de su celda,
-> y el texto blanco de los botones primario/beacon contra `#0F172A`/`#0284C7`.
+> **Auditoría ejecutada — 2026-09-11, gate de UX/UI (Marina García).** Se midieron 14 pares con
+> `contraste()` de `ejemplos_graficas/generar_ejemplos.py` (Monserrat Miranda), la misma función
+> WCAG 2.1 que ya valida la paleta de datos. **11 pasan**, entre 5:1 y 17.85:1. **Dos hallazgos:**
+
+| Hallazgo | Medido | Mínimo | Alcance |
+|---|---|---|---|
+| `outline` `#76777d` usado como **texto micro** | **4.46:1** sobre blanco y hasta **3.46:1** sobre `surface-container-highest` — falla en los **seis** fondos | 4.5:1 | **268 usos** en los 7 mockups |
+| Texto blanco sobre **Beacon Action** `#0284C7` (§4) | **4.10:1** | 4.5:1 | Especificado en el anexo de tokens; no aparece en los mockups |
+
+> **Arreglo propuesto, decisión de Juan Macías.** Para `outline`, oscurecerlo hasta cumplir exige
+> `#64656A` —14.5 % más oscuro, ya perceptible— y desvirtúa un token pensado para **bordes**, donde
+> el umbral es 3:1 y cumple de sobra. La vía limpia es **usar el token de texto para el texto**:
+> `on-surface-variant` `#45464d`, que ya está en esta paleta, da entre **7.29:1 y 9.39:1** en los
+> seis fondos. Para el botón beacon, `#0369A1` —el hover que ya define la §4— da **5.93:1**.
+>
+> **Lo que sí quedó verificado como correcto:** el acento ámbar `#B45309` **pasa donde se usa**
+> (**4.56:1** sobre `surface-container-low`, **5.02:1** sobre blanco). Sólo fallaría si se colocara
+> como texto sobre `surface-container` o más oscuro (4.31:1 y 4.10:1) — **queda como regla, no como
+> defecto**. Y el texto principal `on-surface` va entre 13:1 y 17:1 sobre todos los contenedores.
+>
+> Reproducible: `contraste(a, b)` en `ejemplos_graficas/generar_ejemplos.py`.
 - **Nada se codifica solo por color, por diseño desde esta corrección:** nivel de atención
   (icono + texto), dominante (contorno + icono + etiqueta), `SIN_DATO` (textura + etiqueta "S/D"
   + motivo) — ninguno depende únicamente del tono para leerse. Esto resuelve directamente el

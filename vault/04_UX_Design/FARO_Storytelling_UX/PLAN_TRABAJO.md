@@ -777,9 +777,19 @@ pasa a `status: approved` en su frontmatter.
 **Con esto se cumplen los puntos 1 y 2** del criterio de cierre. Quedan abiertos el 3 y el 4, que no
 pertenecen a este frente.
 
-> **Pendiente declarado, no resuelto.** `03_Visual_Identity.md` se aprueba **con la auditoría formal
-> de contraste WCAG 2.1 AA todavía sin correr** (su §6 lo declara explícitamente). `ADR-011` §4 la
-> hace no negociable, así que la aprobación cubre el diseño y la especificación, **no** la
-> conformidad de accesibilidad. Esa verificación pertenece a `US-651` y aparece en la forma **B** de
-> la §9.bis. Se aprueba con el hueco escrito en vez de retenerlo: el Equipo 5 ya está implementando
-> con estos tokens y retenerlos no haría la auditoría más rápida.
+> **Auditoría de contraste: ejecutada el 2026-09-11 desde el gate**, no diferida. Se midieron 14
+> pares con la función WCAG 2.1 que ya vive en el repositorio (`contraste()` de Monserrat Miranda en
+> `ejemplos_graficas/generar_ejemplos.py`). **11 pasan; dos fallan** y están documentados con número
+> y arreglo en la §6 de `03_Visual_Identity.md`: el token `outline` usado como texto micro en 268
+> lugares, y el texto blanco del botón *Beacon Action*. **Los dos arreglos son de Juan Macías** y no
+> se aplicaron desde el gate: cambiar un token de color en siete mockups es decisión de sistema de
+> diseño, no validación.
+>
+> `ADR-011` §4 hace WCAG 2.1 AA no negociable, así que **la aprobación de `03_Visual_Identity.md`
+> queda condicionada a esos dos cambios.** Se aprueba el documento —el resto está completo y el
+> Equipo 5 ya implementa con él— con los dos hallazgos medidos, nombrados y asignados, que es lo
+> contrario de dejarlos como hueco.
+>
+> **Sigue abierto y no se cierra midiendo colores:** tamaño mínimo de texto y foco visible (Juan), y
+> orden de tabulación (Oscar Quiroz — es interacción, no identidad). Los tres estaban marcados como
+> *"no definidos"* en la §6.

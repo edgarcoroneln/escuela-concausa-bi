@@ -128,3 +128,56 @@ La decisión de claro/oscuro que quedaba pendiente: fijó que el lienzo analíti
 que el slate profundo se usa sólo como acento en componentes puntuales, nunca como fondo de página.
 Conclusión: los tres bloques D3 del Equipo 1, forzados a `color-scheme: light`, **no chocan** —entran
 sobre el mismo lienzo—. Y alineó el color de Jalisco con el que Manuel ya usaba en `US-601`.
+
+---
+
+## Addendum 2 — la auditoría de contraste se ejecutó, no se difirió
+
+El hueco de accesibilidad que este DevLog declaraba arriba **se cerró el mismo día**, midiendo en vez
+de pidiendo.
+
+### Por qué costó minutos y no una tarea
+
+La herramienta ya estaba en el repositorio y la escribió el propio frente:
+`ejemplos_graficas/generar_ejemplos.py` de Monserrat Miranda tiene `luminancia()`, `contraste()` y un
+`validar_paleta()` que **aborta con `SystemExit` si la paleta no cumple** — o sea que la paleta de
+datos de la historia ya estaba auditada y nadie lo había notado. Lo que faltaba era la **paleta de
+interfaz** de Juan.
+
+### Resultado: 14 pares medidos, 11 pasan, 2 fallan
+
+| Hallazgo | Medido | Alcance |
+|---|---|---|
+| `outline` `#76777d` como **texto micro** | 4.46:1 sobre blanco, hasta 3.46:1 sobre `surface-container-highest` — falla en los **seis** fondos | **268 usos** en los 7 mockups |
+| Blanco sobre *Beacon Action* `#0284C7` | 4.10:1 | anexo de tokens; no usado en mockups |
+
+### Dos veces que la medición corrigió lo que yo había reportado
+
+**El ámbar no falla.** Lo había reportado contra `surface-container` (4.31:1), pero en los mockups
+vive sobre `surface-container-low`, donde da **4.56:1**. Pasa. Sólo fallaría si se moviera a un
+contenedor más oscuro: queda como **regla**, no como defecto.
+
+**El `outline` falla mucho peor de lo que dije.** Primero lo medí sólo contra blanco y propuse
+`#75767C`, un 0.5 % más oscuro. **Esa propuesta era inservible:** arreglaba el blanco y seguía
+fallando en los otros cinco fondos. Medir contra los seis lo destapó.
+
+Las dos correcciones justifican por sí solas haber validado desde el gate en vez de delegar la
+medición: se habría enviado a Juan un arreglo que no arregla.
+
+### El arreglo correcto, y por qué no lo aplicó el gate
+
+Oscurecer `outline` hasta cumplir en el peor fondo exige `#64656A` —14.5 % más oscuro, ya
+perceptible— y **desvirtúa un token pensado para bordes**, donde el umbral es 3:1 y cumple de sobra.
+La vía limpia es usar el token de texto para el texto: `on-surface-variant` `#45464d`, **ya presente
+en la paleta de Juan**, da entre 7.29:1 y 9.39:1. Para el botón, `#0369A1` —su propio hover— da
+5.93:1.
+
+**No se aplicó desde el gate a propósito.** Sustituir un token en 268 lugares de siete archivos es
+una decisión de sistema de diseño, no una validación, y equivocarse en el alcance rompe los siete
+mockups a dos días del cierre. Los números y el arreglo quedan escritos en la §6; el cambio es de
+Juan.
+
+### Lo que no se cierra midiendo colores
+
+Tamaño mínimo de texto y foco visible (Juan), y **orden de tabulación (Oscar Quiroz, no Juan** — es
+interacción y navegación, no identidad; se le estaba pidiendo a quien no le tocaba).
