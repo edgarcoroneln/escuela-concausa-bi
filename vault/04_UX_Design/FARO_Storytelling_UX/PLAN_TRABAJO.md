@@ -218,8 +218,22 @@ El entregable visual contempla **7 mockups**: un login y 6 pantallas.
 ### Mockup 0 — Login
 
 **Objetivo:** homologar el acceso con la nueva identidad.
-**Contiene:** nueva identidad y tratamiento del logo; los campos y acciones del login actual; recurso
-visual alineado a la narrativa.
+
+> **Corrección del 2026-09-10.** La versión anterior de esta ficha decía *"los campos y acciones del
+> login actual"*. **Era falso y hay que decirlo, porque manda a diseñar una pantalla que no existe.**
+> Verificado en `src/frontend/auth.py:194`: el acceso es **un solo botón**,
+> `st.link_button("Iniciar sesión con Google", ...)`, que redirige al consentimiento de Google
+> (OAuth2, `GET /api/v1/auth/login`). **No hay usuario, no hay contraseña, no hay formulario.**
+
+**Contiene:** nueva identidad y tratamiento del logo; **un único botón de acceso con Google**; recurso
+visual alineado a la narrativa. Es una pantalla de una sola acción, y el diseño debe aprovecharlo: casi
+todo el espacio es narrativa e identidad.
+
+**No lleva:** campos de usuario o contraseña, ni "¿olvidaste tu contraseña?", ni registro. Tampoco un
+estado de *credenciales inválidas*: un fallo de OAuth vuelve por el callback, no por un campo mal
+escrito. Los estados reales son **en reposo**, **redirigiendo a Google** y **error de vuelta del
+callback**, con mensaje genérico y sin detalle interno.
+
 **No cambia:** autenticación, permisos ni lógica funcional.
 
 ### Pantalla 1 — Entrada

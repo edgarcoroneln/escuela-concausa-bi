@@ -260,3 +260,54 @@ iframes D3 del Equipo 1.
 
 Oscar Quiroz cerró el nombre del Explorador en su §7 (**Explorador de escuelas**, de tres opciones)
 y está usando el lenguaje del scope en sus estados vacíos. Monserrat y Juan aún no empujan.
+
+---
+
+## Addendum 4 — revisión del entregable de Oscar y corrección del Mockup 0
+
+Oscar Quiroz entregó `01_UX_Architecture.md` y cerró el nombre del Explorador. Se revisó contra el
+plan vigente. **Cumple los criterios 21 y 22**: el Equipo 5 podría implementar con ese documento sin
+redefinir decisiones de UX, que era el objetivo del entregable.
+
+Tres cosas suyas van más allá de lo pedido y conviene que sobrevivan: el **401 tratado como sesión
+expirada** conservando la ruta para retomarla después de autenticar; el manejo de
+`tiene_prediccion = false` **negándose a inventar una recomendación genérica**; y el enlace directo
+a P4 y P6 con su justificación de producto.
+
+### La observación importante es un error de este plan, no suyo
+
+La ficha del Mockup 0 decía *"los campos y acciones del login actual"*. **Es falso.** Verificado en
+`src/frontend/auth.py:194`: el acceso es **un solo botón**,
+`st.link_button("Iniciar sesión con Google", ...)`, que redirige al consentimiento de Google. No hay
+usuario, no hay contraseña, no hay formulario.
+
+Oscar heredó esa redacción y encima derivó de ella un estado de *"error: credenciales inválidas"*,
+que no puede ocurrir: un fallo de OAuth vuelve por el callback.
+
+El costo real de no corregirlo hoy es que **Juan dibuja un formulario que no existe**, y se descubre
+al integrar. Corregido en la ficha del plan y en la tabla de arquitectura del scope, con los estados
+reales —en reposo, redirigiendo a Google, error de vuelta del callback— y con lo que la pantalla
+**no** lleva, que es la mitad que evita el error.
+
+Queda además dicho que es una pantalla de **una sola acción**, para que el diseño lo aproveche en vez
+de rellenar el espacio.
+
+### Segunda observación: el walkthrough se contradice con su propio §6
+
+El paso 3 promete *"pregúntale al Asistente FARO sobre **lo que estás viendo**"*, pero el Asistente
+no tiene contexto de pantalla ni de escuela — y él mismo lo escribe en su §6. Es una promesa que el
+producto no cumple: el usuario pregunta *"¿y esta escuela?"* y el Asistente no sabe de cuál habla.
+Se corrige con el copy, no con la arquitectura.
+
+### Tercera: tres piezas del plan llegaron después de que él escribió
+
+No es atribuible a él —son commits de esta rama sin empujar—. Le faltan el acceso a *Cómo funciona*
+(§5.bis) desde P1 y el glosario, la regla del SQL oculto por defecto (§4.ter) en su §6, y saber que
+existe la leyenda de la §7.bis aunque sea de Monserrat.
+
+### Menores
+
+Su tabla de filtros dice de P2 *"Limitados"* y en la misma celda *"ninguno de los 3 obligatorios se
+expone"*: son dos cosas distintas y hay que elegir una. Y queda una pregunta de narrativa, no un
+defecto: el logo lleva de P6 a P1, pero P1 no revela el número, así que quien ya vio la revelación
+vuelve a una entrada que finge no saber. Es decisión de la líder.
