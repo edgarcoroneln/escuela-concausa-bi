@@ -117,6 +117,28 @@ def create_app() -> FastAPI:
                 )
             return await call_next(request)
 
+    # --- Cabeceras de seguridad (ADR-012) ---
+    # La API no emitía ninguna. Se registran DESPUÉS del rate limit para que acompañen también al
+    # 429, y antes que CORS.
+    #
+    # **Reparto deliberado con C5:** aquí van las que protegen a esta API, que solo devuelve JSON.
+    # `Content-Security-Policy` y `X-Frame-Options` los pone **nginx sobre el HTML** del frontend,
+    # que es donde de verdad contienen el XSS —el vector real es la respuesta del agente renderizada
+    # en el chat— y donde no se corre el riesgo de romper `/docs`, que carga Swagger UI de un CDN.
+    @app.middleware("http")
+    async def _cabeceras_seguridad_mw(request: Request, call_next):
+        respuesta = await call_next(request)
+        # Un JSON que el navegador interprete como HTML es XSS: `nosniff` lo impide.
+        respuesta.headers.setdefault("X-Content-Type-Options", "nosniff")
+        # El `code_faro` viaja en la URL del redirect de vuelta (ADR-010). Sin esto, esa URL se
+        # filtraría en el `Referer` hacia cualquier recurso externo.
+        respuesta.headers.setdefault("Referrer-Policy", "no-referrer")
+        if settings.cookies_seguras:  # HSTS solo tiene sentido sobre HTTPS; en local es http://
+            respuesta.headers.setdefault(
+                "Strict-Transport-Security", "max-age=31536000; includeSubDomains"
+            )
+        return respuesta
+
     # --- CORS (US-404) ---
     # Orígenes configurables (C5 añade los de despliegue). Se omite si la lista está vacía.
     if settings.cors_origin_list:
