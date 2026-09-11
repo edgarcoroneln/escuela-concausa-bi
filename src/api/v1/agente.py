@@ -13,10 +13,20 @@ Andrés (y C5 en despliegue) las sobreescriben con `app.dependency_overrides` / 
 
 Cualquier fallo interno del servicio se traduce a un mensaje genérico (sin filtrar detalle) — la
 respuesta pública nunca expone trazas, prompts ni SQL crudo de error.
+
+**`POST /agente/consulta/stream` (Fase 3, 2026-09-10, transversal — toca `src/api/**` de Karla,
+pedir su revisión):** misma orquestación y los mismos guardarraíles que `/consulta`; la única
+diferencia es que la redacción final se transmite por Server-Sent Events en vez de esperar el
+texto completo. Ver `procesar_consulta_stream` en `src/agente/servicio.py` para el porqué (la
+generación de SQL no produce nada útil a medias).
 """
 from __future__ import annotations
 
+import json
+from collections.abc import Iterator, Mapping
+
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 
 from src.agente.recuperacion import recuperar_contexto as _recuperar_contexto_rag
 from src.agente.servicio import (
@@ -24,7 +34,9 @@ from src.agente.servicio import (
     GenerarSQL,
     RecuperarContexto,
     RedactarRespuesta,
+    RedactarRespuestaStream,
     procesar_consulta,
+    procesar_consulta_stream,
 )
 from src.api.schemas import AgenteConsultaIn, AgenteRespuestaOut
 
@@ -96,6 +108,72 @@ def get_redactar_respuesta() -> RedactarRespuesta:
     return _no_configurado
 
 
+def get_redactar_respuesta_stream() -> RedactarRespuestaStream:
+    """LLM redactor en streaming (Fase 3, Célula 3). Sin configurar por defecto."""
+
+    def _no_configurado(pregunta: str, filas):  # noqa: ANN001, ANN202 - firma del Callable
+        raise AgenteNoConfigurado("redactar_respuesta_stream no está configurado (pendiente C3).")
+        yield  # pragma: no cover - hace de _no_configurado un generador, nunca se alcanza
+
+    return _no_configurado
+
+
+# --------------------------------------------------------------------------- #
+# `/consulta/stream` (Fase 3): framing SSE
+# --------------------------------------------------------------------------- #
+
+
+def _evento_sse(nombre: str, datos: Mapping[str, object]) -> str:
+    """Un evento `text/event-stream`: `event: <nombre>` + `data: <json de una sola línea>`."""
+    cuerpo = json.dumps(datos, ensure_ascii=False, separators=(",", ":"))
+    return f"event: {nombre}\ndata: {cuerpo}\n\n"
+
+
+def _generar_eventos_stream(
+    body: AgenteConsultaIn,
+    recuperar_contexto: RecuperarContexto,
+    generar_sql: GenerarSQL,
+    ejecutar_sql: EjecutarSQL,
+    redactar_respuesta_stream: RedactarRespuestaStream,
+) -> Iterator[str]:
+    """Arma los eventos SSE de una consulta: `meta` primero, luego `fragmento`* y `fin` al final.
+
+    Cualquier fallo (guardarraíles, RAG, SQL, o el LLM ya a mitad de transmitir) se degrada al
+    mismo mensaje genérico que usa `/consulta` — nunca se expone una traza ni SQL crudo de error
+    dentro del stream.
+    """
+    try:
+        resultado = procesar_consulta_stream(
+            body.pregunta,
+            recuperar_contexto=recuperar_contexto,
+            generar_sql=generar_sql,
+            ejecutar_sql=ejecutar_sql,
+            redactar_respuesta_stream=redactar_respuesta_stream,
+            contexto_conversacional=_construir_contexto_conversacional(body),
+        )
+    except Exception:  # noqa: BLE001 - degradación segura, igual que /consulta
+        yield _evento_sse("meta", {"sql_generado": None, "fuera_de_alcance": False})
+        yield _evento_sse("fragmento", {"texto": _MSG_NO_DISPONIBLE})
+        yield _evento_sse("fin", {})
+        return
+
+    yield _evento_sse(
+        "meta",
+        {"sql_generado": resultado.sql_generado, "fuera_de_alcance": resultado.fuera_de_alcance},
+    )
+    if resultado.fragmentos is None:
+        # Rechazada o degradada antes de llegar a redactar: un solo fragmento con el texto fijo.
+        yield _evento_sse("fragmento", {"texto": resultado.respuesta_fija or ""})
+        yield _evento_sse("fin", {})
+        return
+    try:
+        for fragmento in resultado.fragmentos:
+            yield _evento_sse("fragmento", {"texto": fragmento})
+    except Exception:  # noqa: BLE001 - el LLM puede fallar a mitad de transmitir
+        yield _evento_sse("fragmento", {"texto": _MSG_NO_DISPONIBLE})
+    yield _evento_sse("fin", {})
+
+
 @router.post("/consulta", response_model=AgenteRespuestaOut)
 def consulta(
     body: AgenteConsultaIn,
@@ -140,4 +218,34 @@ def consulta(
         respuesta=resultado.respuesta,
         sql_generado=resultado.sql_generado,
         fuera_de_alcance=resultado.fuera_de_alcance,
+    )
+
+
+@router.post("/consulta/stream")
+def consulta_stream(
+    body: AgenteConsultaIn,
+    recuperar_contexto: RecuperarContexto = Depends(get_recuperar_contexto),
+    generar_sql: GenerarSQL = Depends(get_generar_sql),
+    ejecutar_sql: EjecutarSQL = Depends(get_ejecutar_sql),
+    redactar_respuesta_stream: RedactarRespuestaStream = Depends(get_redactar_respuesta_stream),
+) -> StreamingResponse:
+    """Igual que `/consulta`, pero transmite la redacción final por Server-Sent Events (Fase 3).
+
+    Mismos guardarraíles y el mismo contrato de entrada (`contexto`, `historial`) que `/consulta`;
+    lo único que cambia es cómo viaja la salida. Tres tipos de evento, en este orden:
+
+    - `meta` (una vez, al inicio): `{"sql_generado": ..., "fuera_de_alcance": ...}`, igual que los
+      campos homónimos de `AgenteRespuestaOut`, para que el cliente los tenga sin esperar el fin.
+    - `fragmento` (una o más veces): `{"texto": "..."}`, cada pedazo de la respuesta según llega.
+    - `fin` (una vez, al final): `{}`, señal de que ya no hay más fragmentos.
+
+    Igual que `/consulta`, nunca se expone una traza, un prompt ni un SQL crudo de error dentro
+    del stream — cualquier fallo se degrada al mismo mensaje genérico.
+    """
+    return StreamingResponse(
+        _generar_eventos_stream(
+            body, recuperar_contexto, generar_sql, ejecutar_sql, redactar_respuesta_stream
+        ),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )

@@ -146,11 +146,22 @@ def create_app() -> FastAPI:
     # `preparar_sql_seguro` (solo-lectura) antes de tocar la BD: el LLM nunca es la única capa.
     # Las firmas del adaptador (prompt, pregunta) y (pregunta, filas) ya casan con el seam.
     if settings.anthropic_api_key:
-        from src.agente.llm import generar_sql_con_llm, redactar_respuesta_con_llm
-        from src.api.v1.agente import get_generar_sql, get_redactar_respuesta
+        from src.agente.llm import (
+            generar_sql_con_llm,
+            redactar_respuesta_con_llm,
+            redactar_respuesta_stream_con_llm,
+        )
+        from src.api.v1.agente import (
+            get_generar_sql,
+            get_redactar_respuesta,
+            get_redactar_respuesta_stream,
+        )
 
         app.dependency_overrides[get_generar_sql] = lambda: generar_sql_con_llm
         app.dependency_overrides[get_redactar_respuesta] = lambda: redactar_respuesta_con_llm
+        app.dependency_overrides[get_redactar_respuesta_stream] = (
+            lambda: redactar_respuesta_stream_con_llm
+        )
 
     @app.exception_handler(StarletteHTTPException)
     async def _http_exc(request: Request, exc: StarletteHTTPException) -> JSONResponse:

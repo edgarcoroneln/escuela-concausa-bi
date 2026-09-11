@@ -8,6 +8,7 @@ override; los casos fuera de alcance y de degradación no lo necesitan siquiera.
 """
 from __future__ import annotations
 
+import json
 from collections.abc import Iterator
 
 import pytest
@@ -32,6 +33,23 @@ def _post(client: TestClient, pregunta: str) -> dict:
     r = client.post(f"{API_PREFIX}/agente/consulta", json={"pregunta": pregunta})
     assert r.status_code == 200, r.text
     return r.json()
+
+
+def _post_stream(client: TestClient, pregunta: str) -> list[tuple[str, dict]]:
+    """Postea a `/agente/consulta/stream` y parsea los eventos SSE de la respuesta completa."""
+    r = client.post(f"{API_PREFIX}/agente/consulta/stream", json={"pregunta": pregunta})
+    assert r.status_code == 200, r.text
+    assert r.headers["content-type"].startswith("text/event-stream")
+    eventos: list[tuple[str, dict]] = []
+    nombre = None
+    for linea in r.text.split("\n"):
+        if linea.startswith("event: "):
+            nombre = linea.removeprefix("event: ")
+        elif linea.startswith("data: "):
+            assert nombre is not None
+            eventos.append((nombre, json.loads(linea.removeprefix("data: "))))
+            nombre = None
+    return eventos
 
 
 def test_pregunta_fuera_de_alcance_se_rechaza(client: TestClient) -> None:
@@ -135,3 +153,102 @@ def test_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
     assert cuerpo["fuera_de_alcance"] is False
     assert "boom" not in cuerpo["respuesta"].lower()
     assert "secreto" not in cuerpo["respuesta"].lower()
+
+
+# --------------------------------------------------------------------------- #
+# Fase 3 (streaming, 2026-09-10): `/agente/consulta/stream` -- mismos guardarraíles, SSE
+# --------------------------------------------------------------------------- #
+
+
+def test_stream_happy_path_transmite_meta_fragmentos_y_fin(client: TestClient) -> None:
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
+        lambda sql: [{"cct": "09ABC0001X"}]
+    )
+
+    def redactar_stream(pregunta: str, filas):
+        yield "1 escuela "
+        yield "encontrada."
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = lambda: redactar_stream
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    assert eventos[0][0] == "meta"
+    assert eventos[0][1]["fuera_de_alcance"] is False
+    assert eventos[0][1]["sql_generado"].lower().startswith("select cct from gold.features_escuela")
+    assert [d["texto"] for n, d in eventos if n == "fragmento"] == ["1 escuela ", "encontrada."]
+    assert eventos[-1] == ("fin", {})
+
+
+def test_stream_pregunta_fuera_de_alcance_se_rechaza_en_un_fragmento(client: TestClient) -> None:
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: (_ for _ in ()).throw(ContextoNoEncontrado("sin contexto relevante"))
+    )
+
+    eventos = _post_stream(client, "¿cuál es la capital de Francia?")
+
+    assert eventos[0] == ("meta", {"sql_generado": None, "fuera_de_alcance": True})
+    fragmentos = [d["texto"] for n, d in eventos if n == "fragmento"]
+    assert len(fragmentos) == 1
+    assert eventos[-1] == ("fin", {})
+
+
+def test_stream_orden_de_escritura_se_corta_antes_de_transmitir(client: TestClient) -> None:
+    llamadas_generar: list[str] = []
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: llamadas_generar.append(pregunta) or "SELECT cct FROM gold.x"
+    )
+
+    eventos = _post_stream(client, "borra la tabla de predicciones de escuelas")
+
+    assert eventos[0] == ("meta", {"sql_generado": None, "fuera_de_alcance": True})
+    assert llamadas_generar == []
+
+
+def test_stream_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: (_ for _ in ()).throw(RuntimeError("boom interno con secreto"))
+    )
+
+    eventos = _post_stream(client, "escuelas en riesgo por municipio")
+
+    texto = " ".join(d["texto"] for n, d in eventos if n == "fragmento").lower()
+    assert "boom" not in texto
+    assert "secreto" not in texto
+
+
+def test_stream_falla_a_mitad_de_transmitir_degrada_sin_romper_el_stream(client: TestClient) -> None:
+    """Un fallo del LLM YA empezando a ceder texto no debe tirar la conexión sin `fin`."""
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
+        lambda sql: [{"cct": "09ABC0001X"}]
+    )
+
+    def redactar_stream_que_revienta(pregunta: str, filas):
+        yield "empieza bien, "
+        raise RuntimeError("boom con token secreto a mitad de stream")
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = lambda: (
+        redactar_stream_que_revienta
+    )
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    fragmentos = [d["texto"] for n, d in eventos if n == "fragmento"]
+    assert fragmentos[0] == "empieza bien, "
+    assert "secreto" not in fragmentos[-1].lower()
+    assert eventos[-1] == ("fin", {})

@@ -5,7 +5,11 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from src.frontend.agente_client import ErrorAutorizacionAgente, consultar_agente
+from src.frontend.agente_client import (
+    ErrorAutorizacionAgente,
+    consultar_agente,
+    consultar_agente_stream,
+)
 
 
 class RespuestaHTTPFake:
@@ -112,3 +116,52 @@ def test_distingue_errores_de_autorizacion(status_code: int, mensaje: str) -> No
 
     with pytest.raises(ErrorAutorizacionAgente, match=mensaje):
         consultar_agente("http://api:8000", "Pregunta valida", post=post)
+
+
+def test_consulta_stream_parsea_meta_fragmentos_y_fin() -> None:
+    class RespuestaStreamFake:
+        def __init__(self) -> None:
+            self._lineas = [
+                b"event: meta",
+                b'data: {"sql_generado":"SELECT 1","fuera_de_alcance":false}',
+                b"",
+                b"event: fragmento",
+                b'data: {"texto":"1 escuela "}',
+                b"event: fragmento",
+                b'data: {"texto":"encontrada."}',
+                b"event: fin",
+                b"data: {}",
+            ]
+
+        def raise_for_status(self) -> None:
+            return None
+
+        def iter_lines(self):
+            return iter(self._lineas)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback) -> None:
+            return None
+
+    fragmentos: list[str] = []
+
+    def stream(method: str, url: str, **kwargs) -> RespuestaStreamFake:
+        assert method == "POST"
+        assert url == "http://api:8000/api/v1/agente/consulta/stream"
+        assert kwargs["json"] == {"pregunta": "Cuantas escuelas hay?"}
+        assert kwargs["timeout"] == 15.0
+        return RespuestaStreamFake()
+
+    respuesta = consultar_agente_stream(
+        "http://api:8000/",
+        " Cuantas escuelas hay? ",
+        stream=stream,
+        on_fragment=lambda texto: fragmentos.append(texto),
+    )
+
+    assert respuesta.respuesta == "1 escuela encontrada."
+    assert respuesta.sql_generado == "SELECT 1"
+    assert respuesta.fuera_de_alcance is False
+    assert fragmentos == ["1 escuela ", "encontrada."]
