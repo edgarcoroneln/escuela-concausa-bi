@@ -20,11 +20,8 @@ Este runbook documenta cómo monitorear, auditar e inspeccionar los eventos y er
 
 1. **Captura en contenedor:** La API corre bajo Uvicorn utilizando `docker/log_config.json`.
 2. **Formateador estructurado:** La librería `python-json-logger` procesa las llamadas estándar de logging de Python (`logger.info`, `logger.warning`, `logger.error`).
-3. **Mapeo para Cloud Logging:**
-   - `rename_fields: {"levelname": "severity", "asctime": "timestamp"}` transforma los niveles a `severity` (`INFO`, `WARNING`, `ERROR`, `CRITICAL`).
-   - `timestamp` se formatea en ISO 8601 con zona horaria (`%Y-%m-%dT%H:%M:%S%z`).
-   - Los campos pasados vía `extra={...}` en el código Python se inyectan automáticamente en la raíz del payload JSON (`jsonPayload`).
-4. **Ingesta en Cloud Run:** Cloud Run ingiere el `stdout` del contenedor y parsea cada línea JSON como una entrada de log estructurada de primer nivel.
+3. **Campos emitidos por `log_config.json`:** El formateador `gcp_json` produce un JSON con los campos `name`, `message`, `severity` (renombrado de `levelname`) y `timestamp` (renombrado de `asctime`, formato `%Y-%m-%dT%H:%M:%S%z`). Campos adicionales pasados vía `extra={...}` se inyectan en la raíz del JSON.
+4. **Ingesta en Cloud Run:** Cloud Run ingiere el `stdout` del contenedor. Al detectar líneas JSON válidas, las parsea como `jsonPayload` (log estructurado de primer nivel). **No** aparecen como `textPayload`.
 
 ---
 
@@ -52,19 +49,18 @@ gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.serv
 
 ### A. Filtros Activos Hoy (Disponibles en Producción)
 
-Los siguientes filtros operan sobre los logs emitidos actualmente por Uvicorn y FastAPI mediante `docker/log_config.json`:
+Los siguientes filtros operan sobre los campos que `docker/log_config.json` emite efectivamente (`name`, `message`, `severity`, `timestamp`):
 
 | Caso Operativo | Consulta en Logs Explorer | Severidad | Propósito / Acción |
 |---|---|---|---|
-| **Errores no controlados / LLM / ChromaDB** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`severity>=ERROR` | `ERROR` / `CRITICAL` | Detecta caídas de conexión a ChromaDB, fallos de Anthropic API o excepciones 500 no capturadas. |
-| **Peticiones HTTP fallidas (4xx / 5xx)** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`jsonPayload.status_code>=400` | `WARNING` / `ERROR` | Acceso a endpoints del agente con error de cliente o servidor en Uvicorn. |
-| **Búsqueda por texto libre en logs** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`textPayload =~ "(guardrail|retry|fallback|chroma)"` | Todas | Rastreo de eventos clave en el cuerpo del mensaje mientras no haya campos estructurados dedicados. |
+| **Errores no controlados / LLM / ChromaDB** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`severity>=ERROR` | `ERROR` / `CRITICAL` | Detecta caídas de conexión a ChromaDB, fallos de Anthropic API o excepciones 500 no capturadas. **Único filtro plenamente respaldado por el log_config.json actual.** |
+| **Búsqueda por texto en el mensaje** | `resource.type="cloud_run_revision"`<br>`resource.labels.service_name="faro-api"`<br>`jsonPayload.message =~ "(guardrail|retry|fallback|chroma)"` | Todas | Rastreo de palabras clave en el campo `message` del JSON estructurado mientras no existan campos dedicados de `event_type`. |
 
 Comando rápido en terminal:
 ```bash
 gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="faro-api" AND severity>=ERROR' \
   --limit=20 \
-  --format="table(timestamp,severity,textPayload,jsonPayload.message)" \
+  --format="table(timestamp,severity,jsonPayload.message)" \
   --project=faro-escuela-sensor
 ```
 
@@ -82,11 +78,11 @@ gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.serv
 
 ## 4. Estructura y Significado de Campos
 
-### Campos activos hoy en producción:
-* **`severity`:** Nivel del evento transformado por `docker/log_config.json` a partir de `levelname` (`INFO`, `WARNING`, `ERROR`, `CRITICAL`).
-* **`timestamp`:** Marca temporal ISO 8601 con zona horaria (`%Y-%m-%dT%H:%M:%S%z`).
-* **`jsonPayload.message` / `textPayload`:** Descripción textual del evento o línea de log de Uvicorn (sin secretos).
-* **`jsonPayload.status_code`:** Código de respuesta HTTP registrado en logs de acceso de Uvicorn.
+### Campos activos hoy en producción (`docker/log_config.json`):
+* **`severity`:** Nivel del evento, transformado por `rename_fields` a partir de `levelname` (`INFO`, `WARNING`, `ERROR`, `CRITICAL`).
+* **`timestamp`:** Marca temporal ISO 8601 con zona horaria (`%Y-%m-%dT%H:%M:%S%z`), transformada de `asctime`.
+* **`jsonPayload.message`:** Descripción textual del evento (sin exponer secretos, tokens ni PII).
+* **`jsonPayload.name`:** Nombre del logger Python que emitió la entrada (ej. `uvicorn.access`, `uvicorn.error`).
 
 ### Campos del contrato objetivo (al instrumentar con `extra={...}` en código Python):
 * **`jsonPayload.event_type`:** Tipo canónico del evento (`guardrail_blocked`, `sql_retry`, `query_success`, `rag_error`).
