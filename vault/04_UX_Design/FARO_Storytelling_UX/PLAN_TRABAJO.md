@@ -180,6 +180,34 @@ cambia lo que el usuario ve, así que entra al diseño:
    *"¿cómo se calcula el índice de riesgo?"*. Eso se solapa con el glosario de la §6, y conviene que
    se refuercen: cada término del glosario puede ofrecer preguntárselo al Asistente. Mete el
    asistente dentro de la narrativa en vez de dejarlo como un botón aparte.
+4. **El SQL generado no se muestra por defecto.** Ver §4.ter.
+
+### 4.ter El SQL no es la respuesta
+
+**Hoy sí se muestra.** `src/frontend/pages/3_Chat.py:85-87` pinta `respuesta.sql_generado` con
+`st.code(..., language="sql")` en cuanto viene, así que la consulta aparece en pantalla dentro de la
+conversación.
+
+El profesor lo señaló el 9-sep con estas palabras: *«la explicación no debe reducirse a mostrar
+SQL»*. La brecha está asignada al Equipo 2 (`US-611`), pero **qué se pinta y qué no es una decisión
+de presentación**, y eso sí es de este frente: la §4 dice que el Equipo 2 es dueño de la lógica y
+este frente del comportamiento visual.
+
+**Decisión de UX:**
+
+- El campo `sql_generado` **se conserva en el contrato**. No se pide quitarlo: sirve para auditar,
+  para QA y para que el evaluador compruebe que la respuesta sale de la base y no de un texto
+  inventado. En una materia de inteligencia de negocios, poder enseñar la consulta es un activo.
+- **No se muestra por defecto.** La respuesta que ve el usuario es la redacción en lenguaje natural,
+  y nada más.
+- Queda **detrás de una acción discreta y opcional** —del tipo *ver consulta*—, cerrada de inicio y
+  fuera del hilo de lectura.
+
+Así se atiende la observación del profesor sin perder la auditabilidad, que es lo que se perdería si
+el campo se eliminara del contrato.
+
+**Implementa el Equipo 2 o el Equipo 5**, según dónde viva el componente. Este frente sólo lo
+especifica.
 
 ---
 
@@ -190,8 +218,22 @@ El entregable visual contempla **7 mockups**: un login y 6 pantallas.
 ### Mockup 0 — Login
 
 **Objetivo:** homologar el acceso con la nueva identidad.
-**Contiene:** nueva identidad y tratamiento del logo; los campos y acciones del login actual; recurso
-visual alineado a la narrativa.
+
+> **Corrección del 2026-09-10.** La versión anterior de esta ficha decía *"los campos y acciones del
+> login actual"*. **Era falso y hay que decirlo, porque manda a diseñar una pantalla que no existe.**
+> Verificado en `src/frontend/auth.py:194`: el acceso es **un solo botón**,
+> `st.link_button("Iniciar sesión con Google", ...)`, que redirige al consentimiento de Google
+> (OAuth2, `GET /api/v1/auth/login`). **No hay usuario, no hay contraseña, no hay formulario.**
+
+**Contiene:** nueva identidad y tratamiento del logo; **un único botón de acceso con Google**; recurso
+visual alineado a la narrativa. Es una pantalla de una sola acción, y el diseño debe aprovecharlo: casi
+todo el espacio es narrativa e identidad.
+
+**No lleva:** campos de usuario o contraseña, ni "¿olvidaste tu contraseña?", ni registro. Tampoco un
+estado de *credenciales inválidas*: un fallo de OAuth vuelve por el callback, no por un campo mal
+escrito. Los estados reales son **en reposo**, **redirigiendo a Google** y **error de vuelta del
+callback**, con mensaje genérico y sin detalle interno.
+
 **No cambia:** autenticación, permisos ni lógica funcional.
 
 ### Pantalla 1 — Entrada
@@ -256,6 +298,70 @@ acceso al glosario.
 
 ---
 
+## 5.bis "Cómo funciona": la superficie que entrega el Equipo 1
+
+El profesor señaló que **faltó explicar cómo funciona el backend**. Esa brecha es de `US-601`, y el
+Equipo 1 ya la construyó: una sección pública llamada **Cómo funciona** con siete apartados.
+Documento de referencia: `vault/03_Architecture/Bosquejo_Componentes_US601.md` — dueño formal Héctor
+Rafael Morales Marbán, redactada e implementada por Manuel Alejandro Serranía Reinada. Se cita sin
+enlace **a propósito**: todavía no está en `main`, y un wikilink a un documento inexistente reprueba
+`vault_lint`. Se convierte en enlace cuando aterrice.
+
+Este frente **no la diseña de cero ni la reescribe**: le da identidad y la coloca dentro de la
+experiencia.
+
+### Dónde vive
+
+**No es una octava pantalla de la historia.** El recorrido narrativo sigue siendo el de la §5, y los
+entregables siguen siendo 7 mockups. *Cómo funciona* es una **superficie hermana**: se llega a ella
+desde la Pantalla 1 y desde el glosario, comparte identidad visual y no interrumpe la investigación.
+
+El motivo es de narrativa, no de esfuerzo: la historia va de qué le pasa a las escuelas, no de cómo
+está hecho el sistema. Quien quiera auditar el sistema entra ahí; quien quiera seguir la
+investigación no tropieza con un diagrama E-R a mitad del camino.
+
+### Qué contiene
+
+Siete apartados que el Equipo 1 ya fijó: `arquitectura` · `modelo-datos` · `capas` · `cubos` ·
+`stack` · `decisiones` · `modelos-ml`.
+
+### Cómo se alimenta
+
+Dos rutas, con un contrato pensado para que agregar apartados no rompa nada:
+
+- `GET /api/v1/about/secciones` — el manifest: `[{id, titulo, orden}]`.
+- `GET /api/v1/about/secciones/{id_seccion}` — el contenido, siempre con el mismo sobre:
+  `{id, titulo, fuente, advertencias, bloques}`.
+
+`bloques` es una lista de **siete tipos**: `markdown`, `mermaid`, `tabla`, `metricas`, `mapa`,
+`barras` y `diagrama_flujo`. Los tres últimos son **D3**, que es justo lo que el profesor pidió ver.
+Un tipo que el cliente no reconozca se pinta con una advertencia en su propio espacio y **nunca tumba
+la página**: es el mismo espíritu de `SIN_DATO` aplicado a la estructura.
+
+El único dato vivo son los conteos de filas por capa. Todo lo demás es contenido fijo, decisión
+consciente del Equipo 1 y anotada por ellos como *follow-up*.
+
+### Tres cosas que este frente sí tiene que resolver
+
+1. **La identidad.** Hoy se ve como una página de Streamlit. Con la identidad nueva tiene que dejar
+   de parecerlo, aunque no entre al recorrido narrativo. Es trabajo de Juan, con los componentes que
+   ya definirá para el resto: no necesita mockup propio, y si sobra tiempo se agrega como octavo.
+2. **El contraste de los bloques D3.** Cada bloque D3 vive en **su propio iframe**, y el Equipo 1 ya
+   se topó con el defecto: heredaban `prefers-color-scheme: dark` y quedaban letras negras sobre
+   fondo negro. Lo resolvieron forzando `color-scheme: light` y fondo blanco explícito. **Si la
+   identidad nueva es oscura, esos bloques van a pelear con ella.** Juan tiene que decidirlo a
+   propósito, no descubrirlo el sábado.
+3. **El acceso.** Oscar define desde dónde se entra y cómo se vuelve, sin romper el hilo de la
+   investigación.
+
+### Dependencia declarada
+
+Las dos rutas **todavía no están en `main`**: viven en `dev/manuel-serrania` junto con la página y
+sus 54 pruebas. Si no aterrizan, esta superficie no se puede alimentar y se cae del alcance —
+como cualquier otra pieza, se declara el recorte y no se dibuja como si existiera.
+
+---
+
 ## 6. Glosario
 
 Accesible para usuarios no técnicos. Como mínimo explica en lenguaje sencillo: índice de riesgo ·
@@ -277,11 +383,74 @@ advertencia de §3.quater: las dos difieren justo en las escuelas de las que tra
 |---|---|---|
 | **Marina García del Buey** — líder | Definir la historia oficial; objetivo, alcance y guardarraíles; criterios de aceptación; coherencia transversal; **gate final de UX/UI** | `00_Storytelling_Scope.md` |
 | **Oscar Antonio Quiroz Lázaro** — UX / navegación | Flujo de las 7 pantallas; objetivo, contenido, botones y conexiones; walkthrough y navegación; comportamiento UX del chat; 2–3 nombres para la exploración posterior. Su documento es guía directa para el Equipo 5 | `01_UX_Architecture.md` |
-| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3 | `02_Data_Visualization_Spec.md` |
-| **Juan Carlos Macías Mayen** — UI / identidad visual | Identidad visual desde cero: logo, paleta, tipografías, componentes, botones, cards, iconografía, imágenes, efectos, apariencia del chat, mockups y PDF final. Único editor del PDF | `03_Visual_Identity.md` |
+| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3; **la leyenda de cada gráfica** (§7.bis), que se escribe **dentro de** `02_Data_Visualization_Spec.md` y no en un documento aparte | `02_Data_Visualization_Spec.md` |
+| **Juan Carlos Macías Mayen** — UI / identidad visual | Identidad visual desde cero: logo, paleta, tipografías, componentes, botones, cards, iconografía, imágenes, efectos, apariencia del Asistente FARO y los 7 mockups. Mantiene `03_Visual_Identity.md` como **guía de identidad de referencia** y su anexo técnico de tokens (§7.ter) | `03_Visual_Identity.md` |
 
 Monserrat entrega a Juan los ejemplos de gráficas y el contenido analítico aprobado.
 Ningún integrante modifica el entregable de otro sin coordinación previa.
+
+---
+
+### 7.bis Leyenda de las gráficas — sugerencia del checkpoint
+
+Salió en el checkpoint y entra al alcance de Monserrat: **cada gráfica debe explicar qué se está
+viendo.** No estaba en la versión anterior del plan.
+
+No es la leyenda mínima de colores que trae cualquier librería. Lo que se pide es que el usuario
+—que no es técnico y que llega sin contexto— pueda leer una gráfica sin que nadie se la explique en
+voz alta. Como mínimo, por gráfica:
+
+- qué representa cada eje, serie o color, con nombres en lenguaje de negocio y no de base de datos;
+- en qué unidad está el valor, y si es proporción, conteo o índice;
+- cómo se ve un `SIN_DATO` ahí dentro y por qué no es un cero;
+- de qué ciclo y qué recorte de escuelas está hablando.
+
+Monserrat decide la forma —leyenda fija, nota al pie, tooltip o una mezcla— y Juan le da tratamiento
+visual. Debe resolverse en las gráficas de la historia y también en las del Explorador de escuelas.
+
+**Dónde se escribe:** dentro de `02_Data_Visualization_Spec.md`, como una sección propia. No es un
+documento aparte — la regla 1 del vault prohíbe abrir un archivo nuevo para algo que pertenece a un
+canónico existente. Es parte de la entrega del viernes de Monserrat (§8).
+
+**Alcance: por gráfica, no por pantalla.** Hay gráficas en P2, P3, P4, P5 y P6 —la matriz de casos,
+la pista del índice, la comparativa de los 6 drivers, la gráfica de unidades del Top 3 y las
+reutilizadas en el Explorador—, así que la leyenda aplica en las cinco. Acotarla a dos pantallas deja
+tres sin cubrir.
+
+Es directamente una respuesta al hallazgo del profesor sobre visualizaciones que no comunicaron
+valor: una gráfica que hay que explicar en vivo no comunica sola.
+
+---
+
+### 7.ter La guía de identidad y el retiro del PDF
+
+**Decisión del 2026-09-11, a propuesta de Juan Macías.** El entregable `FARO_UX_UI_Guide.pdf` **se
+retira** del alcance y del criterio de cierre.
+
+**Por qué.** Un PDF duplica documentos que ya están versionados y se desactualiza en cuanto se mueve
+un token, con la sincronización a mano como única defensa. El Equipo 5 puede copiar valores exactos
+del `.md` y tendría que transcribirlos de un PDF. Y hay dos razones que pesan más que el
+mantenimiento: **no responde a ninguno de los hallazgos del profesor** —que fueron sobre experiencia,
+gráficas, storytelling, componentes, chat y ML, ninguno sobre documentación— y `DEC-024` ya fijó que
+las únicas compuertas son rama personal, PR, CI, una aprobación humana y QA sobre la candidata. Un
+PDF no es ninguna de ellas.
+
+**Qué ocupa su lugar.** Nada nuevo: el documento ya existe.
+
+| Artefacto | Papel | Requisito |
+|---|---|---|
+| `03_Visual_Identity.md` | **Guía de identidad de referencia.** Contiene el sistema de color de datos, que es la parte que la historia necesita | Ya tiene `id`, `owner`, `status` y trazas |
+| `mockups/Design_Tokens_Stitch.md` | **Anexo técnico** de la anterior: paleta de interfaz, tipografía, radios, espaciado, elevación | **Le falta frontmatter propio** con `id`, `owner` y `status`, y quedar listado en `mockups/_index.md` |
+| `mockups/_index.md` | Índice de la carpeta donde viven los 7 mockups | **No existe.** Lo exige la regla 4 |
+
+**Lo que no se aceptó de la propuesta original.** Se planteó que el anexo de tokens sustituyera al PDF
+como entregable final. No puede: su frontmatter es el YAML crudo de Stitch, sin `id`, `owner` ni
+`status`, así que incumple la regla 2 y `Definition_of_Filed`; su propio encabezado lo declara *"no es
+un artefacto canónico del vault"*; y por esa misma nota **el sistema de color de datos no vive ahí**,
+sino en `03_Visual_Identity.md` §3. Un anexo no puede ser la guía.
+
+**Trazabilidad.** Es un cambio a un criterio de cierre de `US-621`, cuyo *go/no-go* pertenece al PO.
+Se registra aquí en vez de desaparecer en silencio, y se le comunica.
 
 ---
 
@@ -315,21 +484,42 @@ cuándo la especificación deja de moverse, no cuándo empieza la implementació
 
 - Marina: `00_Storytelling_Scope.md` final.
 - Oscar: `01_UX_Architecture.md` final.
-- Monserrat: `02_Data_Visualization_Spec.md` final + ejemplos finales de visualizaciones.
-- Juan: `03_Visual_Identity.md` final, 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf`.
+- Monserrat: `02_Data_Visualization_Spec.md` final —**con la leyenda de la §7.bis escrita**— más los
+  ejemplos finales de visualizaciones.
+- Juan: `03_Visual_Identity.md` final, los 7 mockups de escritorio, el anexo de tokens con
+  frontmatter propio y `mockups/_index.md` (§7.ter).
 
 ```text
-mockups/
-├── 00_Login.png
-├── 01_Entrada.png
-├── 02_Panorama_Escuelas_Riesgo.png
-├── 03_Seleccion_Caso.png
-├── 04_Expediente_Escuela.png
-├── 05_Conclusion_Top3.png
-└── 06_Explorador.png
+FARO_Storytelling_UX/
+├── ejemplos_graficas/          Monserrat — ejemplos de visualización que integra Juan
+└── mockups/
+    ├── 00_Login.png
+    ├── 01_Entrada.png
+    ├── 02_Panorama_Escuelas_Riesgo.png
+    ├── 03_Seleccion_Caso.png
+    ├── 04_Expediente_Escuela.png
+    ├── 05_Conclusion_Top3.png
+    └── 06_Explorador.png
 ```
 
+`ejemplos_graficas/` se da de alta a petición de Monserrat: sus ejemplos no tenían ubicación en la
+estructura anterior. Queda registrada en
+[[vault/04_UX_Design/FARO_Storytelling_UX/_index]] (regla 4 del vault).
+
 Escritorio es obligatorio. Móvil queda como evolución futura.
+
+### Jueves 10 por la noche — entrega intermedia de Monserrat a Juan
+
+**Corregido el 2026-09-10 a petición de Monserrat Miranda.** La versión anterior de este plan ponía
+sus ejemplos de visualización y los 7 mockups de Juan en el **mismo corte** del viernes 15:00, y a la
+vez decía que ella le entrega a él para que los integre a la identidad. Las dos cosas no caben: si
+los recibe a las 15:00 no le alcanza.
+
+Monserrat entrega sus ejemplos **hoy después del gate**, y **Juan define el formato**, porque es quien
+integra. Esa entrega es un intercambio interno del frente, no un hito del proyecto: no se espera a
+que esté completa para seguir.
+
+---
 
 ### Sábado 12 a lunes 14 — acompañamiento
 
@@ -372,6 +562,12 @@ Definidos inicialmente por este frente. El Equipo 6 (QA, `US-651`) puede ampliar
 24. La identidad propuesta no depende de la identidad visual anterior de FARO.
 25. El glosario distingue el **nivel de atención** de la columna `prioridad` de Gold.
 26. Ninguna superficie usa el nombre "Watson".
+27. La sección *Cómo funciona* comparte la identidad visual del producto y se alcanza desde la
+    entrada y desde el glosario, sin interrumpir el recorrido narrativo.
+28. Toda gráfica explica qué se está viendo conforme a la §7.bis: ejes o series, unidad, tratamiento
+    de `SIN_DATO`, ciclo y recorte.
+29. La conversación del Asistente no muestra el SQL generado por defecto; si se ofrece, es tras una
+    acción opcional y cerrada de inicio (§4.ter).
 
 ---
 
@@ -385,10 +581,55 @@ guardarraíl de §3: lo que no está aquí, no se dibuja.
 | Las escuelas en riesgo, ordenadas | `GET /api/v1/escuelas` con `order_by=indice_riesgo` y `order=desc` | `cct`, `nombre`, `nivel`, `matricula_total`, `indice_riesgo`, `driver_dominante`, `tiene_prediccion` |
 | Los 6 drivers de una escuela | `GET /api/v1/escuelas/{cct}` | `d1`…`d6`, `indice_completitud_drivers`, `es_estimado_por_grupo`, `sostenimiento`, `latitud`, `longitud` |
 | Recomendación y driver dominante | `GET /api/v1/predicciones/{cct}` | `indice_riesgo`, `driver_dominante`, `recomendacion`, `cluster` |
-| Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante` |
+| Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante`. **El endpoint responde, pero las contribuciones vienen vacías** — ver §10.quater |
 | Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
-| Filtros de la exploración | parámetros de `/escuelas` y `/kpis` | `ciclo`, `cve_ent`, `cve_mun`, `nivel` |
-| Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2 |
+| Filtros de la exploración | `/escuelas`: `ciclo`, `cve_ent`, `cve_mun`, `nivel` · **`/kpis`: sólo `ciclo`, `cve_ent`, `cve_mun`** | **`/kpis` no acepta `nivel`.** El filtro de nivel actúa sobre la lista de escuelas, nunca sobre los indicadores. Verificado por Monserrat Miranda |
+| Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2. **Nombre técnico**, no de producto: lo que ve el usuario es *Asistente FARO* |
+| Sección *Cómo funciona* (§5.bis) | `GET /api/v1/about/secciones` · `GET /api/v1/about/secciones/{id_seccion}` | manifest `[{id, titulo, orden}]` y sobre `{id, titulo, fuente, advertencias, bloques}`. **Pendientes de merge**: viven en `dev/manuel-serrania` |
+
+### 10.quater La explicación SHAP existe como endpoint y no como dato
+
+**Corrección del 2026-09-10, hallazgo de Monserrat Miranda.** La versión anterior de la tabla de
+arriba listaba `/predicciones/{cct}/explicacion` → `contribuciones` como evidencia disponible del
+driver dominante. **Prometía algo que hoy no se puede dibujar.**
+
+`BUG-053` está `fixed` en el sentido correcto —el código lee `gold.recomendaciones.shap_d1…shap_d6`
+por `RepositorioModelos`— pero **esas columnas no están pobladas en producción**: existen tras el
+`ALTER` de C5 y siguen en `NULL`. Monserrat lo midió el 10-sep: **0 de 42**. El endpoint responde
+200 y las contribuciones vienen vacías.
+
+**Consecuencia para el diseño:** el expediente **no** puede mostrar la contribución de cada driver.
+Muestra el driver dominante, que sí viene en `PrediccionOut` y en `EscuelaOut`, y declara la
+explicación como `SIN_DATO` explícito. Si el Equipo 4 puebla las columnas, la pieza entra sin cambio
+de contrato.
+
+Queda dicho aquí y no sólo en el documento de visualizaciones, porque era esta §10 la que lo
+prometía.
+
+---
+
+### 10.bis Dos cosas que el contrato no hace, y cómo se resuelven
+
+Reportadas por Monserrat Miranda el 2026-09-10 al verificar el contrato. Van escritas para que el
+Equipo 5 no las descubra al implementar:
+
+1. **`/api/v1/escuelas` no tiene filtro por `indice_riesgo`.** El corte en la línea de alerta se hace
+   **del lado del cliente**. No obliga a recorrer las 45 276 escuelas: el endpoint sí acepta
+   `order_by=indice_riesgo` con `order=desc`, así que **una sola llamada con `size=100`** trae las de
+   mayor riesgo y se corta en cuanto el valor baja de `0.50`.
+2. **No existe endpoint que devuelva el Top 3 agregado.** Se calcula en Front sobre el conjunto que
+   devuelve esa misma llamada.
+
+### 10.ter El nombre visible del chat todavía no está en el código
+
+`src/frontend/pages/3_Chat.py:33` imprime hoy `st.title("Agente FARO")`, que es el nombre **técnico**
+del módulo (`src/agente/**`, `/api/v1/agente/consulta`) y no el de producto que fija `ADR-011` §6.
+
+Cambiarlo toca tres líneas, y las dos últimas son la trampa: `tests/test_frontend_chat_streamlit.py`
+**afirma el literal viejo** en las líneas **77** y **114**. Quien cambie el título sin tocar las
+pruebas rompe CI. Es trabajo del Equipo 5, dueño de `src/frontend/**`, o del Equipo 2.
+
+Los nombres técnicos **no se tocan**: sólo cambia la cadena que ve el usuario.
 
 | Nivel de atención | se **deriva** en Front de `indice_riesgo` | ver §3.quater |
 
@@ -421,7 +662,7 @@ de esto detiene la construcción de nadie:
 |---|---|---|
 | Importar, no reteclear, los cortes | Equipo 5 · Equipo 4 | `LINEA_DE_ALERTA` vive en `src/api/repositorio_gold.py` y `RIESGO_ESTABLE` en `src/modelos/riesgo.py`, que es crítico de Estefany Hernández. El front necesita los dos. Si el `0.30` se teclea en el frontend, es `BUG-058` otra vez: un umbral hardcodeado en varios archivos sin dueño único |
 | Estados del Asistente | Equipo 2 | Confirmar cuándo aterriza el streaming y los tres errores distinguibles, para diseñarlos y no improvisarlos (§4.bis) |
-| Componentes y memoria técnica | Equipo 1 | El recorrido técnico que alimenta la parte de la historia que explica cómo funciona el sistema por dentro |
+| Componentes y memoria técnica | Equipo 1 | Que `GET /api/v1/about/secciones` y `GET /api/v1/about/secciones/{id_seccion}` lleguen a `main`. Hoy viven en `dev/manuel-serrania` y sostienen toda la §5.bis |
 | Aceptación | Equipo 6 | Ampliar los criterios de §9 con lo que QA necesite ejecutar sobre la candidata |
 
 ---
@@ -474,7 +715,7 @@ Lo que siga contradiciéndolo en documentos anteriores queda superado por `ADR-0
 `US-621` cierra cuando se cumplen las cuatro:
 
 1. Los cuatro entregables de la §7 en su versión final, committeados y mergeados.
-2. Los 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf` en la carpeta.
+2. Los 7 mockups de escritorio en `mockups/`, con su `_index.md` (regla 4). **Sin PDF** — ver §7.ter.
 3. **Handoff aceptado por el Equipo 5** (Diana Alvarez): la arquitectura, la especificación de
    visualizaciones y los mockups bastan para implementar sin redefinir decisiones de UX.
 4. QA (`US-651`) ejecuta los criterios de la §9 sobre la candidata desplegada.

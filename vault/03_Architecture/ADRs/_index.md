@@ -24,3 +24,4 @@ tags: [moc, adr, architecture]
 | [[vault/03_Architecture/ADRs/ADR-009-monitoreo-mlflow-webhook]] | Monitoreo de runs de MLflow con alertas por webhook genérico | proposed | 2026-08-31 |
 | [[vault/03_Architecture/ADRs/ADR-010-puente-oauth-frontend]] | Puente OAuth → frontend: código de un solo uso, nunca tokens en la URL | proposed | 2026-09-03 |
 | [[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]] | Rediseño UX/UI narrativo con gráficas nativas como experiencia principal | accepted | 2026-09-10 |
+| [[vault/03_Architecture/ADRs/ADR-012-retiro-streamlit-frontend-nativo]] | Retiro del embebido de Superset/Streamlit: frontend nativo en React | proposed | 2026-09-10 |
