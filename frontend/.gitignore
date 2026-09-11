@@ -1,0 +1,32 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# env locales -- ninguno se versiona (corregido 11-sep, revisión de Edgar en PR
+# #302: este comentario decía lo contrario). .env.production tampoco se versiona;
+# no hace falta -- api.js cae al mismo default ("", rutas relativas mismo origen,
+# ADR-012) si el archivo no está presente en un checkout limpio. Ver el propio
+# frontend/.env.production (local, no versionado) para el detalle.
+.env
+.env.local
