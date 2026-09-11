@@ -150,3 +150,59 @@ lectura que ella traía.
 Ratificado el nivel de atención con alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`, y que
 **no** es el campo `prioridad` de la API. Su lectura es correcta: `P-01` y `P-02` se cierran sin que
 nadie exponga un campo nuevo, y **la petición al Equipo 5 para mañana 12:00 queda cancelada**.
+
+---
+
+## Addendum 2 — entra al plan la sección "Cómo funciona" del Equipo 1 (`US-601`)
+
+El profesor señaló que **faltó explicar cómo funciona el backend**. Esa brecha es de `US-601` y el
+Equipo 1 ya la construyó: una sección pública **Cómo funciona** con siete apartados
+(`arquitectura`, `modelo-datos`, `capas`, `cubos`, `stack`, `decisiones`, `modelos-ml`). Dueño
+formal Héctor Rafael Morales Marbán; redactada e implementada por Manuel Alejandro Serranía Reinada.
+
+Entra al plan como **§5.bis**. Este frente no la rediseña: le da identidad y la coloca.
+
+### La decisión de fondo: superficie hermana, no octava pantalla
+
+Se resolvió **no** convertirla en una pantalla más del recorrido. El motivo es narrativo, no de
+esfuerzo: la historia va de qué le pasa a las escuelas, no de cómo está hecho el sistema. Quien
+quiera auditar entra desde la Pantalla 1 o el glosario; quien siga la investigación no tropieza con
+un diagrama E-R a media historia.
+
+Efecto práctico: los entregables siguen siendo **7 mockups** y el trabajo de Juan no se dispara a
+cuatro días del cierre. Si sobra tiempo, se agrega como octavo.
+
+### Contrato, y por qué está bien diseñado
+
+Dos rutas: `GET /api/v1/about/secciones` (manifest) y `GET /api/v1/about/secciones/{id_seccion}`
+(sobre genérico `{id, titulo, fuente, advertencias, bloques}`). `bloques` admite **siete tipos** —
+`markdown`, `mermaid`, `tabla`, `metricas`, `mapa`, `barras`, `diagrama_flujo`— y los tres últimos
+son **D3**, justo lo que pidió el profesor.
+
+Lo que hace que valga la pena adoptarlo tal cual: **un tipo de bloque desconocido se pinta con una
+advertencia en su propio espacio y no tumba la página**. Es el mismo espíritu de `SIN_DATO` aplicado
+a la estructura, y permite que el Equipo 1 siga agregando apartados sin romper nada nuestro.
+
+### El aviso que le toca a Juan, y es concreto
+
+Cada bloque D3 vive en **su propio iframe**. El Equipo 1 ya se topó con el defecto: heredaban
+`prefers-color-scheme: dark` y quedaban letras negras sobre fondo negro. Lo resolvieron forzando
+`color-scheme: light` y fondo blanco explícito en los tres bloques D3 y en mermaid.
+
+**Si la identidad nueva es oscura, esos bloques van a pelear con ella.** Es una decisión que Juan
+tiene que tomar a propósito hoy, no descubrir el sábado.
+
+### Dependencia declarada
+
+Las dos rutas, la página y sus 54 pruebas viven en `dev/manuel-serrania` y **no están en `main`**.
+Quedan registradas en la §10 y en la tabla de coordinación de la §11 como pendientes de merge. Si no
+aterrizan, la §5.bis se cae del alcance y se declara el recorte, como cualquier otra pieza.
+
+Por la misma razón el documento de referencia se cita **sin wikilink**: enlazar a un archivo que no
+está en `main` reprueba `vault_lint`. Se convierte en enlace cuando aterrice.
+
+### Fuera de alcance por decisión de la líder
+
+`ADR-012` (retiro de Streamlit, frontend nativo en React, sesión por cookie `httpOnly`) está
+`proposed` en `dev/diana-alvarez` y **no se incorpora a este paquete**: no se va a mergear, y el
+diseño no se ata a una decisión que el PO no ha ratificado.

@@ -256,6 +256,70 @@ acceso al glosario.
 
 ---
 
+## 5.bis "Cómo funciona": la superficie que entrega el Equipo 1
+
+El profesor señaló que **faltó explicar cómo funciona el backend**. Esa brecha es de `US-601`, y el
+Equipo 1 ya la construyó: una sección pública llamada **Cómo funciona** con siete apartados.
+Documento de referencia: `vault/03_Architecture/Bosquejo_Componentes_US601.md` — dueño formal Héctor
+Rafael Morales Marbán, redactada e implementada por Manuel Alejandro Serranía Reinada. Se cita sin
+enlace **a propósito**: todavía no está en `main`, y un wikilink a un documento inexistente reprueba
+`vault_lint`. Se convierte en enlace cuando aterrice.
+
+Este frente **no la diseña de cero ni la reescribe**: le da identidad y la coloca dentro de la
+experiencia.
+
+### Dónde vive
+
+**No es una octava pantalla de la historia.** El recorrido narrativo sigue siendo el de la §5, y los
+entregables siguen siendo 7 mockups. *Cómo funciona* es una **superficie hermana**: se llega a ella
+desde la Pantalla 1 y desde el glosario, comparte identidad visual y no interrumpe la investigación.
+
+El motivo es de narrativa, no de esfuerzo: la historia va de qué le pasa a las escuelas, no de cómo
+está hecho el sistema. Quien quiera auditar el sistema entra ahí; quien quiera seguir la
+investigación no tropieza con un diagrama E-R a mitad del camino.
+
+### Qué contiene
+
+Siete apartados que el Equipo 1 ya fijó: `arquitectura` · `modelo-datos` · `capas` · `cubos` ·
+`stack` · `decisiones` · `modelos-ml`.
+
+### Cómo se alimenta
+
+Dos rutas, con un contrato pensado para que agregar apartados no rompa nada:
+
+- `GET /api/v1/about/secciones` — el manifest: `[{id, titulo, orden}]`.
+- `GET /api/v1/about/secciones/{id_seccion}` — el contenido, siempre con el mismo sobre:
+  `{id, titulo, fuente, advertencias, bloques}`.
+
+`bloques` es una lista de **siete tipos**: `markdown`, `mermaid`, `tabla`, `metricas`, `mapa`,
+`barras` y `diagrama_flujo`. Los tres últimos son **D3**, que es justo lo que el profesor pidió ver.
+Un tipo que el cliente no reconozca se pinta con una advertencia en su propio espacio y **nunca tumba
+la página**: es el mismo espíritu de `SIN_DATO` aplicado a la estructura.
+
+El único dato vivo son los conteos de filas por capa. Todo lo demás es contenido fijo, decisión
+consciente del Equipo 1 y anotada por ellos como *follow-up*.
+
+### Tres cosas que este frente sí tiene que resolver
+
+1. **La identidad.** Hoy se ve como una página de Streamlit. Con la identidad nueva tiene que dejar
+   de parecerlo, aunque no entre al recorrido narrativo. Es trabajo de Juan, con los componentes que
+   ya definirá para el resto: no necesita mockup propio, y si sobra tiempo se agrega como octavo.
+2. **El contraste de los bloques D3.** Cada bloque D3 vive en **su propio iframe**, y el Equipo 1 ya
+   se topó con el defecto: heredaban `prefers-color-scheme: dark` y quedaban letras negras sobre
+   fondo negro. Lo resolvieron forzando `color-scheme: light` y fondo blanco explícito. **Si la
+   identidad nueva es oscura, esos bloques van a pelear con ella.** Juan tiene que decidirlo a
+   propósito, no descubrirlo el sábado.
+3. **El acceso.** Oscar define desde dónde se entra y cómo se vuelve, sin romper el hilo de la
+   investigación.
+
+### Dependencia declarada
+
+Las dos rutas **todavía no están en `main`**: viven en `dev/manuel-serrania` junto con la página y
+sus 54 pruebas. Si no aterrizan, esta superficie no se puede alimentar y se cae del alcance —
+como cualquier otra pieza, se declara el recorte y no se dibuja como si existiera.
+
+---
+
 ## 6. Glosario
 
 Accesible para usuarios no técnicos. Como mínimo explica en lenguaje sencillo: índice de riesgo ·
@@ -391,6 +455,8 @@ Definidos inicialmente por este frente. El Equipo 6 (QA, `US-651`) puede ampliar
 24. La identidad propuesta no depende de la identidad visual anterior de FARO.
 25. El glosario distingue el **nivel de atención** de la columna `prioridad` de Gold.
 26. Ninguna superficie usa el nombre "Watson".
+27. La sección *Cómo funciona* comparte la identidad visual del producto y se alcanza desde la
+    entrada y desde el glosario, sin interrumpir el recorrido narrativo.
 
 ---
 
@@ -408,6 +474,7 @@ guardarraíl de §3: lo que no está aquí, no se dibuja.
 | Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
 | Filtros de la exploración | parámetros de `/escuelas` y `/kpis` | `ciclo`, `cve_ent`, `cve_mun`, `nivel` |
 | Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2. **Nombre técnico**, no de producto: lo que ve el usuario es *Asistente FARO* |
+| Sección *Cómo funciona* (§5.bis) | `GET /api/v1/about/secciones` · `GET /api/v1/about/secciones/{id_seccion}` | manifest `[{id, titulo, orden}]` y sobre `{id, titulo, fuente, advertencias, bloques}`. **Pendientes de merge**: viven en `dev/manuel-serrania` |
 
 ### 10.bis Dos cosas que el contrato no hace, y cómo se resuelven
 
@@ -463,7 +530,7 @@ de esto detiene la construcción de nadie:
 |---|---|---|
 | Importar, no reteclear, los cortes | Equipo 5 · Equipo 4 | `LINEA_DE_ALERTA` vive en `src/api/repositorio_gold.py` y `RIESGO_ESTABLE` en `src/modelos/riesgo.py`, que es crítico de Estefany Hernández. El front necesita los dos. Si el `0.30` se teclea en el frontend, es `BUG-058` otra vez: un umbral hardcodeado en varios archivos sin dueño único |
 | Estados del Asistente | Equipo 2 | Confirmar cuándo aterriza el streaming y los tres errores distinguibles, para diseñarlos y no improvisarlos (§4.bis) |
-| Componentes y memoria técnica | Equipo 1 | El recorrido técnico que alimenta la parte de la historia que explica cómo funciona el sistema por dentro |
+| Componentes y memoria técnica | Equipo 1 | Que `GET /api/v1/about/secciones` y `GET /api/v1/about/secciones/{id_seccion}` lleguen a `main`. Hoy viven en `dev/manuel-serrania` y sostienen toda la §5.bis |
 | Aceptación | Equipo 6 | Ampliar los criterios de §9 con lo que QA necesite ejecutar sobre la candidata |
 
 ---
