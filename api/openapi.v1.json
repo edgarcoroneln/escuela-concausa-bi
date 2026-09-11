@@ -807,6 +807,26 @@
         "title": "Rol",
         "type": "string"
       },
+      "SesionOut": {
+        "description": "Respuesta del **modo cookie** (ADR-012). Deliberadamente **sin JWT**.\n\nEl modo cookie existe para que el token no sea alcanzable desde JavaScript. Si la respuesta\ntrajera el `TokenPair`, un XSS podría llamar al endpoint —el navegador adjunta la cookie solo—\ny leer los dos tokens del JSON, **anulando por completo el beneficio de `HttpOnly`**. Por eso\naquí solo viaja lo que no es una credencial.\n\n`expira_en` permite al frontend programar el refresco **antes** de que el token venza, en vez\nde descubrirlo con un 401 a media pantalla. No es sensible: es una duración, no un secreto.",
+        "properties": {
+          "expira_en": {
+            "description": "Segundos de vida del access token recién emitido.",
+            "title": "Expira En",
+            "type": "integer"
+          },
+          "modo": {
+            "default": "cookie",
+            "title": "Modo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expira_en"
+        ],
+        "title": "SesionOut",
+        "type": "object"
+      },
       "TokenPair": {
         "properties": {
           "access_token": {
@@ -1193,8 +1213,26 @@
     },
     "/api/v1/auth/exchange": {
       "post": {
-        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.",
+        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nQuién lo llama depende del modo: en **legacy** lo llama el **servidor** de Streamlit, y por eso\nlos tokens viajan en el cuerpo y nunca por la URL; en **cookie** lo llama el **navegador** del\nfrontend de React, a través del proxy same-origin de nginx, y los tokens no salen de las cookies\n`httpOnly`. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.\n\n**Dos modos que nunca se mezclan** (`ADR-012`), elegidos con `?sesion=`:\n\n| `?sesion=` | Cookies | Cuerpo de la respuesta |\n|---|---|---|\n| `token` *(por defecto)* | no las toca | `TokenPair` — **el comportamiento de siempre** |\n| `cookie` | siembra la sesion | `SesionOut` — **sin JWT** |\n\nAqui el modo tiene que ser explicito porque el cuerpo es identico en los dos casos: no hay nada\nen la peticion que distinga al servidor de Streamlit del navegador. El **default es el legacy**,\nasi que ningun cliente existente cambia de comportamiento al desplegar esto.\n\n**Por que el modo cookie no devuelve los tokens:** si lo hiciera, el JWT volveria a ser\nalcanzable desde JavaScript y `HttpOnly` dejaria de servir para nada. Ver `SesionOut`.",
         "operationId": "exchange_api_v1_auth_exchange_post",
+        "parameters": [
+          {
+            "description": "`token` (por defecto): devuelve el `TokenPair` y no toca cookies — el comportamiento de siempre. `cookie`: siembra la sesión `httpOnly` y responde **sin JWT** (ADR-012).",
+            "in": "query",
+            "name": "sesion",
+            "required": false,
+            "schema": {
+              "default": "token",
+              "description": "`token` (por defecto): devuelve el `TokenPair` y no toca cookies — el comportamiento de siempre. `cookie`: siembra la sesión `httpOnly` y responde **sin JWT** (ADR-012).",
+              "enum": [
+                "cookie",
+                "token"
+              ],
+              "title": "Sesion",
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1210,7 +1248,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenPair"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TokenPair"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SesionOut"
+                    }
+                  ],
+                  "title": "Response Exchange Api V1 Auth Exchange Post"
                 }
               }
             },
@@ -1281,6 +1327,21 @@
         ]
       }
     },
+    "/api/v1/auth/logout": {
+      "post": {
+        "description": "Cierra la sesión borrando **las dos** cookies (ADR-012).\n\nNo exige token: cerrar sesión con una credencial ya vencida tiene que funcionar igual, o la\npersona se queda con cookies muertas y sin forma de deshacerse de ellas. Y borra la de refresco\nademás de la de acceso — olvidarla dejaría la sesión viva 7 días.\n\nLos clientes que administran el token ellos mismos (Streamlit, pruebas) no necesitan llamarlo:\npara ellos cerrar sesión sigue siendo descartar el par que tienen guardado.",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Logout",
+        "tags": [
+          "Autenticación"
+        ]
+      }
+    },
     "/api/v1/auth/me": {
       "get": {
         "description": "Devuelve el usuario autenticado (requiere access token válido; 401 en caso contrario).",
@@ -1310,24 +1371,39 @@
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "description": "Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.",
+        "description": "Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.\n\n**Dos modos que nunca se mezclan** (ADR-012). El modo lo determina *de dónde vino el token*, que\nes un dato inequívoco y no una bandera que el cliente pueda equivocarse en mandar:\n\n| Token en | Modo | Cookies | Cuerpo de la respuesta |\n|---|---|---|---|\n| `body.refresh_token` | **legacy** | no las toca | `TokenPair` |\n| cookie `faro_refresco` | **cookie** | las renueva | `SesionOut` — **sin JWT** |\n\n**Por qué el modo cookie no devuelve los tokens.** La cookie de refresco está acotada a esta\nruta, así que el navegador la adjunta aquí y solo aquí. Si la respuesta trajera el `TokenPair`,\nun XSS podría hacer `fetch()` contra este endpoint y **leer los dos tokens del JSON**, anulando\nel beneficio de `HttpOnly`: la credencial volvería a ser alcanzable desde JavaScript. Por eso el\nmodo cookie responde solo con `expira_en`, que es una duración y no un secreto.\n\nEl modo legacy **no siembra cookies**: quien administra el token él mismo (el shell de Streamlit,\nlas pruebas, cualquier cliente que no sea navegador) recibe exactamente lo de siempre.",
         "operationId": "refresh_api_v1_auth_refresh_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RefreshIn"
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/RefreshIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenPair"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TokenPair"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SesionOut"
+                    }
+                  ],
+                  "title": "Response Refresh Api V1 Auth Refresh Post"
                 }
               }
             },

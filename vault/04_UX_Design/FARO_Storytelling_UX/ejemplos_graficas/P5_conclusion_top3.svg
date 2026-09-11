@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1080pt" height="705.6pt" viewBox="0 0 1080 705.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1080pt" height="806.4pt" viewBox="0 0 1080 806.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
@@ -20,8 +20,8 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 705.6 
-L 1080 705.6 
+   <path d="M 0 806.4 
+L 1080 806.4 
 L 1080 0 
 L 0 0 
 z
@@ -29,200 +29,206 @@ z
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 410.4 111.822261 
-L 452.52 111.822261 
-L 452.52 153.942261 
-L 410.4 153.942261 
+    <path d="M 410.4 127.79687 
+L 452.52 127.79687 
+L 452.52 175.934012 
+L 410.4 175.934012 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_3">
-    <path d="M 461.7 111.822261 
-L 503.82 111.822261 
-L 503.82 153.942261 
-L 461.7 153.942261 
+    <path d="M 461.7 127.79687 
+L 503.82 127.79687 
+L 503.82 175.934012 
+L 461.7 175.934012 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_4">
-    <path d="M 513 111.822261 
-L 555.12 111.822261 
-L 555.12 153.942261 
-L 513 153.942261 
+    <path d="M 513 127.79687 
+L 555.12 127.79687 
+L 555.12 175.934012 
+L 513 175.934012 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_5">
-    <path d="M 564.3 111.822261 
-L 606.42 111.822261 
-L 606.42 153.942261 
-L 564.3 153.942261 
+    <path d="M 564.3 127.79687 
+L 606.42 127.79687 
+L 606.42 175.934012 
+L 564.3 175.934012 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_6">
-    <path d="M 615.6 111.822261 
-L 657.72 111.822261 
-L 657.72 153.942261 
-L 615.6 153.942261 
+    <path d="M 615.6 127.79687 
+L 657.72 127.79687 
+L 657.72 175.934012 
+L 615.6 175.934012 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_7">
-    <path d="M 410.4 209.532522 
-L 452.52 209.532522 
-L 452.52 251.652522 
-L 410.4 251.652522 
+    <path d="M 410.4 239.465739 
+L 452.52 239.465739 
+L 452.52 287.602882 
+L 410.4 287.602882 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_8">
-    <path d="M 461.7 209.532522 
-L 503.82 209.532522 
-L 503.82 251.652522 
-L 461.7 251.652522 
+    <path d="M 461.7 239.465739 
+L 503.82 239.465739 
+L 503.82 287.602882 
+L 461.7 287.602882 
 z
-" clip-path="url(#p52aa7623ed)" style="fill: #1a1a1a"/>
+" clip-path="url(#p1084391281)" style="fill: #1a1a1a"/>
    </g>
    <g id="line2d_1">
-    <path d="M 32.4 199.562087 
-L 1047.6 199.562087 
-" clip-path="url(#p52aa7623ed)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
+    <path d="M 32.4 228.070957 
+L 1047.6 228.070957 
+" clip-path="url(#p1084391281)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
    </g>
    <g id="line2d_2">
-    <path d="M 32.4 297.272348 
-L 1047.6 297.272348 
-" clip-path="url(#p52aa7623ed)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
+    <path d="M 32.4 339.739826 
+L 1047.6 339.739826 
+" clip-path="url(#p1084391281)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
    </g>
    <g id="text_1">
-    <text style="font-weight: 700; font-size: 24px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.1" y="134.009332" transform="rotate(-0 35.1 134.009332)">1.º</text>
+    <text style="font-weight: 700; font-size: 24px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.1" y="152.262897" transform="rotate(-0 35.1 152.262897)">1.º</text>
    </g>
    <g id="text_2">
-    <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="123.435874" transform="rotate(-0 102.6 123.435874)">Inseguridad del entorno (D2)</text>
+    <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="140.549961" transform="rotate(-0 102.6 140.549961)">Inseguridad del entorno (D2)</text>
    </g>
    <g id="text_3">
-    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="142.727232" transform="rotate(-0 102.6 142.727232)">5 de 7 escuelas (71 %)</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="162.690015" transform="rotate(-0 102.6 162.690015)">5 de 7 escuelas (71 %)</text>
    </g>
    <g id="text_4">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="431.46" y="163.581109" transform="rotate(-0 431.46 163.581109)">15PJN1627V</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="431.46" y="186.712339" transform="rotate(-0 431.46 186.712339)">15PJN1627V</text>
    </g>
    <g id="text_5">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="482.76" y="163.581109" transform="rotate(-0 482.76 163.581109)">15PES0343S</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="482.76" y="186.712339" transform="rotate(-0 482.76 186.712339)">15PES0343S</text>
    </g>
    <g id="text_6">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="534.06" y="163.581109" transform="rotate(-0 534.06 163.581109)">15DJN1794N</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="534.06" y="186.712339" transform="rotate(-0 534.06 186.712339)">15DJN1794N</text>
    </g>
    <g id="text_7">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="585.36" y="163.581109" transform="rotate(-0 585.36 163.581109)">15EPR0628Y</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="585.36" y="186.712339" transform="rotate(-0 585.36 186.712339)">15EPR0628Y</text>
    </g>
    <g id="text_8">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="636.66" y="163.581109" transform="rotate(-0 636.66 163.581109)">15EJN0104C</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="636.66" y="186.712339" transform="rotate(-0 636.66 186.712339)">15EJN0104C</text>
    </g>
    <g id="text_9">
-    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 162.022337)">Presión de inseguridad entre 0.45 y 0.47 (0 = menor</text>
-    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 173.286337)">observada, 1 = mayor); es un valor del municipio.</text>
+    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 183.979207)">Presión de inseguridad entre 0.45 y 0.47 (0 = menor</text>
+    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 195.243207)">observada, 1 = mayor); es un valor del municipio.</text>
    </g>
    <g id="text_10">
-    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="702" y="119.020855" transform="rotate(-0 702 119.020855)">Recomendación</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="702" y="134.995463" transform="rotate(-0 702 134.995463)">Recomendación</text>
    </g>
    <g id="text_11">
-    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 137.7073)">Coordinar con seguridad pública rutas escolares</text>
-    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 151.1473)">seguras y entornos protegidos.</text>
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 155.960865)">Coordinar con seguridad pública rutas escolares</text>
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 169.400865)">seguras y entornos protegidos.</text>
    </g>
    <g id="text_12">
-    <text style="font-weight: 700; font-size: 24px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.1" y="231.719592" transform="rotate(-0 35.1 231.719592)">2.º</text>
+    <text style="font-weight: 700; font-size: 24px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.1" y="263.931766" transform="rotate(-0 35.1 263.931766)">2.º</text>
    </g>
    <g id="text_13">
-    <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="221.146135" transform="rotate(-0 102.6 221.146135)">Conectividad digital (D4)</text>
+    <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="252.218831" transform="rotate(-0 102.6 252.218831)">Conectividad digital (D4)</text>
    </g>
    <g id="text_14">
-    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="240.437493" transform="rotate(-0 102.6 240.437493)">2 de 7 escuelas (29 %)</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="102.6" y="274.358884" transform="rotate(-0 102.6 274.358884)">2 de 7 escuelas (29 %)</text>
    </g>
    <g id="text_15">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="431.46" y="261.29137" transform="rotate(-0 431.46 261.29137)">15EJN4151O</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="431.46" y="298.381208" transform="rotate(-0 431.46 298.381208)">15EJN4151O</text>
    </g>
    <g id="text_16">
-    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="482.76" y="261.29137" transform="rotate(-0 482.76 261.29137)">15EES1468A</text>
+    <text style="font-size: 6.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="482.76" y="298.381208" transform="rotate(-0 482.76 298.381208)">15EES1468A</text>
    </g>
    <g id="text_17">
-    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 259.732598)">Presión de falta de conectividad entre 0.50 y 1.00 (0 =</text>
-    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 270.996598)">menor observada, 1 = mayor); servicios presentes: 0.00,</text>
-    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 283.21141)">0.50.</text>
+    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 295.648076)">Presión de falta de conectividad entre 0.50 y 1.00 (0 =</text>
+    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 306.912076)">menor observada, 1 = mayor); servicios presentes: 0.00,</text>
+    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(102.6 319.126889)">0.50.</text>
    </g>
    <g id="text_18">
-    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="702" y="216.731115" transform="rotate(-0 702 216.731115)">Recomendación</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="702" y="246.664333" transform="rotate(-0 702 246.664333)">Recomendación</text>
    </g>
    <g id="text_19">
-    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 235.417561)">Ampliar conectividad y dotación de equipo de</text>
-    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 249.067561)">cómputo.</text>
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 267.629735)">Ampliar conectividad y dotación de equipo de</text>
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(702 281.279735)">cómputo.</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.1" y="320.151167" transform="rotate(-0 35.1 320.151167)">Dónde están: Toluca (5) · Naucalpan de Juárez (2), en Estado de México.</text>
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.1" y="365.467341" transform="rotate(-0 35.1 365.467341)">Dónde están: Toluca (5) · Naucalpan de Juárez (2), en Estado de México.</text>
    </g>
    <g id="text_21">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(35.1 340.631201)">Evidencia: las escuelas tienen dato para 3 de 6 pistas. Infraestructura escolar, estrés hídrico y calidad del aire no pudieron verificarse en ninguna:</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(35.1 353.631201)">que no aparezcan aquí no significa que no sean un problema.</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(35.1 387.941462)">Evidencia: las escuelas tienen dato para 3 de 6 pistas. Infraestructura escolar, estrés hídrico y calidad del aire no pudieron verificarse en ninguna:</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(35.1 400.941462)">que no aparezcan aquí no significa que no sean un problema.</text>
    </g>
    <g id="text_22">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.1" y="377.440969" transform="rotate(-0 35.1 377.440969)">Todas tienen atención alta: el conjunto se define con ese mismo corte, por eso aquí no se grafica una distribución de niveles.</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.1" y="430.961386" transform="rotate(-0 35.1 430.961386)">Todas tienen atención alta: el conjunto se define con ese mismo corte, por eso aquí no se grafica una distribución de niveles.</text>
    </g>
   </g>
   <g id="patch_9">
-   <path d="M 36.72 570.8304 
-L 697.68 570.8304 
-Q 706.32 570.8304 706.32 565.1856 
-L 706.32 528.4944 
-Q 706.32 522.8496 697.68 522.8496 
-L 36.72 522.8496 
-Q 28.08 522.8496 28.08 528.4944 
-L 28.08 565.1856 
-Q 28.08 570.8304 36.72 570.8304 
+   <path d="M 36.72 614.7008 
+L 697.68 614.7008 
+Q 706.32 614.7008 706.32 608.2496 
+L 706.32 566.3168 
+Q 706.32 559.8656 697.68 559.8656 
+L 36.72 559.8656 
+Q 28.08 559.8656 28.08 566.3168 
+L 28.08 608.2496 
+Q 28.08 614.7008 36.72 614.7008 
 z
 " style="fill: #f6f6f3; stroke: #1a1a1a; stroke-linejoin: miter"/>
   </g>
   <g id="patch_10">
-   <path d="M 807.84 567.3024 
-L 1006.56 567.3024 
-Q 1019.52 567.3024 1019.52 558.8352 
-L 1019.52 534.8448 
-Q 1019.52 526.3776 1006.56 526.3776 
-L 807.84 526.3776 
-Q 794.88 526.3776 794.88 534.8448 
-L 794.88 558.8352 
-Q 794.88 567.3024 807.84 567.3024 
+   <path d="M 807.84 610.6688 
+L 1006.56 610.6688 
+Q 1019.52 610.6688 1019.52 600.992 
+L 1019.52 573.5744 
+Q 1019.52 563.8976 1006.56 563.8976 
+L 807.84 563.8976 
+Q 794.88 563.8976 794.88 573.5744 
+L 794.88 600.992 
+Q 794.88 610.6688 807.84 610.6688 
 z
 " style="fill: #1a1a1a"/>
   </g>
   <g id="text_23">
-   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="29.6352" transform="rotate(-0 32.4 29.6352)">Pantalla 5 · Conclusión Top 3 (ejemplo con datos reales)</text>
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="33.8688" transform="rotate(-0 32.4 33.8688)">Pantalla 5 · Conclusión Top 3 (ejemplo con datos reales)</text>
   </g>
   <g id="text_24">
-   <text style="font-weight: 700; font-size: 20px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="67.032" transform="rotate(-0 32.4 67.032)">Lo que más se repite entre las N escuelas en riesgo</text>
+   <text style="font-weight: 700; font-size: 20px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="76.608" transform="rotate(-0 32.4 76.608)">Lo que más se repite entre las N escuelas en riesgo</text>
   </g>
   <g id="text_25">
-   <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="94.5504" transform="rotate(-0 32.4 94.5504)">Sólo dos factores aparecen como dominantes entre todas las escuelas en riesgo.</text>
+   <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="108.0576" transform="rotate(-0 32.4 108.0576)">Sólo dos factores aparecen como dominantes entre todas las escuelas en riesgo.</text>
   </g>
   <g id="text_26">
-   <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(43.2 543.266514)">Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, independientemente de</text>
-   <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(43.2 556.289385)">los filtros utilizados durante la exploración.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 656.117262)">QUÉ ESTÁS VIENDO</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 666.456825)">QUÉ SE VE — Cada casilla es una escuela en riesgo, agrupada bajo la pista que más destaca en ella. Cuantas más casillas, más se repite esa pista.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 676.612325)">UNIDAD — Conteo de escuelas, k de N. La proporción es secundaria: con N pequeño una escuela mueve muchos puntos.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 687.252325)">SIN DATO — Las pistas que no pudieron verificarse en ninguna escuela no aparecen en el Top, y la nota de cobertura dice cuáles son. Una pista con 0 no deja de existir.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 697.740325)">CICLO Y RECORTE — Ciclo 2024-2025. El conjunto completo de escuelas en riesgo, sin filtros, sin importar lo que el usuario haya filtrado antes.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 706.2832)"/>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 718.914638)">Conteo por driver_dominante de EscuelaOut; rango con empates compartidos (generar_ejemplos.py::top3). Cada casilla es una escuela. Los conteos se resuelven en vivo; en los mockups van como N</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 729.660325)">y k.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 740.194637)">Fuente: GET /api/v1/kpis (sin filtros) · GET /api/v1/escuelas?order_by=indice_riesgo&amp;order=desc&amp;size=100 SIN filtros, con corte en LINEA_DE_ALERTA · GET /api/v1/predicciones/{cct}</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 750.834637)">(recomendacion) · GET /api/v1/municipios/{cve_mun} · campos: escuelas_en_riesgo; driver_dominante, cve_mun, indice_riesgo; recomendacion; d1…d6 e indice_completitud_drivers de</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 761.474637)">/escuelas/{cct}; nombre_municipio.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 772.266638)">Consulta del 10-sep-2026 18:24 (UTC−06:00) a la API v1 en producción (commit 457715a). Cortes leídos del código: LINEA_DE_ALERTA (src/api/repositorio_gold.py:55) y RIESGO_ESTABLE</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 782.860325)">(src/modelos/riesgo.py:76).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 793.546637)">Ejemplo de FORMA Y LECTURA DEL DATO, no mockup ni identidad visual: paleta neutra y provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías).</text>
   </g>
   <g id="text_27">
-   <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="907.2" y="549.827754" transform="rotate(-0 907.2 549.827754)">Explorar otras escuelas →</text>
+   <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(43.2 583.709714)">Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, independientemente de</text>
+   <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(43.2 596.732585)">los filtros utilizados durante la exploración.</text>
   </g>
   <g id="text_28">
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 622.174238)">Fuente: GET /api/v1/kpis (sin filtros) · GET /api/v1/escuelas?order_by=indice_riesgo&amp;order=desc&amp;size=100 SIN filtros, con corte en LINEA_DE_ALERTA · GET /api/v1/predicciones/{cct}</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 632.434237)">(recomendacion) · GET /api/v1/municipios/{cve_mun} · campos: escuelas_en_riesgo; driver_dominante, cve_mun, indice_riesgo; recomendacion; d1…d6 e indice_completitud_drivers de</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 642.694237)">/escuelas/{cct}; nombre_municipio.</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 652.954237)">Conteo por driver_dominante de EscuelaOut; rango con empates compartidos (generar_ejemplos.py::top3). Cada casilla es una escuela. Los conteos se resuelven en vivo; en los mockups van como N</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 663.319925)">y k.</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 673.626238)">Consulta del 10-sep-2026 18:24 (UTC−06:00) a la API v1 en producción (commit 457715a). Cortes leídos del código: LINEA_DE_ALERTA (src/api/repositorio_gold.py:55) y RIESGO_ESTABLE</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 683.839925)">(src/modelos/riesgo.py:76).</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 694.146237)">Ejemplo de FORMA Y LECTURA DEL DATO, no mockup ni identidad visual: paleta neutra y provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías).</text>
+   <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="907.2" y="590.270954" transform="rotate(-0 907.2 590.270954)">Explorar otras escuelas →</text>
   </g>
  </g>
  <defs>
-  <clipPath id="p52aa7623ed">
-   <rect x="32.4" y="105.84" width="1015.2" height="366.912"/>
+  <clipPath id="p1084391281">
+   <rect x="32.4" y="120.96" width="1015.2" height="419.328"/>
   </clipPath>
  </defs>
 </svg>

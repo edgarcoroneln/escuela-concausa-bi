@@ -4,10 +4,10 @@ title: "Threat Model & Security Policy — FARO"
 owner: "Luis Téllez Domínguez"
 co_owners: ["Christian Ruiz"]
 status: approved
-version: "1.0.1"
+version: "1.2"
 traces_up: ["US-502"]
 traces_down: ["SEC-HARDENING-S3", "SEC-HARDENING-S4"]
-last_reviewed: "2026-08-29"
+last_reviewed: "2026-09-10"
 tags: [security, threat-model, cis-controls, vulnerabilities, audit]
 ---
 
@@ -147,6 +147,91 @@ tags: [security, threat-model, cis-controls, vulnerabilities, audit]
 - V12, V13 (logs y healthchecks)
 
 **Total:** 13 vulnerabilidades → 7 mitigadas en Nivel 1, 6 pendientes para Sprints 3-4
+
+---
+
+## 🔐 Sesión del frontend de React — residual aceptado (ADR-012, 2026-09-10)
+
+> Registrado por Christian Ruiz (C4) a petición de Luis Téllez, como parte de la decisión de
+> arquitectura del frontend nuevo. **Esto es un residual aceptado, no un riesgo resuelto.**
+
+### El riesgo que se evitó
+
+El frontend nuevo es **estático** (Vite compilado, servido por nginx) y no tiene servidor donde
+guardar el token, a diferencia del shell de Streamlit que sí lo mantenía del lado servidor
+(`ADR-010`). La opción evaluada primero fue **Bearer administrado por el navegador**, y se
+**descartó**: el `refresh_token` vive **7 días**, así que en `localStorage` un XSS equivale a una
+semana de acceso a la cuenta — con `analista`, eso alcanza `/admin/export`. En CIS v8 bajaba el
+Control 16 de ~9 a ~7 (evaluación de C5).
+
+### Lo que se implementó
+
+Sesión por **cookie `httpOnly`** emitida por la API a través del `proxy_pass` de nginx: mismo
+origen, así que la cookie queda **host-only** del frontend y **el token nunca toca JavaScript**.
+Sin construir un servicio nuevo. Detalle en `src/api/security/cookies.py`.
+
+> No contradice `BUG-059`: allí el hallazgo fue que `.run.app` está en la **Public Suffix List** y
+> la API no puede poner una cookie compartida entre subdominios. Aquí es host-only del propio
+> origen, puesta por el proxy.
+
+| Control | Estado |
+|---|---|
+| Token inaccesible a JavaScript (`HttpOnly`) | ✅ |
+| `Secure` fuera de local | ✅ (`Settings.cookies_seguras`) |
+| Refresh token acotado a `/api/v1/auth/refresh` | ✅ El navegador no lo manda en ninguna otra petición |
+| Logout borra **ambas** cookies | ✅ |
+| `X-Content-Type-Options`, `Referrer-Policy`, HSTS | ✅ Middleware de la API |
+| `Content-Security-Policy`, `X-Frame-Options` | ✅ **nginx (C5)**, `docker/nginx-frontend.conf.template` (PR #302) — es donde contienen el XSS del chat |
+
+### Qué modo usa cada cliente
+
+| Cliente | Modo | Qué hace |
+|---|---|---|
+| **Frontend de React** (`ADR-012`) | **cookie** | `POST /api/v1/auth/exchange?sesion=cookie` con el `code_faro`; después solo `credentials: "same-origin"`; `POST /api/v1/auth/refresh` **sin cuerpo** antes de `expira_en` (el access token vive 15 min) o ante un 401; `POST /api/v1/auth/logout` para cerrar |
+| Shell de Streamlit, pruebas, clientes no-navegador | legacy | Sin cambios: `TokenPair` en el cuerpo y `Authorization: Bearer` |
+
+Para UX (`E3`): **el flujo visible no cambia** —mismo Google OAuth, mismas pantallas—; cambia dónde
+vive la credencial. Los estados de sesión del front se diseñan contra este contrato: *sin sesión*
+(`/auth/me` → 401 → "Inicia sesión"), *sesión activa*, *sesión por vencer* (refresco silencioso
+guiado por `expira_en`) y *sesión cerrada* (logout o refresco fallido → vuelve a "Inicia sesión").
+
+### Corrección tras la revisión del PO (PR #304)
+
+La primera implementación tenía un hueco que el PO detectó al revisar: `/auth/refresh` aceptaba la
+cookie **y devolvía el `TokenPair` en el JSON**. Como la cookie de refresco está acotada a esa ruta,
+el navegador la adjunta ahí — así que **un XSS podía hacer `fetch()` contra ese endpoint y leer los
+dos tokens de la respuesta**, dejando `HttpOnly` sin ningún efecto.
+
+Corregido separando los dos modos, que ya **no se mezclan**:
+
+| Endpoint | Modo | Cómo se elige | Cookies | Cuerpo |
+|---|---|---|---|---|
+| `/auth/exchange` | legacy *(default)* | sin `?sesion` | no las toca | `TokenPair` |
+| `/auth/exchange` | cookie | `?sesion=cookie` | siembra | `SesionOut` — **sin JWT** |
+| `/auth/refresh` | legacy | token en el **cuerpo** | no las toca | `TokenPair` |
+| `/auth/refresh` | cookie | token en la **cookie** | renueva | `SesionOut` — **sin JWT** |
+
+El modo cookie solo informa `expira_en`, que es una duración y no un secreto: permite al frontend
+refrescar **antes** del vencimiento en vez de descubrirlo con un 401. Seis pruebas lo fijan,
+incluida una que busca la forma `eyJ` en el texto crudo de la respuesta por si alguien anidara el
+token bajo otro nombre.
+
+### Residual: CSRF
+
+Con sesión por cookie, un sitio de terceros puede provocar peticiones que el navegador acompaña con
+la credencial. **Se contiene con `SameSite=Lax`**, que no envía la cookie en un POST cross-site; los
+POST del sistema son `/agente/consulta`, `/auth/*` y `/admin/*`.
+
+**No hay token anti-CSRF.** Se acepta para la ventana del proyecto, con el mismo criterio de
+`SEC-003/004/005`. Cierre posterior: token de doble envío o `SameSite=Strict` en la cookie de
+sesión, evaluando el costo en el flujo de vuelta de Google.
+
+### Residual: XSS sigue siendo el vector principal
+
+`HttpOnly` impide **leer** el token, no impide que un XSS **use** la sesión desde el propio
+navegador. El vector concreto de esta app es **la respuesta del agente renderizada en el chat**, que
+es texto libre de un LLM. Mitigación acordada con C5 y C1: **nada del chat se renderiza como HTML**
+(sin `dangerouslySetInnerHTML`, `react-markdown` con HTML crudo desactivado) y **CSP en nginx**.
 
 ---
 
