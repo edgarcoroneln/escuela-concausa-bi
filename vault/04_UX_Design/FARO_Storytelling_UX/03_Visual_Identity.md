@@ -12,13 +12,15 @@ tags: [ui, identidad-visual, design-system, s7, us-621]
 # Visual Identity — identidad visual de FARO
 
 > Documento de Juan Carlos Macías Mayen. Fija **cómo se ve** la experiencia.
-> Único editor del PDF final `FARO_UX_UI_Guide.pdf`.
+> Guía de identidad de referencia del proyecto — su anexo técnico de tokens vive en
+> `mockups/Design_Tokens_Stitch.md` (`DOC-FARO-UX-TOKENS`).
 > → [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]] ·
 > [[vault/04_UX_Design/Accessibility]]
 
 **Estado:** borrador — los 7 mockups de escritorio están listos y liberados para Equipo 5
-(2026-09-10/11). Queda pendiente el PDF final (`FARO_UX_UI_Guide.pdf`, §8) y la auditoría formal
-de contraste WCAG (§6); el doc completo sigue `draft` hasta cerrar esos dos puntos.
+(2026-09-10/11). **`FARO_UX_UI_Guide.pdf` se cae como entregable** (decisión de Marina García del
+Buey, 2026-09-11, avisada a Edgar Coronel como PO — ver §8). Queda pendiente la auditoría formal
+de contraste WCAG (§6); el doc completo sigue `draft` hasta cerrar ese punto.
 
 > **Revisión de Marina García del Buey (lead UX/UI), 2026-09-10.** La primera entrega (solo
 > Login) tenía tres problemas reales: dibujaba un formulario de usuario/contraseña que no existe
@@ -38,6 +40,18 @@ de contraste WCAG (§6); el doc completo sigue `draft` hasta cerrar esos dos pun
 >
 > El asistente conversacional se llama **Asistente FARO**. No se usa "Watson" en ninguna ruta visual.
 > Un cambio total de framework sólo se acepta si conserva despliegue, autenticación, pruebas y plazo.
+
+> **Decisión: claro/oscuro con los bloques D3 de "Cómo funciona" (`PLAN_TRABAJO.md` §5.bis, punto 2)
+> — resuelta el 2026-09-11.** Los tres bloques D3 (mapa, barras, diagrama de flujo) que construyó el
+> Equipo 1 viven cada uno en su propio iframe forzado a `color-scheme: light` y fondo blanco — no se
+> pueden re-skinear sin tocar su código. Esta identidad **no adopta un lienzo oscuro como fondo de
+> página en ningún momento**: el lienzo analítico siempre es claro (`#FFFFFF`/`#F8FAFC`/`#F1F5F9`,
+> ver §3); el slate profundo (`#0F172A`) se usa solo como acento en componentes puntuales — botones
+> primarios, el riel de navegación seleccionado, el nodo del Asistente FARO — nunca como fondo de
+> lienzo. Por eso los bloques D3 **no chocan**: entran directo sobre el mismo lienzo claro que ya usa
+> el resto de la experiencia, sin necesitar ningún tratamiento especial ni envoltura oscura alrededor
+> del iframe. Si en el futuro se agrega un modo oscuro real, ese es el momento de revisar esta
+> decisión — no antes.
 
 ## 1. Concepto
 
@@ -200,14 +214,17 @@ Todos usan el dataset real de 7 escuelas verificado en producción (10-sep-2026,
 `457715a`) — mismo conjunto que `02_Data_Visualization_Spec.md` de Monserrat Miranda, no datos de
 ejemplo inventados.
 
+Índice completo (7 mockups + soporte, con enlaces): [[vault/04_UX_Design/FARO_Storytelling_UX/mockups/_index]].
+
 Material de soporte en `mockups/`, no numerado (no es de las 7 pantallas de la historia):
 
 - [`Guia_Identidad_Visual.png`](mockups/Guia_Identidad_Visual.png) / [`.html`](mockups/Guia_Identidad_Visual.html)
   — guía de identidad completa (paleta de interfaz, sistema de color de datos, tipografía,
   componentes).
-- [`Design_Tokens_Stitch.md`](mockups/Design_Tokens_Stitch.md) — tokens crudos de tipografía,
-  radios, espaciado y elevación (su sección de color quedó superada, ver nota al inicio del
-  archivo; el color vigente es el de §3 de este documento).
+- [`Design_Tokens_Stitch.md`](mockups/Design_Tokens_Stitch.md) — **anexo técnico de este documento**
+  (frontmatter propio `DOC-FARO-UX-TOKENS`): tokens crudos de tipografía, radios, espaciado y
+  elevación (su sección de color quedó superada, ver nota al inicio del archivo; el color vigente
+  es el de §3 de este documento). Sustituye a `FARO_UX_UI_Guide.pdf` como entregable — ver §8.
 - [`Como_Funciona_Preview.png`](mockups/Como_Funciona_Preview.png) / [`.html`](mockups/Como_Funciona_Preview.html)
   — borrador de identidad para la superficie *Cómo funciona* de Equipo 1 (`US-601`, §5.bis de
   `PLAN_TRABAJO`). **No es un octavo mockup formal ni reemplaza el trabajo de Manuel Serranía**:
@@ -216,6 +233,19 @@ Material de soporte en `mockups/`, no numerado (no es de las 7 pantallas de la h
   pendiente de coordinar con Manuel/Héctor antes de darla por final — las dos rutas de la API que
   la alimentan (`GET /api/v1/about/secciones*`) todavía no están en `main`.
 
-## 8. PDF final
+## 8. PDF final — retirado
 
-<!-- FARO_UX_UI_Guide.pdf. Qué incluye y en qué orden. -->
+**`FARO_UX_UI_Guide.pdf` se cae como entregable de `US-621`** (decisión de Marina García del Buey,
+2026-09-11). Un PDF que duplica documentos ya versionados es deuda de mantenimiento, no responde a
+ninguno de los hallazgos del profesor (experiencia, gráficas, storytelling, componentes, chat,
+ML), y `DEC-024` ya fijó que las únicas compuertas del proyecto son rama, PR, CI, una aprobación y
+QA sobre la candidata — un PDF no es ninguna de esas.
+
+En su lugar, la guía de identidad de referencia **es este documento**, y su anexo técnico de
+tokens (paleta de interfaz, tipografía, radios, espaciado, elevación) es
+[`mockups/Design_Tokens_Stitch.md`](mockups/Design_Tokens_Stitch.md) — ya con frontmatter propio
+(`DOC-FARO-UX-TOKENS`, `id`/`owner`/`status`) y listado en
+[[vault/04_UX_Design/FARO_Storytelling_UX/mockups/_index]].
+
+Marina retira las referencias a `FARO_UX_UI_Guide.pdf` de `PLAN_TRABAJO.md` §7/§8/§14 y avisa a
+Edgar Coronel (PO) — el go/no-go de `US-621` es suyo, así que el cambio no desaparece en silencio.
