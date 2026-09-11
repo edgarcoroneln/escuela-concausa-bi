@@ -112,8 +112,10 @@ eléctrico contra slate profundo y blanco puro, como una torre de señal tempran
   timestamp) en `label-micro-mono` a la derecha; métricas en `JetBrains Mono` con indicador de
   tendencia (`+2.4%`, `-0.8%`).
 - **Botones:** primario fondo `#0F172A` / texto blanco / radio `4px` / hover `#1E293B`
-  ("Generar Dictamen", "Exportar Censo"); "beacon" (acción analítica) fondo `#0284C7` / hover
-  `#0369A1` ("Ejecutar Simulación", "Filtrar Matriz"); secundario/sutil fondo blanco, borde
+  ("Generar Dictamen", "Exportar Censo"); "beacon" (acción analítica) fondo `#0369A1` / hover
+  `#0284C7` ("Ejecutar Simulación", "Filtrar Matriz") — **corregido 2026-09-11**: el texto blanco
+  sobre el fondo original (`#0284C7`) daba 4.10:1, bajo WCAG 2.1 AA; se intercambió con su propio
+  hover (`#0369A1`, 5.93:1), sin inventar color nuevo; secundario/sutil fondo blanco, borde
   `#CBD5E1`, texto `#334155`.
 - **Iconografía:** Material Symbols Outlined, trazo fino, coherente con el tono instrumental —
   ver uso en `mockups/00_Login.html`.
@@ -175,36 +177,56 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 
 ## 6. Accesibilidad
 
-> **Auditoría ejecutada — 2026-09-11, gate de UX/UI (Marina García).** Se midieron 14 pares con
-> `contraste()` de `ejemplos_graficas/generar_ejemplos.py` (Monserrat Miranda), la misma función
-> WCAG 2.1 que ya valida la paleta de datos. **11 pasan**, entre 5:1 y 17.85:1. **Dos hallazgos:**
-
-| Hallazgo | Medido | Mínimo | Alcance |
-|---|---|---|---|
-| `outline` `#76777d` usado como **texto micro** | **4.46:1** sobre blanco y hasta **3.46:1** sobre `surface-container-highest` — falla en los **seis** fondos | 4.5:1 | **268 usos** en los 7 mockups |
-| Texto blanco sobre **Beacon Action** `#0284C7` (§4) | **4.10:1** | 4.5:1 | Especificado en el anexo de tokens; no aparece en los mockups |
-
-> **Arreglo propuesto, decisión de Juan Macías.** Para `outline`, oscurecerlo hasta cumplir exige
-> `#64656A` —14.5 % más oscuro, ya perceptible— y desvirtúa un token pensado para **bordes**, donde
-> el umbral es 3:1 y cumple de sobra. La vía limpia es **usar el token de texto para el texto**:
-> `on-surface-variant` `#45464d`, que ya está en esta paleta, da entre **7.29:1 y 9.39:1** en los
-> seis fondos. Para el botón beacon, `#0369A1` —el hover que ya define la §4— da **5.93:1**.
+> **Auditoría de contraste ejecutada — 2026-09-11, gate de UX/UI (Marina García del Buey), 2
+> hallazgos corregidos por Juan Macías el mismo día.** Se midieron **14 pares** con `contraste()`
+> y `validar_paleta()` de `ejemplos_graficas/generar_ejemplos.py` (Monserrat Miranda) — la misma
+> función WCAG 2.1 que ya valida la paleta de datos de la historia; medir en vez de pedir reveló
+> que esa paleta ya estaba auditada y nadie lo sabía. **11 pares pasan**, entre 5:1 y 17.85:1; el
+> texto principal `on-surface` va de 13:1 a 17:1 sobre todos los contenedores.
 >
-> **Lo que sí quedó verificado como correcto:** el acento ámbar `#B45309` **pasa donde se usa**
-> (**4.56:1** sobre `surface-container-low`, **5.02:1** sobre blanco). Sólo fallaría si se colocara
-> como texto sobre `surface-container` o más oscuro (4.31:1 y 4.10:1) — **queda como regla, no como
-> defecto**. Y el texto principal `on-surface` va entre 13:1 y 17:1 sobre todos los contenedores.
+> | Hallazgo | Medido | Mínimo | Alcance | Estado |
+> |---|---|---|---|---|
+> | `outline` `#76777d` usado como **texto micro** | 4.46:1 sobre blanco, hasta 3.46:1 sobre `surface-container-highest` — falla en los 6 fondos | 4.5:1 | 266 usos como texto en los 7 mockups (268 de la medición original incluían por accidente 2 usos de `text-outline-variant`, token distinto) | ✅ corregido |
+> | Texto blanco sobre **Beacon Action** `#0284C7` (§3) | 4.10:1 | 4.5:1 | Anexo de tokens; no aparecía en los mockups | ✅ corregido |
 >
-> Reproducible: `contraste(a, b)` en `ejemplos_graficas/generar_ejemplos.py`.
+> **Arreglo aplicado:** `outline` es un token pensado para bordes (umbral 3:1, cumple de sobra) —
+> oscurecerlo hasta cumplir como texto exigiría `#64656A` (14.5% más oscuro, ya perceptible) y lo
+> desvirtuaría. La vía limpia: usar el token de texto para el texto — `text-on-surface-variant`
+> (`#45464d`, ya en esta paleta) da 7.29–9.39:1 en los 6 fondos. Para el botón, se intercambiaron
+> reposo/hover: `#0369A1` (su propio hover) da 5.93:1 en reposo, sin inventar color — ver §3 y el
+> anexo de tokens.
+>
+> **Verificado como correcto, no como defecto:** el acento ámbar `#B45309` pasa donde vive
+> (4.56:1 sobre `surface-container-low`, 5.02:1 sobre blanco) — solo fallaría como texto sobre
+> `surface-container` o más oscuro (4.31:1 y 4.10:1), así que queda como regla de uso ("nunca
+> fondo, siempre contorno sobre superficie clara"), no como algo que corregir.
+>
+> Reproducible por cualquiera: `contraste(a, b)` en `ejemplos_graficas/generar_ejemplos.py`.
+>
+> **Corrección de seguimiento, 2026-09-11 (hallazgo de Marina sobre el fix anterior):** el
+> reemplazo de `text-outline` no cubría `text-outline-variant` (`#c6c6cd`) usado directamente como
+> texto — token distinto, más claro (1.70:1 sobre blanco, 1.46:1 sobre `surface-container`). Un
+> caso real en los 7 mockups: "OPERATIVO EN LÍNEA" en `02_Panorama_Escuelas_Riesgo.html`,
+> corregido a `text-on-surface-variant`. **El segundo caso que se reportó (`04_Expediente_Escuela.html`)
+> no es texto**: es el `stroke` de un patrón de cuadrícula decorativo en el SVG de fondo del mapa
+> (`opacity-60`, `stroke-width 0.5`) — decorativo puro, exento de umbral de contraste bajo WCAG. No
+> se tocó, para no oscurecer un fondo que se diseñó apenas visible. Hay 6 usos más del mismo token
+> como separador de puntuación ("/", "·") en `Guia_Identidad_Visual.html` y
+> `Como_Funciona_Preview.html` — fuera de los 7 mockups auditados, anotados y sin corregir aún.
 - **Nada se codifica solo por color, por diseño desde esta corrección:** nivel de atención
   (icono + texto), dominante (contorno + icono + etiqueta), `SIN_DATO` (textura + etiqueta "S/D"
   + motivo) — ninguno depende únicamente del tono para leerse. Esto resuelve directamente el
   criterio de `ADR-011` §4 que la primera versión (semáforo) violaba.
 - Todo identificador alfanumérico (CCT, coeficientes, timestamps) va en `JetBrains Mono` para
   legibilidad tabular — no es solo estético, reduce error de lectura en matrices densas.
-- Tamaño mínimo de texto, foco visible y orden de tabulación: **no definidos** en esta entrega
-  (es un export estático de diseño, no un prototipo interactivo completo) — criterio exigible
-  sigue siendo [[vault/04_UX_Design/Accessibility]], sin excepción.
+- **Tamaño mínimo de texto:** `label-micro-mono` (10px) es el piso — no baja de ahí en ningún
+  componente; por debajo de 10px WCAG deja de considerarlo legible en pantalla estándar.
+- **Foco visible:** anillo de `2px` en el acento cian `#38BDF8` con `offset` de `2px` sobre el
+  fondo, mismo tratamiento en todo control interactivo (botones, inputs, filas de tabla
+  seleccionables) — un solo estilo, no uno por componente.
+- Orden de tabulación: **no es alcance de este documento** (es interacción/navegación, no
+  identidad visual) — lo define Oscar Quiroz en `01_UX_Architecture.md` §8. Criterio exigible en
+  ambos casos sigue siendo [[vault/04_UX_Design/Accessibility]], sin excepción.
 
 ## 7. Mockups
 
