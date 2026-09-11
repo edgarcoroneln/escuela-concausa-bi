@@ -1,6 +1,7 @@
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
-import { driverColors, driverIcons, driverNombres } from "../data/mock.js";
+import { driverIcons, driverNombres } from "../data/mock.js";
+import { riskRampColor } from "../lib/riskRamp.js";
 
 const HALLAZGOS = [
   "Todas están en riesgo, pero no todas enfrentan el mismo problema.",
@@ -35,7 +36,7 @@ export default function Hallazgos() {
                   {driverIcons[d.driver]} {driverNombres[d.driver]}
                 </span>
                 <div className="flex-1 h-2.5 rounded-full" style={{ background: "var(--color-border)" }}>
-                  <div className="h-2.5 rounded-full" style={{ width: `${(d.n / max) * 100}%`, background: driverColors[d.driver] }} />
+                  <div className="h-2.5 rounded-full" style={{ width: `${(d.n / max) * 100}%`, background: riskRampColor(d.n / max) }} />
                 </div>
                 <span className="text-xs font-semibold tabular w-4 text-right" style={{ color: "var(--color-ink)" }}>{d.n}</span>
               </li>

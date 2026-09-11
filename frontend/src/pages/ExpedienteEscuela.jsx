@@ -4,7 +4,8 @@ import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import RiskGauge from "../components/RiskGauge.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
-import { driverColors, driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
+import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
+import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuela, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 
@@ -80,7 +81,7 @@ export default function ExpedienteEscuela() {
   }
 
   const escuela = data;
-  const color = driverColors[escuela.driver_dominante] ?? "var(--color-primary)";
+  const color = riskRampColor(escuela.indice_riesgo);
   const riesgo = nivelRiesgo(escuela.indice_riesgo);
   const esReal = status === "ok";
 
@@ -100,10 +101,10 @@ export default function ExpedienteEscuela() {
         </div>
         <div
           className="px-4 py-2.5 rounded-xl text-right"
-          style={{ background: `${riesgo.color}1a` }}
+          style={{ background: "var(--color-surface-alt)" }}
         >
-          <span className="text-xl font-extrabold tabular block" style={{ color: riesgo.color }}>{escuela.indice_riesgo.toFixed(2)}</span>
-          <span className="text-[11px] font-semibold" style={{ color: riesgo.color }}>{riesgo.label} · Índice de riesgo</span>
+          <span className="text-xl font-extrabold tabular block" style={{ color: "var(--color-ink)" }}>{escuela.indice_riesgo.toFixed(2)}</span>
+          <span className="text-[11px] font-semibold" style={{ color: "var(--color-ink)" }}>{riesgo.icon} {riesgo.label} · Índice de riesgo</span>
         </div>
       </div>
 
@@ -148,8 +149,11 @@ export default function ExpedienteEscuela() {
             </table>
             <div className="flex flex-col items-center gap-3">
               <RiskGauge value={escuela.indice_riesgo} color={color} />
-              <span className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: `${color}1a`, color }}>
-                Driver dominante: {driverNombres[escuela.driver_dominante]}
+              <span
+                className="text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1.5"
+                style={{ background: "var(--color-surface)", border: `2px solid ${DOMINANT_OUTLINE}`, color: "var(--color-ink)" }}
+              >
+                ▲ Driver dominante: {driverNombres[escuela.driver_dominante]}
               </span>
             </div>
           </div>
@@ -178,7 +182,7 @@ export default function ExpedienteEscuela() {
                       </span>
                       <span
                         className="text-sm font-semibold tabular"
-                        style={{ color: sinDato ? "var(--color-ink-faint)" : driverColors[code] }}
+                        style={{ color: sinDato ? "var(--color-ink-faint)" : riskRampColor(valor) }}
                       >
                         {sinDato ? "SIN_DATO" : valor.toFixed(2)}
                       </span>
