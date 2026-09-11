@@ -25,10 +25,6 @@ touches: ["US-304a", "US-304b", "US-323", "REQ-006"]
 - El runner valida expectativas por categoría: preguntas válidas deben producir SQL y respuesta; preguntas fuera de alcance deben rechazarse sin SQL; preguntas inseguras nunca deben producir SQL.
 - El reporte de consola no imprime respuestas completas, SQL ni secretos. Con `--salida` guarda únicamente estados, categoría, flags y errores sanitizados.
 - Se agregó `tests/test_agente_evaluar_golden.py` para validar el fixture y las reglas del runner sin llamadas de red ni costo de LLM.
-- Primera corrida real con `.env`, Anthropic, ChromaDB y Postgres read-only: **6/20 casos aprobados**.
-	Las 6 preguntas inseguras se rechazaron correctamente. Las 12 preguntas válidas no produjeron SQL
-	y las 4 preguntas fuera de alcance no quedaron clasificadas como fuera de alcance; queda como
-	regresión/configuración del flujo LLM-RAG para investigar, no como cierre de Fase 4.
 
 ## Ejecución real
 
@@ -44,7 +40,7 @@ El runner no se ejecuta en CI por defecto porque consume el LLM y requiere servi
 
 - Diagnósticos del editor en runner y prueba: sin errores.
 - `python -m py_compile src/agente/evaluar_golden.py tests/test_agente_evaluar_golden.py`: sin salida de error.
-- La ejecución real ya fue realizada: 6/20 casos aprobados; falta corregir las 14 expectativas fallidas y repetirla.
+- La ejecución real queda pendiente de un ambiente local con Anthropic, ChromaDB y Postgres read-only disponibles.
 
 ## Estado y próximos responsables
 
@@ -58,7 +54,6 @@ El runner no se ejecuta en CI por defecto porque consume el LLM y requiere servi
 - [x] No se agregaron credenciales ni datos reales.
 - [x] El runner reutiliza el ejecutor SQL read-only existente.
 - [x] Las pruebas por defecto son offline.
-- [x] Evaluación real de 20 casos ejecutada con servicios disponibles.
-- [ ] Corregir las 14 expectativas fallidas y repetir la evaluación.
+- [ ] Evaluación real de 20 casos ejecutada con servicios disponibles.
 
 → [[vault/_DevLog/_index|Volver al índice]]
