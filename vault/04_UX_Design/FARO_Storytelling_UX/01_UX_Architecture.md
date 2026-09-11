@@ -119,7 +119,7 @@ que es libre.
   sustentada solo en los datos existentes; recomendación general por driver; la nota obligatoria:
   *"Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, independientemente de
   los filtros utilizados durante la exploración."*
-- **Botones y CTA:** un único CTA principal (ver nombre propuesto en §7).
+- **Botones y CTA:** un único CTA principal — **"Ir al Explorador de escuelas"** (§7).
 - **A dónde conecta:** CTA → P6.
 - **Estados:** carga; sin drill-down (no hay estado de detalle adicional); error de API.
 
@@ -192,14 +192,14 @@ Botón único: "Entendido". No vuelve a aparecer para ese usuario/sesión.
 - Su lógica funcional (streaming, RAG, memoria) es responsabilidad del Equipo 2 (`US-611`); este
   documento fija solo su presencia y comportamiento visible.
 
-## 7. Nombres propuestos para la exploración posterior
+## 7. Nombre de la exploración posterior
 
-1. **Explorador de escuelas** — directo, describe la acción sin metáfora.
-2. **Otros casos** — mantiene el lenguaje de investigación del storytelling.
-3. **Sala de seguimiento** — sugiere continuidad sin sonar a "ML" ni a herramienta técnica.
+**Explorador de escuelas.** Elegido por Marina en el gate del jueves, de las tres opciones
+propuestas (Explorador de escuelas / Otros casos / Sala de seguimiento). No usa "ML", "modelo" ni
+"predicción" de cara al usuario.
 
-Ninguna usa "ML", "modelo" ni "predicción" de cara al usuario. Marina elige una en el gate de hoy; este
-documento se actualiza con la elegida antes de la entrega del viernes.
+Es el nombre visible de la Pantalla 6 en toda la experiencia: encabezado de P6, CTA de salida de
+P5 (§2) y cualquier referencia de navegación (logo, breadcrumbs) que apunte a ella.
 
 ## 8. Estados vacíos, de error y SIN_DATO
 
