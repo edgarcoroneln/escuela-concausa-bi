@@ -206,3 +206,57 @@ está en `main` reprueba `vault_lint`. Se convierte en enlace cuando aterrice.
 `ADR-012` (retiro de Streamlit, frontend nativo en React, sesión por cookie `httpOnly`) está
 `proposed` en `dev/diana-alvarez` y **no se incorpora a este paquete**: no se va a mergear, y el
 diseño no se ata a una decisión que el PO no ha ratificado.
+
+---
+
+## Addendum 3 — leyenda de gráficas y el SQL del Asistente
+
+Dos ajustes salidos del checkpoint, más una duda de alcance que se resuelve.
+
+### Leyenda de las gráficas — nueva §7.bis
+
+No estaba en el plan y entra al alcance de Monserrat: **cada gráfica debe explicar qué se está
+viendo**. No es la leyenda de colores que trae cualquier librería, sino que el usuario —no técnico y
+sin contexto— pueda leerla sin que nadie se la explique en voz alta: ejes o series en lenguaje de
+negocio, unidad del valor, cómo se ve un `SIN_DATO` ahí dentro, y de qué ciclo y qué recorte habla.
+
+Va directo contra el hallazgo del profesor sobre visualizaciones que no comunicaron valor: una
+gráfica que hay que explicar en vivo no comunica sola.
+
+**Se escribió en el plan y no en el documento de Monserrat**, a propósito. El plan es de esta
+líder y gobierna su trabajo; su archivo es suyo y puede estar editándolo en local sin haber
+empujado. Tocarlo desde aquí le crearía un conflicto y rompería la regla del §13 de no modificar el
+entregable de otro sin coordinación.
+
+### El SQL del Asistente — nueva §4.ter, y sí nos corresponde
+
+Se dudaba si es de este frente. **Lo es, en parte.** La §4 reparte: el Equipo 2 es dueño de la
+lógica y este frente del comportamiento visual. Qué se pinta y qué no es presentación.
+
+Verificado que **hoy sí se muestra**: `src/frontend/pages/3_Chat.py:85-87` pinta
+`respuesta.sql_generado` con `st.code(..., language="sql")` en cuanto viene. El campo existe en el
+contrato como `AgenteRespuestaOut.sql_generado`. El profesor lo señaló el 9-sep: *«la explicación no
+debe reducirse a mostrar SQL»*.
+
+**Decisión: el campo se conserva, la interfaz no lo muestra por defecto.** Se quiso evitar la
+solución fácil de pedir que se elimine del contrato: sirve para auditar, para QA y para que el
+evaluador compruebe que la respuesta sale de la base y no de un texto inventado — en una materia de
+inteligencia de negocios eso es un activo, no ruido. Queda detrás de una acción opcional del tipo
+*ver consulta*, cerrada de inicio y fuera del hilo de lectura.
+
+Nótese que el profesor no pidió ocultarlo: pidió que la explicación **no se redujera** a mostrarlo.
+Ocultarlo por defecto y dejarlo disponible responde a las dos cosas.
+
+Implementa el Equipo 2 o el Equipo 5 según dónde viva el componente; este frente sólo especifica.
+
+### Nota sobre la pregunta de la octava pantalla
+
+Se confirmó que la §5.bis **no le agrega un mockup a Juan**. *Cómo funciona* es superficie hermana:
+el recorrido sigue siendo de 7 pantallas y el entregable sigue siendo de 7 mockups. Lo que sí le
+toca a Juan es que su sistema de componentes la cubra, y la decisión de claro/oscuro por los
+iframes D3 del Equipo 1.
+
+### Avance del equipo
+
+Oscar Quiroz cerró el nombre del Explorador en su §7 (**Explorador de escuelas**, de tres opciones)
+y está usando el lenguaje del scope en sus estados vacíos. Monserrat y Juan aún no empujan.

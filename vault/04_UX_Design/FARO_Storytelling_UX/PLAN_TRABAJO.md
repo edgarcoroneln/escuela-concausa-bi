@@ -180,6 +180,34 @@ cambia lo que el usuario ve, así que entra al diseño:
    *"¿cómo se calcula el índice de riesgo?"*. Eso se solapa con el glosario de la §6, y conviene que
    se refuercen: cada término del glosario puede ofrecer preguntárselo al Asistente. Mete el
    asistente dentro de la narrativa en vez de dejarlo como un botón aparte.
+4. **El SQL generado no se muestra por defecto.** Ver §4.ter.
+
+### 4.ter El SQL no es la respuesta
+
+**Hoy sí se muestra.** `src/frontend/pages/3_Chat.py:85-87` pinta `respuesta.sql_generado` con
+`st.code(..., language="sql")` en cuanto viene, así que la consulta aparece en pantalla dentro de la
+conversación.
+
+El profesor lo señaló el 9-sep con estas palabras: *«la explicación no debe reducirse a mostrar
+SQL»*. La brecha está asignada al Equipo 2 (`US-611`), pero **qué se pinta y qué no es una decisión
+de presentación**, y eso sí es de este frente: la §4 dice que el Equipo 2 es dueño de la lógica y
+este frente del comportamiento visual.
+
+**Decisión de UX:**
+
+- El campo `sql_generado` **se conserva en el contrato**. No se pide quitarlo: sirve para auditar,
+  para QA y para que el evaluador compruebe que la respuesta sale de la base y no de un texto
+  inventado. En una materia de inteligencia de negocios, poder enseñar la consulta es un activo.
+- **No se muestra por defecto.** La respuesta que ve el usuario es la redacción en lenguaje natural,
+  y nada más.
+- Queda **detrás de una acción discreta y opcional** —del tipo *ver consulta*—, cerrada de inicio y
+  fuera del hilo de lectura.
+
+Así se atiende la observación del profesor sin perder la auditabilidad, que es lo que se perdería si
+el campo se eliminara del contrato.
+
+**Implementa el Equipo 2 o el Equipo 5**, según dónde viva el componente. Este frente sólo lo
+especifica.
 
 ---
 
@@ -341,11 +369,33 @@ advertencia de §3.quater: las dos difieren justo en las escuelas de las que tra
 |---|---|---|
 | **Marina García del Buey** — líder | Definir la historia oficial; objetivo, alcance y guardarraíles; criterios de aceptación; coherencia transversal; **gate final de UX/UI** | `00_Storytelling_Scope.md` |
 | **Oscar Antonio Quiroz Lázaro** — UX / navegación | Flujo de las 7 pantallas; objetivo, contenido, botones y conexiones; walkthrough y navegación; comportamiento UX del chat; 2–3 nombres para la exploración posterior. Su documento es guía directa para el Equipo 5 | `01_UX_Architecture.md` |
-| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3 | `02_Data_Visualization_Spec.md` |
+| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3; **la leyenda de cada gráfica** (§7.bis) | `02_Data_Visualization_Spec.md` |
 | **Juan Carlos Macías Mayen** — UI / identidad visual | Identidad visual desde cero: logo, paleta, tipografías, componentes, botones, cards, iconografía, imágenes, efectos, apariencia del chat, mockups y PDF final. Único editor del PDF | `03_Visual_Identity.md` |
 
 Monserrat entrega a Juan los ejemplos de gráficas y el contenido analítico aprobado.
 Ningún integrante modifica el entregable de otro sin coordinación previa.
+
+---
+
+### 7.bis Leyenda de las gráficas — sugerencia del checkpoint
+
+Salió en el checkpoint y entra al alcance de Monserrat: **cada gráfica debe explicar qué se está
+viendo.** No estaba en la versión anterior del plan.
+
+No es la leyenda mínima de colores que trae cualquier librería. Lo que se pide es que el usuario
+—que no es técnico y que llega sin contexto— pueda leer una gráfica sin que nadie se la explique en
+voz alta. Como mínimo, por gráfica:
+
+- qué representa cada eje, serie o color, con nombres en lenguaje de negocio y no de base de datos;
+- en qué unidad está el valor, y si es proporción, conteo o índice;
+- cómo se ve un `SIN_DATO` ahí dentro y por qué no es un cero;
+- de qué ciclo y qué recorte de escuelas está hablando.
+
+Monserrat decide la forma —leyenda fija, nota al pie, tooltip o una mezcla— y Juan le da tratamiento
+visual. Debe resolverse en las gráficas de la historia y también en las del Explorador de escuelas.
+
+Es directamente una respuesta al hallazgo del profesor sobre visualizaciones que no comunicaron
+valor: una gráfica que hay que explicar en vivo no comunica sola.
 
 ---
 
@@ -457,6 +507,10 @@ Definidos inicialmente por este frente. El Equipo 6 (QA, `US-651`) puede ampliar
 26. Ninguna superficie usa el nombre "Watson".
 27. La sección *Cómo funciona* comparte la identidad visual del producto y se alcanza desde la
     entrada y desde el glosario, sin interrumpir el recorrido narrativo.
+28. Toda gráfica explica qué se está viendo conforme a la §7.bis: ejes o series, unidad, tratamiento
+    de `SIN_DATO`, ciclo y recorte.
+29. La conversación del Asistente no muestra el SQL generado por defecto; si se ofrece, es tras una
+    acción opcional y cerrada de inicio (§4.ter).
 
 ---
 
