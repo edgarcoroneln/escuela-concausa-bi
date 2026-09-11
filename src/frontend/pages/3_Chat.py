@@ -7,7 +7,7 @@ import os
 import streamlit as st
 
 from auth import encabezado, token_de_acceso
-from agente_client import consultar_agente_stream
+from agente_client import consultar_agente_stream, preparar_historial
 
 API_BASE_URL = os.environ.get("FARO_API_BASE_URL", "http://localhost:8000")
 PREGUNTAS_SUGERIDAS = [
@@ -65,6 +65,7 @@ for fila in range(0, len(PREGUNTAS_SUGERIDAS), 3):
 pregunta_manual = st.chat_input("Escribe tu pregunta sobre escuelas, riesgo o drivers")
 pregunta = pregunta_sugerida or pregunta_manual
 if pregunta:
+	historial = preparar_historial(mensajes)
 	mensajes.append({"rol": "user", "contenido": pregunta})
 	with st.chat_message("user"):
 		st.markdown(pregunta)
@@ -78,6 +79,7 @@ if pregunta:
 					API_BASE_URL,
 					pregunta,
 					access_token=access_token,
+					historial=historial,
 					on_fragment=lambda texto: [
 						respuesta_parcial.append(texto),
 						placeholder.markdown("".join(respuesta_parcial)),

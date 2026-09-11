@@ -9,6 +9,7 @@ from src.frontend.agente_client import (
     ErrorAutorizacionAgente,
     consultar_agente,
     consultar_agente_stream,
+    preparar_historial,
 )
 
 
@@ -165,3 +166,55 @@ def test_consulta_stream_parsea_meta_fragmentos_y_fin() -> None:
     assert respuesta.sql_generado == "SELECT 1"
     assert respuesta.fuera_de_alcance is False
     assert fragmentos == ["1 escuela ", "encontrada."]
+
+
+def test_prepara_historial_con_turnos_completos_y_acotados() -> None:
+    mensajes = [
+        {"rol": "user", "contenido": "¿Cuántas escuelas hay?\n"},
+        {"rol": "assistant", "contenido": "Hay 4 escuelas.\t"},
+        {"rol": "user", "contenido": "Pregunta sin respuesta"},
+    ]
+
+    assert preparar_historial(mensajes) == [
+        {"pregunta": "¿Cuántas escuelas hay?", "respuesta": "Hay 4 escuelas."}
+    ]
+
+
+def test_consulta_stream_envia_historial_sin_la_pregunta_actual() -> None:
+    class RespuestaStreamFake:
+        def raise_for_status(self) -> None:
+            return None
+
+        def iter_lines(self):
+            return iter(
+                [
+                    "event: fragmento",
+                    'data: {"texto":"Respuesta"}',
+                    "event: fin",
+                    "data: {}",
+                ]
+            )
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback) -> None:
+            return None
+
+    def stream(method: str, url: str, **kwargs) -> RespuestaStreamFake:
+        assert kwargs["json"] == {
+            "pregunta": "Pregunta nueva",
+            "historial": [{"pregunta": "Anterior", "respuesta": "Respuesta anterior"}],
+        }
+        return RespuestaStreamFake()
+
+    respuesta = consultar_agente_stream(
+        "http://api:8000",
+        "Pregunta nueva",
+        stream=stream,
+        historial=[
+            {"pregunta": "Anterior", "respuesta": "Respuesta anterior"},
+        ],
+    )
+
+    assert respuesta.respuesta == "Respuesta"

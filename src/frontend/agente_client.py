@@ -9,6 +9,9 @@ from typing import Any
 
 import httpx
 
+MAX_TURNOS_HISTORIAL = 10
+MAX_LARGO_TURNO = 500
+
 
 @dataclass(frozen=True)
 class RespuestaAgente:
@@ -48,6 +51,41 @@ def _validar_respuesta_canonica(payload: dict[str, Any]) -> RespuestaAgente:
         )
     except (AttributeError, KeyError, TypeError) as exc:
         raise ValueError("La API devolvió una respuesta de agente inválida.") from exc
+
+
+def preparar_historial(
+    mensajes: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Convierte mensajes del widget en turnos previos válidos para la API."""
+    turnos: list[dict[str, str]] = []
+    pregunta_pendiente: str | None = None
+    for mensaje in mensajes:
+        rol = mensaje.get("rol")
+        contenido = mensaje.get("contenido", "")
+        if rol == "user":
+            pregunta_pendiente = contenido
+        elif rol == "assistant" and pregunta_pendiente is not None:
+            pregunta = _normalizar_texto_historial(pregunta_pendiente)
+            respuesta = _normalizar_texto_historial(contenido)
+            if pregunta and respuesta:
+                turnos.append({"pregunta": pregunta, "respuesta": respuesta})
+            pregunta_pendiente = None
+            return _normalizar_historial(turnos)
+
+
+def _normalizar_texto_historial(texto: str) -> str:
+    limpio = "".join(caracter if caracter.isprintable() else " " for caracter in texto)
+    return " ".join(limpio.split())[:MAX_LARGO_TURNO]
+
+
+def _normalizar_historial(turnos: list[dict[str, str]]) -> list[dict[str, str]]:
+    normalizados: list[dict[str, str]] = []
+    for turno in turnos:
+        pregunta = _normalizar_texto_historial(turno.get("pregunta", ""))
+        respuesta = _normalizar_texto_historial(turno.get("respuesta", ""))
+        if pregunta and respuesta:
+            normalizados.append({"pregunta": pregunta, "respuesta": respuesta})
+    return normalizados[-MAX_TURNOS_HISTORIAL:]
 
 
 def consultar_agente(
@@ -92,6 +130,7 @@ def consultar_agente_stream(
     stream: Callable[..., Any] = httpx.stream,
     access_token: str | None = None,
     on_fragment: Callable[[str], None] | None = None,
+    historial: list[dict[str, str]] | None = None,
 ) -> RespuestaAgente:
     """Consulta `/api/v1/agente/consulta/stream` y devuelve la respuesta final con streaming."""
     texto = _validar_pregunta(pregunta)
@@ -100,12 +139,15 @@ def consultar_agente_stream(
     fuera_de_alcance = False
     fragmentos: list[str] = []
     evento_actual: str | None = None
+    payload = {"pregunta": texto}
+    if historial:
+        payload["historial"] = _normalizar_historial(historial)
 
     try:
         with stream(
             "POST",
             f"{api_base_url.rstrip('/')}/api/v1/agente/consulta/stream",
-            json={"pregunta": texto},
+            json=payload,
             headers=headers,
             timeout=15.0,
         ) as response:

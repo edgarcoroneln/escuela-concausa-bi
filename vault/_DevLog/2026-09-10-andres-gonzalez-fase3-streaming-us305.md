@@ -16,23 +16,25 @@ tags: [devlog, agent, chat, streaming, sse]
 ## Qué se hizo
 - Se verificó que el widget de Streamlit ya llamaba `consultar_agente_stream`, pero el cliente intentaba usar `httpx.post(..., stream=True)`.
 - Se corrigió el cliente para usar `httpx.stream("POST", ...)` como context manager, que es el contrato real de HTTPX para respuestas SSE.
+- El cliente SSE ahora acepta `historial` como turnos `{pregunta, respuesta}` y Streamlit construye los turnos completos anteriores antes de agregar la pregunta actual.
+- El historial se limita a los últimos 10 turnos, normaliza caracteres no imprimibles y acota cada campo a 500 caracteres.
 - La prueba del cliente ahora usa un fake con `__enter__`/`__exit__` y recibe un callable `stream`, de modo que la prueba reproduce la forma real de consumo.
 - Se conserva el contrato de eventos del backend: `meta`, uno o más `fragmento` y `fin`; los fragmentos se envían al callback para render incremental y se concatenan para el historial.
 
 ## Archivos modificados
 - `src/frontend/agente_client.py`
+- `src/frontend/pages/3_Chat.py`
 - `tests/test_frontend_agente_client.py`
 
 ## Seguridad / calidad
 - [x] No se agregaron secretos ni permisos nuevos.
 - [x] La petición conserva el Bearer opcional y el límite de 3–500 caracteres.
 - [x] Diagnósticos estáticos de los dos archivos: sin errores.
-- [x] `pytest tests/test_frontend_agente_client.py -q` → 12 passed.
-- [x] `pytest tests/test_agente_endpoint.py -q` → 11 passed.
-- [x] `pytest tests/test_agente_servicio.py -q` → 19 passed.
+- [x] `pytest tests/test_frontend_agente_client.py tests/test_frontend_chat_streamlit.py -q` → 16 passed.
+- [x] Ruff sobre cliente, página y pruebas: limpio.
 
 ## Estado real
-El defecto de integración identificado queda corregido en código y la prueba ahora detectaría el uso incorrecto de `httpx.post`. Las 42 pruebas enfocadas de cliente, endpoint y servicio están verdes; la Fase 3 queda cerrada en código y pruebas locales. La validación contra la API candidata queda como paso de despliegue, no como bloqueo de esta implementación.
+El frontend de la Fase 3 queda listo en código y pruebas locales. La historia no se declara cerrada end-to-end: falta que el dueño de API incorpore `/api/v1/agente/consulta/stream`, OpenAPI y la prueba real del endpoint. Sin esa ruta, el cliente recibiría 404 aunque el frontend esté preparado.
 
 ## Próximo paso
-Coordinar el redeploy de la candidata y hacer el smoke test visual del widget; la implementación y las pruebas locales de la Fase 3 están terminadas.
+Coordinar con Juan Macías o Christian Ruiz el PR de API; después sincronizar esta rama con `origin/main`, ejecutar la integración real y hacer el smoke test visual.
