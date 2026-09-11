@@ -1,0 +1,828 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "primary-fixed-dim": "#bec6e0",
+        "on-error-container": "#93000a",
+        "primary-container": "#131b2e",
+        "on-tertiary-fixed-variant": "#004c69",
+        "surface-container": "#e5eeff",
+        "surface-container-highest": "#d3e4fe",
+        "tertiary-fixed-dim": "#7bd0ff",
+        "secondary-fixed": "#cce5ff",
+        "inverse-surface": "#213145",
+        "outline-variant": "#c6c6cd",
+        "surface-bright": "#f8f9ff",
+        "surface-container-high": "#dce9ff",
+        "error-container": "#ffdad6",
+        "on-primary": "#ffffff",
+        "secondary": "#006398",
+        "on-tertiary-fixed": "#001e2c",
+        "surface-container-low": "#eff4ff",
+        "on-background": "#0b1c30",
+        "surface-variant": "#d3e4fe",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed-variant": "#004b73",
+        "on-tertiary": "#ffffff",
+        "surface-tint": "#565e74",
+        "on-primary-fixed": "#131b2e",
+        "on-secondary-fixed": "#001d31",
+        "inverse-primary": "#bec6e0",
+        "on-surface-variant": "#45464d",
+        "background": "#f8f9ff",
+        "inverse-on-surface": "#eaf1ff",
+        "secondary-fixed-dim": "#93ccff",
+        "on-primary-fixed-variant": "#3f465c",
+        "on-surface": "#0b1c30",
+        "tertiary-fixed": "#c4e7ff",
+        "error": "#ba1a1a",
+        "tertiary-container": "#001e2c",
+        "primary-fixed": "#dae2fd",
+        "surface": "#f8f9ff",
+        "on-secondary-container": "#00476e",
+        "on-error": "#ffffff",
+        "secondary-container": "#5bb8fe",
+        "on-primary-container": "#7c839b",
+        "outline": "#76777d",
+        "surface-dim": "#cbdbf5",
+        "surface-container-lowest": "#ffffff",
+        "tertiary": "#000000",
+        "on-tertiary-container": "#008ebf",
+        "primary": "#000000"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.125rem",
+        "lg": "0.25rem",
+        "xl": "0.5rem",
+        "full": "0.75rem"
+      },
+      "spacing": {
+        "space-2xl": "3rem",
+        "layout-margin-desktop": "2rem",
+        "space-xs": "0.25rem",
+        "space-base": "1rem",
+        "space-sm": "0.5rem",
+        "inspector-panel-width": "26rem",
+        "layout-margin-mobile": "1rem",
+        "space-md": "0.75rem",
+        "space-xl": "2rem",
+        "layout-gutter": "1rem",
+        "sidebar-width-collapsed": "4.5rem",
+        "space-lg": "1.5rem",
+        "space-2xs": "0.125rem",
+        "sidebar-width-expanded": "17.5rem"
+      },
+      "fontFamily": {
+        "title-md": [
+          "Inter"
+        ],
+        "body-sm": [
+          "Inter"
+        ],
+        "label-data-mono": [
+          "JetBrains Mono"
+        ],
+        "headline-lg": [
+          "Space Grotesk"
+        ],
+        "headline-xl": [
+          "Space Grotesk"
+        ],
+        "headline-sm": [
+          "Space Grotesk"
+        ],
+        "headline-lg-mobile": [
+          "Space Grotesk"
+        ],
+        "headline-xl-mobile": [
+          "Space Grotesk"
+        ],
+        "label-micro-mono": [
+          "JetBrains Mono"
+        ],
+        "label-ui": [
+          "Inter"
+        ],
+        "body-md": [
+          "Inter"
+        ]
+      },
+      "fontSize": {
+        "title-md": [
+          "15px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "-0.005em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "18px",
+            "letterSpacing": "0em",
+            "fontWeight": "400"
+          }
+        ],
+        "label-data-mono": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.02em",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg": [
+          "24px",
+          {
+            "lineHeight": "32px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-xl": [
+          "32px",
+          {
+            "lineHeight": "40px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-sm": [
+          "18px",
+          {
+            "lineHeight": "24px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-lg-mobile": [
+          "20px",
+          {
+            "lineHeight": "28px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "600"
+          }
+        ],
+        "headline-xl-mobile": [
+          "26px",
+          {
+            "lineHeight": "34px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-micro-mono": [
+          "10px",
+          {
+            "lineHeight": "14px",
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-ui": [
+          "11px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.03em",
+            "fontWeight": "600"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "0em",
+            "fontWeight": "400"
+          }
+        ]
+      }
+    }
+  }
+};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased select-none"><aside class="fixed left-0 top-0 h-full w-[260px] bg-surface-container-lowest z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="px-space-base pt-space-lg pb-space-md flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-headline-lg text-headline-lg tracking-tight font-bold text-on-surface">FARO</span><span class="px-space-xs py-space-2xs bg-surface-container text-secondary font-label-micro-mono text-label-micro-mono rounded-lg tracking-wider">SISTEMA SENSOR SOCIAL</span></div><div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium tracking-widest">INTELLIGENCE // VIGILANCIA TERRITORIAL</div></div><nav class="flex flex-col px-space-sm pt-space-sm gap-space-2xs" data-active-classes="bg-primary-container text-on-primary font-title-md rounded-lg shadow-sm"><div class="px-space-sm pt-space-sm pb-space-2xs font-label-ui text-label-ui text-on-surface-variant tracking-wider uppercase opacity-70">FLUJO DE INVESTIGACIÓN</div><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="iniciar-sesion" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">00</span><span class="truncate">Iniciar Sesión</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="entrada-a-faro" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">01</span><span class="truncate">Entrada a FARO</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="panorama-de-riesgo" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">02</span><span class="truncate">Panorama de Riesgo</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="seleccion-de-caso" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">03</span><span class="truncate">Selección de Caso</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="expediente-de-escuela" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">04</span><span class="truncate">Expediente de Escuela</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="conclusion-global" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">05</span><span class="truncate">Conclusión Global</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="explorador-de-escuelas" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">06</span><span class="truncate">Explorador de Escuelas</span></a><div class="px-space-sm pt-space-md pb-space-2xs font-label-ui text-label-ui text-on-surface-variant tracking-wider uppercase opacity-70">REFERENCIA TÉCNICA</div><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="como-funciona-faro" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">US</span><span class="truncate">Cómo funciona FARO</span></a><a class="flex items-center gap-space-sm px-space-sm py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="guia-de-identidad" href="#"><span class="font-label-data-mono text-label-data-mono text-secondary opacity-80">ID</span><span class="truncate">Guía de Identidad</span></a></nav></div><div class="p-space-base m-space-sm bg-surface-container-low rounded-xl flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-title-md text-title-md text-on-surface">Analista de Políticas</span><span class="w-2 h-2 rounded-full bg-secondary"></span></div><div class="font-body-sm text-body-sm text-on-surface-variant">Coordinación Federal</div><div class="pt-space-xs flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant tracking-wider">4 ENTIDADES</span><span class="font-label-data-mono text-label-data-mono text-secondary bg-surface-container px-space-xs py-space-2xs rounded">09 · 15 · 19 · 14</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-14 bg-surface-container-lowest z-40 flex items-center justify-between px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface font-semibold">FARO</span><span class="text-outline-variant font-label-micro-mono text-label-micro-mono">/</span><span class="font-label-micro-mono text-label-micro-mono text-secondary tracking-wider font-semibold">SURVEILLANCE_NODE</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="font-body-sm text-body-sm text-on-surface-variant"><span class="text-on-surface font-medium">Alcance:</span> 4 Entidades · CDMX, Edomex, NL, Jalisco</div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container-low rounded-lg"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold tracking-wider">TELEMETRÍA // EN VIVO</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="flex items-center gap-space-sm"><div class="flex flex-col text-right"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">USUARIO ASIGNADO</span><span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">Analista_04</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-14 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Technical Dossier Header Bar -->
+<section class="w-full px-space-lg pt-space-lg pb-space-md bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-xs py-space-2xs bg-primary-container text-on-primary font-label-micro-mono text-label-micro-mono tracking-widest uppercase rounded">US-601</span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary tracking-wider font-semibold">ARQUITECTURA // SPEC-DATA-PIPELINE-v4.2</span>
+<span class="text-outline-variant font-label-micro-mono text-label-micro-mono">/</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">REPOSITORIO FEDERADO</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-micro-mono text-label-micro-mono">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="">ESTADO: AUDITADO &amp; CERTIFICADO</span>
+</div>
+<div class="font-label-data-mono text-label-data-mono text-on-surface bg-surface-container-low px-space-sm py-space-2xs rounded">
+          REV: 2024.Q4-GOLD
+        </div>
+</div>
+</div>
+<div class="flex flex-col gap-space-2xs mt-space-xs">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">
+        MEMORIA TÉCNICA // US-601 — Arquitectura de Telemetría y Pipelines de Datos
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-4xl">
+        Recorrido técnico del pipeline sensorial Medallion (Bronze → Silver → Gold), ingestión de 8 fuentes y neutralidad analítica con manejo estricto de SIN_DATO.
+      </p>
+</div>
+<!-- Traceability & Coordination Bar -->
+<div class="mt-space-xs p-space-sm bg-surface-container-low rounded-lg flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-semibold text-on-surface">Equipo 1: Componentes y memoria técnica</span> (Héctor Morales Marbán, Manuel Serranía, Carlos Mayorga) · Trazabilidad REQ-001 / REQ-004 · Insumo técnico para Storytelling UX Equipo 3
+        </span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-surface-container text-on-surface-variant rounded">SCHEME: LIGHT_MODE</span>
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-surface-container text-on-surface-variant rounded">ISOLATION: ZERO_IMPUTE</span>
+</div>
+</div>
+<!-- Navigation Anchor Tabs -->
+<div class="flex items-center gap-space-xs overflow-x-auto pt-space-sm">
+<a class="px-space-md py-space-xs bg-primary-container text-on-primary font-title-md text-title-md rounded shadow-sm whitespace-nowrap flex items-center gap-space-xs" href="#pipeline-medallion">
+<span class="font-label-data-mono text-label-data-mono text-secondary-container">01</span>
+<span class="">1. Arquitectura de Pipelines (Bronze → Silver → Gold)</span>
+</a>
+<a class="px-space-md py-space-xs bg-surface-container-low text-on-surface hover:bg-surface-container font-title-md text-title-md rounded whitespace-nowrap flex items-center gap-space-xs transition-colors" href="#contrato-fuentes">
+<span class="font-label-data-mono text-label-data-mono text-secondary">02</span>
+<span class="">2. Contrato de Fuentes (DS-01…DS-08)</span>
+</a>
+<a class="px-space-md py-space-xs bg-surface-container-low text-on-surface hover:bg-surface-container font-title-md text-title-md rounded whitespace-nowrap flex items-center gap-space-xs transition-colors" href="#regla-sin-dato">
+<span class="font-label-data-mono text-label-data-mono text-secondary">03</span>
+<span class="">3. Regla de Oro: SIN_DATO</span>
+</a>
+<a class="px-space-md py-space-xs bg-surface-container-low text-on-surface hover:bg-surface-container font-title-md text-title-md rounded whitespace-nowrap flex items-center gap-space-xs transition-colors" href="#esquema-gold">
+<span class="font-label-data-mono text-label-data-mono text-secondary">04</span>
+<span class="">4. Esquema Dimensional Gold</span>
+</a>
+<a class="px-space-md py-space-xs bg-surface-container-low text-on-surface hover:bg-surface-container font-title-md text-title-md rounded whitespace-nowrap flex items-center gap-space-xs transition-colors" href="#modelos-algoritmicos">
+<span class="font-label-data-mono text-label-data-mono text-secondary">05</span>
+<span class="">5. Modelos Algorítmicos FARO v4.2</span>
+</a>
+</div>
+</section>
+<!-- Main Technical Workbench Canvas -->
+<div class="px-space-lg py-space-xl flex flex-col gap-space-2xl max-w-[1440px] mx-auto w-full">
+<!-- SECTION 1: MEDALLION PIPELINE & LIVE POSTGRES METRICS -->
+<section class="flex flex-col gap-space-base" id="pipeline-medallion">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 bg-secondary rounded-sm"></span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            1. Arquitectura de Pipelines: Patrón Medallion Sensorial
+          </h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase tracking-widest">PostgreSQL Core Telemetry // Auditoría activa</span>
+</div>
+<!-- Medallion Stage Visual Flow -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Bronze Layer Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-[#B08968]"></div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-[#B08968]/15 text-[#6F4E37] font-bold rounded">
+                CAPA 01 // BRONZE
+              </span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">RAW INGEST</span>
+</div>
+<div class="font-title-md text-title-md text-on-surface">Ingestión Cruda Federada</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Recepción íntegra de 8 fuentes abiertas y censales públicas. Cero transformaciones destructivas; snapshots inmutables preservados con timestamp de captura y sha256 de payload original.
+            </p>
+</div>
+<div class="mt-space-lg pt-space-base bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">TELEMETRÍA PG_STAT:</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-label-data-mono">44,114</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">Planteles censados</span>
+</div>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">8 repositorios ingestados sin pérdida</div>
+</div>
+</div>
+<!-- Silver Layer Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-[#8D99AE]"></div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-[#8D99AE]/20 text-[#2B2D42] font-bold rounded">
+                CAPA 02 // SILVER
+              </span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">CANONICAL KEYS</span>
+</div>
+<div class="font-title-md text-title-md text-on-surface">Homologación y Normalización</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Unificación estructural de la Clave de Centro de Trabajo (CCT de 10 caracteres) cruzada con clave geoestadística INEGI (5 dígitos: 2 entidad + 3 municipio). Deduplicación y tipificación estricta.
+            </p>
+</div>
+<div class="mt-space-lg pt-space-base bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CONCORDANCIA RELACIONAL:</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-label-data-mono">100.0%</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">Llaves CCT unificadas</span>
+</div>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">0 discrepancias en marco municipal</div>
+</div>
+</div>
+<!-- Gold Layer Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-[#D4AF37]"></div>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-[#D4AF37]/20 text-[#5C4D14] font-bold rounded">
+                CAPA 03 // GOLD
+              </span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">STAR SCHEMA</span>
+</div>
+<div class="font-title-md text-title-md text-on-surface">Esquema Analítico Multidimensional</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Tablas dimensionales analíticas indexadas para consulta en tiempo real. Acotado estrictamente a <code class="font-label-data-mono text-secondary bg-surface-container px-1 py-0.5 rounded text-xs">SCOPE_ENTIDADES = ["09", "15", "19", "14"]</code>.
+            </p>
+</div>
+<div class="mt-space-lg pt-space-base bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-space-2xs">
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">COHORTE AUDITADA:</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-label-data-mono">7 Planteles</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">Cohorte Crítica v4.2</span>
+</div>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">6 vectores multidimensionales auditados</div>
+</div>
+</div>
+</div>
+<!-- Pipeline Telemetry Topology SVG Diagram -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-base">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary uppercase font-semibold">DIAGRAMA DE TOPOLOGÍA SENSORIAL</span>
+<span class="font-title-md text-title-md text-on-surface">Flujo de Ingesta, Limpieza Canónica y Carga Dimensional</span>
+</div>
+<span class="font-label-data-mono text-label-data-mono px-space-sm py-space-2xs bg-surface-container text-on-surface-variant rounded">ETL_WORKER_POOL // ACTIVE</span>
+</div>
+<div class="w-full overflow-x-auto">
+<svg class="w-full min-w-[760px] h-48" fill="none" viewBox="0 0 900 180" xmlns="http://www.w3.org/2000/svg">
+<!-- Grid Lines & Background Accents -->
+<line stroke="#E2E8F0" stroke-dasharray="4 4" stroke-width="2" x1="50" x2="850" y1="90" y2="90"></line>
+<!-- Nodes: Data Sources -->
+<rect fill="#F8FAFC" height="120" rx="8" width="130" x="20" y="30"></rect>
+<text fill="#006398" font-family="JetBrains Mono" font-size="10" font-weight="600" text-anchor="middle" x="85" y="55">8 FUENTES (DS)</text>
+<text fill="#45464d" font-family="Inter" font-size="11" text-anchor="middle" x="85" y="75">SEP · INEGI · SESNSP</text>
+<text fill="#45464d" font-family="Inter" font-size="11" text-anchor="middle" x="85" y="93">CONEVAL · IFT</text>
+<text fill="#45464d" font-family="Inter" font-size="11" text-anchor="middle" x="85" y="111">CONAGUA · SINAICA</text>
+<text fill="#76777d" font-family="JetBrains Mono" font-size="9" text-anchor="middle" x="85" y="132">POLL FREQ: 24H</text>
+<!-- Connector Arrow 1 -->
+<path d="M150 90 L210 90" marker-end="url(#arrowhead)" stroke="#006398" stroke-width="2"></path>
+<!-- Bronze Container -->
+<rect fill="#B08968" fill-opacity="0.08" height="110" rx="8" width="170" x="210" y="35"></rect>
+<rect fill="#B08968" height="4" width="170" x="210" y="35"></rect>
+<text fill="#6F4E37" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="middle" x="295" y="60">BRONZE LAYER</text>
+<text fill="#0B1C30" font-family="Inter" font-size="11" text-anchor="middle" x="295" y="80">ingest_raw_partition</text>
+<text fill="#45464D" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="295" y="100">44,114 registros</text>
+<text fill="#76777D" font-family="Inter" font-size="9" text-anchor="middle" x="295" y="125">Inmutable · Cero mutación</text>
+<!-- Connector Arrow 2 -->
+<path d="M380 90 L440 90" stroke="#006398" stroke-width="2"></path>
+<!-- Silver Container -->
+<rect fill="#8D99AE" fill-opacity="0.08" height="110" rx="8" width="180" x="440" y="35"></rect>
+<rect fill="#8D99AE" height="4" width="180" x="440" y="35"></rect>
+<text fill="#2B2D42" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="middle" x="530" y="60">SILVER LAYER</text>
+<text fill="#0B1C30" font-family="Inter" font-size="11" text-anchor="middle" x="530" y="80">homologate_cct_inegi</text>
+<text fill="#45464D" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="530" y="100">Claves 10D + 5D</text>
+<text fill="#76777D" font-family="Inter" font-size="9" text-anchor="middle" x="530" y="125">Detección de nulos estructurada</text>
+<!-- Connector Arrow 3 -->
+<path d="M620 90 L680 90" stroke="#006398" stroke-width="2"></path>
+<!-- Gold Container -->
+<rect fill="#D4AF37" fill-opacity="0.1" height="110" rx="8" width="200" x="680" y="35"></rect>
+<rect fill="#D4AF37" height="4" width="200" x="680" y="35"></rect>
+<text fill="#5C4D14" font-family="JetBrains Mono" font-size="11" font-weight="600" text-anchor="middle" x="780" y="60">GOLD STAR SCHEMA</text>
+<text fill="#0B1C30" font-family="Inter" font-size="11" text-anchor="middle" x="780" y="80">fact_escuela_ciclo</text>
+<text fill="#006398" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="780" y="100">dim_escuela · dim_driver</text>
+<text fill="#76777D" font-family="Inter" font-size="9" text-anchor="middle" x="780" y="125">Filtro: SCOPE_ENTIDADES (09,15,19,14)</text>
+</svg>
+</div>
+</div>
+</section>
+<!-- SECTION 2: CONTRATO DE FUENTES (DS-01 a DS-08) -->
+<section class="flex flex-col gap-space-base" id="contrato-fuentes">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 bg-secondary rounded-sm"></span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            2. Contrato de Fuentes de Datos (DS-01 … DS-08)
+          </h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">ESPECIFICACIÓN DE INGESTIÓN FEDERADA</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low font-label-micro-mono text-label-micro-mono text-on-surface-variant uppercase">
+<th class="py-space-sm px-space-md">ID</th>
+<th class="py-space-sm px-space-md">Fuente / Emisor</th>
+<th class="py-space-sm px-space-md">Dimensiones &amp; Atributos Ingestados</th>
+<th class="py-space-sm px-space-md">Mapeo Driver</th>
+<th class="py-space-sm px-space-md">Resolución Territorial</th>
+<th class="py-space-sm px-space-md">Manejo de Faltante</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-sm text-body-sm text-on-surface">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-01</td>
+<td class="py-space-sm px-space-md font-semibold">SEP / SIGED</td>
+<td class="py-space-sm px-space-md">CCT, turno escolar, nivel educativo, matrícula oficial, docentes activos</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container text-on-surface font-label-micro-mono text-label-micro-mono rounded">NÚCLEO REGISTRAL</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Plantel (Puntual)</td>
+<td class="py-space-sm px-space-md text-error font-medium">Rechazo en ingestión si CCT inválido</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-02</td>
+<td class="py-space-sm px-space-md font-semibold">CEMABE / INEGI</td>
+<td class="py-space-sm px-space-md">Materialidad constructiva, acceso a sanitarios, luz continua, bardas perimetrales</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono rounded">D3 Infraestructura</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Plantel / Censo Físico</td>
+<td class="py-space-sm px-space-md text-on-surface-variant font-label-micro-mono text-label-micro-mono">sin registro en el censo CEMABE</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-03</td>
+<td class="py-space-sm px-space-md font-semibold">SESNSP</td>
+<td class="py-space-sm px-space-md">Incidencia delictiva de alto impacto, homicidio doloso, robo a transeúnte, cuadrantes</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono rounded">D2 Inseguridad</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Municipal / Cuadrante Urbano</td>
+<td class="py-space-sm px-space-md text-on-surface-variant font-label-micro-mono text-label-micro-mono">sin dato para su municipio</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-04</td>
+<td class="py-space-sm px-space-md font-semibold">CONEVAL</td>
+<td class="py-space-sm px-space-md">Índice de rezago social (IRS), marginación por ageb, carencia por acceso a alimentación</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono rounded">D1 Pobreza</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">AGEB / Municipio</td>
+<td class="py-space-sm px-space-md text-on-surface-variant font-label-micro-mono text-label-micro-mono">sin dato para su municipio</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-05</td>
+<td class="py-space-sm px-space-md font-semibold">IFT / CFE TEIT</td>
+<td class="py-space-sm px-space-md">Penetración de banda ancha fija/móvil, puntos de internet para el bienestar</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono rounded">D4 Conectividad</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Radio 1.5 km escolar</td>
+<td class="py-space-sm px-space-md text-on-surface-variant font-label-micro-mono text-label-micro-mono">cobertura celular no censada</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-06</td>
+<td class="py-space-sm px-space-md font-semibold">CONAGUA</td>
+<td class="py-space-sm px-space-md">Monitor de sequía de México (MSM), nivel de cuenca hídrica, disponibilidad per cápita</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono rounded">D5 Estrés Hídrico</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Cuenca Hidrológica</td>
+<td class="py-space-sm px-space-md text-on-surface-variant font-label-micro-mono text-label-micro-mono">aún no hay fuente de estrés hídrico integrada</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-07</td>
+<td class="py-space-sm px-space-md font-semibold">SINAICA</td>
+<td class="py-space-sm px-space-md">Concentración PM2.5, PM10, O3, índice aire y salud por estación de monitoreo</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono rounded">D6 Calidad del Aire</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Estación georreferenciada</td>
+<td class="py-space-sm px-space-md text-on-surface-variant font-label-micro-mono text-label-micro-mono">no hay estación de calidad del aire a 15 km o menos</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono text-secondary font-semibold">DS-08</td>
+<td class="py-space-sm px-space-md font-semibold">Marco Geoestadístico INEGI</td>
+<td class="py-space-sm px-space-md">Límites estatales, polígonos municipales, coordenadas EPSG:4326 y centroides de AGEB</td>
+<td class="py-space-sm px-space-md"><span class="px-space-xs py-space-2xs bg-surface-container text-on-surface font-label-micro-mono text-label-micro-mono rounded">ANDAMIAJE GEO</span></td>
+<td class="py-space-sm px-space-md font-label-data-mono text-label-data-mono">Vectorial Poligonal</td>
+<td class="py-space-sm px-space-md text-error font-medium">Falla de topología detiene carga</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- SECTION 3: REGLA DE ORO: SIN_DATO & COBERTURA SENSORIAL -->
+<section class="flex flex-col gap-space-base" id="regla-sin-dato">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 bg-secondary rounded-sm"></span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            3. Regla de Oro: Neutralidad Analítica y Tratamiento SIN_DATO
+          </h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-error font-bold uppercase tracking-wider">CLAUDE.md §4 MANDATO ARQUITECTÓNICO</span>
+</div>
+<!-- Critical Governance Callout Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="p-space-sm bg-error-container text-on-error-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">block</span>
+</div>
+<div class="flex flex-col gap-space-xs flex-1">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">
+              PROHIBICIÓN ESTRICTA DE IMPUTACIÓN A CERO (CLAUDE.md §4)
+            </span>
+<p class="font-body-md text-body-md text-on-surface">
+              Un valor faltante en el sensor social <span class="font-semibold text-error">nunca se imputa a 0.00 ni se asume neutro</span>; se marca explícitamente como <code class="font-label-data-mono bg-surface-container px-1 py-0.5 rounded text-secondary font-bold">SIN_DATO</code> para no castigar ni premiar sesgos territoriales derivados de la ausencia de infraestructura censal o meteorológica.
+            </p>
+</div>
+</div>
+<!-- Visual demonstration of the 45deg Hatch Texture Required -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md mt-space-sm">
+<!-- Sample D3 Missing -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono font-semibold text-on-surface">VECTOR D3: INFRAESTRUCTURA</span>
+<span class="font-label-micro-mono text-label-micro-mono text-error font-bold">NULL_VALUE</span>
+</div>
+<div class="h-12 w-full rounded flex items-center justify-center" style="background: repeating-linear-gradient(45deg, #CBD5E1 0 2px, #F1F5F9 2px 8px);">
+<span class="px-space-xs py-space-2xs bg-surface-container-lowest text-on-surface font-label-data-mono text-label-data-mono font-bold rounded shadow-sm">
+                SIN_DATO
+              </span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Motivo: "sin registro en el censo CEMABE"</span>
+</div>
+<!-- Sample D5 Missing -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono font-semibold text-on-surface">VECTOR D5: ESTRÉS HÍDRICO</span>
+<span class="font-label-micro-mono text-label-micro-mono text-error font-bold">NULL_VALUE</span>
+</div>
+<div class="h-12 w-full rounded flex items-center justify-center" style="background: repeating-linear-gradient(45deg, #CBD5E1 0 2px, #F1F5F9 2px 8px);">
+<span class="px-space-xs py-space-2xs bg-surface-container-lowest text-on-surface font-label-data-mono text-label-data-mono font-bold rounded shadow-sm">
+                SIN_DATO
+              </span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Motivo: "aún no hay fuente de estrés hídrico integrada"</span>
+</div>
+<!-- Sample D6 Missing -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono font-semibold text-on-surface">VECTOR D6: CALIDAD DEL AIRE</span>
+<span class="font-label-micro-mono text-label-micro-mono text-error font-bold">NULL_VALUE</span>
+</div>
+<div class="h-12 w-full rounded flex items-center justify-center" style="background: repeating-linear-gradient(45deg, #CBD5E1 0 2px, #F1F5F9 2px 8px);">
+<span class="px-space-xs py-space-2xs bg-surface-container-lowest text-on-surface font-label-data-mono text-label-data-mono font-bold rounded shadow-sm">
+                SIN_DATO
+              </span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Motivo: "no hay estación de calidad del aire a 15 km o menos"</span>
+</div>
+<!-- Sample D1/D2 Missing -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono font-semibold text-on-surface">VECTOR D1/D2: TERRITORIAL</span>
+<span class="font-label-micro-mono text-label-micro-mono text-error font-bold">NULL_VALUE</span>
+</div>
+<div class="h-12 w-full rounded flex items-center justify-center" style="background: repeating-linear-gradient(45deg, #CBD5E1 0 2px, #F1F5F9 2px 8px);">
+<span class="px-space-xs py-space-2xs bg-surface-container-lowest text-on-surface font-label-data-mono text-label-data-mono font-bold rounded shadow-sm">
+                SIN_DATO
+              </span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">Motivo: "sin dato para su municipio"</span>
+</div>
+</div>
+<div class="p-space-sm bg-surface-container-lowest rounded text-on-surface-variant font-body-sm text-body-sm flex items-center justify-between">
+<span class="">
+<strong>Impacto en cálculo del Índice FARO:</strong> El denominador del promedio ponderado omite dinámicamente el peso del vector marcado como <code class="font-label-data-mono text-xs">SIN_DATO</code>, recalculando la masa analítica sobre el 100% de los drivers verdaderamente observados.
+          </span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary uppercase font-bold">REWEIGHTING_POLICY = PROPORTIONAL</span>
+</div>
+</div>
+</section>
+<!-- SECTION 4: ESQUEMA DIMENSIONAL GOLD & COBERTURA DE ENTIDADES -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg" id="esquema-gold">
+<!-- Left Column: Schema Architecture (7 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-space-base">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 bg-secondary rounded-sm"></span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            4. Esquema Dimensional Gold (Star Schema)
+          </h2>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface">Tablas de Hechos y Dimensiones</span>
+<span class="font-label-data-mono text-label-data-mono text-secondary bg-surface-container px-space-xs py-space-2xs rounded">DIALECT: PostgreSQL 16</span>
+</div>
+<div class="space-y-space-sm">
+<!-- Fact Table -->
+<div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-space-2xs">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-bold">fact_escuela_ciclo</span>
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-primary text-on-primary rounded">TABLA CENTRAL DE HECHOS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Almacena métricas consolidadas por ciclo escolar. Métricas clave: <code class="font-label-data-mono text-xs">faro_score_compuesto</code>, <code class="font-label-data-mono text-xs">d1_pobreza_val</code>, <code class="font-label-data-mono text-xs">d2_seguridad_val</code>, <code class="font-label-data-mono text-xs">d3_infra_val</code>, <code class="font-label-data-mono text-xs">d4_conec_val</code>, <code class="font-label-data-mono text-xs">d5_hidro_val</code>, <code class="font-label-data-mono text-xs">d6_aire_val</code>.
+              </p>
+<div class="font-label-micro-mono text-label-micro-mono text-secondary pt-space-2xs">
+                FOREIGN KEYS: (cct_id → dim_escuela.cct), (municipio_id → dim_municipio.id), (periodo_id → dim_tiempo.id)
+              </div>
+</div>
+<!-- Dim Tables Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+<div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">dim_escuela</span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">DIMENSIÓN</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                  CCT (PK), nombre oficial, nivel, modalidad, turno, geolocalización (lat/lon EPSG:4326), matrícula activa.
+                </div>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">dim_municipio</span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">DIMENSIÓN</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                  Clave INEGI (5 dígitos), clave entidad (2 dígitos), nombre municipio, tipología urbana/rural, polígono geográfico.
+                </div>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">dim_driver</span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">DIMENSIÓN</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                  Código de driver (D1…D6), nombre de dimensión, peso algorítmico nominal, fuente oficial rectora.
+                </div>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">dim_tiempo</span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">DIMENSIÓN</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                  Ciclo escolar (ej. 2023-2024), trimestre de corte censal, fecha de publicación del indicador oficial.
+                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Paleta Categórica de Manuel (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-base">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 bg-secondary rounded-sm"></span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            Entidades en Alcance &amp; Paleta
+          </h2>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary uppercase font-semibold">PALETA CATEGÓRICA DE MANUEL</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+              "Paleta categórica obligatoria: un color fijo por entidad federativa, nunca una escala secuencial para evitar jerarquías territoriales falsas."
+            </p>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- CDMX -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded" style="background-color: #4C72B0;"></span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Ciudad de México</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CLAVE INEGI: 09</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-data-mono text-label-data-mono font-bold" style="color: rgb(76, 114, 176);">#4C72B0</span>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">4,210 planteles</div>
+</div>
+</div>
+<!-- Edomex -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded" style="background-color: #DD8452;"></span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Estado de México</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CLAVE INEGI: 15</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-data-mono text-label-data-mono font-bold" style="color: #DD8452;">#DD8452</span>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">18,340 planteles</div>
+</div>
+</div>
+<!-- Nuevo León -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded" style="background-color: #55A868;"></span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Nuevo León</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CLAVE INEGI: 19</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-data-mono text-label-data-mono font-bold" style="color: #55A868;">#55A868</span>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">6,120 planteles</div>
+</div>
+</div>
+<!-- Jalisco -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-5 h-5 rounded" style="background-color: #C44E52;"></span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Jalisco</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">CLAVE INEGI: 14</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-data-mono text-label-data-mono font-bold" style="color: #C44E52;">#C44E52</span>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">15,444 planteles</div>
+</div>
+</div>
+</div>
+<div class="p-space-xs bg-surface-container rounded text-center">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+              TOTAL SCOPE REGISTRAL: <strong>44,114 PLANTELES</strong>
+</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: MODELOS ALGORÍTMICOS FARO v4.2 -->
+<section class="flex flex-col gap-space-base" id="modelos-algoritmicos">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 bg-secondary rounded-sm"></span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+            5. Modelos Algorítmicos FARO v4.2
+          </h2>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">MATRIZ DE PONDERACIÓN DINÁMICA</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Algorithm 01 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-bold">MODEL-01 // PONDERACIÓN</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">W_FARO</span>
+</div>
+<div class="font-title-md text-title-md text-on-surface">Índice Compuesto Multivariado</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Ponderación lineal normalizada sobre los vectores con observación activa:
+            <br>
+<code class="block font-label-data-mono text-xs bg-surface-container-low p-space-xs rounded my-space-xs text-on-surface">
+              Score = Σ(w_i · x_i) / Σ(w_i)
+            </code>
+            donde <code class="text-xs font-label-data-mono">w_i = 0</code> si el indicador tiene etiqueta <code class="text-xs font-label-data-mono">SIN_DATO</code>.
+          </p>
+</div>
+<!-- Algorithm 02 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-bold">MODEL-02 // DIVERGENCIA</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">KL_DIST</span>
+</div>
+<div class="font-title-md text-title-md text-on-surface">Sensor de Disparidad Municipal</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Mide la brecha entre el desempeño relativo del plantel respecto a la media de su cuadrante municipal para aislar factores escolares internos de presiones estructurales de entorno.
+          </p>
+</div>
+<!-- Algorithm 03 -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-bold">MODEL-03 // COHORTE</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">RANK_TRIAGE</span>
+</div>
+<div class="font-title-md text-title-md text-on-surface">Clasificación por Vectores Críticos</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Identificación objetiva de las cohortes que presentan concurrencia de al menos 3 vectores en el percentil 90, sin utilizar etiquetas subjetivas o descalificadoras.
+          </p>
+</div>
+</div>
+</section>
+<!-- Final Institutional Endorsement Footer -->
+<div class="p-space-md bg-surface-container-low rounded-xl flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">policy</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+          Documento técnico generado para la Unidad de Evaluación del Sistema Sensor Social FARO. Todos los pipelines ejecutan validaciones idempotentes.
+        </span>
+</div>
+<div class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">
+        TIMESTAMP BUILD: 2024-11-28 14:32:09 UTC
+      </div>
+</div>
+</div>
+<!-- Persistent Floating Operational Node: Asistente FARO -->
+
+</div>
+<!-- Minimalist Interactive Tab Scroller Script -->
+<script>
+  // Smooth scroll handler for anchor navigation links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+</script></main></div><div class="fixed bottom-6 right-6 z-50"><button class="flex items-center gap-space-sm px-space-base py-space-sm bg-primary-container text-on-primary rounded-full shadow-[0_8px_24px_-4px_rgba(0,0,0,0.3)] hover:bg-inverse-surface hover:text-inverse-on-surface transition-all duration-200" type="button"><span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span><span class="font-label-micro-mono text-label-micro-mono tracking-wider font-semibold text-secondary-container">ASISTENTE FARO // EN LÍNEA</span><span class="material-symbols-outlined text-[16px] text-secondary-container">terminal</span></button></div>
+
+</body></html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>FARO Intelligence Platform</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-container":"#5bb8fe","surface-container-lowest":"#ffffff","on-tertiary-fixed-variant":"#004c69","on-secondary":"#ffffff","primary":"#000000","inverse-on-surface":"#eaf1ff","on-tertiary-container":"#008ebf","inverse-primary":"#bec6e0","secondary-fixed":"#cce5ff","on-secondary-container":"#00476e","surface-variant":"#d3e4fe","outline":"#76777d","on-surface":"#0b1c30","on-primary-fixed-variant":"#3f465c","on-error-container":"#93000a","on-secondary-fixed-variant":"#004b73","on-primary-container":"#7c839b","error-container":"#ffdad6","surface":"#f8f9ff","inverse-surface":"#213145","background":"#f8f9ff","on-secondary-fixed":"#001d31","surface-container-high":"#dce9ff","tertiary-fixed-dim":"#7bd0ff","primary-container":"#131b2e","on-tertiary-fixed":"#001e2c","surface-dim":"#cbdbf5","on-background":"#0b1c30","surface-container":"#e5eeff","on-surface-variant":"#45464d","surface-tint":"#565e74","error":"#ba1a1a","secondary-fixed-dim":"#93ccff","secondary":"#006398","surface-container-low":"#eff4ff","surface-container-highest":"#d3e4fe","tertiary":"#000000","tertiary-container":"#001e2c","on-error":"#ffffff","outline-variant":"#c6c6cd","primary-fixed":"#dae2fd","on-primary-fixed":"#131b2e","on-primary":"#ffffff","tertiary-fixed":"#c4e7ff","on-tertiary":"#ffffff","primary-fixed-dim":"#bec6e0","surface-bright":"#f8f9ff"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"sidebar-width-expanded":"17.5rem","space-xs":"0.25rem","space-lg":"1.5rem","space-2xl":"3rem","inspector-panel-width":"26rem","space-sm":"0.5rem","layout-gutter":"1rem","layout-margin-desktop":"2rem","space-xl":"2rem","space-2xs":"0.125rem","space-md":"0.75rem","layout-margin-mobile":"1rem","sidebar-width-collapsed":"4.5rem","space-base":"1rem"},fontFamily:{"body-md":["Inter"],"label-data-mono":["JetBrains Mono"],"headline-sm":["Space Grotesk"],"body-sm":["Inter"],"headline-lg":["Space Grotesk"],"label-ui":["Inter"],"headline-xl-mobile":["Space Grotesk"],"title-md":["Inter"],"headline-xl":["Space Grotesk"],"label-micro-mono":["JetBrains Mono"],"headline-lg-mobile":["Space Grotesk"]},fontSize:{"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"label-data-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-ui":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-xl-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.015em","fontWeight":"600"}],"title-md":["15px",{"lineHeight":"22px","letterSpacing":"-0.005em","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-micro-mono":["10px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-secondary selection:text-on-secondary"><aside class="fixed left-0 top-0 h-screen w-sidebar-width-expanded bg-surface-container-lowest border-r border-outline-variant/40 z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="px-space-lg py-space-lg border-b border-outline-variant/30"><div class="flex items-center gap-space-sm"><div class="w-2.5 h-2.5 rounded-none bg-secondary animate-pulse"></div><span class="font-headline-lg text-headline-lg text-primary tracking-tight">FARO</span></div><p class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold uppercase tracking-wider mt-space-2xs">FARO — INTELLIGENCE // VIGILANCIA TERRITORIAL</p><div class="mt-space-sm inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container border border-outline-variant/50 rounded"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">SISTEMA SENSOR SOCIAL</span></div></div><div class="px-space-md pt-space-md pb-space-2xs"><span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider px-space-sm">Flujo de Investigación</span></div><nav class="flex flex-col gap-space-2xs px-space-sm" data-active-classes="bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container"><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="login" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">00</span><span class="flex-1">Iniciar Sesión</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="entrada-faro" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">01</span><span class="flex-1">Entrada a FARO</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="panorama-riesgo" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">02</span><span class="flex-1">Panorama de Riesgo</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="seleccion-caso" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">03</span><span class="flex-1">Selección de Caso</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="expediente-escuela" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">04</span><span class="flex-1">Expediente de Escuela</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="conclusion-global" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">05</span><span class="flex-1">Conclusión Global</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="explorador-escuelas" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">06</span><span class="flex-1">Explorador de Escuelas</span></a></nav><div class="my-space-md border-t border-outline-variant/30"></div><div class="px-space-md pb-space-2xs"><span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider px-space-sm">Referencia Técnica</span></div><nav class="flex flex-col gap-space-2xs px-space-sm mb-space-lg" data-active-classes="bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container"><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="como-funciona" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">US</span><span class="flex-1">Cómo funciona FARO</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="guia-identidad" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">ID</span><span class="flex-1">Guía de Identidad</span></a></nav></div><div class="p-space-md border-t border-outline-variant/30 bg-surface-container-low"><div class="flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono uppercase text-on-surface-variant font-semibold">MUESTRA AUDITADA: N=7 PLANTELES</span><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span></div><p class="font-label-ui text-label-ui text-on-surface font-semibold truncate">Analista de Políticas</p><p class="font-label-micro-mono text-label-micro-mono text-on-surface-variant truncate">Coordinación Federal</p><div class="mt-space-xs px-space-xs py-space-2xs bg-surface-container-lowest border border-outline-variant/60 rounded flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">4 Entidades</span><span class="font-label-micro-mono text-label-micro-mono text-outline font-normal">(09, 15, 19, 14)</span></div></div></div></aside><div class="pl-sidebar-width-expanded min-h-screen flex flex-col"><header class="fixed top-0 left-sidebar-width-expanded right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/40 z-40 flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs font-label-data-mono text-label-data-mono text-on-surface-variant"><span class="text-primary font-semibold">FARO</span><span class="text-outline">/</span><span class="text-secondary font-medium">SURVEILLANCE_NODE</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container border border-outline-variant/40 rounded-full"><span class="font-label-micro-mono text-label-micro-mono text-on-surface font-medium">Alcance: 4 Entidades · CDMX, Edomex, NL, Jalisco</span></div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container-low border border-outline-variant/40 rounded"><span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span><span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">TELEMETRÍA // EN VIVO</span></div><div class="flex items-center gap-space-sm pl-space-md border-l border-outline-variant/40"><div class="text-right hidden sm:block"><p class="font-label-ui text-label-ui text-on-surface font-semibold">ANALISTA_04</p><p class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">FEDERAL_NODE</p></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background flex-1"><div class="flex flex-col w-full">
+<!-- Status & Technical Breadcrumb Bar -->
+<div class="w-full bg-surface-container-low px-space-xl py-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold uppercase tracking-wider">MÓDULO DE SÍNTESIS AGREGADA // SENSOR RED FEDERAL</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant">MUESTRA AUDITADA: N=7 PLANTELES</span>
+</div>
+<div class="flex items-center gap-space-sm font-label-micro-mono text-label-micro-mono text-outline">
+<span class="">CORTE TEMPORAL: CICLO VIGENTE</span>
+<span class="">•</span>
+<span class="text-on-surface font-semibold">Auditoría activa</span>
+</div>
+</div>
+<div class="px-space-xl py-space-xl max-w-[1400px] mx-auto w-full flex flex-col gap-space-xl">
+<!-- Header Block with Rigorous Institutional Framing -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-on-secondary px-space-xs py-space-2xs bg-primary rounded uppercase">DIAGNÓSTICO TRANSCENSAL</span>
+<span class="font-label-data-mono text-label-data-mono text-outline">REF: FARO-PANORAMA-C5</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">Factores de Riesgo Dominantes</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-4xl">Jerarquización sistemática calculada mediante agregación estadística sobre el universo censal verificado.</p>
+<!-- Mandatory Explicit Methodology Note (LITERAL, VISIBLE, NO TOOLTIP) -->
+<div class="mt-space-sm bg-surface-container px-space-md py-space-sm rounded flex items-center gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0">info</span>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">
+          Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, independientemente de los filtros utilizados durante la exploración.
+        </p>
+</div>
+</div>
+<!-- Main Grid: Top 2 Dominant Drivers + Neutral Vacant 3rd Slot -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-lg items-stretch">
+<!-- Card 1: 1er Lugar Dominante (D2) -->
+<div class="bg-surface-container-lowest rounded shadow-md p-space-lg flex flex-col justify-between relative overflow-hidden transition-all hover:shadow-xl group">
+<!-- Amber Accent Hairline Strip -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-[#B45309]"></div>
+<div>
+<!-- Meta Header -->
+<div class="flex items-center justify-between mb-space-md">
+<div class="inline-flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-[#B45309]"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#B45309] font-bold uppercase tracking-widest">1ER LUGAR DOMINANTE</span>
+</div>
+<span class="font-label-data-mono text-label-data-mono px-space-xs py-space-2xs bg-surface-container text-on-surface-variant font-semibold rounded">CÓDIGO: D2</span>
+</div>
+<!-- Driver Identity -->
+<div class="flex items-start gap-space-sm mb-space-lg">
+<div class="p-space-sm rounded bg-surface-container text-[#B45309] shrink-0">
+<span class="material-symbols-outlined text-[28px]">shield</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Inseguridad del entorno</h2>
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase tracking-wider">FACTOR PERIFÉRICO VECTORIAL</span>
+</div>
+</div>
+<!-- Quantitative Evidence Metrics -->
+<div class="bg-surface-container-low p-space-md rounded mb-space-lg">
+<div class="flex items-baseline justify-between mb-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase">Presencia Diagnosticada</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant font-medium">MUESTRA AUDITADA: N=7 PLANTELES</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">71</span>
+<span class="font-title-md text-title-md text-[#B45309] font-bold">%</span>
+</div>
+<!-- Quantitative Progress Bar -->
+<div class="w-full h-1.5 bg-surface-container mt-space-sm rounded overflow-hidden">
+<div class="h-full bg-[#B45309] w-[71%]"></div>
+</div>
+</div>
+<!-- Official Institutional Recommendation (Copy Real) -->
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase font-semibold">RECOMENDACIÓN INSTITUCIONAL OFICIAL</span>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+              Coordinar con seguridad pública rutas escolares seguras y entornos protegidos.
+            </p>
+</div>
+</div>
+<!-- Technical Telemetry Footer -->
+<div class="mt-space-lg pt-space-md bg-surface-container-low -mx-space-lg -mb-space-lg px-space-lg py-space-sm flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-outline">MASA CRÍTICA TRANSVERSAL</span>
+<span class="font-label-data-mono text-label-data-mono text-primary font-semibold">N=5 // ALCANCE 4 ENTIDADES</span>
+</div>
+</div>
+<!-- Card 2: 2º Lugar Dominante (D4) -->
+<div class="bg-surface-container-lowest rounded shadow-md p-space-lg flex flex-col justify-between relative overflow-hidden transition-all hover:shadow-xl group">
+<!-- Amber Accent Hairline Strip -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-[#B45309]"></div>
+<div>
+<!-- Meta Header -->
+<div class="flex items-center justify-between mb-space-md">
+<div class="inline-flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-[#B45309]"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-[#B45309] font-bold uppercase tracking-widest">2º LUGAR DOMINANTE</span>
+</div>
+<span class="font-label-data-mono text-label-data-mono px-space-xs py-space-2xs bg-surface-container text-on-surface-variant font-semibold rounded">CÓDIGO: D4</span>
+</div>
+<!-- Driver Identity -->
+<div class="flex items-start gap-space-sm mb-space-lg">
+<div class="p-space-sm rounded bg-surface-container text-[#B45309] shrink-0">
+<span class="material-symbols-outlined text-[28px]">router</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Conectividad digital</h2>
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase tracking-wider">FACTOR ESTRUCTURAL TECNOLÓGICO</span>
+</div>
+</div>
+<!-- Quantitative Evidence Metrics -->
+<div class="bg-surface-container-low p-space-md rounded mb-space-lg">
+<div class="flex items-baseline justify-between mb-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase">Presencia Diagnosticada</span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface-variant font-medium">MUESTRA AUDITADA: N=7 PLANTELES</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">29</span>
+<span class="font-title-md text-title-md text-[#B45309] font-bold">%</span>
+</div>
+<!-- Quantitative Progress Bar -->
+<div class="w-full h-1.5 bg-surface-container mt-space-sm rounded overflow-hidden">
+<div class="h-full bg-[#B45309] w-[29%]"></div>
+</div>
+</div>
+<!-- Official Institutional Recommendation (Copy Real) -->
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase font-semibold">RECOMENDACIÓN INSTITUCIONAL OFICIAL</span>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+              Ampliar conectividad y dotación de equipo de cómputo.
+            </p>
+</div>
+</div>
+<!-- Technical Telemetry Footer -->
+<div class="mt-space-lg pt-space-md bg-surface-container-low -mx-space-lg -mb-space-lg px-space-lg py-space-sm flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-outline">MASA CRÍTICA TRANSVERSAL</span>
+<span class="font-label-data-mono text-label-data-mono text-primary font-semibold">N=2 // ALCANCE 2 ENTIDADES</span>
+</div>
+</div>
+<!-- Slot 3: VACANTE / ESTADO VACÍO OBLIGATORIO (No inventar tercer driver) -->
+<div class="bg-surface-container-low rounded shadow-sm p-space-lg flex flex-col justify-between relative overflow-hidden">
+<div>
+<!-- Meta Header -->
+<div class="flex items-center justify-between mb-space-md">
+<div class="inline-flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold uppercase tracking-widest">3ª POSICIÓN // VACANTE</span>
+</div>
+<span class="font-label-micro-mono text-label-micro-mono px-space-xs py-space-2xs bg-surface-container-high text-outline rounded uppercase">SIN CRITERIO</span>
+</div>
+<!-- Neutral Empty State Graphic & Copy -->
+<div class="flex flex-col items-center text-center py-space-md my-space-xs">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center text-outline mb-space-md">
+<span class="material-symbols-outlined text-[30px]">check_box_outline_blank</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface-variant mb-space-xs">Sin factores concurrentes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant font-medium max-w-xs mb-space-md">
+              Solo dos factores aparecen como dominantes entre todas las escuelas en riesgo.
+            </p>
+</div>
+<!-- Methodological Clarification -->
+<div class="bg-surface-container p-space-md rounded">
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase font-semibold block mb-space-2xs">ACLARACIÓN METODOLÓGICA</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Factores basales como Pobreza (D1) o Infraestructura (D3) operan como condiciones de base sin alcanzar masa crítica transversal en este ciclo censal.
+            </p>
+</div>
+</div>
+<!-- Telemetry Footer -->
+<div class="mt-space-lg pt-space-md bg-surface-container -mx-space-lg -mb-space-lg px-space-lg py-space-sm flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-outline">ESTADO CENSAL</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase font-medium">UMBRAL DISPERSIÓN NO ALCANZADO</span>
+</div>
+</div>
+</div>
+<!-- Comparative Distribution Graph: Frecuencia Absoluta de Incidencia por Factor Evaluado -->
+<div class="bg-surface-container-lowest rounded shadow-md p-space-xl flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
+<div>
+<div class="flex items-center gap-space-xs mb-space-2xs">
+<span class="w-2 h-2 bg-secondary rounded-none"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary uppercase font-semibold">DISTRIBUCIÓN PARAMÉTRICA TOTAL</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Frecuencia Absoluta de Incidencia por Factor Evaluado</h2>
+</div>
+<div class="flex items-center gap-space-lg font-label-micro-mono text-label-micro-mono">
+<div class="flex items-center gap-space-xs">
+<span class="w-3 h-3 bg-[#B45309] rounded-none"></span>
+<span class="text-on-surface-variant">FACTOR DOMINANTE (TOP 2)</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-3 h-3 bg-surface-container-highest rounded-none"></span>
+<span class="text-outline">FACTOR BASAL / INCIDENCIA 0%</span>
+</div>
+</div>
+</div>
+<!-- High-Precision Analytical Bar Chart Container -->
+<div class="grid grid-cols-1 md:grid-cols-6 gap-space-md pt-space-sm">
+<!-- Factor D1 -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col justify-between h-48">
+<div class="flex justify-between items-start">
+<span class="font-label-data-mono text-label-data-mono text-outline font-semibold">D1</span>
+<span class="font-label-data-mono text-label-data-mono text-outline">0 esc.</span>
+</div>
+<div class="flex flex-col items-center justify-end h-28 gap-space-xs">
+<div class="w-full bg-surface-container h-1 rounded"></div>
+<span class="font-label-data-mono text-label-data-mono text-outline">0%</span>
+</div>
+<div class="truncate">
+<p class="font-body-sm text-body-sm text-outline truncate" title="Pobreza">Pobreza</p>
+<span class="font-label-micro-mono text-label-micro-mono text-outline/80 uppercase">BASAL</span>
+</div>
+</div>
+<!-- Factor D2 (Dominant 1) -->
+<div class="bg-surface-container-lowest shadow-sm p-space-md rounded flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-[#B45309]"></div>
+<div class="flex justify-between items-start">
+<span class="font-label-data-mono text-label-data-mono text-[#B45309] font-bold">D2</span>
+<span class="font-label-data-mono text-label-data-mono text-[#B45309] font-bold">5 esc.</span>
+</div>
+<div class="flex flex-col items-center justify-end h-28 gap-space-xs">
+<div class="w-full bg-[#B45309] h-20 rounded-t transition-all duration-700"></div>
+<span class="font-label-data-mono text-label-data-mono text-[#B45309] font-bold">71%</span>
+</div>
+<div class="truncate">
+<p class="font-body-sm text-body-sm text-primary font-semibold truncate" title="Inseguridad">Inseguridad</p>
+<span class="font-label-micro-mono text-label-micro-mono text-[#B45309] font-semibold uppercase">1º DOMINANTE</span>
+</div>
+</div>
+<!-- Factor D3 -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col justify-between h-48">
+<div class="flex justify-between items-start">
+<span class="font-label-data-mono text-label-data-mono text-outline font-semibold">D3</span>
+<span class="font-label-data-mono text-label-data-mono text-outline">0 esc.</span>
+</div>
+<div class="flex flex-col items-center justify-end h-28 gap-space-xs">
+<div class="w-full bg-surface-container h-1 rounded"></div>
+<span class="font-label-data-mono text-label-data-mono text-outline">0%</span>
+</div>
+<div class="truncate">
+<p class="font-body-sm text-body-sm text-outline truncate" title="Infraestructura">Infraestructura</p>
+<span class="font-label-micro-mono text-label-micro-mono text-outline/80 uppercase">BASAL</span>
+</div>
+</div>
+<!-- Factor D4 (Dominant 2) -->
+<div class="bg-surface-container-lowest shadow-sm p-space-md rounded flex flex-col justify-between h-48 relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-[#B45309]"></div>
+<div class="flex justify-between items-start">
+<span class="font-label-data-mono text-label-data-mono text-[#B45309] font-bold">D4</span>
+<span class="font-label-data-mono text-label-data-mono text-[#B45309] font-bold">2 esc.</span>
+</div>
+<div class="flex flex-col items-center justify-end h-28 gap-space-xs">
+<div class="w-full bg-[#B45309]/80 h-10 rounded-t transition-all duration-700"></div>
+<span class="font-label-data-mono text-label-data-mono text-[#B45309] font-bold">29%</span>
+</div>
+<div class="truncate">
+<p class="font-body-sm text-body-sm text-primary font-semibold truncate" title="Conectividad">Conectividad</p>
+<span class="font-label-micro-mono text-label-micro-mono text-[#B45309] font-semibold uppercase">2º DOMINANTE</span>
+</div>
+</div>
+<!-- Factor D5 -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col justify-between h-48">
+<div class="flex justify-between items-start">
+<span class="font-label-data-mono text-label-data-mono text-outline font-semibold">D5</span>
+<span class="font-label-data-mono text-label-data-mono text-outline">0 esc.</span>
+</div>
+<div class="flex flex-col items-center justify-end h-28 gap-space-xs">
+<div class="w-full bg-surface-container h-1 rounded"></div>
+<span class="font-label-data-mono text-label-data-mono text-outline">0%</span>
+</div>
+<div class="truncate">
+<p class="font-body-sm text-body-sm text-outline truncate" title="Estrés Hídrico">Estrés Hídrico</p>
+<span class="font-label-micro-mono text-label-micro-mono text-outline/80 uppercase">BASAL</span>
+</div>
+</div>
+<!-- Factor D6 -->
+<div class="bg-surface-container-low p-space-md rounded flex flex-col justify-between h-48">
+<div class="flex justify-between items-start">
+<span class="font-label-data-mono text-label-data-mono text-outline font-semibold">D6</span>
+<span class="font-label-data-mono text-label-data-mono text-outline">0 esc.</span>
+</div>
+<div class="flex flex-col items-center justify-end h-28 gap-space-xs">
+<div class="w-full bg-surface-container h-1 rounded"></div>
+<span class="font-label-data-mono text-label-data-mono text-outline">0%</span>
+</div>
+<div class="truncate">
+<p class="font-body-sm text-body-sm text-outline truncate" title="Calidad del Aire">Calidad del Aire</p>
+<span class="font-label-micro-mono text-label-micro-mono text-outline/80 uppercase">BASAL</span>
+</div>
+</div>
+</div>
+<!-- Chart Metadata Footnote -->
+<div class="flex items-center justify-between border-t border-outline-variant/30 pt-space-sm text-outline">
+<span class="font-label-micro-mono text-label-micro-mono">CÁLCULO: (ESCUELAS CON FACTOR / TOTAL ESCUELAS AUDITADAS N=7) * 100</span>
+<span class="font-label-micro-mono text-label-micro-mono font-medium">TOTAL CASOS DE RIESGO: 7 // SUMATORIA FRECUENCIAS: 100%</span>
+</div>
+</div>
+<!-- Operational Single Action Footer: UN ÚNICO CTA PRINCIPAL -->
+<div class="flex items-center justify-between bg-surface-container-lowest p-space-lg rounded shadow-sm mb-space-2xl">
+<div class="flex flex-col">
+<span class="font-label-micro-mono text-label-micro-mono text-outline uppercase font-semibold">SIGUIENTE ACCIÓN EN FLUJO CENSAL</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Concluido el análisis macro, continúe con la inspección individualizada de planteles territoriales.</p>
+</div>
+<!-- Primary Mandatory CTA Button -->
+<a class="inline-flex items-center gap-space-sm px-space-xl py-space-md bg-primary hover:bg-surface-tint text-on-primary font-title-md text-title-md rounded shadow transition-colors" data-path="explorador-escuelas" href="#">
+<span class="">Explorar otras escuelas</span>
+<span class="font-label-data-mono text-label-data-mono">→</span>
+</a>
+</div>
+</div>
+<!-- Asistente FARO Flotante (Zero Watson Branding) -->
+<div class="fixed bottom-space-lg right-space-lg z-50 flex flex-col items-end">
+<!-- Collapsible Assistant Card -->
+<div class="hidden w-[380px] bg-primary-container text-on-primary rounded shadow-2xl p-space-md mb-space-sm transition-all duration-300" id="faro-assistant-card">
+<div class="flex items-center justify-between pb-space-xs border-b border-outline-variant/20 mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary-container font-semibold tracking-wider uppercase">ASISTENTE FARO // NÚCLEO COGNITIVO</span>
+</div>
+<button class="text-outline hover:text-on-primary text-[18px]" id="close-faro-assistant">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-inverse-on-surface mb-space-sm">
+        Los resultados indican concentración crítica en <strong class="text-secondary-container">Inseguridad (71%)</strong> y <strong class="text-secondary-container">Conectividad (29%)</strong>. No existen covariables secundarias con significancia estadística en la cohorte actual.
+      </p>
+<div class="bg-inverse-surface p-space-xs rounded mb-space-sm">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary-container uppercase block mb-space-2xs">CONSULTA RÁPIDA SUGERIDA:</span>
+<p class="font-label-data-mono text-label-data-mono text-on-surface-variant cursor-pointer hover:text-secondary-container transition-colors" onclick="document.getElementById('faro-query-input').value = this.innerText;">
+          "¿Cuál es el desglose territorial de D2 por municipio?"
+        </p>
+</div>
+<div class="flex items-center gap-space-xs">
+<input class="flex-1 bg-inverse-surface text-on-primary font-body-sm text-body-sm px-space-sm py-space-xs rounded focus:outline-none focus:ring-1 focus:ring-secondary-container" id="faro-query-input" placeholder="Consultar diagnóstico FARO..." type="text">
+<button class="bg-secondary hover:bg-secondary-container hover:text-on-secondary-container text-on-secondary p-space-xs rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</div>
+<!-- Floating Dock Trigger Button -->
+<button class="inline-flex items-center gap-space-sm px-space-md py-space-sm bg-primary-container text-on-primary rounded-full shadow-2xl hover:bg-surface-tint transition-all group" id="toggle-faro-assistant">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></div>
+<span class="material-symbols-outlined text-secondary-container text-[20px]">radar</span>
+<span class="font-label-micro-mono text-label-micro-mono tracking-wider font-semibold uppercase">ASISTENTE FARO // EN LÍNEA</span>
+</button>
+</div>
+<!-- Inline Micro-interaction Script for Assistant & Links -->
+<script>
+    (function() {
+      const toggleBtn = document.getElementById('toggle-faro-assistant');
+      const closeBtn = document.getElementById('close-faro-assistant');
+      const assistantCard = document.getElementById('faro-assistant-card');
+
+      if (toggleBtn && assistantCard) {
+        toggleBtn.addEventListener('click', function() {
+          assistantCard.classList.toggle('hidden');
+        });
+      }
+
+      if (closeBtn && assistantCard) {
+        closeBtn.addEventListener('click', function() {
+          assistantCard.classList.add('hidden');
+        });
+      }
+    })();
+  </script>
+</div></main></div>
+
+</body></html>

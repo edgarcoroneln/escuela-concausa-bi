@@ -216,7 +216,7 @@ glosario están disponibles en todas las posteriores al login.
 
 | # | Pantalla | Qué hace en la historia | Qué **no** hace |
 |---|---|---|---|
-| 0 | Login | Homologa el acceso con la identidad nueva | No cambia autenticación ni permisos |
+| 0 | Login | Homologa el acceso con la identidad nueva. **Una sola acción: el botón de acceso con Google** | No lleva campos de usuario ni contraseña; no cambia autenticación ni permisos |
 | 1 | Entrada | Qué es FARO, qué investigamos y cuál es el papel del usuario. Walkthrough único que menciona el chat | **No revela cuántas escuelas están en riesgo** |
 | 2 | Panorama | **Revela los casos.** Riesgo, matrícula, ubicación, nivel, municipio y driver dominante. Aquí va la matriz escuelas × 6 drivers, que sostiene el mensaje de §3.5 | La matrícula se muestra únicamente aquí dentro de la historia |
 | 3 | Selección de caso | Las escuelas identificables con su índice. El usuario puede investigar una sola y seguir | No obliga a revisarlas todas |
