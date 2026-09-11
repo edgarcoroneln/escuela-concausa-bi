@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-11T18:32:45+00:00",
+    "generated_at": "2026-09-11T18:51:24+00:00",
     "generated_date": "2026-09-11",
-    "commit": "20f997a",
+    "commit": "1557464",
     "branch": "main",
     "working_tree": "clean",
-    "source_fingerprint": "80eb355f3c28",
+    "source_fingerprint": "f5d12b910145",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -1869,8 +1869,8 @@
         "US-611"
       ],
       "pr_count": 30,
-      "pr_open": 1,
-      "pr_merged": 28,
+      "pr_open": 0,
+      "pr_merged": 29,
       "stories": 6,
       "done": 5,
       "wip": 1,
@@ -3659,7 +3659,7 @@
         "name": "Marina García del Buey",
         "cell": "Célula 3",
         "engagement": 90.7,
-        "commits": 57,
+        "commits": 56,
         "prs_merged": 19,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3705,9 +3705,9 @@
         "name": "Andrés González Habib",
         "cell": "Célula 2",
         "engagement": 89.2,
-        "commits": 2,
-        "prs_merged": 28,
-        "prs_open": 1,
+        "commits": 6,
+        "prs_merged": 29,
+        "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
@@ -3843,7 +3843,7 @@
         "name": "Edgar Edmundo Coronel Navarrete",
         "cell": "Célula 6",
         "engagement": 81.4,
-        "commits": 552,
+        "commits": 546,
         "prs_merged": 48,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3935,7 +3935,7 @@
         "name": "Héctor Rafael Morales Marbán",
         "cell": "Célula 1",
         "engagement": 75.0,
-        "commits": 28,
+        "commits": 26,
         "prs_merged": 22,
         "prs_open": 0,
         "risk": "retraso",
@@ -4004,6 +4004,17 @@
         "signal": "53 PR · 42 DevLog · 6 US activas"
       },
       {
+        "name": "Andrés González Habib",
+        "cell": "Célula 2",
+        "cell_group": "Célula 3 · Machine Learning & Agente IA",
+        "active": true,
+        "prs_merged": 29,
+        "devlogs": 28,
+        "active_us": 6,
+        "activity": 63,
+        "signal": "29 PR · 28 DevLog · 6 US activas"
+      },
+      {
         "name": "Diana Aracely Alvarez Varela",
         "cell": "Célula 5",
         "cell_group": "Célula 1 · Data Engineering & Quality",
@@ -4013,17 +4024,6 @@
         "active_us": 7,
         "activity": 62,
         "signal": "29 PR · 26 DevLog · 7 US activas"
-      },
-      {
-        "name": "Andrés González Habib",
-        "cell": "Célula 2",
-        "cell_group": "Célula 3 · Machine Learning & Agente IA",
-        "active": true,
-        "prs_merged": 28,
-        "devlogs": 26,
-        "active_us": 6,
-        "activity": 60,
-        "signal": "28 PR · 26 DevLog · 6 US activas"
       },
       {
         "name": "Héctor Rafael Morales Marbán",
@@ -4524,9 +4524,22 @@
   "git_activity": {
     "available": true,
     "repository": "edgarcoroneln/escuela-concausa-bi",
-    "generated_at": "2026-09-11T18:32:45+00:00",
+    "generated_at": "2026-09-11T18:51:24+00:00",
     "scope": "Todos los PR del repositorio, hasta 2,000 por ejecución",
     "prs": [
+      {
+        "number": 313,
+        "title": "[Andrés González] - Fallback síncrono y memoria conversacional del chat (US-305) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "Agh28",
+        "created_at": "2026-09-11T05:03:17Z",
+        "merged_at": "2026-09-11T18:50:32Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/313",
+        "story_ids": [
+          "US-305",
+          "US-611"
+        ]
+      },
       {
         "number": 309,
         "title": "[Alejandro Velazquez] - Runbooks de observabilidad y re-despliegue del agente (US-304b) - [sync|CI|DoF|DevLog]",
@@ -4537,19 +4550,6 @@
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/309",
         "story_ids": [
           "US-304b"
-        ]
-      },
-      {
-        "number": 313,
-        "title": "[Andrés González] - Fallback síncrono y memoria conversacional del chat (US-305) - [sync|CI|DoF|DevLog]",
-        "state": "open",
-        "author": "Agh28",
-        "created_at": "2026-09-11T05:03:17Z",
-        "merged_at": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/313",
-        "story_ids": [
-          "US-305",
-          "US-611"
         ]
       },
       {
@@ -8921,13 +8921,13 @@
     "commits": [
       {
         "author": "edgarcoroneln",
-        "count": 552,
-        "last_at": "2026-09-11T18:31:48Z"
+        "count": 546,
+        "last_at": "2026-09-11T18:50:31Z"
       },
       {
         "author": "github-actions[bot]",
-        "count": 240,
-        "last_at": "2026-09-11T18:10:22Z"
+        "count": 236,
+        "last_at": "2026-09-11T18:32:45Z"
       },
       {
         "author": "LuisTellez03",
@@ -8940,14 +8940,14 @@
         "last_at": "2026-09-11T16:06:05Z"
       },
       {
-        "author": "marina-gdb",
-        "count": 57,
-        "last_at": "2026-09-11T06:55:41Z"
+        "author": "andreshabib10",
+        "count": 65,
+        "last_at": "2026-09-11T18:18:10Z"
       },
       {
-        "author": "andreshabib10",
-        "count": 55,
-        "last_at": "2026-09-11T03:06:15Z"
+        "author": "marina-gdb",
+        "count": 56,
+        "last_at": "2026-09-11T06:55:41Z"
       },
       {
         "author": "monserratxmiranda",
@@ -8980,14 +8980,14 @@
         "last_at": "2026-09-08T04:35:06Z"
       },
       {
-        "author": "hector677-mm",
-        "count": 28,
-        "last_at": "2026-09-07T05:07:10Z"
-      },
-      {
         "author": "stephi-coder",
         "count": 27,
         "last_at": "2026-09-11T00:32:26Z"
+      },
+      {
+        "author": "hector677-mm",
+        "count": 26,
+        "last_at": "2026-09-07T05:07:10Z"
       },
       {
         "author": "juanmmayen98-pixel",
@@ -9026,8 +9026,8 @@
       },
       {
         "author": "Agh28",
-        "count": 2,
-        "last_at": "2026-09-05T17:31:56Z"
+        "count": 6,
+        "last_at": "2026-09-11T18:38:50Z"
       },
       {
         "author": "Dr4wde064",
@@ -9037,9 +9037,51 @@
     ],
     "ci": [
       {
+        "name": "Refresh PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554567"
+      },
+      {
+        "name": "Update Project Graph",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554493"
+      },
+      {
         "name": "CI",
         "status": "in_progress",
         "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554422"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "failure",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554416"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34634458499"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34634458468"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34634458454"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34633781623"
       },
       {
@@ -9050,8 +9092,8 @@
       },
       {
         "name": "Refresh PM Dashboard",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34633781481"
       },
       {
@@ -9113,48 +9155,6 @@
         "status": "completed",
         "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34631364039"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "failure",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34631364023"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34631363972"
-      },
-      {
-        "name": "Refresh PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34631270145"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34631270063"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34631270061"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34629465133"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34629465094"
       }
     ],
     "note": "Actividad agregada; no determina Done ni se usa como ranking individual."
