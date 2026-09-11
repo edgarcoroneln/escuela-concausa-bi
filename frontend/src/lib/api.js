@@ -75,8 +75,24 @@ export const postPrediccionesBatch = (ccts) =>
   request("/api/v1/predicciones/batch", { method: "POST", body: JSON.stringify({ ccts }) });
 
 // --- Agente (chat) ---
-export const postAgenteConsulta = (pregunta) =>
-  request("/api/v1/agente/consulta", { method: "POST", body: JSON.stringify({ pregunta }) });
+// `historial`: turnos previos del chat (pregunta del usuario + respuesta del agente),
+// del mas antiguo al mas reciente, max. MAX_TURNOS_HISTORIAL turnos (10, ver
+// src/api/schemas.py). Opcional y retrocompatible -- un arreglo vacio (default) se
+// comporta igual que antes de este cambio. Contrato exacto y ejemplos:
+// tests/test_agente_historial.py.
+//
+// OJO -- pendiente de acuerdo con backend (Andres/Karla, 11-sep): si una `respuesta`
+// de un turno pasa de 500 caracteres, el contrato la rechaza con 422 al reenviarla.
+// La decision es que trunque el API (en redactar_respuesta_con_llm, src/agente/llm.py),
+// no este cliente -- no se agrega recorte aqui hasta que ese cambio este en main.
+//
+// Quien construya el estado del chat (turnos) debe pasar `historial` ya armado como
+// lista de { pregunta, respuesta }; esta funcion solo lo reenvia tal cual.
+export const postAgenteConsulta = (pregunta, historial = []) =>
+  request("/api/v1/agente/consulta", {
+    method: "POST",
+    body: JSON.stringify({ pregunta, historial }),
+  });
 
 // --- Auth (US-402, C4) ---
 export const getAuthMe = () => request("/api/v1/auth/me");
