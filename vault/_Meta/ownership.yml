@@ -140,17 +140,17 @@ personas:
     rol: "Integrante S7 · QA"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/1-emilio-galnares-ruiz.md
+    # Corregido 2026-09-11 (revisión del PR #320 de Edward Ruiz): `celula: 6` ya decía QA
+    # desde la reapertura de S7, pero verde/amarillo seguían siendo los de su celula anterior
+    # (Data Engineering, C1) — nunca se actualizaron al reasignar el padrón en
+    # Plan_Recuperacion_2026-09-09. `vault/06_Quality_Testing/**` ya está en `comunes`, así que
+    # esto no bloqueaba escribir ahí; el problema real era que el archivo seguía dándole verde
+    # sobre `src/ingesta/**`/`dbt/**`/`dags/**`, que ya no son su área.
     verde:
-      - "src/ingesta/**"
-      - "dbt/**"
-      - "dags/**"
-      - "vault/14_Data_Sources/**"
-      - "vault/03_Architecture/Data_Model.md"
+      - "vault/06_Quality_Testing/**"
     amarillo:
-      - "vault/03_Architecture/_index.md"
       - "tests/**"
       - "great_expectations/**"
-      - "requirements/celula-1.txt"
 
   manuel-serrania:
     nombre: "Manuel Alejandro Serranía Reinada"
@@ -352,11 +352,12 @@ personas:
     rol: "Integrante S7 · QA"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/4-eloisa-gonzalez-rubio.md
+    # Corregido 2026-09-11 (revisión del PR #320 de Edward Ruiz): mismo hueco que Emilio
+    # Galnares — verde/amarillo seguían siendo los de su celula anterior (Backend/API, C4),
+    # nunca actualizados al reasignarla a QA en la reapertura de S7.
     verde:
-      - "src/api/**"
-      - "vault/03_Architecture/API_Specification.md"
+      - "vault/06_Quality_Testing/**"
     amarillo:
-      - "vault/03_Architecture/_index.md"
       - "tests/**"
 
   luis-tellez:
@@ -388,13 +389,12 @@ personas:
     rol: "Integrante S7 · QA"
     tech_lead: false
     plan: vault/12_Roadmap_Sprints/Sprints/5-edgar-ulises-jimenez-lopez.md
+    # Corregido 2026-09-11 (revisión del PR #320 de Edward Ruiz): el resto del verde/amarillo
+    # era su celula anterior (DevOps/CI-CD, C5), nunca actualizado al reasignarlo a QA en la
+    # reapertura de S7. Se conserva `common_alerting/**` y el amarillo de `dags/**`: son suyos
+    # por autoría de US-524b (el módulo de alertas), no por la celula que tenía entonces.
     verde:
-      - ".github/**"
-      - "docker/**"
-      - "docker-compose.yml"
-      - "infra/**"
-      - "vault/08_CICD_DevOps/**"
-      - "vault/11_Operations/**"
+      - "vault/06_Quality_Testing/**"
       # Módulo de alertas que él mismo creó para US-524b (webhook Slack/Discord +
       # callbacks de Airflow) — es infraestructura de monitoreo, no lógica de ingesta.
       - "common_alerting/**"
@@ -437,13 +437,13 @@ personas:
     rol: "Líder S7 · QA integral"
     tech_lead: true
     plan: vault/12_Roadmap_Sprints/Sprints/5-edward-ulysses-ruiz-bustillos.md
+    # Corregido 2026-09-11 (revisión del PR #320): igual que el resto de C6, verde/amarillo
+    # eran los de su celula anterior (DevOps/CI-CD, C5) — nunca actualizados al reasignarlo
+    # como líder de QA en la reapertura de S7. `vault/06_Quality_Testing/**` ya estaba en
+    # `comunes` (no era lo que bloqueaba el PR #320), pero seguía dándole verde sobre
+    # `docker/**`/`.github/**`, que ya no son su área.
     verde:
-      - ".github/**"
-      - "docker/**"
-      - "docker-compose.yml"
-      - "infra/**"
-      - "vault/08_CICD_DevOps/**"
-      - "vault/11_Operations/**"
+      - "vault/06_Quality_Testing/**"
     amarillo:
       - "requirements/**"
       - "scripts/**"
@@ -467,6 +467,14 @@ comunes:
   # Infraestructura de la raíz, compartida por todo el repositorio.
   - ".gitignore"
   - ".gitattributes"
+  # Hueco real hallado 2026-09-11 (PR #322, Diana Alvarez): docker-compose.yml solo estaba
+  # en verde de Luis Téllez, así que nadie más podía agregar la variable de entorno que su
+  # propio servicio necesita -- mismo patrón ya visto con Alejandro (env vars del agente) y
+  # ahora con Diana (env vars de auth). Es config compartida de todo el repo, no lógica de
+  # una sola célula, mismo espíritu que requirements.txt abajo. Sigue en `criticos` -> Luis
+  # revisa cuando está disponible, pero el gate ya no reprueba con él de viaje. Ratificado
+  # por el PO como `DEC-025`.
+  - "docker-compose.yml"
   # Guía de ambiente local en la raíz. Reportada por Monserrat Miranda y ratificada por
   # Christian Ruiz (2026-09-05): la carpeta no estaba en NINGÚN alcance —ni verde, ni
   # amarillo, ni comunes—, así que el gate reprobaba a quien intentara ejecutar el
@@ -521,6 +529,9 @@ criticos:
   ".github/**": luis-tellez
   "docker/**": luis-tellez
   "vault/08_CICD_DevOps/**": luis-tellez
+  # Movido a `comunes` arriba el 2026-09-11 (DEC-025) -- se conserva aquí para que el gate
+  # avise a Luis cuando vuelva de viaje, igual que Traceability_Matrix.md con Edgar.
+  "docker-compose.yml": luis-tellez
   "vault/_Meta/**": edgar-coronel
   "vault/07_Security/**": christian-ruiz
   "frontend/**": diana-alvarez
@@ -544,6 +555,9 @@ criticos:
   # globs, así que no hay forma de sacarlo del `**` de comunes — esta línea es la única
   # vía mecánica para que el gate vuelva a avisar cuando alguien fuera de C3 lo toque.
   "vault/06_Quality_Testing/Automated/**": edward-ruiz
+  # Mismo espíritu que Automated/** arriba: la estrategia operativa de QA (PR #320) es de C6,
+  # no de cualquiera que pase por comunes. Añadido 2026-09-11 al revisar ese PR.
+  "vault/06_Quality_Testing/QA_team_documentation/**": edward-ruiz
   "src/agente/**": andres-gonzalez
   "src/modelos/**": estefany-hernandez
   "vault/15_ML_Models/**": estefany-hernandez
