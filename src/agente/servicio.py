@@ -125,39 +125,29 @@ def _preparar_para_redaccion(
         )
 
     if not alcance.permitido:
-        # El vocabulario no reconoció el tema: antes de rechazar, se le da una segunda oportunidad
-        # a la pregunta vía la señal semántica del RAG (Fase 1). No es un hueco de seguridad: la
-        # intención de escritura ya se descartó arriba, y el SQL sigue pasando por
-        # `preparar_sql_seguro` + el rol read-only pase lo que pase aquí.
-        try:
-            contexto = recuperar_contexto(pregunta)
-        except ContextoNoEncontrado:
-            return ResultadoConsulta(
-                respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
-                sql_generado=None,
-                fuera_de_alcance=True,
-            )
-        except ErrorRecuperacion:
-            return ResultadoConsulta(
-                respuesta="El contexto de FARO no está disponible temporalmente.",
-                sql_generado=None,
-                fuera_de_alcance=False,
-            )
-    else:
-        try:
-            contexto = recuperar_contexto(pregunta)
-        except ContextoNoEncontrado:
-            return ResultadoConsulta(
-                respuesta="No encontré contexto de Gold para responder esa pregunta.",
-                sql_generado=None,
-                fuera_de_alcance=False,
-            )
-        except ErrorRecuperacion:
-            return ResultadoConsulta(
-                respuesta="El contexto de FARO no está disponible temporalmente.",
-                sql_generado=None,
-                fuera_de_alcance=False,
-            )
+        # No permitimos que vecinos semánticos accidentales del RAG conviertan una pregunta ajena
+        # en una consulta de Gold. Las preguntas naturales del dominio ya pasan por el vocabulario
+        # ampliado; el SQL continúa protegido por preparar_sql_seguro y el rol read-only.
+        return ResultadoConsulta(
+            respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
+            sql_generado=None,
+            fuera_de_alcance=True,
+        )
+
+    try:
+        contexto = recuperar_contexto(pregunta)
+    except ContextoNoEncontrado:
+        return ResultadoConsulta(
+            respuesta="No encontré contexto de Gold para responder esa pregunta.",
+            sql_generado=None,
+            fuera_de_alcance=False,
+        )
+    except ErrorRecuperacion:
+        return ResultadoConsulta(
+            respuesta="El contexto de FARO no está disponible temporalmente.",
+            sql_generado=None,
+            fuera_de_alcance=False,
+        )
 
     prompt = construir_prompt_sistema(contexto, contexto_conversacional)
     try:
