@@ -230,10 +230,12 @@ Botón único: "Entendido". No vuelve a aparecer para ese usuario/sesión.
   - *Sin datos:* "No encontré información para responder eso con los datos disponibles."
   - *Timeout:* "El Asistente FARO está tardando más de lo esperado. Intenta de nuevo."
 - **El SQL generado no se muestra por defecto** (plan §4.ter — decisión de presentación, alcance de
-  este frente; la lógica es del Equipo 2). El campo `sql_generado` se conserva en el contrato, pero
-  queda detrás de una acción opcional y cerrada al abrir la conversación (p. ej. "Ver la consulta"):
-  sirve para auditar y para que el evaluador confirme que la respuesta sale de la base real, sin que
-  la explicación se reduzca a mostrar SQL.
+  este frente). Hoy sí se muestra en producción (`src/frontend/pages/3_Chat.py:85-87`), así que esto
+  es una corrección, no solo una especificación a futuro. El campo `sql_generado` se conserva en el
+  contrato, pero queda detrás de una acción discreta y opcional, cerrada de inicio y fuera del hilo de
+  lectura (p. ej. "Ver la consulta"): sirve para auditar y para que el evaluador confirme que la
+  respuesta sale de la base real, sin que la explicación se reduzca a mostrar SQL. **Implementa el
+  Equipo 2 o el Equipo 5, según dónde viva el componente** — este frente solo lo especifica.
 - **Preguntas conceptuales:** cada término del glosario puede ofrecer "Pregúntale al Asistente", que
   precarga la pregunta (p. ej. "¿qué significa SIN_DATO?").
 - **Al navegar entre pantallas:** el panel permanece abierto y conserva la conversación; no se
