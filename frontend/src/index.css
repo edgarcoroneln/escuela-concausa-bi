@@ -1,56 +1,159 @@
 @import "tailwindcss";
 
-/* Inter autohospedado (revisión de Edgar, PR #302, 11-sep): reemplaza el
-   <link> a Google Fonts de index.html, que el CSP de nginx-unprivileged en
-   prod bloquea (style-src/font-src solo 'self'). Pesos = los mismos que ya
-   se pedían por Google Fonts (400/500/600/700/800). Requiere
-   `npm install @fontsource/inter` en frontend/. */
+/* Tipografia autohospedada (revision de Edgar, PR #302, 11-sep): CSP de
+   nginx-unprivileged en prod bloquea Google Fonts (style-src/font-src solo
+   'self'), asi que las 3 familias de la identidad se sirven locales via
+   @fontsource. Requiere en frontend/:
+     npm install @fontsource/space-grotesk @fontsource/jetbrains-mono
+   (@fontsource/inter ya estaba instalado desde el PR #302). */
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 @import "@fontsource/inter/800.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
 
 /*
-  Tokens de diseño de FARO — calcados del mockup de storytelling de UX/UI
-  (Equipo 6: Marina/Oscar/Juan Macias/Monse): barra superior oscura, fondo
-  gris claro, tarjetas blancas, semáforo rojo/ámbar/verde para riesgo.
-  Placeholder hasta que UX/UI entregue tokens exactos (hex finales);
-  ningún componente debería tener colores hardcodeados fuera de aquí.
+  Tokens de diseno de FARO -- identidad final liberada por Juan Macias
+  (Equipo 3, revisada por Marina Garcia) el 2026-09-10/11, aprobada por Edgar
+  en el PR #310. Fuente: vault/04_UX_Design/FARO_Storytelling_UX/
+  03_Visual_Identity.md (S3, colores/tipografia/botones), 05 (elevacion) y
+  mockups/Design_Tokens_Stitch.md (tipografia/radios/espaciado -- su seccion
+  de color quedo superada, ver nota al inicio de ese archivo).
+
+  FASE 1 (este cambio): solo tokens. Ningun componente cambia de logica
+  todavia -- las variables legadas (--color-primary, --color-accent, etc.)
+  se quedan con el mismo NOMBRE para no romper nada, pero su VALOR ya es el
+  de la identidad final. Las variables nuevas (--faro-*) quedan listas para
+  cuando se actualicen los componentes uno por uno (matriz de drivers,
+  RiskGauge, badges de atencion, etc.) -- ver el propio 03_Visual_Identity.md
+  S4 para el inventario de componentes pendientes.
+
+  ADVERTENCIA heredada del propio doc de UX: los pares de color de abajo
+  *no* estan auditados formalmente contra WCAG 2.1 AA todavia (S6). No
+  inventar variantes de color nuevas sin pasar por esa validacion.
 */
 :root {
-  --color-bg: #f2f3f6;
-  --color-surface: #ffffff;
-  --color-border: #e4e6ec;
+  /* --- Paleta de interfaz (03_Visual_Identity.md S3) --- */
+  --faro-command-base: #0f172a;      /* slate-900 -- fondo header/nav, texto principal */
+  --faro-command-base-soft: #1e293b; /* slate-800 -- hover de lo anterior */
+  --faro-signal: #0284c7;            /* cyan-700 -- acento "beacon", botones analiticos */
+  --faro-signal-soft: #38bdf8;       /* cyan-400 -- microborde/glow del Asistente FARO */
+  --faro-canvas: #ffffff;
+  --faro-canvas-subtle: #f8fafc;     /* nivel 0, fondo de la app */
+  --faro-canvas-container: #f1f5f9;  /* superficie alterna dentro de tarjetas */
+  --faro-hairline: #e2e8f0;          /* borde de tarjetas/paneles, 1px */
+  --faro-hairline-hover: #cbd5e1;    /* borde en hover (nivel 2) */
 
-  --color-header: #101a2c;
-  --color-header-text: #e8ebf1;
-  --color-header-text-soft: #9aa4b8;
+  /* --- Paleta categorica de las 4 entidades del alcance (fija, no degradado) --- */
+  --faro-entity-cdmx: #4c72b0;
+  --faro-entity-edomex: #dd8452;
+  --faro-entity-nl: #55a868;
+  --faro-entity-jalisco: #c44e52;
 
-  --color-ink: #14181f;
-  --color-ink-soft: #4b5262;
-  --color-ink-faint: #8890a0;
+  /* --- Color de dato: rampa secuencial de magnitud (indice de riesgo / presion de driver, 0->1) ---
+     NO es la paleta de interfaz de arriba. 5 pasos, un solo tono. */
+  --faro-ramp-1: #eef2f7;
+  --faro-ramp-2: #c7d2e0;
+  --faro-ramp-3: #93a5c0;
+  --faro-ramp-4: #56698c;
+  --faro-ramp-5: #0f172a;
 
-  --color-primary: #2b5aa8;
-  --color-primary-soft: #e7edf7;
-  --color-accent: #1b8a72;
-  --color-accent-soft: #e3f3ee;
+  /* Acento del driver dominante -- SOLO como contorno, nunca relleno */
+  --faro-dominant-outline: #b45309;
+  /* Gris de contexto -- lo que no destaca */
+  --faro-context-gray: #94a3b8;
+  /* SIN_DATO: textura rayada 45deg sobre canvas-subtle + etiqueta "S/D" */
+  --faro-sin-dato-stripe: #cbd5e1;
+  --faro-sin-dato-bg: #f8fafc;
 
+  /* --- Tipografia (Design_Tokens_Stitch.md) --- */
+  --faro-font-display: "Space Grotesk", var(--faro-font-sans);
+  --faro-font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --faro-font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* --- Radios (Design_Tokens_Stitch.md) --- */
+  --faro-radius-sm: 0.125rem;
+  --faro-radius-DEFAULT: 0.25rem;
+  --faro-radius-md: 0.375rem;
+  --faro-radius-lg: 0.5rem;
+  --faro-radius-xl: 0.75rem;
+  --faro-radius-full: 9999px;
+
+  /* --- Espaciado y layout (Design_Tokens_Stitch.md) --- */
+  --faro-space-2xs: 0.125rem;
+  --faro-space-xs: 0.25rem;
+  --faro-space-sm: 0.5rem;
+  --faro-space-md: 0.75rem;
+  --faro-space-base: 1rem;
+  --faro-space-lg: 1.5rem;
+  --faro-space-xl: 2rem;
+  --faro-space-2xl: 3rem;
+  --faro-sidebar-collapsed: 4.5rem;
+  --faro-sidebar-expanded: 17.5rem;
+  --faro-inspector-width: 26rem;
+
+  /* --- Elevacion (03_Visual_Identity.md S5 / Stitch "Surface Stack System") --- */
+  --faro-shadow-none: none;                                                        /* nivel 1, tarjetas en reposo */
+  --faro-shadow-hover: 0 4px 12px -2px rgba(15, 23, 42, .06), 0 2px 4px -1px rgba(15, 23, 42, .03); /* nivel 2 */
+  --faro-shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, .1), 0 8px 10px -6px rgba(15, 23, 42, .05); /* nivel 3 */
+  --faro-shadow-asistente: 0 0 0 1px rgba(2, 132, 199, .4), 0 8px 24px -4px rgba(2, 132, 199, .35);  /* nodo Asistente FARO */
+
+  /* ============================================================ */
+  /* Variables legadas -- MISMO NOMBRE, valor ya actualizado a la  */
+  /* identidad final. Ningun componente necesita cambiar en Fase 1.*/
+  /* ============================================================ */
+  --color-bg: var(--faro-canvas-subtle);
+  --color-surface: var(--faro-canvas);
+  --color-surface-alt: var(--faro-canvas-container);
+  --color-border: var(--faro-hairline);
+
+  --color-header: var(--faro-command-base);
+  --color-header-text: var(--faro-canvas-subtle);
+  --color-header-text-soft: var(--faro-context-gray);
+
+  --color-ink: var(--faro-command-base);   /* texto on-surface, spec S6 */
+  --color-ink-soft: #334155;               /* slate-700, texto de boton secundario en spec */
+  --color-ink-faint: var(--faro-context-gray);
+
+  --color-primary: var(--faro-command-base);      /* boton primario spec: fondo #0F172A */
+  --color-primary-soft: var(--faro-canvas-container);
+  --color-accent: var(--faro-signal);             /* boton "beacon" spec: fondo #0284C7 */
+  --color-accent-soft: #e0f2fe;
+
+  /* Alerta/error generico de UI (fallos de carga, etc.) -- concepto distinto
+     al semaforo de nivel de riesgo, que S3/S6 del doc de identidad rechaza
+     explicitamente. No se toca aqui. */
   --color-alert: #e0483c;
   --color-alert-soft: #fbe6e4;
+
+  /* OJO -- pendiente de Fase 2, no borrar todavia: estas 3 variables
+     representan el semaforo rojo/ambar/verde que 03_Visual_Identity.md S3 y
+     Design_Tokens_Stitch.md rechazan explicitamente ("Calibrated Risk
+     Tiers -- RECHAZADO, NO USAR"). Hoy solo se usan como color de texto de
+     error generico (RiskGauge/VistaGeneral/LosSieteCasos/ExpedienteEscuela/
+     Home), no como badge de nivel de riesgo -- por eso no se tocan en esta
+     fase de solo-tokens. El reemplazo real es --faro-ramp-* + icono de
+     atencion (triangulo alta >=0.50, cuadrado media >=0.30, circulo baja
+     <0.30 -- sin color propio, vease S3) cuando se actualicen esos
+     componentes.
   --color-risk-low: #1b8a72;
   --color-risk-mid: #e8a33d;
   --color-risk-high: #e0483c;
 
-  --color-sin-dato: #9aa1af;
-  --color-sin-dato-bg: #eef0f3;
+  --color-sin-dato: var(--faro-context-gray);
+  --color-sin-dato-bg: var(--faro-sin-dato-bg);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
-  --font-display: var(--font-sans);
+  --font-sans: var(--faro-font-sans);
+  --font-display: var(--faro-font-display);
 
-  --shadow-card: 0 1px 2px rgba(20, 24, 31, 0.04), 0 8px 20px -12px rgba(20, 24, 31, 0.12);
-  --shadow-card-hover: 0 4px 8px rgba(20, 24, 31, 0.06), 0 16px 32px -14px rgba(20, 24, 31, 0.18);
-  --radius-card: 14px;
+  --shadow-card: var(--faro-shadow-none);   /* spec S5: nivel 1, sin sombra en reposo */
+  --shadow-card-hover: var(--faro-shadow-hover);
+  --radius-card: var(--faro-radius-md);     /* spec: tarjetas de datos, 6px */
 }
 
 * {
@@ -71,10 +174,18 @@ body {
 
 h1, h2, h3 {
   font-family: var(--font-display);
+  font-weight: 600; /* spec: encabezados nunca decorativos, solo 500/600 */
   letter-spacing: -0.01em;
 }
 
-/* Etiqueta pequeña tipo "Expediente 01 de 07" — gris, no acento de color */
+/* Todo identificador alfanumerico (CCT, coeficientes, timestamps) va en
+   JetBrains Mono -- spec S3/S6, obligatorio para legibilidad tabular. */
+.font-mono-dato {
+  font-family: var(--faro-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Etiqueta pequena tipo "Expediente 01 de 07" -- gris, no acento de color */
 .kicker {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -93,6 +204,7 @@ h1, h2, h3 {
 .lift:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
+  border-color: var(--faro-hairline-hover);
 }
 
 .tabular {
