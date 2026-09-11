@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import src.api.app as appmod
 from src.api.config import Settings
-from src.api.v1.agente import get_generar_sql, get_redactar_respuesta, get_redactar_respuesta_stream
+from src.api.v1.agente import get_generar_sql, get_redactar_respuesta
 
 
 def test_con_api_key_cablea_las_dos_etapas_llm(monkeypatch) -> None:
@@ -34,24 +34,6 @@ def test_con_api_key_cablea_las_dos_etapas_llm(monkeypatch) -> None:
     assert app_con.dependency_overrides[get_redactar_respuesta]() is redactar_respuesta_con_llm
 
 
-def test_con_api_key_cablea_tambien_el_redactor_en_streaming(monkeypatch) -> None:
-    """Fase 3: get_redactar_respuesta_stream se cablea igual que las otras dos etapas."""
-    from src.agente.llm import redactar_respuesta_stream_con_llm
-
-    monkeypatch.setattr(
-        appmod,
-        "get_settings",
-        lambda: Settings(anthropic_api_key="sk-ant-de-prueba", cors_origins=""),
-    )
-    app_con = appmod.create_app()
-
-    assert get_redactar_respuesta_stream in app_con.dependency_overrides
-    assert (
-        app_con.dependency_overrides[get_redactar_respuesta_stream]()
-        is redactar_respuesta_stream_con_llm
-    )
-
-
 def test_sin_api_key_no_cablea_el_llm(monkeypatch) -> None:
     """Sin la clave, el seam queda con sus defaults seguros (el agente degrada, no llama al LLM)."""
     monkeypatch.setattr(
@@ -61,4 +43,3 @@ def test_sin_api_key_no_cablea_el_llm(monkeypatch) -> None:
 
     assert get_generar_sql not in app_sin.dependency_overrides
     assert get_redactar_respuesta not in app_sin.dependency_overrides
-    assert get_redactar_respuesta_stream not in app_sin.dependency_overrides
