@@ -383,8 +383,8 @@ advertencia de §3.quater: las dos difieren justo en las escuelas de las que tra
 |---|---|---|
 | **Marina García del Buey** — líder | Definir la historia oficial; objetivo, alcance y guardarraíles; criterios de aceptación; coherencia transversal; **gate final de UX/UI** | `00_Storytelling_Scope.md` |
 | **Oscar Antonio Quiroz Lázaro** — UX / navegación | Flujo de las 7 pantallas; objetivo, contenido, botones y conexiones; walkthrough y navegación; comportamiento UX del chat; 2–3 nombres para la exploración posterior. Su documento es guía directa para el Equipo 5 | `01_UX_Architecture.md` |
-| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3; **la leyenda de cada gráfica** (§7.bis) | `02_Data_Visualization_Spec.md` |
-| **Juan Carlos Macías Mayen** — UI / identidad visual | Identidad visual desde cero: logo, paleta, tipografías, componentes, botones, cards, iconografía, imágenes, efectos, apariencia del chat, mockups y PDF final. Único editor del PDF | `03_Visual_Identity.md` |
+| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3; **la leyenda de cada gráfica** (§7.bis), que se escribe **dentro de** `02_Data_Visualization_Spec.md` y no en un documento aparte | `02_Data_Visualization_Spec.md` |
+| **Juan Carlos Macías Mayen** — UI / identidad visual | Identidad visual desde cero: logo, paleta, tipografías, componentes, botones, cards, iconografía, imágenes, efectos, apariencia del Asistente FARO y los 7 mockups. Mantiene `03_Visual_Identity.md` como **guía de identidad de referencia** y su anexo técnico de tokens (§7.ter) | `03_Visual_Identity.md` |
 
 Monserrat entrega a Juan los ejemplos de gráficas y el contenido analítico aprobado.
 Ningún integrante modifica el entregable de otro sin coordinación previa.
@@ -408,8 +408,49 @@ voz alta. Como mínimo, por gráfica:
 Monserrat decide la forma —leyenda fija, nota al pie, tooltip o una mezcla— y Juan le da tratamiento
 visual. Debe resolverse en las gráficas de la historia y también en las del Explorador de escuelas.
 
+**Dónde se escribe:** dentro de `02_Data_Visualization_Spec.md`, como una sección propia. No es un
+documento aparte — la regla 1 del vault prohíbe abrir un archivo nuevo para algo que pertenece a un
+canónico existente. Es parte de la entrega del viernes de Monserrat (§8).
+
+**Alcance: por gráfica, no por pantalla.** Hay gráficas en P2, P3, P4, P5 y P6 —la matriz de casos,
+la pista del índice, la comparativa de los 6 drivers, la gráfica de unidades del Top 3 y las
+reutilizadas en el Explorador—, así que la leyenda aplica en las cinco. Acotarla a dos pantallas deja
+tres sin cubrir.
+
 Es directamente una respuesta al hallazgo del profesor sobre visualizaciones que no comunicaron
 valor: una gráfica que hay que explicar en vivo no comunica sola.
+
+---
+
+### 7.ter La guía de identidad y el retiro del PDF
+
+**Decisión del 2026-09-11, a propuesta de Juan Macías.** El entregable `FARO_UX_UI_Guide.pdf` **se
+retira** del alcance y del criterio de cierre.
+
+**Por qué.** Un PDF duplica documentos que ya están versionados y se desactualiza en cuanto se mueve
+un token, con la sincronización a mano como única defensa. El Equipo 5 puede copiar valores exactos
+del `.md` y tendría que transcribirlos de un PDF. Y hay dos razones que pesan más que el
+mantenimiento: **no responde a ninguno de los hallazgos del profesor** —que fueron sobre experiencia,
+gráficas, storytelling, componentes, chat y ML, ninguno sobre documentación— y `DEC-024` ya fijó que
+las únicas compuertas son rama personal, PR, CI, una aprobación humana y QA sobre la candidata. Un
+PDF no es ninguna de ellas.
+
+**Qué ocupa su lugar.** Nada nuevo: el documento ya existe.
+
+| Artefacto | Papel | Requisito |
+|---|---|---|
+| `03_Visual_Identity.md` | **Guía de identidad de referencia.** Contiene el sistema de color de datos, que es la parte que la historia necesita | Ya tiene `id`, `owner`, `status` y trazas |
+| `mockups/Design_Tokens_Stitch.md` | **Anexo técnico** de la anterior: paleta de interfaz, tipografía, radios, espaciado, elevación | **Le falta frontmatter propio** con `id`, `owner` y `status`, y quedar listado en `mockups/_index.md` |
+| `mockups/_index.md` | Índice de la carpeta donde viven los 7 mockups | **No existe.** Lo exige la regla 4 |
+
+**Lo que no se aceptó de la propuesta original.** Se planteó que el anexo de tokens sustituyera al PDF
+como entregable final. No puede: su frontmatter es el YAML crudo de Stitch, sin `id`, `owner` ni
+`status`, así que incumple la regla 2 y `Definition_of_Filed`; su propio encabezado lo declara *"no es
+un artefacto canónico del vault"*; y por esa misma nota **el sistema de color de datos no vive ahí**,
+sino en `03_Visual_Identity.md` §3. Un anexo no puede ser la guía.
+
+**Trazabilidad.** Es un cambio a un criterio de cierre de `US-621`, cuyo *go/no-go* pertenece al PO.
+Se registra aquí en vez de desaparecer en silencio, y se le comunica.
 
 ---
 
@@ -443,8 +484,10 @@ cuándo la especificación deja de moverse, no cuándo empieza la implementació
 
 - Marina: `00_Storytelling_Scope.md` final.
 - Oscar: `01_UX_Architecture.md` final.
-- Monserrat: `02_Data_Visualization_Spec.md` final + ejemplos finales de visualizaciones.
-- Juan: `03_Visual_Identity.md` final, 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf`.
+- Monserrat: `02_Data_Visualization_Spec.md` final —**con la leyenda de la §7.bis escrita**— más los
+  ejemplos finales de visualizaciones.
+- Juan: `03_Visual_Identity.md` final, los 7 mockups de escritorio, el anexo de tokens con
+  frontmatter propio y `mockups/_index.md` (§7.ter).
 
 ```text
 FARO_Storytelling_UX/
@@ -672,7 +715,7 @@ Lo que siga contradiciéndolo en documentos anteriores queda superado por `ADR-0
 `US-621` cierra cuando se cumplen las cuatro:
 
 1. Los cuatro entregables de la §7 en su versión final, committeados y mergeados.
-2. Los 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf` en la carpeta.
+2. Los 7 mockups de escritorio en `mockups/`, con su `_index.md` (regla 4). **Sin PDF** — ver §7.ter.
 3. **Handoff aceptado por el Equipo 5** (Diana Alvarez): la arquitectura, la especificación de
    visualizaciones y los mockups bastan para implementar sin redefinir decisiones de UX.
 4. QA (`US-651`) ejecuta los criterios de la §9 sobre la candidata desplegada.
