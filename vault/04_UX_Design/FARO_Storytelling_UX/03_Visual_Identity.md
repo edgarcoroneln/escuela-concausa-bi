@@ -2,7 +2,7 @@
 id: DOC-FARO-UX-IDENTITY
 title: "Visual Identity — identidad visual de FARO"
 owner: "Juan Carlos Macías Mayen"
-status: draft
+status: approved
 traces_up: ["US-621", "REQ-002", "vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope"]
 traces_down: ["US-641"]
 last_reviewed: "2026-09-10"
@@ -17,10 +17,7 @@ tags: [ui, identidad-visual, design-system, s7, us-621]
 > → [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]] ·
 > [[vault/04_UX_Design/Accessibility]]
 
-**Estado:** borrador — los 7 mockups de escritorio están listos y liberados para Equipo 5
-(2026-09-10/11). **`FARO_UX_UI_Guide.pdf` se cae como entregable** (decisión de Marina García del
-Buey, 2026-09-11, avisada a Edgar Coronel como PO — ver §8). Queda pendiente la auditoría formal
-de contraste WCAG (§6); el doc completo sigue `draft` hasta cerrar ese punto.
+**Estado: aprobado** el 2026-09-11 por Marina García del Buey, gate final de UX/UI (plan §7), contra la versión mergeada a `main`. Los cambios posteriores pasan por ella.
 
 > **Revisión de Marina García del Buey (lead UX/UI), 2026-09-10.** La primera entrega (solo
 > Login) tenía tres problemas reales: dibujaba un formulario de usuario/contraseña que no existe
