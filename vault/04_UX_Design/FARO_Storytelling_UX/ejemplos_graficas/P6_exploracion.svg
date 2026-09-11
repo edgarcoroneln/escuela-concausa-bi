@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1080pt" height="691.2pt" viewBox="0 0 1080 691.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 691.2 
+L 1080 691.2 
+L 1080 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 32.4 178.3296 
+L 745.2 178.3296 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 309.6 193.86432 
+L 530.228571 193.86432 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 375.788571 185.8464 
+L 375.788571 201.88224 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 419.914286 185.8464 
+L 419.914286 201.88224 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 405.185176 193.86432 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="m941f45b0d6" d="M -4.5 4.5 
+L 4.5 4.5 
+L 4.5 -4.5 
+L -4.5 -4.5 
+z
+" style="stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </defs>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="405.185176" y="193.86432" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_6">
+    <path d="M 32.4 209.39904 
+L 745.2 209.39904 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 309.6 224.93376 
+L 530.228571 224.93376 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_8">
+    <path d="M 375.788571 216.91584 
+L 375.788571 232.95168 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_9">
+    <path d="M 419.914286 216.91584 
+L 419.914286 232.95168 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_10">
+    <path d="M 405.185176 224.93376 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="405.185176" y="224.93376" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <path d="M 32.4 240.46848 
+L 745.2 240.46848 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_12">
+    <path d="M 309.6 256.0032 
+L 530.228571 256.0032 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_13">
+    <path d="M 375.788571 247.98528 
+L 375.788571 264.02112 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_14">
+    <path d="M 419.914286 247.98528 
+L 419.914286 264.02112 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_15">
+    <path d="M 405.185176 256.0032 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="405.185176" y="256.0032" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_16">
+    <path d="M 32.4 271.53792 
+L 745.2 271.53792 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M 309.6 287.07264 
+L 530.228571 287.07264 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 375.788571 279.05472 
+L 375.788571 295.09056 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_19">
+    <path d="M 419.914286 279.05472 
+L 419.914286 295.09056 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_20">
+    <path d="M 405.185176 287.07264 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="405.185176" y="287.07264" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_21">
+    <path d="M 32.4 302.60736 
+L 745.2 302.60736 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_22">
+    <path d="M 309.6 318.14208 
+L 530.228571 318.14208 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_23">
+    <path d="M 375.788571 310.12416 
+L 375.788571 326.16 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_24">
+    <path d="M 419.914286 310.12416 
+L 419.914286 326.16 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_25">
+    <path d="M 405.185176 318.14208 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="405.185176" y="318.14208" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_26">
+    <path d="M 32.4 333.6768 
+L 745.2 333.6768 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_27">
+    <path d="M 309.6 349.21152 
+L 530.228571 349.21152 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_28">
+    <path d="M 375.788571 341.1936 
+L 375.788571 357.22944 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_29">
+    <path d="M 419.914286 341.1936 
+L 419.914286 357.22944 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_30">
+    <path d="M 404.344856 349.21152 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="404.344856" y="349.21152" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_31">
+    <path d="M 32.4 364.74624 
+L 745.2 364.74624 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_32">
+    <path d="M 309.6 380.28096 
+L 530.228571 380.28096 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_33">
+    <path d="M 375.788571 372.26304 
+L 375.788571 388.29888 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_34">
+    <path d="M 419.914286 372.26304 
+L 419.914286 388.29888 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_35">
+    <path d="M 403.974845 380.28096 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="403.974845" y="380.28096" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_36">
+    <path d="M 32.4 395.81568 
+L 745.2 395.81568 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_37">
+    <path d="M 309.6 411.3504 
+L 530.228571 411.3504 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_38">
+    <path d="M 375.788571 403.33248 
+L 375.788571 419.36832 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_39">
+    <path d="M 419.914286 403.33248 
+L 419.914286 419.36832 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_40">
+    <path d="M 403.974845 411.3504 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="403.974845" y="411.3504" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_41">
+    <path d="M 32.4 426.88512 
+L 745.2 426.88512 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_42">
+    <path d="M 309.6 442.41984 
+L 530.228571 442.41984 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_43">
+    <path d="M 375.788571 434.40192 
+L 375.788571 450.43776 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_44">
+    <path d="M 419.914286 434.40192 
+L 419.914286 450.43776 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_45">
+    <path d="M 403.974845 442.41984 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="403.974845" y="442.41984" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_46">
+    <path d="M 32.4 457.95456 
+L 745.2 457.95456 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_47">
+    <path d="M 309.6 473.48928 
+L 530.228571 473.48928 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_48">
+    <path d="M 375.788571 465.47136 
+L 375.788571 481.5072 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_49">
+    <path d="M 419.914286 465.47136 
+L 419.914286 481.5072 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_50">
+    <path d="M 403.974845 473.48928 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="403.974845" y="473.48928" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_51">
+    <path d="M 32.4 489.024 
+L 745.2 489.024 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_52">
+    <path d="M 309.6 504.55872 
+L 530.228571 504.55872 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_53">
+    <path d="M 375.788571 496.5408 
+L 375.788571 512.57664 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_54">
+    <path d="M 419.914286 496.5408 
+L 419.914286 512.57664 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_55">
+    <path d="M 403.974845 504.55872 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="403.974845" y="504.55872" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_56">
+    <path d="M 32.4 520.09344 
+L 745.2 520.09344 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_57">
+    <path d="M 309.6 535.62816 
+L 530.228571 535.62816 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_58">
+    <path d="M 375.788571 527.61024 
+L 375.788571 543.64608 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_59">
+    <path d="M 419.914286 527.61024 
+L 419.914286 543.64608 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_60">
+    <path d="M 402.599648 535.62816 
+" clip-path="url(#pe433b34356)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#pe433b34356)">
+     <use xlink:href="#m941f45b0d6" x="402.599648" y="535.62816" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="170.033933" transform="rotate(-0 35.228571 170.033933)">Escuela</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="170.033933" transform="rotate(-0 270 170.033933)">Índice</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="375.788571" y="170.346238" transform="rotate(-0 375.788571 170.346238)">0.30</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="419.914286" y="170.346238" transform="rotate(-0 419.914286 170.346238)">0.50</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="170.033933" transform="rotate(-0 547.2 170.033933)">Atención · driver dominante</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="191.191011" transform="rotate(-0 35.228571 191.191011)">GRAL. MARIANO MATAMOROS</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="203.355636" transform="rotate(-0 35.228571 203.355636)">Primaria · 19DPR0010B</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="196.461976" transform="rotate(-0 270 196.461976)">0.433</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="196.202562" transform="rotate(-0 547.2 196.202562)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="222.260451" transform="rotate(-0 35.228571 222.260451)">JOSE MARIA MORELOS</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="234.425076" transform="rotate(-0 35.228571 234.425076)">Primaria · 19DPR0902K</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="227.531416" transform="rotate(-0 270 227.531416)">0.433</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="227.272002" transform="rotate(-0 547.2 227.272002)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="253.329891" transform="rotate(-0 35.228571 253.329891)">LEONA VICARIO</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="265.494516" transform="rotate(-0 35.228571 265.494516)">Preescolar · 19EJN0438M</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="258.600856" transform="rotate(-0 270 258.600856)">0.433</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="258.341442" transform="rotate(-0 547.2 258.341442)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="284.399331" transform="rotate(-0 35.228571 284.399331)">LIC. BENITO JUAREZ</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="296.563956" transform="rotate(-0 35.228571 296.563956)">Preescolar · 19EJN0451G</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="289.670296" transform="rotate(-0 270 289.670296)">0.433</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="289.410882" transform="rotate(-0 547.2 289.410882)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="315.468771" transform="rotate(-0 35.228571 315.468771)">LIC. BENITO JUAREZ</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="327.633396" transform="rotate(-0 35.228571 327.633396)">Primaria · 19EPR0479C</text>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="320.739736" transform="rotate(-0 270 320.739736)">0.433</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="320.480322" transform="rotate(-0 547.2 320.480322)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="346.538211" transform="rotate(-0 35.228571 346.538211)">INSTITUTO MANO AMIGA LA CIMA</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="358.702836" transform="rotate(-0 35.228571 358.702836)">Preescolar · 19PJN0177X</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="351.809176" transform="rotate(-0 270 351.809176)">0.429</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="351.549762" transform="rotate(-0 547.2 351.549762)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="377.607651" transform="rotate(-0 35.228571 377.607651)">ALFONSO MARTINEZ DOMINGUEZ</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="389.772276" transform="rotate(-0 35.228571 389.772276)">Secundaria · 19EES0150U</text>
+   </g>
+   <g id="text_32">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="382.878616" transform="rotate(-0 270 382.878616)">0.428</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="382.619202" transform="rotate(-0 547.2 382.619202)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_34">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="408.677091" transform="rotate(-0 35.228571 408.677091)">FRANCISCO I. MADERO</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="420.841716" transform="rotate(-0 35.228571 420.841716)">Primaria · 19EPR0559O</text>
+   </g>
+   <g id="text_36">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="413.948056" transform="rotate(-0 270 413.948056)">0.428</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="413.688642" transform="rotate(-0 547.2 413.688642)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_38">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="439.746531" transform="rotate(-0 35.228571 439.746531)">LIC. ADOLFO RUIZ CORTINES</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="451.911156" transform="rotate(-0 35.228571 451.911156)">Preescolar · 19EJN0284Z</text>
+   </g>
+   <g id="text_40">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="445.017496" transform="rotate(-0 270 445.017496)">0.428</text>
+   </g>
+   <g id="text_41">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="444.758082" transform="rotate(-0 547.2 444.758082)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_42">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="470.815971" transform="rotate(-0 35.228571 470.815971)">PEDRO MORENO</text>
+   </g>
+   <g id="text_43">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="482.980596" transform="rotate(-0 35.228571 482.980596)">Primaria · 19EPR0051A</text>
+   </g>
+   <g id="text_44">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="476.086936" transform="rotate(-0 270 476.086936)">0.428</text>
+   </g>
+   <g id="text_45">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="475.827522" transform="rotate(-0 547.2 475.827522)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_46">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="501.885411" transform="rotate(-0 35.228571 501.885411)">REVOLUCION</text>
+   </g>
+   <g id="text_47">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="514.050036" transform="rotate(-0 35.228571 514.050036)">Preescolar · 19EJN0005Z</text>
+   </g>
+   <g id="text_48">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="507.156376" transform="rotate(-0 270 507.156376)">0.428</text>
+   </g>
+   <g id="text_49">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="506.896962" transform="rotate(-0 547.2 506.896962)">■ media · Conectividad digital</text>
+   </g>
+   <g id="text_50">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="35.228571" y="532.954851" transform="rotate(-0 35.228571 532.954851)">CENTENARIA GRAL. IGNACIO ZARAGO…</text>
+   </g>
+   <g id="text_51">
+    <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="35.228571" y="545.119476" transform="rotate(-0 35.228571 545.119476)">Primaria · 19EPR0407J</text>
+   </g>
+   <g id="text_52">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="270" y="538.225816" transform="rotate(-0 270 538.225816)">0.422</text>
+   </g>
+   <g id="text_53">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="547.2" y="537.966402" transform="rotate(-0 547.2 537.966402)">■ media · Inseguridad del entorno</text>
+   </g>
+  </g>
+  <g id="axes_2">
+   <g id="patch_2">
+    <path d="M 785.7 442.368 
+L 1039.5 442.368 
+Q 1047.6 442.368 1047.6 433.24416 
+L 1047.6 147.36384 
+Q 1047.6 138.24 1039.5 138.24 
+L 785.7 138.24 
+Q 777.6 138.24 777.6 147.36384 
+L 777.6 433.24416 
+Q 777.6 442.368 785.7 442.368 
+z
+" clip-path="url(#p0f7b2178a1)" style="fill: #f6f6f3; stroke: #c9c8c1; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_54">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="796.5" y="171.688365" transform="rotate(-0 796.5 171.688365)">Este filtro</text>
+   </g>
+   <g id="text_55">
+    <text style="font-weight: 700; font-size: 26px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="796.5" y="218.819506" transform="rotate(-0 796.5 218.819506)">0</text>
+   </g>
+   <g id="text_56">
+    <text style="font-size: 9.2px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(796.5 262.088101)">escuelas con atención alta</text>
+    <text style="font-size: 9.2px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(796.5 273.498617)">(cruzan la línea de alerta)</text>
+   </g>
+   <g id="text_57">
+    <text style="font-weight: 700; font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="796.5" y="316.146307" transform="rotate(-0 796.5 316.146307)">3.6 de 6</text>
+   </g>
+   <g id="text_58">
+    <text style="font-size: 9.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="796.5" y="348.996323" transform="rotate(-0 796.5 348.996323)">pistas con dato, en promedio</text>
+   </g>
+   <g id="text_59">
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(796.5 388.765908)">El filtro de nivel no cambia estos</text>
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(796.5 398.848205)">indicadores: /kpis no acepta nivel.</text>
+   </g>
+  </g>
+  <g id="patch_3">
+   <path d="M 39.96 81.5616 
+L 181.44 81.5616 
+Q 192.24 81.5616 192.24 74.6496 
+L 192.24 56.6784 
+Q 192.24 49.7664 181.44 49.7664 
+L 39.96 49.7664 
+Q 29.16 49.7664 29.16 56.6784 
+L 29.16 74.6496 
+Q 29.16 81.5616 39.96 81.5616 
+z
+" style="fill: #f6f6f3; stroke: #c9c8c1; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_4">
+   <path d="M 212.76 81.5616 
+L 354.24 81.5616 
+Q 365.04 81.5616 365.04 74.6496 
+L 365.04 56.6784 
+Q 365.04 49.7664 354.24 49.7664 
+L 212.76 49.7664 
+Q 201.96 49.7664 201.96 56.6784 
+L 201.96 74.6496 
+Q 201.96 81.5616 212.76 81.5616 
+z
+" style="fill: #f6f6f3; stroke: #c9c8c1; stroke-linejoin: miter"/>
+  </g>
+  <g id="patch_5">
+   <path d="M 385.56 81.5616 
+L 527.04 81.5616 
+Q 537.84 81.5616 537.84 74.6496 
+L 537.84 56.6784 
+Q 537.84 49.7664 527.04 49.7664 
+L 385.56 49.7664 
+Q 374.76 49.7664 374.76 56.6784 
+L 374.76 74.6496 
+Q 374.76 81.5616 385.56 81.5616 
+z
+" style="fill: #f6f6f3; stroke: #c9c8c1; stroke-linejoin: miter"/>
+  </g>
+  <g id="text_60">
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="29.0304" transform="rotate(-0 32.4 29.0304)">Pantalla 6 · Exploración de otras escuelas (ejemplo con datos reales)</text>
+  </g>
+  <g id="text_61">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="110.7" y="68.262047" transform="rotate(-0 110.7 68.262047)">Ciclo: 2024-2025</text>
+  </g>
+  <g id="text_62">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="283.5" y="68.462047" transform="rotate(-0 283.5 68.462047)">Entidad: Nuevo León</text>
+  </g>
+  <g id="text_63">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="456.3" y="68.262047" transform="rotate(-0 456.3 68.262047)">Nivel: todos</text>
+  </g>
+  <g id="text_64">
+   <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="107.136" transform="rotate(-0 32.4 107.136)">Las de mayor índice primero. Elige una para abrir su expediente, igual al de la Pantalla 4.</text>
+  </g>
+  <g id="text_65">
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 580.862317)">Nivel de atención: ▲ alta desde 0.50 · ■ media desde 0.30 · ● baja debajo. Forma y texto, no sólo color.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 593.462317)">Varias escuelas comparten exactamente el mismo índice: la lista las pone juntas en orden alfabético y no inventa un orden entre ellas.</text>
+  </g>
+  <g id="text_66">
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 628.467037)">Fuente: GET /api/v1/escuelas?cve_ent=19&amp;order_by=indice_riesgo&amp;order=desc&amp;size=20 · GET /api/v1/kpis?cve_ent=19 · campos: cct, nombre, nivel, indice_riesgo, driver_dominante;</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 638.727037)">escuelas_en_riesgo, indice_completitud_drivers.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 649.244725)">Filtro de ejemplo. La matrícula no se muestra aquí: dentro de la historia sólo aparece en la Pantalla 2.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 659.399037)">Consulta del 10-sep-2026 18:24 (UTC−06:00) a la API v1 en producción (commit 457715a). Cortes leídos del código: LINEA_DE_ALERTA (src/api/repositorio_gold.py:55) y RIESGO_ESTABLE</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 669.612725)">(src/modelos/riesgo.py:76).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 679.919037)">Ejemplo de FORMA Y LECTURA DEL DATO, no mockup ni identidad visual: paleta neutra y provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías).</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pe433b34356">
+   <rect x="32.4" y="138.24" width="712.8" height="412.92288"/>
+  </clipPath>
+  <clipPath id="p0f7b2178a1">
+   <rect x="777.6" y="138.24" width="270" height="304.128"/>
+  </clipPath>
+ </defs>
+</svg>
