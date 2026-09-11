@@ -1,7 +1,9 @@
 // Cliente del API real de FARO (contrato: api/openapi.v1.json).
 // Base URL configurable por env var de Vite: VITE_API_BASE_URL
-//   - local:  .env            -> http://localhost:8000
-//   - prod:   .env.production -> https://faro-api-eanzfglvyq-uc.a.run.app
+//   - local:  NO se define -> "" (rutas relativas; server.proxy de Vite las
+//             manda a localhost:8000, ver vite.config.js)
+//   - prod:   se sirve en el MISMO origen vía proxy nginx (ADR-012, Luis) ->
+//             VITE_API_BASE_URL vacío en .env.production
 //
 // Todas las funciones devuelven { data, error }. Nunca lanzan (throw) para que
 // la página decida cómo mostrar el error.
@@ -13,13 +15,13 @@
 // permitido es el modo demo explícito de ./demoMode.js (VITE_USE_MOCK=true).
 // Ver useApiResource.js para el patrón de carga recomendado.
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 async function request(path, options = {}) {
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
       headers: { "Content-Type": "application/json", ...(options.headers ?? {}) },
-      credentials: "include", // el API usa cookies/JWT de sesión (US-402 OAuth Google)
+      credentials: "same-origin", // mismo origen vía proxy nginx (ADR-012); la cookie httpOnly viaja sola
       ...options,
     });
     if (!res.ok) {
