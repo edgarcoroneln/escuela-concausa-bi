@@ -4,14 +4,14 @@ date: "2026-09-05"
 author_human: "Deni Garrido Fragoso"
 agent: "Codex"
 model: "GPT-5"
-session_duration: "ADR-011, alineación Gold y regeneración controlada de US-113"
-touches: ["ADR-011", "US-104", "US-112", "US-113", "US-311", "US-313", "DS-01", "DS-02", "DS-08"]
+session_duration: "Alineación Gold y regeneración controlada de US-113"
+touches: ["US-104", "US-112", "US-113", "US-311", "US-313", "DS-01", "DS-02", "DS-08"]
 tags: [devlog, us113, adr, gold, ml, datos-reales]
 ---
 
-# ADR-011 — alineación de `features_escuela` y regeneración de US-113
+# Alineación de `features_escuela` y regeneración de US-113
 
-→ [[vault/_DevLog/_index|Volver al índice]] · [[vault/03_Architecture/ADRs/ADR-011-universo-features-escuela]]
+→ [[vault/_DevLog/_index|Volver al índice]] · [[vault/03_Architecture/Data_Model]]
 
 ## Objetivo
 
@@ -21,7 +21,7 @@ materializar los nueve cubos de US-113 con datos DS-08 reales.
 
 ## Decisión y cambio realizado
 
-- Se registró **ADR-011** como `accepted`: `dim_escuela`/DS-02 es la autoridad para la
+- Se documentó la decisión de que `dim_escuela`/DS-02 sea la autoridad para la
   pertenencia a Gold y para `cve_mun`; DS-01 conserva la matrícula y el target.
 - `features_escuela.sql` usa ahora el mismo `INNER JOIN` contra `dim_escuela` que
   `fact_escuela_ciclo`. Se eliminó el filtro redundante de `cve_ent` de DS-01: la dimensión

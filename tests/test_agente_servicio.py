@@ -38,12 +38,19 @@ def test_orquesta_consulta_segura_con_dependencias_inyectadas() -> None:
 
 
 def test_pregunta_fuera_de_alcance_no_invoca_dependencias() -> None:
+    """Fase 1: el vocabulario no reconoce el tema, así que se intenta el respaldo semántico del
+    RAG antes de rechazar. Para un tema realmente ajeno, el RAG confirma "no relevante"
+    (`ContextoNoEncontrado`) y ni el LLM ni el ejecutor SQL llegan a invocarse."""
+
+    def sin_contexto_relevante(pregunta: str) -> str:
+        raise ContextoNoEncontrado("sin contexto relevante para ese tema")
+
     def no_debe_llamarse(*args):
-        raise AssertionError("No se deben invocar dependencias para preguntas fuera de alcance")
+        raise AssertionError("No se deben invocar el LLM ni la BD para preguntas fuera de alcance")
 
     resultado = procesar_consulta(
         "Cual es la mejor receta de pasta?",
-        recuperar_contexto=no_debe_llamarse,
+        recuperar_contexto=sin_contexto_relevante,
         generar_sql=no_debe_llamarse,
         ejecutar_sql=no_debe_llamarse,
         redactar_respuesta=no_debe_llamarse,
@@ -51,6 +58,29 @@ def test_pregunta_fuera_de_alcance_no_invoca_dependencias() -> None:
 
     assert resultado.fuera_de_alcance
     assert resultado.sql_generado is None
+
+
+def test_pregunta_sin_vocabulario_exacto_pasa_por_respaldo_semantico() -> None:
+    """Fase 1: una pregunta libre que no toca ninguna palabra de la whitelist, pero que SÍ es del
+    dominio, se acepta cuando el RAG encuentra contexto relevante (sin necesidad de redeploy del
+    vocabulario para cada sinónimo nuevo)."""
+    llamadas: list[str] = []
+
+    def recuperar(pregunta: str) -> str:
+        llamadas.append("recuperar")
+        return "Tabla gold.predicciones(cct, indice_riesgo)"
+
+    resultado = procesar_consulta(
+        "Que colegios corren peligro de quedarse sin inscritos?",
+        recuperar_contexto=recuperar,
+        generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.predicciones",
+        ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+        redactar_respuesta=lambda pregunta, filas: f"{len(filas)} escuela.",
+    )
+
+    assert llamadas == ["recuperar"]
+    assert not resultado.fuera_de_alcance
+    assert resultado.respuesta == "1 escuela."
 
 
 def test_sql_inseguro_nunca_llega_al_ejecutor() -> None:
@@ -204,3 +234,78 @@ def test_entrada_compuesta_usa_recuperacion_rag_real(monkeypatch) -> None:
 
     assert resultado.respuesta == "Una escuela."
     assert resultado.sql_generado == "SELECT cct FROM gold.features_escuela LIMIT 1000;"
+
+
+def test_auto_correccion_reintenta_sql_tras_error_de_ejecucion() -> None:
+    """Fase 1: si `ejecutar_sql` falla, se regenera el SQL una vez antes de rendirse."""
+    intentos_generar: list[str] = []
+
+    def generar(prompt: str, pregunta: str) -> str:
+        intentos_generar.append(prompt)
+        if len(intentos_generar) == 1:
+            return "SELECT columna_inexistente FROM gold.predicciones"
+        assert "no se pudo ejecutar" in prompt.lower()
+        return "SELECT cct FROM gold.predicciones"
+
+    def ejecutar(sql: str):
+        if "columna_inexistente" in sql:
+            raise RuntimeError("columna_inexistente no existe")
+        return [{"cct": "09ABC0001X"}]
+
+    resultado = procesar_consulta(
+        "Cuantas escuelas tienen mayor riesgo?",
+        recuperar_contexto=lambda pregunta: "gold.predicciones(cct)",
+        generar_sql=generar,
+        ejecutar_sql=ejecutar,
+        redactar_respuesta=lambda pregunta, filas: f"{len(filas)} escuela.",
+    )
+
+    assert len(intentos_generar) == 2
+    assert resultado.sql_generado == "SELECT cct FROM gold.predicciones LIMIT 1000;"
+    assert resultado.respuesta == "1 escuela."
+    assert not resultado.fuera_de_alcance
+
+
+def test_auto_correccion_se_rinde_tras_agotar_reintentos() -> None:
+    """Si el SQL sigue fallando tras el reintento, se degrada con un mensaje claro (sin crash)."""
+
+    def ejecutar(sql: str):
+        raise RuntimeError("la consulta no se pudo ejecutar")
+
+    resultado = procesar_consulta(
+        "Cuantas escuelas tienen mayor riesgo?",
+        recuperar_contexto=lambda pregunta: "gold.predicciones(cct)",
+        generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.predicciones",
+        ejecutar_sql=ejecutar,
+        redactar_respuesta=lambda pregunta, filas: "no debe llamarse",
+    )
+
+    assert resultado.sql_generado is None
+    assert not resultado.fuera_de_alcance
+    assert "reformularla" in resultado.respuesta
+
+
+def test_respuesta_directa_sin_sql_para_pregunta_conceptual() -> None:
+    """Fase 1: una pregunta metodológica se responde desde el contexto RAG, sin tocar la BD."""
+
+    def no_debe_llamarse(*args):
+        raise AssertionError("una pregunta conceptual no debe ejecutar SQL")
+
+    observado: dict[str, object] = {}
+
+    def redactar(pregunta: str, filas):
+        observado["filas"] = filas
+        return "SIN_DATO indica que ese driver no tiene información para esa escuela."
+
+    resultado = procesar_consulta(
+        "Que significa SIN_DATO en los drivers?",
+        recuperar_contexto=lambda pregunta: "Convención SIN_DATO: nunca se imputa como cero.",
+        generar_sql=lambda prompt, pregunta: "NO_SQL_NECESARIO",
+        ejecutar_sql=no_debe_llamarse,
+        redactar_respuesta=redactar,
+    )
+
+    assert resultado.sql_generado is None
+    assert not resultado.fuera_de_alcance
+    assert "SIN_DATO" in resultado.respuesta
+    assert "contexto_faro" in observado["filas"][0]

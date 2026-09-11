@@ -1,0 +1,483 @@
+---
+id: DOC-FARO-UX-PLAN
+title: "Plan de trabajo — UX/UI y storytelling FARO (Equipo 3, S7)"
+owner: "Marina García del Buey"
+status: approved
+version: "1.2"
+traces_up: ["US-621", "REQ-002", "ADR-011", "DEC-023", "DEC-024", "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09", "vault/13_Reports/Revision_Profesor_2026-09-09"]
+traces_down: ["vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope", "vault/04_UX_Design/FARO_Storytelling_UX/01_UX_Architecture", "vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
+last_reviewed: "2026-09-10"
+tags: [ux, storytelling, s7, us-621, celula-3, aprobado]
+---
+
+# Plan de trabajo — UX/UI y storytelling FARO
+
+> Plan operativo del **Equipo 3 · UX/UI y storytelling** de S7. Implementa `US-621` (`REQ-002`).
+> → [[vault/04_UX_Design/FARO_Storytelling_UX/_index]] ·
+> [[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]] ·
+> [[vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09]] ·
+> [[vault/13_Reports/Revision_Profesor_2026-09-09]]
+
+**Estado: aprobado.** `DEC-023` aprueba esta propuesta como dirección UX/UI de S7 y `ADR-011` la
+declara el paquete que gobierna el diseño. Las seis peticiones de la §11 quedaron resueltas por
+`ADR-011` y `DEC-024`. Ver §14.
+
+**Líder:** Marina García del Buey — UX/UI & Storytelling Lead.
+**Equipo:** Oscar Antonio Quiroz Lázaro · Monserrat Xcaret Miranda Olivas · Juan Carlos Macías Mayen.
+**Aprobador:** Edgar Edmundo Coronel Navarrete — PO.
+**Alcance principal:** escritorio. Móvil queda como evolución posterior.
+
+---
+
+## 0. Correcciones respecto a la propuesta original
+
+Se registran en vez de aplicarse en silencio, para que el PO vea qué cambió y por qué.
+
+| # | Propuesta original | Corrección | Motivo |
+|---|---|---|---|
+| 1 | Carpeta `04_UX_Design/` en la raíz del repositorio | `vault/04_UX_Design/FARO_Storytelling_UX/` | La carpeta no existe en la raíz; vive en el vault. Una ruta raíz no está en el alcance de nadie en `vault/_Meta/ownership.yml` y `check_ownership.py` reprobaría el PR de los cuatro |
+| 2 | Sin ID | `US-621` · `REQ-002` | `Definition_of_Filed` exige ID, y el regex del título de PR no acepta un PR sin él |
+| 3 | Checkpoint jueves 19:00 · entrega viernes 15:00 | Gate jueves 10 **18:00** · entrega a Equipo 5 viernes 11 15:00 · *code freeze* domingo 13 20:00 · entrega lunes 14 | El calendario canónico de S7 es `Plan_Recuperacion_2026-09-09`; la hora del gate y el corte final no los fija este frente |
+| 4 | "Equipo ejecutor: Oscar, Juan Macías y Monse" | Equipo 3 completo con Marina como líder | Así lo registran `DEC-022` y el padrón de `ownership.yml` |
+| 5 | `prioridad` obligatoria en Pantallas 4 y 5 | **Resuelto por `ADR-011` §5 y `DEC-024`:** se sustituye por el **nivel de atención** derivado de `indice_riesgo`. El front **no consume** `gold.recomendaciones.prioridad` | El contrato v1 no expone `prioridad`, y `BUG-063` deja su corte `ALTA` por encima del techo del fenómeno. El PO resolvió derivarlo en presentación en vez de esperar a rematerializar Gold |
+| 6 | Etiqueta Alto / Medio / Bajo "conforme a la definición oficial disponible" | **Resuelto por `ADR-011` §5:** alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`. Es la misma etiqueta del punto 5, no una segunda | No existía esa definición. Los cortes reutilizan `LINEA_DE_ALERTA` (`DEC-019`) y `RIESGO_ESTABLE`, ya ratificados |
+| 7 | "Watson" como nombre del chat | **Resuelto por `ADR-011` §6:** el nombre de producto es **Asistente FARO**. No se usa "Watson" | El nombre no existía en ningún documento y la decisión de producto es del PO con el Equipo 2 |
+| 8 | "Las gráficas deben construirse directamente en Front" | **Resuelto por `ADR-011` y `DEC-023`:** concedido. Superset deja de ser la navegación principal y **permanece como evidencia analítica y respaldo** | `ADR-011` supersede a `ADR-002` sólo en la obligación de embeber Superset como experiencia principal. Lo ejecuta el Equipo 5 |
+
+---
+
+## 1. Objetivo
+
+Rediseñar la experiencia UX/UI de FARO para que el usuario entienda de forma intuitiva qué ocurre con
+las escuelas en riesgo y llegue a una conclusión clara:
+
+> **Identificar los 3 drivers dominantes que más se repiten entre las escuelas en riesgo, entender la
+> problemática que muestran los datos y conocer la recomendación asociada.**
+
+La experiencia se diseña principalmente para el evaluador, pero debe seguir siendo clara para
+cualquier persona que consulte FARO tras autenticarse.
+
+Responde a tres de los hallazgos del profesor del 9-sep: experiencia visual no satisfactoria,
+gráficas sin valor comunicado y ausencia de una historia de negocio.
+
+---
+
+## 2. Principio de storytelling
+
+La experiencia se presenta como una investigación profesional y sutil. No convierte a FARO en un
+juego ni usa una estética detectivesca caricaturesca. El usuario debe sentir que:
+
+1. encuentra una señal;
+2. revisa los casos;
+3. analiza la evidencia;
+4. identifica qué driver destaca;
+5. llega a una conclusión;
+6. conoce la recomendación;
+7. después puede explorar otras escuelas.
+
+La Pantalla 1 todavía no revela cuántas escuelas hay en riesgo. Esa revelación ocurre en la Pantalla 2.
+
+La conclusión oficial siempre se calcula sobre **el conjunto completo de escuelas en riesgo**,
+independientemente de los filtros usados durante la exploración.
+
+---
+
+## 3. Datos y guardarraíles
+
+La nueva UX/UI puede reorganizar por completo las visualizaciones existentes. Sin embargo:
+
+- Front consume únicamente datos Gold a través de la API;
+- se usan los endpoints que ya existen (§10 lista el mapeo verificado);
+- **no se inventan métricas, datos, drivers ni explicaciones**;
+- si un dato existe en Gold pero ningún endpoint actual lo expone, queda fuera del alcance **o se
+  tramita como petición explícita en §11** — no se dibuja como si existiera. `DEC-024` añade una
+  tercera salida: representar la pieza que falta con **fixture contractual o `SIN_DATO`**, para no
+  detener el diseño ni las pruebas mientras el dato real llega;
+- no se afirma causalidad;
+- se usa lenguaje como **driver dominante**, **factor que destaca**, **principal línea de
+  investigación** o **factor asociado**;
+- donde no hay dato se marca `SIN_DATO` explícito: nunca cero, nunca nulo silencioso.
+
+Los 6 drivers oficiales son: **D1** pobreza y rezago · **D2** inseguridad · **D3** infraestructura ·
+**D4** conectividad · **D5** estrés hídrico · **D6** calidad del aire.
+
+### 3.ter No negociables heredados de `ADR-011` §4
+
+La libertad de rediseño no toca nada de esto, y aplica a los cuatro entregables:
+
+PRD · contratos de datos y de API · OAuth2/JWT y RBAC · **WCAG 2.1 AA** · `SIN_DATO` explícito ·
+filtros de ciclo, entidad y nivel · no causalidad · pruebas y trazabilidad por PR.
+
+Un cambio total de framework sólo se acepta si conserva despliegue, autenticación, pruebas y plazo
+(`ADR-011` §3).
+
+### 3.quater Nivel de atención — la etiqueta que sustituye a `prioridad`
+
+`ADR-011` §5 y `DEC-024` fijan una sola etiqueta, derivada en el front desde `indice_riesgo`:
+
+| Nivel de atención | Corte | Constante que lo respalda |
+|---|---|---|
+| alta | `indice_riesgo >= 0.50` | `LINEA_DE_ALERTA` (`DEC-019`), `src/api/repositorio_gold.py:55` |
+| media | `>= 0.30` y `< 0.50` | `RIESGO_ESTABLE`, `src/modelos/riesgo.py:76` |
+| baja | `< 0.30` | — |
+
+**El front no consume `gold.recomendaciones.prioridad`** mientras esa columna siga calculada con el
+ancla histórica `0.60`.
+
+> **Advertencia que hay que decir en voz alta, no descubrir el domingo.** La columna Gold `prioridad`
+> asigna `ALTA` con `>= 0.60` y `MEDIA` con `>= 0.30` (`src/modelos/publicar_gold.py:197`). O sea que
+> **coincide con el nivel de atención en el corte de media y baja, y difiere sólo entre 0.50 y 0.60**
+> — exactamente donde viven las escuelas en riesgo, porque el máximo observado es `0.5717`. En la
+> práctica: el front dirá *atención alta* para esas escuelas y la columna Gold dirá `MEDIA` para las
+> mismas. Las dos son correctas según su propia definición. Como Superset permanece disponible como
+> evidencia (`DEC-023`) y DB-09 expone esa columna, **el glosario debe explicar que el nivel de
+> atención es un corte de presentación, distinto de la prioridad publicada en Gold.** Es la lectura
+> honesta de `ADR-011` §5, no una excepción a él.
+
+### 3.bis El número de escuelas en riesgo
+
+`DEC-019` separó el ancla de la sigmoide (`0.60`, no se toca) de la línea de alerta (`0.50`), y con
+`0.50` son **7 escuelas de 45 276**. Los modelos de dbt en `main` ya calculan con `>= 0.5`.
+
+La rematerialización ya ocurrió: la QA de los nueve tableros del 2026-09-08 (Monserrat Miranda,
+`TEST-PLAN-PRE-DEMO`) verificó **KPI-04 = 7 en DB-02 contra producción**, con 44 114 escuelas y
+completitud de 62 %.
+
+`ADR-011` resuelve **P-05** a nivel de contrato: `KpisOut`, el OpenAPI, el repositorio Gold, el mock
+y las pruebas ya usan `escuelas_en_riesgo` con `LINEA_DE_ALERTA = 0.50`, y la comprobación por
+despliegue pasa al **smoke continuo de QA** (`US-651`), que no bloquea construcción.
+
+**Aun así, los entregables siguen escribiendo "N escuelas en riesgo" y nunca un literal.** No
+contradice al PO: lo refuerza. Si la comprobación vive en el smoke de QA, un número tecleado a mano
+en la copy es justo lo único que ese smoke no puede detectar. En producción el número se resuelve del
+dato en vivo; en los mockups va `N`.
+
+---
+
+## 4. El Asistente FARO durante la experiencia
+
+**Nombre de producto: Asistente FARO** (`ADR-011` §6). No se usa "Watson" en ninguna superficie ni en
+ningún documento.
+
+Está disponible durante toda la experiencia posterior al login como un botón flotante.
+
+- Es un asistente general: permite consultar datos en lenguaje natural.
+- No necesita conocer automáticamente la pantalla ni la escuela que el usuario está viendo.
+- **Su lógica funcional pertenece al Equipo 2** (`US-611`). Este frente define únicamente su
+  presencia, comportamiento visual y coherencia con la identidad.
+- El walkthrough inicial menciona brevemente que está disponible durante todo el recorrido.
+
+### 4.bis Tres cosas del Equipo 2 que este frente debe diseñar
+
+El diagnóstico del chat ([[vault/15_ML_Models/Diagnostico_Chat_Agente_2026-09-09]], Andrés González)
+cambia lo que el usuario ve, así que entra al diseño:
+
+1. **Viene streaming.** La respuesta se muestra mientras se genera. Hay que diseñar ese estado, no un
+   spinner que espera varios segundos en silencio.
+2. **Los errores se distinguen en tres:** fuera de alcance, sin datos y timeout. Cada uno necesita su
+   propio mensaje; "no disponible" para todo es lo que el diagnóstico marca como defecto.
+3. **Ya responde preguntas conceptuales sin tocar la base** — *"¿qué significa `SIN_DATO`?"*,
+   *"¿cómo se calcula el índice de riesgo?"*. Eso se solapa con el glosario de la §6, y conviene que
+   se refuercen: cada término del glosario puede ofrecer preguntárselo al Asistente. Mete el
+   asistente dentro de la narrativa en vez de dejarlo como un botón aparte.
+
+---
+
+## 5. Arquitectura de la experiencia
+
+El entregable visual contempla **7 mockups**: un login y 6 pantallas.
+
+### Mockup 0 — Login
+
+**Objetivo:** homologar el acceso con la nueva identidad.
+**Contiene:** nueva identidad y tratamiento del logo; los campos y acciones del login actual; recurso
+visual alineado a la narrativa.
+**No cambia:** autenticación, permisos ni lógica funcional.
+
+### Pantalla 1 — Entrada
+
+**Objetivo:** explicar qué es FARO y cuál será el propósito del usuario antes de revelar los casos.
+**Contiene:** qué es FARO; objetivo del proyecto; imágenes que introducen la historia; explicación
+breve del propósito del usuario; CTA principal; acceso a glosario; Asistente FARO flotante; un único
+walkthrough inicial, sencillo y breve.
+**No revela todavía:** cuántas escuelas están en riesgo.
+
+### Pantalla 2 — Panorama de las escuelas en riesgo
+
+**Objetivo:** revelar los casos y presentar el panorama general.
+**Contiene:** revelación clara del número de escuelas en riesgo; información general de matrícula —la
+matrícula se muestra únicamente aquí dentro de la historia—; riesgo; filtros limitados; visualización
+principal definida por Monserrat; CTA hacia la selección de caso; Asistente FARO flotante.
+
+Monserrat tiene libertad creativa sobre la visualización, dentro de los datos y endpoints existentes.
+
+### Pantalla 3 — Selección de caso
+
+**Objetivo:** que el usuario elija libremente una escuela.
+**Contiene:** las escuelas identificables; índice de riesgo numérico; **nivel de atención** según
+§3.quater; CTA para abrir el caso.
+El usuario **no necesita revisar todas**: puede investigar una sola y continuar.
+
+### Pantalla 4 — Expediente de una escuela
+
+**Objetivo:** entender qué driver destaca y cuál es la recomendación.
+**Contiene:** nombre de la escuela; índice de riesgo numérico; **nivel de atención** (§3.quater);
+nota al pie o tooltip que explique qué calcula el índice **y qué significa el nivel de atención**;
+gráfica comparativa de los 6 drivers; highlight claro del driver dominante; recomendación
+correspondiente; regreso a selección; avance hacia la conclusión; Asistente FARO flotante.
+**No incluye:** evolución histórica de matrícula.
+Por restricción de tiempo no se desarrolla explicabilidad adicional del modelo ni métricas nuevas
+para justificar el driver dominante; se usa la contribución que ya entrega `/explicacion`.
+
+### Pantalla 5 — Conclusión Top 3
+
+**Objetivo:** cerrar la historia con el principal hallazgo.
+**Muestra:** los 3 drivers dominantes más frecuentes entre las escuelas en riesgo; número o proporción
+de escuelas en las que cada uno aparece como dominante; problemática sustentada únicamente en los
+datos existentes; recomendación general asociada a cada driver; distribución de niveles de atención
+si aporta (§3.quater).
+
+Debe indicarse explícitamente:
+
+> **Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, independientemente
+> de los filtros utilizados durante la exploración.**
+
+Sin drill-down adicional. **Un único CTA principal:** avanzar a la exploración de otras escuelas.
+
+### Pantalla 6 — Exploración de otras escuelas
+
+**Objetivo:** permitir continuar después de la historia.
+Oscar propone 2–3 nombres comprensibles. No debe llamarse "ML" de cara al usuario.
+**Contiene:** un único pop-up sencillo al entrar por primera vez; los filtros obligatorios del
+proyecto —ciclo, entidad y nivel educativo, los tres soportados hoy—; filtros adicionales sólo si ya
+están soportados; selección de escuela; reutilización de la lógica del expediente (índice, etiqueta,
+gráfica de 6 drivers, driver dominante, recomendación, nivel de atención); Asistente FARO flotante;
+acceso al glosario.
+
+---
+
+## 6. Glosario
+
+Accesible para usuarios no técnicos. Como mínimo explica en lenguaje sencillo: índice de riesgo ·
+driver · driver dominante · recomendación · **nivel de atención** · `SIN_DATO`.
+
+La entrada de **nivel de atención** debe decir, además de qué significa, que es un **corte de
+presentación** derivado del índice de riesgo (alta `>= 0.50`, media `>= 0.30`, baja `< 0.30`) y que
+**no es** la columna `prioridad` publicada en Gold, que usa el ancla histórica `0.60`. Ver la
+advertencia de §3.quater: las dos difieren justo en las escuelas de las que trata la historia.
+
+---
+
+## 7. División de trabajo
+
+> **Marina decide qué historia contamos. Oscar decide cómo se recorre. Monserrat decide qué datos y
+> gráficas la demuestran. Juan decide cómo se ve.**
+
+| Persona | Responsabilidad | Archivo propio |
+|---|---|---|
+| **Marina García del Buey** — líder | Definir la historia oficial; objetivo, alcance y guardarraíles; criterios de aceptación; coherencia transversal; **gate final de UX/UI** | `00_Storytelling_Scope.md` |
+| **Oscar Antonio Quiroz Lázaro** — UX / navegación | Flujo de las 7 pantallas; objetivo, contenido, botones y conexiones; walkthrough y navegación; comportamiento UX del chat; 2–3 nombres para la exploración posterior. Su documento es guía directa para el Equipo 5 | `01_UX_Architecture.md` |
+| **Monserrat Xcaret Miranda Olivas** — narrativa analítica | Qué dato responde cada pregunta; gráficas de cada pantalla; sólo datos Gold expuestos por endpoints actuales; ejemplos de visualizaciones; cómo se obtiene y comunica el Top 3 | `02_Data_Visualization_Spec.md` |
+| **Juan Carlos Macías Mayen** — UI / identidad visual | Identidad visual desde cero: logo, paleta, tipografías, componentes, botones, cards, iconografía, imágenes, efectos, apariencia del chat, mockups y PDF final. Único editor del PDF | `03_Visual_Identity.md` |
+
+Monserrat entrega a Juan los ejemplos de gráficas y el contenido analítico aprobado.
+Ningún integrante modifica el entregable de otro sin coordinación previa.
+
+---
+
+## 8. Entregables y calendario
+
+Alineado a `Plan_Recuperacion_2026-09-09`. Cada integrante trabaja en su rama fija `dev/{identidad}`,
+sincroniza con `git merge origin/main` y entra por PR. No se requiere merge a `main` para dar por
+cumplido un gate interno, pero sí para que el Equipo 5 lo consuma.
+
+### Jueves 10 — gate del frente, antes de las 18:00
+
+Borrador formal committeado por cada integrante. Sin código productivo en este gate.
+
+| Persona | Archivo | Debe contener |
+|---|---|---|
+| Marina | `00_Storytelling_Scope.md` | Objetivo, público, storytelling, alcance, reglas, arquitectura acordada, criterios de aceptación iniciales |
+| Oscar | `01_UX_Architecture.md` | Flujo de las 7 pantallas, ficha breve por pantalla, botones, conexiones, filtros, walkthrough, chat, propuestas de nombre |
+| Monserrat | `02_Data_Visualization_Spec.md` | Propuesta de visualización por pantalla, variables necesarias, endpoint actual que la sostiene, ejemplos iniciales |
+| Juan | `03_Visual_Identity.md` | **2–3 rutas visuales**, cada una con logo, paleta, tipografías, cards, botones, iconografía, tratamiento de gráficas, imágenes, chat, estados de riesgo y tratamiento del driver dominante |
+
+**Gate del jueves:** Marina selecciona una ruta visual.
+
+### Viernes 11 — entrega a Equipo 5, 15:00
+
+Es la fecha que importa: el Equipo 5 (Diana Alvarez) implementa a partir de aquí.
+
+**No es una compuerta secuencial.** `DEC-024` establece que los seis frentes construyen y prueban en
+paralelo contra contratos versionados: el Equipo 5 no espera a que esté todo para empezar
+componentes, y este frente entrega de forma incremental lo que ya esté cerrado. La fecha marca
+cuándo la especificación deja de moverse, no cuándo empieza la implementación.
+
+- Marina: `00_Storytelling_Scope.md` final.
+- Oscar: `01_UX_Architecture.md` final.
+- Monserrat: `02_Data_Visualization_Spec.md` final + ejemplos finales de visualizaciones.
+- Juan: `03_Visual_Identity.md` final, 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf`.
+
+```text
+mockups/
+├── 00_Login.png
+├── 01_Entrada.png
+├── 02_Panorama_Escuelas_Riesgo.png
+├── 03_Seleccion_Caso.png
+├── 04_Expediente_Escuela.png
+├── 05_Conclusion_Top3.png
+└── 06_Explorador.png
+```
+
+Escritorio es obligatorio. Móvil queda como evolución futura.
+
+### Sábado 12 a lunes 14 — acompañamiento
+
+El frente no cierra el viernes: acompaña al Equipo 5 durante la integración, responde dudas de
+implementación y valida el recorrido en la candidata. *Code freeze* domingo 13 a las 20:00; entrega
+el lunes 14 a primera hora.
+
+---
+
+## 9. Criterios de aceptación propuestos
+
+Definidos inicialmente por este frente. El Equipo 6 (QA, `US-651`) puede ampliarlos.
+
+1. Una persona que no conoce FARO entiende desde la entrada qué busca el proyecto y qué debe hacer.
+2. La Pantalla 2 revela de forma inequívoca cuántas escuelas están en riesgo.
+3. El usuario puede seleccionar cualquiera de ellas sin tener que revisar las demás.
+4. El índice de riesgo se muestra con valor numérico y con su **nivel de atención** (§3.quater).
+5. El significado del índice de riesgo se explica en lenguaje sencillo.
+6. El expediente muestra simultáneamente los 6 drivers.
+7. El driver dominante queda visualmente destacado.
+8. La recomendación proviene de datos existentes. El nivel de atención se **deriva** de
+   `indice_riesgo` en el front; ninguna superficie consume `gold.recomendaciones.prioridad`.
+9. Ningún texto afirma causalidad que los datos no puedan demostrar.
+10. La conclusión muestra los 3 drivers dominantes más frecuentes sobre el conjunto completo.
+11. La Pantalla 5 lo indica explícitamente.
+12. La problemática presentada está sustentada únicamente por los datos disponibles.
+13. La Pantalla 5 tiene un solo CTA principal.
+14. El Asistente FARO permanece visible como componente flotante tras el login, con estado de
+    streaming y tres mensajes de error distinguibles (§4.bis).
+15. Existe un único walkthrough sencillo al inicio.
+16. Existe un único pop-up sencillo al entrar por primera vez a la exploración.
+17. El glosario explica los términos mínimos acordados.
+18. Toda visualización propuesta puede construirse con endpoints existentes, con una resolución de
+    §11 o con fixture contractual rotulado como tal (`DEC-024`).
+19. Ninguna gráfica requiere un endpoint no acordado.
+20. Los 7 mockups comparten una identidad visual consistente.
+21. La arquitectura indica objetivo, contenido, botones y conexión de cada pantalla.
+22. El Equipo 5 puede implementar con arquitectura + especificación + mockups sin redefinir UX.
+23. Escritorio queda completamente resuelto.
+24. La identidad propuesta no depende de la identidad visual anterior de FARO.
+25. El glosario distingue el **nivel de atención** de la columna `prioridad` de Gold.
+26. Ninguna superficie usa el nombre "Watson".
+
+---
+
+## 10. Mapeo verificado contra la API v1
+
+Verificado contra `api/openapi.v1.json` el 2026-09-10. Este mapeo es el que hace exigible el
+guardarraíl de §3: lo que no está aquí, no se dibuja.
+
+| Necesidad | Endpoint | Campos |
+|---|---|---|
+| Las escuelas en riesgo, ordenadas | `GET /api/v1/escuelas` con `order_by=indice_riesgo` y `order=desc` | `cct`, `nombre`, `nivel`, `matricula_total`, `indice_riesgo`, `driver_dominante`, `tiene_prediccion` |
+| Los 6 drivers de una escuela | `GET /api/v1/escuelas/{cct}` | `d1`…`d6`, `indice_completitud_drivers`, `es_estimado_por_grupo`, `sostenimiento`, `latitud`, `longitud` |
+| Recomendación y driver dominante | `GET /api/v1/predicciones/{cct}` | `indice_riesgo`, `driver_dominante`, `recomendacion`, `cluster` |
+| Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante` |
+| Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
+| Filtros de la exploración | parámetros de `/escuelas` y `/kpis` | `ciclo`, `cve_ent`, `cve_mun`, `nivel` |
+| Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2 |
+
+| Nivel de atención | se **deriva** en Front de `indice_riesgo` | ver §3.quater |
+
+**Lo que sigue sin existir en el contrato:** `prioridad` no aparece en `EscuelaOut`,
+`EscuelaDetalleOut`, `PrediccionOut` ni `ExplicacionSHAPOut`, y **no se pidió exponerla**:
+`ADR-011` §5 resolvió derivar el nivel de atención en presentación. La columna Gold `prioridad`
+queda fuera del alcance de este frente.
+
+---
+
+## 11. Resoluciones del PO
+
+Las seis peticiones que abrió este plan quedaron **cerradas el 2026-09-10** por
+[[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]], `DEC-023` y `DEC-024`. Se
+conservan con su número porque el `ADR` y la matriz las citan así.
+
+| # | Qué se pidió | Resolución |
+|---|---|---|
+| **P-01** | Exponer `prioridad` y decidir el corte de `BUG-063` | **No se expone y no se consume.** El front deriva el **nivel de atención** desde `indice_riesgo` (§3.quater). `BUG-063` puede alinearse después sin bloquear UX |
+| **P-02** | Definición oficial de las bandas | alta `>= 0.50` · media `>= 0.30 y < 0.50` · baja `< 0.30`. Reutiliza `LINEA_DE_ALERTA` y `RIESGO_ESTABLE` |
+| **P-03** | Nombre del chat | **Asistente FARO.** No se usa "Watson" |
+| **P-04** | ADR para retirar Superset de la experiencia | Concedido. Superset deja de ser la navegación principal y **permanece como evidencia analítica y respaldo** |
+| **P-05** | Confirmar `escuelas_en_riesgo` en `/api/v1/kpis` | Resuelto a nivel de contrato; la comprobación por despliegue pasa al smoke continuo de QA (`US-651`) y no bloquea construcción. La regla de §3.bis sigue en pie |
+| **P-06** | Qué documento manda en UX | **`FARO_Storytelling_UX` gobierna el diseño de S7.** `UX_Guidelines.md` pasó a `superseded` |
+
+Lo que queda abierto ya no son peticiones sino **coordinación**, y `DEC-024` es explícita en que nada
+de esto detiene la construcción de nadie:
+
+| Tema | Con quién | Qué necesitamos |
+|---|---|---|
+| Importar, no reteclear, los cortes | Equipo 5 · Equipo 4 | `LINEA_DE_ALERTA` vive en `src/api/repositorio_gold.py` y `RIESGO_ESTABLE` en `src/modelos/riesgo.py`, que es crítico de Estefany Hernández. El front necesita los dos. Si el `0.30` se teclea en el frontend, es `BUG-058` otra vez: un umbral hardcodeado en varios archivos sin dueño único |
+| Estados del Asistente | Equipo 2 | Confirmar cuándo aterriza el streaming y los tres errores distinguibles, para diseñarlos y no improvisarlos (§4.bis) |
+| Componentes y memoria técnica | Equipo 1 | El recorrido técnico que alimenta la parte de la historia que explica cómo funciona el sistema por dentro |
+| Aceptación | Equipo 6 | Ampliar los criterios de §9 con lo que QA necesite ejecutar sobre la candidata |
+
+---
+
+## 12. Relación con los documentos canónicos de UX
+
+**`P-06` está resuelta.** `ADR-011` declara que el paquete `FARO_Storytelling_UX` gobierna el diseño
+de S7, y `UX_Guidelines.md` pasó a `status: superseded`, `source_of_truth: false`,
+`superseded_by: ADR-011`, con una nota que lo conserva como baseline histórico. Este frente **no
+editó** ese archivo: lo hizo su owner.
+
+| Documento existente | Estado hoy | Relación |
+|---|---|---|
+| [[vault/04_UX_Design/UX_Guidelines]] | `superseded` por `ADR-011` | Baseline histórico. `03_Visual_Identity.md` es el sistema de diseño de la nueva experiencia. Sus criterios de accesibilidad y `SIN_DATO` **siguen vigentes** |
+| [[vault/04_UX_Design/Screen_Specs]] | `in_review`, owner Manuel Serranía | `01_UX_Architecture.md` define la nueva navegación. `Screen_Specs` conserva el catálogo de KPIs y el detalle de los 10 tableros |
+| [[vault/04_UX_Design/Manual_Usuario_Dashboards]] | `approved`, owner Oscar Quiroz | **Sigue vigente.** `DEC-023` mantiene Superset como evidencia analítica y respaldo, así que su manual no es documentación histórica |
+| [[vault/04_UX_Design/Accessibility]] | vigente | **Aplica sin excepción.** `ADR-011` §4 añade **WCAG 2.1 AA** como no negociable |
+| `Cube_Specs_*`, `US221_KPIs_Base` | `approved` | Siguen vigentes: son contratos de datos, no de presentación |
+
+---
+
+## 13. Regla de colaboración y cumplimiento del vault
+
+- Cada integrante trabaja en su rama fija `dev/{identidad}` y es dueño de su archivo.
+- `vault/04_UX_Design/**` está en el verde de los cuatro y es ruta **crítica de Marina García**: el
+  gate avisa y ella revisa.
+- Cada documento lleva frontmatter con `id`, `owner`, `status` y trazas, y queda listado en
+  [[vault/04_UX_Design/FARO_Storytelling_UX/_index]].
+- Cada PR: título `[Nombre Apellido] - Descripción (US-621) - [sync|CI|DoF|DevLog]`, DevLog propio,
+  fila en la matriz de trazabilidad y `vault_lint.py` en verde.
+- Los `.md` se guardan en **UTF-8**.
+- **Los cortes del nivel de atención se importan, no se retetean.** `LINEA_DE_ALERTA` y
+  `RIESGO_ESTABLE` ya existen en el código y viven en capas distintas (§3.quater). Un `0.30` escrito
+  a mano en el frontend repite exactamente el patrón de `BUG-058`.
+- `DEC-024`: los seis frentes construyen y prueban en paralelo. Las únicas compuertas son rama
+  personal, PR, CI, una aprobación humana y QA sobre la candidata.
+
+---
+
+## 14. Estado de aprobación
+
+**Aprobado el 2026-09-10.** `DEC-023` acepta esta propuesta como la dirección UX/UI de S7 y
+`ADR-011` la declara el paquete que gobierna el diseño. El PR #297 fue aprobado y mergeado por el PO.
+
+Este plan es, desde esa fecha, el **contexto oficial de UX/UI** del proyecto y de los LLM del equipo.
+Lo que siga contradiciéndolo en documentos anteriores queda superado por `ADR-011`.
+
+### Criterio de cierre de `US-621`
+
+`US-621` cierra cuando se cumplen las cuatro:
+
+1. Los cuatro entregables de la §7 en su versión final, committeados y mergeados.
+2. Los 7 mockups de escritorio y `FARO_UX_UI_Guide.pdf` en la carpeta.
+3. **Handoff aceptado por el Equipo 5** (Diana Alvarez): la arquitectura, la especificación de
+   visualizaciones y los mockups bastan para implementar sin redefinir decisiones de UX.
+4. QA (`US-651`) ejecuta los criterios de la §9 sobre la candidata desplegada.
+
+Los puntos 1 y 2 son de este frente. El 3 y el 4 dependen de E5 y E6, y `DEC-024` impide que se
+usen como pretexto para detener la construcción de nadie.
