@@ -130,26 +130,15 @@ def generar_sql_con_llm(
     """Genera SQL estructurado; `preparar_sql_seguro` conserva la autoridad final."""
     if not prompt_sistema.strip() or not pregunta.strip():
         raise ValueError("El prompt y la pregunta no pueden estar vacios.")
-    mensaje_usuario = (
-        "Genera una sola consulta SQL para responder la pregunta. "
-        "Devuelve exclusivamente el campo sql.\n\nPregunta: " + pregunta
+    objeto = _solicitar_objeto(
+        prompt_sistema=prompt_sistema,
+        mensaje_usuario=(
+            "Genera una sola consulta SQL para responder la pregunta. "
+            "Devuelve exclusivamente el campo sql.\n\nPregunta: " + pregunta
+        ),
+        formato=_FORMATO_SQL,
+        cliente=cliente,
     )
-    try:
-        objeto = _solicitar_objeto(
-            prompt_sistema=prompt_sistema,
-            mensaje_usuario=mensaje_usuario,
-            formato=_FORMATO_SQL,
-            cliente=cliente,
-        )
-    except ErrorLLM:
-        # Una respuesta estructurada incompleta puede ser transitoria; un único reintento evita
-        # convertir una consulta válida en un error visible sin abrir un ciclo de costo ilimitado.
-        objeto = _solicitar_objeto(
-            prompt_sistema=prompt_sistema,
-            mensaje_usuario=mensaje_usuario,
-            formato=_FORMATO_SQL,
-            cliente=cliente,
-        )
     sql = objeto.get("sql")
     if not isinstance(sql, str) or not sql.strip():
         raise ErrorLLM("El LLM no devolvio SQL valido.")
