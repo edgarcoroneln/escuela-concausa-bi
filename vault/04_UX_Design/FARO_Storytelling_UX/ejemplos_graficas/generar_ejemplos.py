@@ -362,7 +362,9 @@ PALETA = {
     "presion_0": "#E8EDF2",
     "presion_1": "#1F3A52",
     "barra": "#5A7690",
-    "barra_dominante": "#1F3A52",
+    # Acento del dominante: NO es un paso de la rampa de presión, que ya codifica magnitud
+    # (regla 4 de referencias/LEER_PRIMERO.md). El acento definitivo lo elige Juan.
+    "barra_dominante": "#1A1A1A",
 }
 FUENTE = "DejaVu Sans"
 

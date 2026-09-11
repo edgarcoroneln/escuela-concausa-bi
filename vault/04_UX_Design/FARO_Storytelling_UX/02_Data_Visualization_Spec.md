@@ -141,6 +141,9 @@ D1 → D6, flanqueada por los atributos del caso.
 | Centro | Una celda `SIN_DATO` va rayada, con el texto "sin dato"; nunca en blanco ni en cero | `d_i = null` |
 | Derecha | Evidencia disponible, "k de 6", en texto y seis casillas llenas o rayadas | `indice_completitud_drivers`, `d_i` |
 
+Las zonas describen **contenido, no posición**: dónde va cada bloque, su tamaño y su orden en la
+página los decide Juan (§7.5). Lo que no cambia es qué dato aparece y cómo se lee.
+
 **Orden de filas:** `indice_riesgo` descendente y, entre valores iguales, por nombre y CCT. La API no
 garantiza un orden estable entre empates, y los empates son frecuentes: en la consulta, dos escuelas
 comparten 0.572 y tres comparten 0.515. Encima de la matriz, la frase de revelación de
@@ -274,9 +277,10 @@ Tres consecuencias:
   nada al rayado de `SIN_DATO`.
 
 **El driver dominante** (`driver_dominante` de `PrediccionOut`) se destaca con **cuatro señales, no
-sólo color**: barra en tono más oscuro, marcador ▲ junto a la etiqueta, etiqueta en negritas y la
-leyenda "Driver dominante" junto a la barra (dentro de ella, en blanco, cuando la barra llega al
-borde). Debajo va una frase fija: *"El driver dominante es el factor que más destaca en esta escuela
+sólo color**: barra en el color de **acento** —nunca un paso de la rampa, que ya codifica magnitud;
+en los ejemplos es tinta neutra y el acento definitivo lo elige Juan—, marcador ▲ junto a la
+etiqueta, etiqueta en negritas y la leyenda "Driver dominante" junto a la barra (dentro de ella, en
+blanco, cuando la barra llega al borde). Debajo va una frase fija: *"El driver dominante es el factor que más destaca en esta escuela
 según el modelo ML-02. Orienta la investigación y la recomendación; no es la causa."*
 
 **Contexto territorial, sólo para D1.** `MunicipioOut` expone `pobreza_pct` e `indice_rezago_social`.
@@ -456,8 +460,9 @@ los conteos van como `N`; los valores dibujados son los que devolvió la API.
 **Contraste medido por el script** (WCAG 2.1 AA): tinta 17.4:1 · tinta secundaria 8.6:1 · barra
 4.7:1 · barra dominante 11.8:1 · rayado de `SIN_DATO` 4.7:1 · número en celda, peor caso 4.5:1.
 
-**Sin imágenes de referencia en esta versión**, por decisión de Monserrat del 10-sep: las formas salen
-del dato y del contrato. Si llegan referencias, se comparan con estas formas y se ajusta.
+La carpeta tiene su propio índice,
+[[vault/04_UX_Design/FARO_Storytelling_UX/ejemplos_graficas/_index]], y en `referencias/` están las
+cinco referencias de forma de Monserrat, evaluadas en la §7.4.
 
 ### 7.2 Cómo se regeneran
 
@@ -486,6 +491,55 @@ universo de producción; lo que se compara es la **forma**, no las cifras.
 | P6 | DB-08: pivote de números sin lectura, pastel OK/SIN_DATO y detalle escuela × driver en `N/A` | La misma lista y el mismo expediente de la historia, con los filtros obligatorios y el nivel de atención por fila |
 | Todas | DB-07 contaba `SIN_DATO` sólo agregado (barras de 100 % por driver) y su mapa de vacíos salía como mapamundi | `SIN_DATO` visible en cada escuela y en cada pista, con el motivo, y la evidencia "k de 6" junto al dato |
 
+### 7.4 Referencias de forma de Monserrat
+
+Cinco pantallas de referencia en `ejemplos_graficas/referencias/`, con su nota de autora
+[[vault/04_UX_Design/FARO_Storytelling_UX/ejemplos_graficas/referencias/LEER_PRIMERO]]. Fijan la
+forma de lectura de cada pantalla y están construidas con **valores de fixture**
+(`tests/fixtures/features_escuela_mock.csv`): no son hallazgos, y los números que muestran no son los
+de producción. Se revisaron contra el contrato con la regla de la §1: lo que se sostiene se adopta; lo
+que no, se dice y se propone la forma más cercana que sí se sostiene.
+
+| Referencia | Qué fija y se adopta | Qué no se sostiene tal cual, y la forma más cercana |
+|---|---|---|
+| [02_Panorama](ejemplos_graficas/referencias/02_Panorama.png) | Revelación con `N`; tarjetas de matrícula, variación agregada con flecha y signo del dato, y evidencia promedio en barra continua; matriz escuelas × 6 drivers con dominante por contorno y `s/d` rayado; filtros limitados al universo de los N casos; "ver los mismos datos como tabla"; un CTA hacia la selección | **D3 y D4 van en valor publicado**, así que las celdas más oscuras son las escuelas *mejor* servidas: se leen como falta (`1 − valor`, §4.1). **La tarjeta de evidencia dice que D5 y D6 tienen "cobertura parcial por diseño"**: en producción D5 es `SIN_DATO` en todas las escuelas, y en las siete en riesgo faltan además D3 y D6; la copy correcta es la de la §6. **D5 aparece con valores**: vienen del fixture; en producción esa columna va rayada completa |
+| [03_Seleccion_de_caso](ejemplos_graficas/referencias/03_Seleccion_de_caso.png) | Coincide con la §2: índice en número, pista con 0.30 y la línea de alerta, nivel con icono y texto, empates juntos en orden alfabético | Se sostiene completa, con los datos ya cargados en la P2 |
+| [04_Expediente](ejemplos_graficas/referencias/04_Expediente.png) | Seis pistas en barras sobre un eje común, dominante con acento, `SIN_DATO` rayado, medidor de muescas "k de 6", recomendación con la aclaración de no causalidad, regreso a los casos y avance a la conclusión | **La frase "la pista dominante es la que más pesa en la predicción, no la de valor más alto" es incorrecta**: el dominante es la salida de ML-02, que aprende a señalar la pista con más presión orientada (`features_escuela.sql:371-418`), y en producción coincidió con la barra más larga en las siete. Lo que pesa en la predicción es SHAP, hoy `SIN_DATO`. La diferencia que la frase intenta explicar desaparece al orientar D3/D4 (§4.1). **D3 y D4 en valor publicado**: igual que en la 02. **Ubicación:** el mapa usa `superset/assets/geojson/municipios_scope.geojson`, que la API no expone; queda como recorte de la §8.1 y, mientras tanto, municipio y entidad en texto. **Rezago del municipio contra un "promedio estatal":** el índice de CONEVAL es estandarizado y aquí es negativo (Naucalpan −1.22, Toluca −1.06), así que una barra rellena desde cero lo dibuja al revés; y el promedio estatal no existe en la API, habría que calcularlo en Front desde `GET /api/v1/municipios?cve_ent=…` (dos llamadas para el Estado de México). La forma más cercana que se sostiene es una franja con todos los municipios de la entidad sobre el eje del índice, el de la escuela marcado y el promedio simple como marca declarada. Entra a las derivaciones de la §1.1 sólo con visto bueno de Marina; mientras tanto, la línea de contexto con `pobreza_pct` de la §4.2 |
+| [05_Conclusion](ejemplos_graficas/referencias/05_Conclusion.png) | Banner "cómo se calcula" con el conjunto completo; tarjetas de casos, pistas evaluadas, evidencia en muescas (x de 42) y municipios; Top con tarjeta de empate "sin tercer lugar único" —la misma regla de la §5.1—; tabla de las seis pistas con "domina en" y "verificada en", incluidos los ceros; "lo que no podemos afirmar"; un solo CTA | **La copy lleva conteos tecleados** ("3 de las 7", "36 de 42", "6" municipios, "7 de 7"): en los mockups van como `N` y `k`. **El resultado es del fixture** (D1 primero, D5 y D6 empatados): en producción son D2 (5) y D4 (2), y D5 no puede ser dominante. **"Verificada en" es un conteo entero x de y**: por la regla 6 de la propia nota va en muescas, no en barra; y necesita `d1…d6` de cada escuela, o sea las N llamadas que ya hace la P2 |
+| [06_Explorador](ejemplos_graficas/referencias/06_Explorador.png) | Filtros de ciclo, entidad, municipio y nivel; pop-up único de primera vez; "N escuelas encontradas" (`Page.total`); orden por índice; niveles alta, media y baja con icono y texto; paginación de 50 | Se sostiene completa. El filtro de nivel no llega a `/kpis` (§8.1) |
+
+Las cinco imágenes no llevan el rótulo de fixture dentro del dibujo; lo llevan la carpeta, la nota y
+esta tabla. Si alguna se reutiliza fuera de este paquete, tiene que llevarlo en la propia imagen
+(`DEC-024`).
+
+### 7.5 Qué decide Juan y qué no se mueve
+
+**Juan Carlos Macías tiene libertad total sobre la maquetación y la identidad.** Los ejemplos de la
+§7.1 y las referencias de la §7.4 son bocetos de lectura, no maquetas: puede reacomodar la posición
+de tarjetas, gráficas y textos; cambiar la jerarquía, el tamaño y el orden de los bloques en la
+página; y decidir colores, tipografías, tamaños de letra, iconografía, componentes, espaciado y
+acabado. Nada de este documento fija una posición en pantalla.
+
+Lo que **no** se mueve es la lectura del dato:
+
+1. **Qué dato va en cada pantalla** (§2) y de qué endpoint sale. Un bloque se puede reubicar dentro
+   de su pantalla, no quitar ni pasar a otra; la matrícula sólo aparece en la P2.
+2. **Un solo tono para la magnitud**, en pasos discretos; el dominante con contorno o acento, **nunca
+   un paso de la rampa**; nada codificado sólo por color. WCAG 2.1 AA: texto ≥ 4.5:1 y marcas ≥ 3:1.
+3. **`SIN_DATO` con tratamiento propio**, idéntico en todas las pantallas, distinto de cualquier paso
+   de la rampa y de un cero.
+4. **D1…D6 siempre en el mismo orden**; D3 y D4 leídos como falta; el eje de presión rotulado
+   "0 = menor observada · 1 = mayor observada", sin `%`.
+5. **Las barras terminan en el valor** y parten de un cero con sentido; los conteos enteros "x de y"
+   van en muescas.
+6. **Los conteos de la copy son `N` y `k`**, resueltos en vivo; los cortes se importan (§1.1).
+7. En la P5, la leyenda del conjunto completo visible y **un solo CTA**.
+8. **Sin causalidad**; "nivel de atención", nunca "prioridad"; **Asistente FARO**.
+
+Lo que Juan tiene que definir para que la lectura funcione (de la nota de las referencias): una rampa
+de un solo tono en cinco pasos, un color de acento para el dominante y el Top, un gris de contexto,
+una textura para `SIN_DATO` y tres etiquetas de nivel de atención con texto e icono.
+
 ---
 
 ## 8. Lo que NO se puede graficar hoy
@@ -498,7 +552,8 @@ universo de producción; lo que se compara es la **forma**, no las cifras.
 | **Bandas "oficiales" alto/medio/bajo** (era P-02) | Resuelto por `ADR-011` §5: son el nivel de atención | — | Una sola etiqueta; no existe una segunda |
 | **Distribución de niveles de atención en la P5** | Tautológica: el conjunto en riesgo se define con el mismo corte que "alta" | — | Una línea de texto (§5.2) |
 | **Distribución de niveles en la P6 para todo un filtro** | Contarla exige paginar todas las escuelas del filtro (`size ≤ 100`), y `/kpis` sólo cuenta las de riesgo alto | Un conteo por nivel de atención en `/kpis` (cambio de contrato, Equipo 5) | El nivel va por fila en la página visible, y `escuelas_en_riesgo` del filtro desde `/kpis` |
-| **Mapa de ubicación** | La API no expone geometría y `latitud`/`longitud` sin base no se leen | Exponer la geometría municipal de Gold o aprobar una base cartográfica versionada: capa secundaria de puntos en la P2 | Municipio como texto en cada fila de la matriz |
+| **Mapa de ubicación** | La API no expone geometría y `latitud`/`longitud` sin base no se leen | Exponer la geometría municipal de Gold o aprobar como base cartográfica versionada `superset/assets/geojson/municipios_scope.geojson`, que es lo que usa la referencia 04 (§7.4): municipio resaltado y punto de la escuela en el expediente | Municipio y entidad como texto |
+| **Rezago del municipio contra el promedio estatal** | El promedio estatal no está en la API y el índice de CONEVAL es negativo en estos municipios | Derivación declarada en §1.1 desde `GET /api/v1/municipios?cve_ent=…`, dibujada como franja de municipios con el promedio marcado (§7.4) | Línea de contexto con `pobreza_pct` (§4.2) |
 | **Evolución histórica de matrícula por escuela** | `/escuelas/{cct}` no acepta `ciclo`, y el plan la excluye del expediente | Cambio de plan más petición de endpoint | No se dibuja |
 | **Caída de matrícula de una escuela concreta** | `variacion_matricula` sólo existe agregada (`KpisOut`) | Un campo por escuela en el contrato | Sólo la variación agregada, en la P2 |
 | **Escuela contra su municipio en D2…D6** | No hay promedio municipal de esos drivers; además D1 y D2 ya son valores del municipio | Un agregado territorial por driver en el contrato | Sólo el contexto de D1 con `pobreza_pct` (§4.2) |

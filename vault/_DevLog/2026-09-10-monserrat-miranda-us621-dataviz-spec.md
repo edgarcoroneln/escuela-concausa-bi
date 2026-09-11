@@ -31,6 +31,22 @@ tags: [devlog, equipo-3, ux, dataviz, storytelling, s7, us-621]
   archivo; el formato de entrega a Juan lo define Juan; el conjunto en riesgo se obtiene con una sola
   llamada a `/escuelas`; y el aviso del nombre del asistente queda escrito en la §8.2 del documento.
 
+## Segunda entrega: referencias de forma y libertad de Juan
+
+- **Cinco referencias de forma de Monserrat** (P2 a P6) y su nota `LEER_PRIMERO.md` entran a
+  `ejemplos_graficas/referencias/`, sin cambios en las imágenes; a la nota sólo se le añadió el
+  frontmatter que exige el vault. La carpeta tiene ahora su propio `_index.md`.
+- **Evaluación contra el contrato** en la §7.4 de la especificación. Se adopta casi toda la forma, y
+  se corrigen, sin tocar las imágenes, cuatro cosas que el dato de producción contradice: D3 y D4 en
+  valor publicado (02 y 04), "D5 y D6 con cobertura parcial" (02), la frase "el dominante es la pista
+  que más pesa en la predicción" (04) y los conteos tecleados de la 05. El mapa y el "promedio
+  estatal" del rezago quedan como recortes con su forma más cercana (§7.4, §8.1).
+- **Juan Carlos Macías tiene libertad total** de maquetación, colores, tipografías y tamaños; la §7.5
+  separa eso de las reglas de lectura del dato, que no se mueven.
+- **Los ejemplos se regeneraron** para cumplir la regla 4 de la nota: la barra del dominante usaba el
+  paso más oscuro de la rampa y ahora usa un acento neutro.
+- **Sincronía:** `origin/main` sin commits nuevos desde `c1762f4` al preparar el PR.
+
 ## Lo que dijo el dato y cambia el diseño
 
 Todo verificado contra el código o contra la consulta, con su ruta:
@@ -85,7 +101,8 @@ ejemplos son de escritorio y su paleta es neutra, no la identidad anterior.
 - **Archivos creados/modificados:**
   `vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec.md` ·
   `vault/04_UX_Design/FARO_Storytelling_UX/ejemplos_graficas/generar_ejemplos.py` y sus 12 imágenes
-  (6 PNG, 6 SVG) · este DevLog · `vault/_DevLog/_index.md` (una fila) ·
+  (6 PNG, 6 SVG) · `ejemplos_graficas/_index.md` · `ejemplos_graficas/referencias/` (5 PNG y
+  `LEER_PRIMERO.md` de Monserrat) · este DevLog · `vault/_DevLog/_index.md` (una fila) ·
   `vault/02_Requirements/Traceability_Matrix.md` (una sección de evidencia).
 - **Decisiones de Monserrat:** dato real con su sesión y el token por entrada oculta; seguir sin
   imágenes de referencia; D3 y D4 orientados como presión; evidencia en la matriz como sección nueva,
@@ -102,6 +119,8 @@ ejemplos son de escritorio y su paleta es neutra, no la identidad anterior.
 
 - [x] Sin secretos: el token nunca se escribió ni se imprimió; la evidencia no se versiona.
 - [x] `ruff check` limpio sobre `ejemplos_graficas/`.
+- [x] `pytest --noconftest tests/test_generate_pm_dashboard.py tests/test_check_ownership.py`: 52
+  pasan (las pruebas que leen el índice de DevLog y el padrón). La suite completa la corre CI.
 - [x] `vault_lint` limpio sobre una copia con sólo lo versionado y lo nuevo. En la carpeta local el
   único bloqueo es `referencias_locales/prompt.md`, que está excluido de git y no llega a CI.
 - [ ] Pruebas nuevas: no aplica (documento y script de ejemplos, sin código productivo).
@@ -114,9 +133,12 @@ ejemplos son de escritorio y su paleta es neutra, no la identidad anterior.
 
 ## Próximos pasos
 
-- Monserrat revisa línea por línea; después, push y PR:
-  `[Monserrat Miranda] - Especificación de visualizaciones de la historia FARO (US-621) - [sync|CI|DoF|DevLog]`.
-  Mencionar en el PR la sección nueva de la matriz de trazabilidad (crítico de Edgar Coronel).
+- PR `[Monserrat Miranda] - Especificación de visualizaciones de la historia FARO (US-621) - [sync|CI|DoF|DevLog]`,
+  abierto a petición de Monserrat. Pide revisión a Edgar Coronel (matriz de trazabilidad) y a Marina
+  García (`vault/04_UX_Design/**`). Las casillas de revisión línea por línea y de datos en prompts
+  son declaración de Monserrat y las marca ella.
+- Marina: visto bueno o no a la franja de rezago contra el promedio estatal (§7.4) y al mapa con la
+  base cartográfica versionada (§8.1).
 - Marina: alta de `ejemplos_graficas/` en su `_index.md`; "24" → 26 en `00_Storytelling_Scope` §7.
 - Juan: formato de entrega de los ejemplos.
 - Equipo 5: los avisos de la §8.2 (nombre del asistente y sus dos pruebas, constantes, ciclo explícito).
