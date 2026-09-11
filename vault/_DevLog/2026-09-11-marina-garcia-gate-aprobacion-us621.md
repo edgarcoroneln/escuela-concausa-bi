@@ -84,3 +84,47 @@ python vault/_Meta/scripts/vault_lint.py .   → Vault limpio
 
 Pedir a Diana que declare el handoff, a Edward el desglose de `US-651`, a Edgar la actualización de
 `Execution_Status`, y a Héctor y Manuel la leyenda de sus tres bloques D3 más el sync antes del PR.
+
+---
+
+## Addendum — *Cómo funciona* pasa a declararse como superficie
+
+**Hallazgo de Marina al revisar `03_Visual_Identity.md` a mano.** El preview de *Cómo funciona*
+existía en `mockups/` y estaba indexado, pero **ninguna de las dos tablas lo declaraba como
+superficie**: en la §7 del documento de Juan y en `mockups/_index.md` aparecía en el mismo grupo que
+`Guia_Identidad_Visual` y `Design_Tokens_Stitch`, o sea catalogado como material de apoyo.
+
+Los dos documentos eran consistentes entre sí, y los dos decían lo mismo: *esto no es una pantalla*.
+
+### Por qué era un hueco y no un error de Juan
+
+Él seguía el plan al pie de la letra: la §5.bis dice *"no es una octava pantalla"* y *"no necesita
+mockup propio"*, y citó esa frase para justificar dónde lo puso. **La redacción corta era mía.**
+
+Lo que esa redacción no distinguió son dos cosas distintas: que algo **no entre al recorrido
+narrativo** —correcto, la historia son 7 pantallas— y que **no se declare como superficie del
+producto**. Y *Cómo funciona* sí lo es: el usuario la ve, tiene overlay, acceso desde P1 y desde el
+glosario, y responde a uno de los hallazgos del profesor.
+
+La asimetría lo delataba: **Oscar sí la trata como superficie**, con sección propia en su mapa de
+navegación —acceso, comportamiento y retorno—, mientras Juan la dejó como archivo suelto. Dos
+documentos del mismo frente describiendo la misma cosa con estatus distinto.
+
+### Qué se hizo
+
+Fila **`S`** en las dos tablas —identificador propio y no un `7`, para no romper el recorrido
+P0–P6—, con una nota que explica la distinción y, sobre todo, **le dice al Equipo 5 dónde está cada
+pieza**: comportamiento en `01_UX_Architecture.md` §1, alcance y dependencia en `PLAN_TRABAJO.md`
+§5.bis, reglas de forma de los bloques D3 en `02_Data_Visualization_Spec.md` §8.4, y la decisión de
+claro/oscuro en la §1 de `03_Visual_Identity.md`. Se eliminó la entrada duplicada de la tabla de
+soporte.
+
+**Son dos archivos de Juan Macías.** Se editan desde el gate y se le avisa, que es lo que pide la
+§13 —coordinación, no permiso—; queda dicho en ambas notas quién los tocó y por qué.
+
+### Lo que sí resolvió Juan y conviene no perder de vista
+
+La decisión de claro/oscuro que quedaba pendiente: fijó que el lienzo analítico es **siempre claro** y
+que el slate profundo se usa sólo como acento en componentes puntuales, nunca como fondo de página.
+Conclusión: los tres bloques D3 del Equipo 1, forzados a `color-scheme: light`, **no chocan** —entran
+sobre el mismo lienzo—. Y alineó el color de Jalisco con el que Manuel ya usaba en `US-601`.

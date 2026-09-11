@@ -206,12 +206,27 @@ Los 7, de escritorio, **listos y liberados para Equipo 5** (2026-09-10/11):
 | 4 | Expediente | [`mockups/04_Expediente_Escuela.png`](mockups/04_Expediente_Escuela.png) / [`.html`](mockups/04_Expediente_Escuela.html) | listo |
 | 5 | Conclusión (Top 2 real; el rótulo "Top 3" es el máximo de casillas, no una cuenta fija) | [`mockups/05_Conclusion_Top3.png`](mockups/05_Conclusion_Top3.png) / [`.html`](mockups/05_Conclusion_Top3.html) | listo |
 | 6 | Explorador | [`mockups/06_Explorador.png`](mockups/06_Explorador.png) / [`.html`](mockups/06_Explorador.html) | listo |
+| **S** | **Cómo funciona** — superficie hermana, no entra al recorrido (`PLAN_TRABAJO` §5.bis) | [`mockups/Como_Funciona_Preview.png`](mockups/Como_Funciona_Preview.png) / [`.html`](mockups/Como_Funciona_Preview.html) | borrador |
 
 Todos usan el dataset real de 7 escuelas verificado en producción (10-sep-2026, commit
 `457715a`) — mismo conjunto que `02_Data_Visualization_Spec.md` de Monserrat Miranda, no datos de
 ejemplo inventados.
 
 Índice completo (7 mockups + soporte, con enlaces): [[vault/04_UX_Design/FARO_Storytelling_UX/mockups/_index]].
+
+> **Por qué la fila `S` y no un `7`.** *Cómo funciona* **es una superficie del producto** —el
+> usuario la ve, tiene overlay, acceso desde P1 y desde el glosario— pero **no es una pantalla de la
+> historia**: el recorrido narrativo sigue siendo P0–P6. Se le da identificador propio para que no
+> quede escondida entre los anexos y el Equipo 5 la encuentre al leer esta tabla.
+>
+> **Equipo 5, dónde está lo que necesitan de esta superficie:**
+> comportamiento, acceso y retorno en `01_UX_Architecture.md` §1 ("Superficie hermana"); alcance y
+> dependencia en `PLAN_TRABAJO.md` §5.bis; reglas de forma de sus bloques D3 en
+> `02_Data_Visualization_Spec.md` §8.4; y la decisión de claro/oscuro en la §1 de este documento.
+> El contenido es del Equipo 1 (`US-601`) y llega por `GET /api/v1/about/secciones*`.
+>
+> *Fila añadida por Marina García el 2026-09-11, gate de UX/UI, y avisada a Juan Macías: el archivo
+> ya existía y estaba indexado, pero ninguna tabla lo declaraba como superficie.*
 
 Material de soporte en `mockups/`, no numerado (no es de las 7 pantallas de la historia):
 
