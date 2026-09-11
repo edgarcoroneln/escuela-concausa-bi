@@ -5,11 +5,11 @@ author_human: "Andrés González Habib"
 agent: "GitHub Copilot"
 model: "claude-sonnet-5"
 session_duration: "30m"
-touches: ["US-305", "US-304a", "REQ-006", "SEC-003"]
+touches: ["US-305", "US-304a", "US-611", "REQ-006"]
 tags: [devlog, agent, chat, historial, prompt]
 ---
 
-# DevLog — 2026-09-10 — `construir_prompt_sistema` ya lee el historial de turnos (cierra la Fase 2 del rediseño del chat)
+# DevLog — 2026-09-10 — `construir_prompt_sistema` ya lee el historial de turnos (backend listo; E2E de la Fase 2 sigue pendiente)
 
 → [[vault/_DevLog/_index|Volver al índice]]
 
@@ -32,6 +32,12 @@ tags: [devlog, agent, chat, historial, prompt]
   genera un DELETE").
 - El bloque solo se agrega si `historial` existe y no está vacío; sin la clave o con lista vacía,
   el prompt es idéntico al de antes (retrocompatible con quien no manda historial).
+- **Corrección tras revisión de Edgar Coronel (PM):** el código estaba bien, pero el estado que yo
+  declaraba estaba adelantado. Se corrige aquí y en la matriz: esto no es "Fase 2 completa
+  end-to-end", es el backend listo (contrato de Karla + consumo en el prompt); falta que algún
+  cliente envíe `historial` y probarlo con el LLM real. También traza a `US-611` (Equipo 2, S7),
+  no solo a `US-305`, y se quita `SEC-003` de los IDs tocados (ese ID es rate limiting en memoria,
+  no aplica a este cambio — el mismo error está en el DevLog de Karla, a corregir en su próximo PR).
 
 ## 🤖 Sesión de IA
 - **Agente / modelo:** GitHub Copilot / claude-sonnet-5
@@ -57,10 +63,24 @@ tags: [devlog, agent, chat, historial, prompt]
 - [x] DevLog enlaza a los IDs afectados
 
 ## Bloqueantes
-Ninguno. Con esto la Fase 2 del rediseño del chat queda completa end-to-end (contrato de Karla +
-consumo en el prompt).
+**Todavía no es end-to-end.** Ningún cliente envía `historial` todavía: el widget de Streamlit
+(`src/frontend/agente_client.py:41`) manda solo `{"pregunta": texto}`, y el cliente React del PR
+#302 (`frontend/src/lib/api.js:67`) manda solo `{ pregunta }`. Tampoco hay prueba de este cambio
+con el LLM real. Es el mismo residual que `Execution_Status.md` ya registra para `US-611`.
+
+Aviso para el E2E (a coordinar con Diana/Karla): la respuesta del redactor (`src/agente/llm.py:159`)
+solo hace `.strip()` — no colapsa saltos de línea internos ni la acota a 500 caracteres, así que una
+respuesta con lista de escuelas puede violar las reglas de `HistorialTurnoIn` (sin caracteres de
+control, máx. 500 chars) si un cliente la reenvía tal cual en `historial`. Falta decidir si
+normaliza el cliente (recortar y mandar los últimos 10 turnos) o la API (normalizar en vez de
+rechazar).
 
 ## Próximos pasos
-- Abrir PR de `dev/andres-gonzalez` con este cambio.
-- Avisar a Alejandro (Fase 3, streaming + redeploy) que el historial ya es funcional de punta a
-  punta para que lo considere en su plan de despliegue.
+- Coordinar con quien construya los clientes (Streamlit/React) para que empiecen a enviar
+  `historial` — sin eso el backend no tiene efecto observable.
+- Validar este cambio con el LLM real (Anthropic) antes de darlo por probado end-to-end.
+- Definir con Karla/Diana quién normaliza la respuesta del agente antes de que viaje como turno de
+  `historial`.
+- Avisar a Alejandro (Fase 3, streaming + redeploy) del estado real: backend listo, E2E pendiente.
+- Pedir a QA que agregue como caso de regresión el reenvío de una respuesta larga del agente como
+  turno de `historial`.

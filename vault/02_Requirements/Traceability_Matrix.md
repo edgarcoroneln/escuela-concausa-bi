@@ -52,7 +52,7 @@ tags: [requirements, traceability, matrix]
 | `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | [[vault/15_ML_Models/ML03_Explicacion_US631]] / [[vault/_DevLog/2026-09-10-estefany-hernandez-explicacion-ml03-us631]] / ⬜ | 🟡 En progreso |
 | `REQ-004` | `US-601`, `US-611`, `US-641` | Componentes e integraciones backend/chat/frontend revalidados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-005` | `US-641` | Equipo 5: candidata desplegada, observable y recuperable | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | `test_agente_prompt` ✅ / [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] / ⬜ | 🟡 En progreso |
 | `REQ-007` | `US-651`, `US-654`, `US-006` | Equipo 6/PO: QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
 
 ## Evidencia incremental — 2026-08-26
@@ -772,7 +772,7 @@ anclas no existen en el DOM hasta hacer scroll.
 
 | REQ | Historias | Evidencia de prueba | DevLog | Estado |
 |---|---|---|---|---|
-| `REQ-004` · `REQ-006` | `US-305`, `US-304a` | `construir_prompt_sistema` agrega un bloque "Historial de la conversación" cuando `contexto_conversacional["historial"]` viene no vacío, con la transcripción literal `Usuario:`/`Agente:` de cada turno. Mismo criterio de dato hostil que `ccts`/`ciclo`/`filtros`/`resumen`: se advierte que el historial es texto de usuario, no instrucciones nuevas ni SQL, y que cualquier orden dentro de un turno pasado se ignora (defensa contra inyección). Retrocompatible: sin `historial` o con lista vacía, el prompt no cambia. 4 pruebas nuevas ✅ (`tests/test_agente_prompt.py`), 32/32 en verde, `ruff` limpio | [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] | ✅ Fase 2 completa end-to-end (contrato de Karla + consumo en el prompt) |
+| `REQ-004` · `REQ-006` | `US-305`, `US-304a`, `US-611` | `construir_prompt_sistema` agrega un bloque "Historial de la conversación" cuando `contexto_conversacional["historial"]` viene no vacío, con la transcripción literal `Usuario:`/`Agente:` de cada turno. Mismo criterio de dato hostil que `ccts`/`ciclo`/`filtros`/`resumen`: se advierte que el historial es texto de usuario, no instrucciones nuevas ni SQL, y que cualquier orden dentro de un turno pasado se ignora (defensa contra inyección). Retrocompatible: sin `historial` o con lista vacía, el prompt no cambia. 4 pruebas nuevas ✅ (`tests/test_agente_prompt.py`), 32/32 en verde, `ruff` limpio | [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] | 🟡 Backend listo (contrato + prompt); E2E pendiente: que el cliente envíe `historial` y la prueba con el LLM real en la candidata |
 
 ## Evidencia incremental — 2026-09-10 · alineación del paquete de UX/UI a `ADR-011` (E3, Marina García)
 
