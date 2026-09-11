@@ -23,6 +23,19 @@ class AgenteHTTPFake(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         longitud = int(self.headers["Content-Length"])
         pregunta = json.loads(self.rfile.read(longitud))["pregunta"]
+        if "falla parcial" in pregunta.lower():
+            cuerpo = (
+                "event: fragmento\n"
+                'data: {"texto":"Texto parcial"}\n\n'
+                "event: fragmento\n"
+                "data: no-json\n\n"
+            ).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream")
+            self.send_header("Content-Length", str(len(cuerpo)))
+            self.end_headers()
+            self.wfile.write(cuerpo)
+            return
         fuera_de_alcance = "borra" in pregunta.lower()
         respuesta = (
             "Esa operación no está permitida."
@@ -123,3 +136,13 @@ def test_sin_sesion_el_chat_no_se_renderiza(api_agente: None) -> None:
     assert not app.button, "las sugerencias siguen pulsables sin sesion"
     assert not app.chat_input, "el campo de pregunta sigue disponible sin sesion"
     assert any("Inicia sesion" in i.value for i in app.info), "no se pide iniciar sesion"
+
+
+def test_chat_limpia_fragmentos_si_streaming_falla(api_agente: None) -> None:
+    app = _app_con_sesion()
+
+    app.chat_input[0].set_value("Falla parcial").run(timeout=20)
+
+    assert not app.exception
+    assert any("No se pudo consultar el agente" in error.value for error in app.error)
+    assert not any("Texto parcial" in markdown.value for markdown in app.markdown)
