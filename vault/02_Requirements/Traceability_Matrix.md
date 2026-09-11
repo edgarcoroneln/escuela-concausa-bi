@@ -754,6 +754,10 @@ anclas no existen en el DOM hasta hacer scroll.
 |---|---|---|---|---|
 | `REQ-002` · `REQ-006` · `REQ-007` | `US-621` · `US-641` · `US-651` | PR #297 aprobado y mergeado. `DEC-023` ratifica la propuesta de Marina y [[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]] autoriza UX narrativa y gráficas nativas, con Superset como evidencia/respaldo. `DEC-024` elimina dependencias secuenciales: nivel de atención derivado de `indice_riesgo` (`alta >= 0.50`, `media >= 0.30`, `baja < 0.30`), nombre **Asistente FARO** y KPI `escuelas_en_riesgo` validado contra contrato, implementación y pruebas existentes. [[vault/04_UX_Design/UX_Guidelines]] queda como baseline histórico | E3, Front, Chat, ML y QA construyen y prueban en paralelo mediante contratos versionados; un pendiente de otro equipo no detiene mockups, componentes, pruebas contractuales ni integración incremental | 🟡 ejecución paralela · P-01…P-06 resueltas |
 
+### Gobernanza incremental — alcance de implementación de `US-641`
+
+`frontend/**` queda asignado a Diana Alvarez como líder E5; su acceso de integración se limita a `docker/frontend-entrypoint.sh`, `docker/frontend-react.Dockerfile`, `docker/nginx-frontend.conf.template` y `vault/08_CICD_DevOps/**`. Docker y CI/CD conservan revisión crítica de Luis Téllez. Evidencia y handoff: [[vault/_DevLog/2026-09-10-edgar-coronel-alcance-diana-frontend-s7]].
+
 ## Evidencia incremental — 2026-09-10 · Fase 1 del plan de mejora del chat (C3, Andrés González Habib)
 
 | REQ | Historias | Evidencia de prueba | DevLog | Estado |
