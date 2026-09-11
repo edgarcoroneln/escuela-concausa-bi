@@ -19,8 +19,10 @@ tags: [ui, identidad-visual, design-system, s7, us-621]
 
 **Estado:** borrador — los 7 mockups de escritorio están listos y liberados para Equipo 5
 (2026-09-10/11). **`FARO_UX_UI_Guide.pdf` se cae como entregable** (decisión de Marina García del
-Buey, 2026-09-11, avisada a Edgar Coronel como PO — ver §8). Queda pendiente la auditoría formal
-de contraste WCAG (§6); el doc completo sigue `draft` hasta cerrar ese punto.
+Buey, 2026-09-11, avisada a Edgar Coronel como PO — ver §8). La auditoría de contraste WCAG ya se
+ejecutó y sus 2 hallazgos ya se corrigieron (§6). **Cierre formal del gate de UX/UI (flip a
+`approved`): en curso por Marina García del Buey**, sin PR abierto todavía a petición suya — el
+frontmatter de este archivo sigue `draft` hasta que su PR aterrice.
 
 > **Revisión de Marina García del Buey (lead UX/UI), 2026-09-10.** La primera entrega (solo
 > Login) tenía tres problemas reales: dibujaba un formulario de usuario/contraseña que no existe
@@ -180,21 +182,31 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 
 ## 6. Accesibilidad
 
-> **Contraste — dos hallazgos corregidos el 2026-09-11**, verificados con la fórmula real de WCAG
-> 2.1 (no a ojo): (1) `text-outline` (`#76777d`) usado como texto micro fallaba en los 6 fondos —
-> 4.46:1 sobre blanco, hasta 3.46:1 sobre `surface-container-highest` — porque es un token pensado
-> para bordes (umbral 3:1), no para texto (umbral 4.5:1). Sustituido por `text-on-surface-variant`
-> (`#45464d`, 7.29–9.39:1 en los 6 fondos) en los **266 usos como texto** de los 7 mockups —
-> `text-outline-variant`, que es un token distinto, no se tocó. (2) Texto blanco sobre el botón
-> Beacon Action fallaba en su fondo de reposo (`#0284C7`, 4.10:1); corregido intercambiando
-> reposo/hover con su propio hover (`#0369A1`, 5.93:1), sin inventar color — ver §3 y el anexo de
-> tokens. El acento ámbar `#B45309` **sí pasa** (4.56:1) en el fondo donde realmente vive
-> (`surface-container-low`); solo fallaría si se moviera a un contenedor más oscuro, así que queda
-> como regla de uso, no como defecto.
+> **Auditoría de contraste ejecutada — 2026-09-11, gate de UX/UI (Marina García del Buey), 2
+> hallazgos corregidos por Juan Macías el mismo día.** Se midieron **14 pares** con `contraste()`
+> y `validar_paleta()` de `ejemplos_graficas/generar_ejemplos.py` (Monserrat Miranda) — la misma
+> función WCAG 2.1 que ya valida la paleta de datos de la historia; medir en vez de pedir reveló
+> que esa paleta ya estaba auditada y nadie lo sabía. **11 pares pasan**, entre 5:1 y 17.85:1; el
+> texto principal `on-surface` va de 13:1 a 17:1 sobre todos los contenedores.
 >
-> **Pendiente de una auditoría formal más amplia** (14 pares medidos, incluida la rampa de
-> magnitud completa contra `on-surface`) — existe pero vive sin PR en `dev/marina-garcia`; se
-> reconcilia con esta sección cuando aterrice.
+> | Hallazgo | Medido | Mínimo | Alcance | Estado |
+> |---|---|---|---|---|
+> | `outline` `#76777d` usado como **texto micro** | 4.46:1 sobre blanco, hasta 3.46:1 sobre `surface-container-highest` — falla en los 6 fondos | 4.5:1 | 266 usos como texto en los 7 mockups (268 de la medición original incluían por accidente 2 usos de `text-outline-variant`, token distinto) | ✅ corregido |
+> | Texto blanco sobre **Beacon Action** `#0284C7` (§3) | 4.10:1 | 4.5:1 | Anexo de tokens; no aparecía en los mockups | ✅ corregido |
+>
+> **Arreglo aplicado:** `outline` es un token pensado para bordes (umbral 3:1, cumple de sobra) —
+> oscurecerlo hasta cumplir como texto exigiría `#64656A` (14.5% más oscuro, ya perceptible) y lo
+> desvirtuaría. La vía limpia: usar el token de texto para el texto — `text-on-surface-variant`
+> (`#45464d`, ya en esta paleta) da 7.29–9.39:1 en los 6 fondos. Para el botón, se intercambiaron
+> reposo/hover: `#0369A1` (su propio hover) da 5.93:1 en reposo, sin inventar color — ver §3 y el
+> anexo de tokens.
+>
+> **Verificado como correcto, no como defecto:** el acento ámbar `#B45309` pasa donde vive
+> (4.56:1 sobre `surface-container-low`, 5.02:1 sobre blanco) — solo fallaría como texto sobre
+> `surface-container` o más oscuro (4.31:1 y 4.10:1), así que queda como regla de uso ("nunca
+> fondo, siempre contorno sobre superficie clara"), no como algo que corregir.
+>
+> Reproducible por cualquiera: `contraste(a, b)` en `ejemplos_graficas/generar_ejemplos.py`.
 - **Nada se codifica solo por color, por diseño desde esta corrección:** nivel de atención
   (icono + texto), dominante (contorno + icono + etiqueta), `SIN_DATO` (textura + etiqueta "S/D"
   + motivo) — ninguno depende únicamente del tono para leerse. Esto resuelve directamente el
