@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
   "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1080pt" height="691.2pt" viewBox="0 0 1080 691.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1080pt" height="1116pt" viewBox="0 0 1080 1116" xmlns="http://www.w3.org/2000/svg" version="1.1">
  <metadata>
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
@@ -20,8 +20,8 @@
  </defs>
  <g id="figure_1">
   <g id="patch_1">
-   <path d="M 0 691.2 
-L 1080 691.2 
+   <path d="M 0 1116 
+L 1080 1116 
 L 1080 0 
 L 0 0 
 z
@@ -29,341 +29,347 @@ z
   </g>
   <g id="axes_1">
    <g id="patch_2">
-    <path d="M 50.22 549.71136 
-L 370.98 549.71136 
-Q 385.236 549.71136 385.236 543.21408 
-L 385.236 400.27392 
-Q 385.236 393.77664 370.98 393.77664 
-L 50.22 393.77664 
-Q 35.964 393.77664 35.964 400.27392 
-L 35.964 543.21408 
-Q 35.964 549.71136 50.22 549.71136 
+    <path d="M 50.22 887.5548 
+L 370.98 887.5548 
+Q 385.236 887.5548 385.236 877.0644 
+L 385.236 646.2756 
+Q 385.236 635.7852 370.98 635.7852 
+L 50.22 635.7852 
+Q 35.964 635.7852 35.964 646.2756 
+L 35.964 877.0644 
+Q 35.964 887.5548 50.22 887.5548 
 z
-" clip-path="url(#paebf5ef193)" style="fill: #f6f6f3; stroke: #c9c8c1; stroke-linejoin: miter"/>
+" clip-path="url(#p8c38a33dfe)" style="fill: #f6f6f3; stroke: #c9c8c1; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
-    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="53.784" y="425.315401" transform="rotate(-0 53.784 425.315401)">Recomendación</text>
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="53.784" y="681.299881" transform="rotate(-0 53.784 681.299881)">Recomendación</text>
    </g>
    <g id="text_2">
-    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="53.784" y="449.192865" transform="rotate(-0 53.784 449.192865)">Asociada al driver dominante: Conectividad digital</text>
+    <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="53.784" y="721.149825" transform="rotate(-0 53.784 721.149825)">Asociada al driver dominante: Conectividad digital</text>
    </g>
    <g id="text_3">
-    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(53.784 479.373641)">Ampliar conectividad y dotación de equipo</text>
-    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(53.784 494.323641)">de cómputo.</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(53.784 767.303081)">Ampliar conectividad y dotación de equipo</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(53.784 782.253081)">de cómputo.</text>
    </g>
   </g>
   <g id="axes_2">
    <g id="line2d_1">
-    <path d="M 681.089362 125.86529 
-L 681.089362 457.529806 
-" clip-path="url(#pef75a4cc04)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
+    <path d="M 681.089362 203.22 
+L 681.089362 738.72 
+" clip-path="url(#pb337a29294)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
    </g>
    <g id="line2d_2">
-    <path d="M 839.068085 125.86529 
-L 839.068085 457.529806 
-" clip-path="url(#pef75a4cc04)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
+    <path d="M 839.068085 203.22 
+L 839.068085 738.72 
+" clip-path="url(#pb337a29294)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
    </g>
    <g id="line2d_3">
-    <path d="M 997.046809 125.86529 
-L 997.046809 457.529806 
-" clip-path="url(#pef75a4cc04)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
+    <path d="M 997.046809 203.22 
+L 997.046809 738.72 
+" clip-path="url(#pb337a29294)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.6; stroke-linecap: square"/>
    </g>
    <g id="patch_3">
-    <path d="M 681.089362 137.571097 
-L 699.747696 137.571097 
-L 699.747696 164.327226 
-L 681.089362 164.327226 
+    <path d="M 681.089362 222.12 
+L 699.747696 222.12 
+L 699.747696 265.32 
+L 681.089362 265.32 
 z
-" clip-path="url(#pef75a4cc04)" style="fill: #5a7690"/>
+" clip-path="url(#pb337a29294)" style="fill: #5a7690"/>
    </g>
    <g id="patch_4">
-    <path d="M 681.089362 193.313032 
-L 829.581094 193.313032 
-L 829.581094 220.069161 
-L 681.089362 220.069161 
+    <path d="M 681.089362 312.12 
+L 829.581094 312.12 
+L 829.581094 355.32 
+L 681.089362 355.32 
 z
-" clip-path="url(#pef75a4cc04)" style="fill: #5a7690"/>
+" clip-path="url(#pb337a29294)" style="fill: #5a7690"/>
    </g>
    <g id="patch_5">
-    <path d="M 681.089362 245.710452 
-L 997.046809 245.710452 
-L 997.046809 279.155613 
-L 681.089362 279.155613 
+    <path d="M 681.089362 396.72 
+L 997.046809 396.72 
+L 997.046809 450.72 
+L 681.089362 450.72 
 z
-" clip-path="url(#pef75a4cc04)" style="fill: url(#h70f8a5cedd)"/>
+" clip-path="url(#pb337a29294)" style="fill: url(#h70f8a5cedd)"/>
    </g>
    <g id="patch_6">
-    <path d="M 681.089362 304.796903 
-L 997.046809 304.796903 
-L 997.046809 331.553032 
-L 681.089362 331.553032 
+    <path d="M 681.089362 492.12 
+L 997.046809 492.12 
+L 997.046809 535.32 
+L 681.089362 535.32 
 z
-" clip-path="url(#pef75a4cc04)" style="fill: #1a1a1a"/>
+" clip-path="url(#pb337a29294)" style="fill: #1a1a1a"/>
    </g>
    <g id="patch_7">
-    <path d="M 681.089362 357.194323 
-L 997.046809 357.194323 
-L 997.046809 390.639484 
-L 681.089362 390.639484 
+    <path d="M 681.089362 576.72 
+L 997.046809 576.72 
+L 997.046809 630.72 
+L 681.089362 630.72 
 z
-" clip-path="url(#pef75a4cc04)" style="fill: url(#h70f8a5cedd)"/>
+" clip-path="url(#pb337a29294)" style="fill: url(#h70f8a5cedd)"/>
    </g>
    <g id="patch_8">
-    <path d="M 681.089362 412.936258 
-L 997.046809 412.936258 
-L 997.046809 446.381419 
-L 681.089362 446.381419 
+    <path d="M 681.089362 666.72 
+L 997.046809 666.72 
+L 997.046809 720.72 
+L 681.089362 720.72 
 z
-" clip-path="url(#pef75a4cc04)" style="fill: url(#h70f8a5cedd)"/>
+" clip-path="url(#pb337a29294)" style="fill: url(#h70f8a5cedd)"/>
    </g>
    <g id="text_4">
-    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="681.089362" y="468.371193" transform="rotate(-0 681.089362 468.371193)">0</text>
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="681.089362" y="752.302031" transform="rotate(-0 681.089362 752.302031)">0</text>
    </g>
    <g id="text_5">
-    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="839.068085" y="468.371193" transform="rotate(-0 839.068085 468.371193)">0.5</text>
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="839.068085" y="752.302031" transform="rotate(-0 839.068085 752.302031)">0.5</text>
    </g>
    <g id="text_6">
-    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="997.046809" y="468.371193" transform="rotate(-0 997.046809 468.371193)">1</text>
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="997.046809" y="752.302031" transform="rotate(-0 997.046809 752.302031)">1</text>
    </g>
    <g id="text_7">
-    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="681.089362" y="119.993433" transform="rotate(-0 681.089362 119.993433)">0 = menor presión observada</text>
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="681.089362" y="194.950078" transform="rotate(-0 681.089362 194.950078)">0 = menor presión observada</text>
    </g>
    <g id="text_8">
-    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #4d4c48" x="997.046809" y="119.993433" transform="rotate(-0 997.046809 119.993433)">1 = mayor presión observada</text>
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #4d4c48" x="997.046809" y="194.950078" transform="rotate(-0 997.046809 194.950078)">1 = mayor presión observada</text>
    </g>
    <g id="text_9">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="149.087853" transform="rotate(-0 459.919149 149.087853)">D1 Pobreza y rezago</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="239.118047" transform="rotate(-0 459.919149 239.118047)">D1 Pobreza y rezago</text>
    </g>
    <g id="text_10">
-    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="459.919149" y="166.457624" transform="rotate(-0 459.919149 166.457624)">valor municipal</text>
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="459.919149" y="267.450398" transform="rotate(-0 459.919149 267.450398)">valor municipal</text>
    </g>
    <g id="text_11">
-    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="704.487058" y="153.6767" transform="rotate(-0 704.487058 153.6767)">0.06</text>
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="704.487058" y="246.447539" transform="rotate(-0 704.487058 246.447539)">0.06</text>
    </g>
    <g id="text_12">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="204.829789" transform="rotate(-0 459.919149 204.829789)">D2 Inseguridad</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="329.118047" transform="rotate(-0 459.919149 329.118047)">D2 Inseguridad</text>
    </g>
    <g id="text_13">
-    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="459.919149" y="222.19956" transform="rotate(-0 459.919149 222.19956)">valor municipal</text>
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="459.919149" y="357.450398" transform="rotate(-0 459.919149 357.450398)">valor municipal</text>
    </g>
    <g id="text_14">
-    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="834.320456" y="209.418636" transform="rotate(-0 834.320456 209.418636)">0.47</text>
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="834.320456" y="336.447539" transform="rotate(-0 834.320456 336.447539)">0.47</text>
    </g>
    <g id="text_15">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="260.571724" transform="rotate(-0 459.919149 260.571724)">D3 Falta de infraestructura</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="419.118047" transform="rotate(-0 459.919149 419.118047)">D3 Falta de infraestructura</text>
    </g>
    <g id="text_16">
     <g id="patch_9">
-     <path d="M 750.648569 273.890192 
-L 927.487601 273.890192 
-Q 929.462601 273.890192 929.462601 271.915192 
-L 929.462601 252.950872 
-Q 929.462601 250.975872 927.487601 250.975872 
-L 750.648569 250.975872 
-Q 748.673569 250.975872 748.673569 252.950872 
-L 748.673569 271.915192 
-Q 748.673569 273.890192 750.648569 273.890192 
+     <path d="M 750.648569 435.17716 
+L 927.487601 435.17716 
+Q 929.462601 435.17716 929.462601 433.20216 
+L 929.462601 414.23784 
+Q 929.462601 412.26284 927.487601 412.26284 
+L 750.648569 412.26284 
+Q 748.673569 412.26284 748.673569 414.23784 
+L 748.673569 433.20216 
+Q 748.673569 435.17716 750.648569 435.17716 
 z
 " style="fill: #ffffff"/>
     </g>
-    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(753.687601 259.744409)">SIN DATO — pista que no pudimos verificar</text>
-    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(750.648569 269.226569)">sin registro de servicios en el censo CEMABE</text>
+    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(753.687601 421.031377)">SIN DATO — pista que no pudimos verificar</text>
+    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(750.648569 430.513537)">sin registro de servicios en el censo CEMABE</text>
    </g>
    <g id="text_17">
-    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="316.31366" transform="rotate(-0 459.919149 316.31366)">▲ D4 Falta de conectividad</text>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="509.118047" transform="rotate(-0 459.919149 509.118047)">▲ D4 Falta de conectividad</text>
    </g>
    <g id="text_18">
-    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="459.919149" y="333.683431" transform="rotate(-0 459.919149 333.683431)">servicios presentes: 0.00</text>
+    <text style="font-size: 8.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="459.919149" y="537.450398" transform="rotate(-0 459.919149 537.450398)">servicios presentes: 0.00</text>
    </g>
    <g id="text_19">
-    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="1001.78617" y="320.902507" transform="rotate(-0 1001.78617 320.902507)">1.00</text>
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="1001.78617" y="516.447539" transform="rotate(-0 1001.78617 516.447539)">1.00</text>
    </g>
    <g id="text_20">
-    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #ffffff" x="990.72766" y="320.51321" transform="rotate(-0 990.72766 320.51321)">Driver dominante</text>
+    <text style="font-weight: 700; font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #ffffff" x="990.72766" y="516.058242" transform="rotate(-0 990.72766 516.058242)">Driver dominante</text>
    </g>
    <g id="text_21">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="372.255595" transform="rotate(-0 459.919149 372.255595)">D5 Estrés hídrico</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="599.318047" transform="rotate(-0 459.919149 599.318047)">D5 Estrés hídrico</text>
    </g>
    <g id="text_22">
     <g id="patch_10">
-     <path d="M 748.386577 385.532063 
-L 929.749593 385.532063 
-Q 931.724593 385.532063 931.724593 383.557063 
-L 931.724593 364.276743 
-Q 931.724593 362.301743 929.749593 362.301743 
-L 748.386577 362.301743 
-Q 746.411577 362.301743 746.411577 364.276743 
-L 746.411577 383.557063 
-Q 746.411577 385.532063 748.386577 385.532063 
+     <path d="M 748.386577 615.33516 
+L 929.749593 615.33516 
+Q 931.724593 615.33516 931.724593 613.36016 
+L 931.724593 594.07984 
+Q 931.724593 592.10484 929.749593 592.10484 
+L 748.386577 592.10484 
+Q 746.411577 592.10484 746.411577 594.07984 
+L 746.411577 613.36016 
+Q 746.411577 615.33516 748.386577 615.33516 
 z
 " style="fill: #ffffff"/>
     </g>
-    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(753.687601 371.07028)">SIN DATO — pista que no pudimos verificar</text>
-    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(748.386577 380.86844)">aún no hay fuente de estrés hídrico integrada</text>
+    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(753.687601 600.873377)">SIN DATO — pista que no pudimos verificar</text>
+    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(748.386577 610.671537)">aún no hay fuente de estrés hídrico integrada</text>
    </g>
    <g id="text_23">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="427.797531" transform="rotate(-0 459.919149 427.797531)">D6 Calidad del aire</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="459.919149" y="689.118047" transform="rotate(-0 459.919149 689.118047)">D6 Calidad del aire</text>
    </g>
    <g id="text_24">
     <g id="patch_11">
-     <path d="M 734.493687 441.273999 
-L 943.642484 441.273999 
-Q 945.617484 441.273999 945.617484 439.298999 
-L 945.617484 420.018679 
-Q 945.617484 418.043679 943.642484 418.043679 
-L 734.493687 418.043679 
-Q 732.518687 418.043679 732.518687 420.018679 
-L 732.518687 439.298999 
-Q 732.518687 441.273999 734.493687 441.273999 
+     <path d="M 734.493687 705.33516 
+L 943.642484 705.33516 
+Q 945.617484 705.33516 945.617484 703.36016 
+L 945.617484 684.07984 
+Q 945.617484 682.10484 943.642484 682.10484 
+L 734.493687 682.10484 
+Q 732.518687 682.10484 732.518687 684.07984 
+L 732.518687 703.36016 
+Q 732.518687 705.33516 734.493687 705.33516 
 z
 " style="fill: #ffffff"/>
     </g>
-    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(753.687601 426.812216)">SIN DATO — pista que no pudimos verificar</text>
-    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(734.493687 436.610376)">no hay estación de calidad del aire a 15 km o menos</text>
+    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(753.687601 690.873377)">SIN DATO — pista que no pudimos verificar</text>
+    <text style="font-size: 7.9px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(734.493687 700.671537)">no hay estación de calidad del aire a 15 km o menos</text>
    </g>
   </g>
   <g id="axes_3">
    <g id="patch_12">
-    <path d="M 453.6 601.344 
-L 1047.6 601.344 
-L 1047.6 569.0304 
-L 453.6 569.0304 
+    <path d="M 453.6 970.92 
+L 1047.6 970.92 
+L 1047.6 918.747 
+L 453.6 918.747 
 z
-" clip-path="url(#p95e2226443)" style="fill: url(#h70f8a5cedd)"/>
+" clip-path="url(#pf196161629)" style="fill: url(#h70f8a5cedd)"/>
    </g>
    <g id="text_25">
-    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="453.6" y="553.128116" transform="rotate(-0 453.6 553.128116)">Qué pesó en el modelo (contribuciones SHAP, panel aparte de la presión)</text>
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="453.6" y="888.401516" transform="rotate(-0 453.6 888.401516)">Qué pesó en el modelo (contribuciones SHAP, panel aparte de la presión)</text>
    </g>
    <g id="text_26">
     <g id="patch_13">
-     <path d="M 552.721594 591.655528 
-L 948.478406 591.655528 
-Q 950.578406 591.655528 950.578406 589.555528 
-L 950.578406 580.818872 
-Q 950.578406 578.718872 948.478406 578.718872 
-L 552.721594 578.718872 
-Q 550.621594 578.718872 550.621594 580.818872 
-L 550.621594 589.555528 
-Q 550.621594 591.655528 552.721594 591.655528 
+     <path d="M 552.721594 951.301828 
+L 948.478406 951.301828 
+Q 950.578406 951.301828 950.578406 949.201828 
+L 950.578406 940.465172 
+Q 950.578406 938.365172 948.478406 938.365172 
+L 552.721594 938.365172 
+Q 550.621594 938.365172 550.621594 940.465172 
+L 550.621594 949.201828 
+Q 550.621594 951.301828 552.721594 951.301828 
 z
 " style="fill: #ffffff"/>
     </g>
-    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="750.6" y="587.537559" transform="rotate(-0 750.6 587.537559)">SIN DATO — la explicación del modelo para esta escuela aún no está publicada en producción</text>
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="750.6" y="947.183859" transform="rotate(-0 750.6 947.183859)">SIN DATO — la explicación del modelo para esta escuela aún no está publicada en producción</text>
    </g>
   </g>
   <g id="patch_14">
-   <path d="M 648 102.2976 
-L 663.12 102.2976 
-L 663.12 88.4736 
-L 648 88.4736 
+   <path d="M 648 165.168 
+L 663.12 165.168 
+L 663.12 142.848 
+L 648 142.848 
 z
 " style="fill: #4d4c48"/>
   </g>
   <g id="patch_15">
-   <path d="M 668.52 102.2976 
-L 683.64 102.2976 
-L 683.64 88.4736 
-L 668.52 88.4736 
+   <path d="M 668.52 165.168 
+L 683.64 165.168 
+L 683.64 142.848 
+L 668.52 142.848 
 z
 " style="fill: #4d4c48"/>
   </g>
   <g id="patch_16">
-   <path d="M 689.04 102.2976 
-L 704.16 102.2976 
-L 704.16 88.4736 
-L 689.04 88.4736 
+   <path d="M 689.04 165.168 
+L 704.16 165.168 
+L 704.16 142.848 
+L 689.04 142.848 
 z
 " style="fill: url(#ha6a3d8905a); stroke: #6e6d68; stroke-width: 0.6; stroke-linejoin: miter"/>
   </g>
   <g id="patch_17">
-   <path d="M 709.56 102.2976 
-L 724.68 102.2976 
-L 724.68 88.4736 
-L 709.56 88.4736 
+   <path d="M 709.56 165.168 
+L 724.68 165.168 
+L 724.68 142.848 
+L 709.56 142.848 
 z
 " style="fill: #4d4c48"/>
   </g>
   <g id="patch_18">
-   <path d="M 730.08 102.2976 
-L 745.2 102.2976 
-L 745.2 88.4736 
-L 730.08 88.4736 
+   <path d="M 730.08 165.168 
+L 745.2 165.168 
+L 745.2 142.848 
+L 730.08 142.848 
 z
 " style="fill: url(#ha6a3d8905a); stroke: #6e6d68; stroke-width: 0.6; stroke-linejoin: miter"/>
   </g>
   <g id="patch_19">
-   <path d="M 750.6 102.2976 
-L 765.72 102.2976 
-L 765.72 88.4736 
-L 750.6 88.4736 
+   <path d="M 750.6 165.168 
+L 765.72 165.168 
+L 765.72 142.848 
+L 750.6 142.848 
 z
 " style="fill: url(#ha6a3d8905a); stroke: #6e6d68; stroke-width: 0.6; stroke-linejoin: miter"/>
   </g>
   <g id="text_27">
-   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="29.0304" transform="rotate(-0 32.4 29.0304)">Pantalla 4 · Expediente de una escuela (ejemplo con datos reales)</text>
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="46.872" transform="rotate(-0 32.4 46.872)">Pantalla 4 · Expediente de una escuela (ejemplo con datos reales)</text>
   </g>
   <g id="text_28">
-   <text style="font-weight: 700; font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="79.339781" transform="rotate(-0 32.4 79.339781)">LIC. AGUSTIN GONZALEZ</text>
+   <text style="font-weight: 700; font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="119.695781" transform="rotate(-0 32.4 119.695781)">LIC. AGUSTIN GONZALEZ</text>
   </g>
   <g id="text_29">
-   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="116.916759" transform="rotate(-0 32.4 116.916759)">15EJN4151O · Toluca · Preescolar · Público</text>
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="183.610359" transform="rotate(-0 32.4 183.610359)">15EJN4151O · Toluca · Preescolar · Público</text>
   </g>
   <g id="text_30">
-   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="176.256" transform="rotate(-0 32.4 176.256)">Índice de riesgo</text>
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="284.58" transform="rotate(-0 32.4 284.58)">Índice de riesgo</text>
   </g>
   <g id="text_31">
-   <text style="font-weight: 700; font-size: 30px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="215.6544" transform="rotate(-0 32.4 215.6544)">0.531</text>
+   <text style="font-weight: 700; font-size: 30px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="348.192" transform="rotate(-0 32.4 348.192)">0.531</text>
   </g>
   <g id="text_32">
-   <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="167.4" y="207.36" transform="rotate(-0 167.4 207.36)">▲ Atención alta</text>
+   <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="167.4" y="334.8" transform="rotate(-0 167.4 334.8)">▲ Atención alta</text>
   </g>
   <g id="text_33">
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 238.370525)">Qué calcula: traduce a una escala de 0 a 1 la variación de</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 249.90265)">matrícula que el modelo ML-01 proyecta para el próximo</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 261.78265)">ciclo. 0.30 es una escuela que conserva su matrícula;</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 273.66265)">0.60, una que perdería 5 %. Nivel de atención: alta desde</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 285.54265)">0.50 (línea de alerta), media desde 0.30, baja debajo. Es</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 297.42265)">un corte de presentación, no la columna «prioridad» de</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 309.97915)">Gold.</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 379.404125)">Qué calcula: traduce a una escala de 0 a 1 la variación de</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 390.93625)">matrícula que el modelo ML-01 proyecta para el próximo</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 402.81625)">ciclo. 0.30 es una escuela que conserva su matrícula;</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 414.69625)">0.60, una que perdería 5 %. Nivel de atención: alta desde</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 426.57625)">0.50 (línea de alerta), media desde 0.30, baja debajo. Es</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 438.45625)">un corte de presentación, no la columna «prioridad» de</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 451.01275)">Gold.</text>
   </g>
   <g id="text_34">
-   <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="352.512" transform="rotate(-0 32.4 352.512)">Estimación por grupo: sin dato</text>
+   <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="32.4" y="569.16" transform="rotate(-0 32.4 569.16)">Estimación por grupo: sin dato</text>
   </g>
   <g id="text_35">
-   <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="366.336" transform="rotate(-0 32.4 366.336)">El contrato expone el campo, pero la API aún lo devuelve vacío.</text>
+   <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="32.4" y="591.48" transform="rotate(-0 32.4 591.48)">El contrato expone el campo, pero la API aún lo devuelve vacío.</text>
   </g>
   <g id="text_36">
-   <text style="font-weight: 700; font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="453.6" y="77.661656" transform="rotate(-0 453.6 77.661656)">¿Qué pista destaca en esta escuela?</text>
+   <text style="font-weight: 700; font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="453.6" y="118.017656" transform="rotate(-0 453.6 118.017656)">¿Qué pista destaca en esta escuela?</text>
   </g>
   <g id="text_37">
-   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="453.6" y="100.224" transform="rotate(-0 453.6 100.224)">Evidencia disponible: 3 de 6 pistas</text>
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="453.6" y="161.82" transform="rotate(-0 453.6 161.82)">Evidencia disponible: 3 de 6 pistas</text>
   </g>
   <g id="text_38">
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(453.6 488.70825)">Contexto del municipio (CONEVAL): en Toluca, 51.8 % de la población vive en pobreza. La barra de D1 mide</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(453.6 499.97225)">el rezago social relativo entre municipios, no el porcentaje de pobreza.</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(453.6 783.94425)">Contexto del municipio (CONEVAL): en Toluca, 51.8 % de la población vive en pobreza. La barra de D1 mide</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(453.6 795.20825)">el rezago social relativo entre municipios, no el porcentaje de pobreza.</text>
   </g>
   <g id="text_39">
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(453.6 519.81225)">El driver dominante es el factor que más destaca en esta escuela según el modelo ML-02. Orienta la</text>
-   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(453.6 531.25225)">investigación y la recomendación; no es la causa.</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(453.6 834.16425)">El driver dominante es el factor que más destaca en esta escuela según el modelo ML-02. Orienta la</text>
+   <text style="font-size: 8.8px; font-family: 'DejaVu Sans'; fill: #1a1a1a" transform="translate(453.6 845.60425)">investigación y la recomendación; no es la causa.</text>
   </g>
   <g id="text_40">
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 628.467037)">Fuente: GET /api/v1/escuelas/{cct} · GET /api/v1/predicciones/{cct} · GET /api/v1/predicciones/{cct}/explicacion · GET /api/v1/municipios/{cve_mun} · campos: nombre, nivel, sostenimiento,</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 638.727037)">d1…d6, indice_completitud_drivers, es_estimado_por_grupo; indice_riesgo, driver_dominante, recomendacion; contribuciones; pobreza_pct.</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 648.987037)">D3 y D4 se dibujan como falta (1 − servicios presentes), la misma lectura con la que el pipeline elige el dominante (dbt/models/gold/features_escuela.sql:385-410).</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 659.399037)">Consulta del 10-sep-2026 18:24 (UTC−06:00) a la API v1 en producción (commit 457715a). Cortes leídos del código: LINEA_DE_ALERTA (src/api/repositorio_gold.py:55) y RIESGO_ESTABLE</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 669.612725)">(src/modelos/riesgo.py:76).</text>
-   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 679.919037)">Ejemplo de FORMA Y LECTURA DEL DATO, no mockup ni identidad visual: paleta neutra y provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 983.282062)">QUÉ ESTÁS VIENDO</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 993.621625)">QUÉ SE VE — Las seis pistas del entorno de esta escuela, siempre en el mismo orden. La barra mide cuánta presión ejerce cada una; la marcada con ▲ es la que más destaca según el modelo.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1003.777125)">UNIDAD — Posición relativa de 0 a 1 entre las escuelas observadas. Infraestructura y conectividad se leen como falta: 1 es carencia total del servicio.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1014.417125)">SIN DATO — Pista rayada de punta a punta, con el motivo por el que falta. Un cero real se dibuja como una línea mínima con su «0.00»: no se parecen.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1025.057125)">CICLO Y RECORTE — Ciclo 2024-2025, una sola escuela. Pobreza y rezago e inseguridad son valores de su municipio, compartidos con las demás escuelas de ahí.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1033.448)"/>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1046.079438)">D3 y D4 se dibujan como falta (1 − servicios presentes), la misma lectura con la que el pipeline elige el dominante (dbt/models/gold/features_escuela.sql:385-410).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1056.719437)">Fuente: GET /api/v1/escuelas/{cct} · GET /api/v1/predicciones/{cct} · GET /api/v1/predicciones/{cct}/explicacion · GET /api/v1/municipios/{cve_mun} · campos: nombre, nivel, sostenimiento,</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1067.359438)">d1…d6, indice_completitud_drivers, es_estimado_por_grupo; indice_riesgo, driver_dominante, recomendacion; contribuciones; pobreza_pct.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1078.151437)">Consulta del 10-sep-2026 18:24 (UTC−06:00) a la API v1 en producción (commit 457715a). Cortes leídos del código: LINEA_DE_ALERTA (src/api/repositorio_gold.py:55) y RIESGO_ESTABLE</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1088.745125)">(src/modelos/riesgo.py:76).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(32.4 1099.431437)">Ejemplo de FORMA Y LECTURA DEL DATO, no mockup ni identidad visual: paleta neutra y provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías).</text>
   </g>
  </g>
  <defs>
-  <clipPath id="paebf5ef193">
-   <rect x="32.4" y="390.528" width="356.4" height="162.432"/>
+  <clipPath id="p8c38a33dfe">
+   <rect x="32.4" y="630.54" width="356.4" height="262.26"/>
   </clipPath>
-  <clipPath id="pef75a4cc04">
-   <rect x="453.6" y="117.504" width="594" height="345.6"/>
+  <clipPath id="pb337a29294">
+   <rect x="453.6" y="189.72" width="594" height="558"/>
   </clipPath>
-  <clipPath id="p95e2226443">
-   <rect x="453.6" y="542.592" width="594" height="58.752"/>
+  <clipPath id="pf196161629">
+   <rect x="453.6" y="876.06" width="594" height="94.86"/>
   </clipPath>
  </defs>
  <defs>
