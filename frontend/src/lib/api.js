@@ -17,6 +17,18 @@
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
+// Origen absoluto del API -- SOLO para el link de "Iniciar sesion" (US-405,
+// ADR-012). El boton no puede pasar por el proxy /api/* de este frontend: la
+// cookie anti-CSRF `faro_oauth_state` se tiene que fijar en el origen del API,
+// no en el del frontend, o Google regresa a un origen que nunca la fijo y el
+// callback responde 401. Variable separada de VITE_API_BASE_URL a proposito --
+// esa se queda vacia (rutas relativas via proxy) y esta va con URL absoluta;
+// compartir una sola variable para las dos rompe alguna de las dos.
+//   - local:  VITE_API_ORIGIN=http://localhost:8000
+//   - prod:   VITE_API_ORIGIN=https://<host real de faro-api> (coordinar con Christian/Luis --
+//             ese mismo valor, sin / final, es el que Christian valida contra FRONTEND_REDIRECT_URIS)
+const API_ORIGIN = import.meta.env.VITE_API_ORIGIN ?? "";
+
 async function request(path, options = {}) {
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
@@ -118,22 +130,31 @@ export const postAgenteConsulta = (pregunta, historial = []) =>
     body: JSON.stringify({ pregunta, historial }),
   });
 
-// --- Auth (US-402, C4) ---
+// --- Auth (US-402, US-405, C4, ADR-012) ---
 export const getAuthMe = () => request("/api/v1/auth/me");
-// Login (pendiente, revisión Edgar PR #302, 11-sep): NO hay boton/UI de login
-// todavia en este PR, asi que se retira el helper en vez de dejarlo mal armado.
-// Cuando se implemente, el link debe apuntar DIRECTO al origen del API (NO al
-// proxy nginx de este frontend), con el `redirect` exacto del frontend:
-//   `${API_ORIGIN}/api/v1/auth/login?redirect=${encodeURIComponent(window.location.origin)}`
-// Motivo (ADR-012): la cookie httpOnly `faro_oauth_state` se debe fijar en el
-// origen del API mismo -- si se pide via el proxy /api/* de este frontend, el
-// flujo de OAuth de Google regresa al origen del frontend, no al del API, y la
-// cookie nunca se setea. Falta definir `API_ORIGIN` (VITE_API_BASE_URL hoy
-// esta vacio a propósito, ver .env / .env.production) -- coordinar con PR #304.
-// Cierre de sesión (agregado 11-sep, revisión de seguridad de Christian):
-// el frontend no guarda ni refresca tokens -- solo pide logout y la cookie
-// httpOnly la borra el API. Falta el botón/UI que lo dispare (Topbar.jsx
-// hoy no tiene ningún estado de sesión todavía).
+
+// Arranca el flujo de login (US-405). URL absoluta a proposito -- ver
+// comentario de API_ORIGIN arriba: se lee en el momento del click, no al
+// cargar el modulo, para que siempre use el origen real del tab (relevante
+// si algun dia el front vive en mas de un origen valido).
+export const getAuthLoginUrl = () =>
+  `${API_ORIGIN}/api/v1/auth/login?redirect=${encodeURIComponent(window.location.origin)}`;
+
+// Canje del codigo de un solo uso por la sesion, modo cookie (US-405,
+// ADR-010, ADR-012). Ruta RELATIVA a proposito -- a diferencia del login de
+// arriba, esta llamada SI va por el proxy same-origin de este frontend
+// (via request(), que ya manda credentials: "same-origin"), porque la
+// cookie httpOnly de sesion se tiene que fijar en el origen del frontend,
+// no en el del API. Nunca toca JWT: la respuesta es SesionOut (solo
+// expira_en), nunca TokenPair -- ver src/api/schemas.py.
+export const postAuthExchange = (code) =>
+  request("/api/v1/auth/exchange?sesion=cookie", {
+    method: "POST",
+    body: JSON.stringify({ code }),
+  });
+
+// Cierre de sesion: el frontend no guarda ni refresca tokens -- solo pide
+// logout y la cookie httpOnly la borra el API.
 export const postAuthLogout = () => request("/api/v1/auth/logout", { method: "POST" });
 
 export const API_BASE_URL = BASE_URL;
