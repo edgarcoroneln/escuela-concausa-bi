@@ -49,7 +49,7 @@ tags: [requirements, traceability, matrix]
 |---|---|---|---|---|
 | `REQ-001` | `US-601` | Equipo 1: explicación verificable Bronze→Silver→Gold, filtros, cubos, ER y componentes | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-002` | `US-621`, `US-641` | Equipos 3 y 5: UX, gráficas, storytelling y frontend aceptados e integrados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | [[vault/15_ML_Models/ML03_Explicacion_US631]] / [[vault/_DevLog/2026-09-10-estefany-hernandez-explicacion-ml03-us631]] / ⬜ | 🟡 En progreso |
 | `REQ-004` | `US-601`, `US-611`, `US-641` | Componentes e integraciones backend/chat/frontend revalidados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-005` | `US-641` | Equipo 5: candidata desplegada, observable y recuperable | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
