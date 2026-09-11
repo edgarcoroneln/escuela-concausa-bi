@@ -1,5 +1,14 @@
 worker_processes auto;
 
+# Corre como usuario "nginx" (nginxinc/nginx-unprivileged), no root -- pedido de
+# seguridad de Christian en la revisión del PR #302 (10-sep). Al reemplazar el
+# nginx.conf completo con esta plantilla se perdió el ajuste que trae la
+# imagen base para que esto funcione sin ser root: el pid por default
+# (/run/nginx.pid) no es escribible por "nginx". Se mueve a /tmp, que sí lo
+# es. Encontrado al validar el contenedor non-root: se caía con
+# "open() /run/nginx.pid failed (13: Permission denied)".
+pid /tmp/nginx.pid;
+
 events {
   worker_connections 1024;
 }
@@ -10,6 +19,16 @@ http {
   sendfile      on;
   gzip          on;
   gzip_types    text/css application/javascript application/json image/svg+xml;
+
+  # Mismo motivo que el pid de arriba: los directorios temporales default de
+  # nginx tampoco son escribibles por "nginx". No hacen falta todavía (no hay
+  # proxy_pass ni bodies que bufferear), pero se dejan listos para cuando Luis
+  # conecte /api/* -- así no se repite este mismo ciclo de prueba y error.
+  client_body_temp_path /tmp/client_temp;
+  proxy_temp_path       /tmp/proxy_temp;
+  fastcgi_temp_path     /tmp/fastcgi_temp;
+  uwsgi_temp_path       /tmp/uwsgi_temp;
+  scgi_temp_path        /tmp/scgi_temp;
 
   server {
     listen ${PORT};
