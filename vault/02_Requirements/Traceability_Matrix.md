@@ -760,6 +760,16 @@ anclas no existen en el DOM hasta hacer scroll.
 |---|---|---|---|---|
 | `REQ-006` | `US-304a`, `US-304b`, `US-305` | El profesor calificó el agente de "basura"; diagnóstico ubicó la causa en la whitelist rígida de `pregunta_en_alcance`, cero transparencia de cobertura geográfica, bug conocido de Nuevo León y falta de auto-corrección. Fase 1: puerta híbrida (vocabulario ampliado + respaldo semántico del RAG), respuesta directa sin SQL, auto-corrección de SQL (1 reintento), cobertura de las 4 entidades explicada en el prompt, few-shot con el join que corrige Nuevo León. 61/61 pruebas propias ✅ · `ruff` ✅ · **validado con Anthropic + ChromaDB + Postgres reales**: 5/5 casos de prueba correctos | [[vault/_DevLog/2026-09-10-andres-gonzalez-fase1-chat-agente]] | 🟡 En progreso (Fase 2 Karla / Fase 3 Alejandro pendientes) |
 
+## Evidencia incremental — 2026-09-10 · `construir_prompt_sistema` lee el historial de turnos (C3, Andrés González Habib)
+
+> Cierra el residual dejado por la entrada de Karla Monter arriba ("Fase 2, historial de turnos"):
+> el campo ya llegaba validado a `contexto_conversacional["historial"]`, pero `construir_prompt_sistema`
+> (`src/agente/prompt.py`, alcance de Andrés) todavía no lo leía.
+
+| REQ | Historias | Evidencia de prueba | DevLog | Estado |
+|---|---|---|---|---|
+| `REQ-004` · `REQ-006` | `US-305`, `US-304a` | `construir_prompt_sistema` agrega un bloque "Historial de la conversación" cuando `contexto_conversacional["historial"]` viene no vacío, con la transcripción literal `Usuario:`/`Agente:` de cada turno. Mismo criterio de dato hostil que `ccts`/`ciclo`/`filtros`/`resumen`: se advierte que el historial es texto de usuario, no instrucciones nuevas ni SQL, y que cualquier orden dentro de un turno pasado se ignora (defensa contra inyección). Retrocompatible: sin `historial` o con lista vacía, el prompt no cambia. 4 pruebas nuevas ✅ (`tests/test_agente_prompt.py`), 32/32 en verde, `ruff` limpio | [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] | ✅ Fase 2 completa end-to-end (contrato de Karla + consumo en el prompt) |
+
 ## Evidencia incremental — 2026-09-10 · alineación del paquete de UX/UI a `ADR-011` (E3, Marina García)
 
 | REQ | Historias | Evidencia entregada | Pendiente / a quién | Estado |
