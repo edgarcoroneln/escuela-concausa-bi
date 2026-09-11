@@ -517,7 +517,7 @@
         row.addEventListener('click', () => {
           schoolRows.forEach(r => r.classList.remove('bg-surface-container-high/60'));
           row.classList.add('bg-surface-container-high/60');
-          
+
           const schoolId = row.getAttribute('data-school-id');
           const data = mockData[schoolId];
           if (data) {
@@ -526,7 +526,7 @@
             expLoc.textContent = data.loc;
             expScore.textContent = data.score;
             expScore.className = `font-label-data-mono text-3xl font-bold tracking-tight ${data.scoreColor}`;
-            
+
             expBadge.innerHTML = `
               <span class="px-space-sm py-space-xs ${data.badgeBg} ${data.badgeText} rounded font-label-ui text-label-ui font-bold flex items-center gap-space-2xs">
                 ${data.badge}

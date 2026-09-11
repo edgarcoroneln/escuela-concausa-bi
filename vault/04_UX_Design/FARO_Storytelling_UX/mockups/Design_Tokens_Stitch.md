@@ -170,20 +170,25 @@ The color palette is calibrated for institutional decision-makers who require in
 - **The Signal (Beacon Cyan & Electric Indigo - `#0284C7`, `#38BDF8`):** Signifies telemetry, systematic verification, active telemetry states, and interactive focal points.
 - **Analytical Canvas (`#FFFFFF`, `#F8FAFC`, `#F1F5F9`):** A clinical, noise-free backdrop that enhances visual scanning and table interpretation.
 
-### Calibrated Risk Tiers
-Risk indicators follow a strict tri-state chromatic scale. Never use these colors decoratively:
-- **Critical / High Tier (`#E11D48`):** Demands immediate mitigation protocol.
-- **Elevated / Medium Tier (`#D97706`):** Signals negative inflection points or unstable stability.
-- **Controlled / Low Tier (`#059669`):** Indicates monitored structural resilience.
+### ~~Calibrated Risk Tiers~~ — RECHAZADO, NO USAR (ver nota de encabezado)
+~~Risk indicators follow a strict tri-state chromatic scale. Never use these colors decoratively:~~
+- ~~Critical / High Tier (`#E11D48`): Demands immediate mitigation protocol.~~
+- ~~Elevated / Medium Tier (`#D97706`): Signals negative inflection points or unstable stability.~~
+- ~~Controlled / Low Tier (`#059669`): Indicates monitored structural resilience.~~
+- **Sustituido por:** nivel de atención sin color, solo icono ▲■● + texto — nunca semáforo
+  (`03_Visual_Identity.md` §3).
 
-### Systematic Risk Drivers
-The six diagnostic indices are assigned distinct, non-competing chromatic markers:
-- **Pobreza y Rezago:** `#6366F1` (Indigo Horizon)
-- **Inseguridad:** `#F43F5E` (Signal Crimson)
-- **Infraestructura:** `#EA580C` (Structural Amber)
-- **Conectividad:** `#0284C7` (Beacon Cyan)
-- **Estrés Hídrico:** `#0D9488` (Hydrologic Teal)
-- **Calidad del Aire:** `#8B5CF6` (Atmospheric Violet)
+### ~~Systematic Risk Drivers~~ — RECHAZADO, NO USAR (ver nota de encabezado)
+~~The six diagnostic indices are assigned distinct, non-competing chromatic markers:~~
+- ~~Pobreza y Rezago: `#6366F1` (Indigo Horizon)~~
+- ~~Inseguridad: `#F43F5E` (Signal Crimson)~~
+- ~~Infraestructura: `#EA580C` (Structural Amber)~~
+- ~~Conectividad: `#0284C7` (Beacon Cyan)~~
+- ~~Estrés Hídrico: `#0D9488` (Hydrologic Teal)~~
+- ~~Calidad del Aire: `#8B5CF6` (Atmospheric Violet)~~
+- **Sustituido por:** los 6 drivers no tienen color propio, se identifican por posición fija
+  D1…D6 y texto; el color de su celda es siempre la rampa de magnitud
+  (`03_Visual_Identity.md` §3).
 
 ## Typography
 
@@ -220,7 +225,7 @@ This design system deliberately avoids heavy skeuomorphic drop-shadows or floati
 - **Level 1 (Cards & Data Nodes):** `#FFFFFF` — Inset by hairline border `#E2E8F0`. No shadow at rest.
 - **Level 2 (Hover & Interactive Focus):** `#FFFFFF` with shadow: `0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.03)` and border transition to `#CBD5E1`.
 - **Level 3 (Diagnostic Drawers, Modals & Inspector Panels):** `#FFFFFF` with shadow: `0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05)`.
-- **Telemetry Float (Watson AI Node):** `#0F172A` resting surface accented with ambient beacon bloom: `0 0 0 1px rgba(2, 132, 199, 0.4), 0 8px 24px -4px rgba(2, 132, 199, 0.35)`.
+- **Telemetry Float (Asistente FARO Node):** `#0F172A` resting surface accented with ambient beacon bloom: `0 0 0 1px rgba(2, 132, 199, 0.4), 0 8px 24px -4px rgba(2, 132, 199, 0.35)`.
 
 ## Shapes
 
@@ -237,15 +242,17 @@ The design system employs **Soft Minimal Radii (Level 1)** to maintain the struc
 - Header: Left-aligned title in `headline-sm`, trailing operational metadata in `label-micro-mono` (e.g., CCT ID, confidence score, update timestamp).
 - Metric Display: High-contrast numerical readouts in `JetBrains Mono` paired with small directional trend indicators (`+2.4%`, `-0.8%`).
 
-### Interactive Risk Indicator Chips
-- High Risk: Background `#FFF1F2`, border `1px solid #FECDD3`, text `#E11D48`.
-- Medium Risk: Background `#FFFBEB`, border `1px solid #FDE68A`, text `#D97706`.
-- Low Risk: Background `#ECFDF5`, border `1px solid #A7F3D0`, text `#059669`.
-- Format: A left-aligned `6px` solid status beacon dot followed by all-caps text in `label-micro-mono`.
+### ~~Interactive Risk Indicator Chips~~ — RECHAZADO, NO USAR (ver nota de encabezado)
+- ~~High Risk: Background `#FFF1F2`, border `1px solid #FECDD3`, text `#E11D48`.~~
+- ~~Medium Risk: Background `#FFFBEB`, border `1px solid #FDE68A`, text `#D97706`.~~
+- ~~Low Risk: Background `#ECFDF5`, border `1px solid #A7F3D0`, text `#059669`.~~
+- ~~Format: A left-aligned `6px` solid status beacon dot followed by all-caps text in `label-micro-mono`.~~
+- **Sustituido por:** nivel de atención sin color propio, solo icono ▲■● + texto (`03_Visual_Identity.md` §3).
 
-### Diagnostic Driver Matrix Badges
-- Represent each of the 6 drivers (Pobreza, Inseguridad, Infraestructura, Conectividad, Estrés Hídrico, Calidad del Aire).
-- Renders as a compact tag containing a calibrated driver color square or progress bar showing the calculated impact index (0.0 to 10.0 scale).
+### ~~Diagnostic Driver Matrix Badges~~ — RECHAZADO, NO USAR (ver nota de encabezado)
+- ~~Represent each of the 6 drivers (Pobreza, Inseguridad, Infraestructura, Conectividad, Estrés Hídrico, Calidad del Aire).~~
+- ~~Renders as a compact tag containing a calibrated driver color square or progress bar showing the calculated impact index (0.0 to 10.0 scale).~~
+- **Sustituido por:** posición fija D1…D6 + rampa secuencial de un tono para magnitud (escala real 0.0–1.0, no 0–10) + contorno ámbar `#B45309` solo en el dominante (`03_Visual_Identity.md` §3).
 
 ### Buttons & Operational Actions
 - **Primary:** Background `#0F172A`, text `#FFFFFF`, radius `4px`, hover state `#1E293B`. For high-level operational triggers (e.g., "Generar Dictamen", "Exportar Censo").
@@ -259,11 +266,11 @@ The design system employs **Soft Minimal Radii (Level 1)** to maintain the struc
 
 ### School Diagnostic Inspector (Side Sheet)
 - A persistent right-hand intelligence drawer that activates upon selecting any school record.
-- Houses the comprehensive multi-driver risk score, Watson AI predictive recommendations, local infrastructure logs, and historical risk progression graphs.
+- Houses the comprehensive multi-driver risk score, Asistente FARO predictive recommendations, local infrastructure logs, and historical risk progression graphs.
 
-### Floating Watson AI Intelligence Node
+### Floating Asistente FARO Intelligence Node
 - Form Factor: Fixed floating circular dock element or compact pill pinned to the lower-right workspace (`bottom: 24px`, `right: 24px`).
 - Styling: Deep Navy surface (`#0F172A`) framed by an illuminated Beacon Cyan micro-border (`#38BDF8`).
 - Glow: Ambient radial dispersion (`box-shadow: 0 0 20px rgba(2, 132, 199, 0.25)`).
-- Iconography: Precise algorithmic sparkle/beacon geometry paired with `JetBrains Mono` status badge: `WATSON.AI // ONLINE`.
+- Iconography: Precise algorithmic sparkle/beacon geometry paired with `JetBrains Mono` status badge: `ASISTENTE FARO // ONLINE`.
 - Behavior: Expands smoothly into an analytical natural-language prompt interface that accepts investigative queries (e.g., *"¿Qué planteles en la Región Norte combinan estrés hídrico y rezago crítico?"*).
