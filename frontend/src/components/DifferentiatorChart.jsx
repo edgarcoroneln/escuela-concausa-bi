@@ -1,9 +1,9 @@
 import Card from "./Card.jsx";
 import RiskGauge from "./RiskGauge.jsx";
-import { driverColors } from "../data/mock.js";
+import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 
 function SchoolPanel({ school }) {
-  const color = driverColors[school.driver] ?? "var(--color-primary)";
+  const color = riskRampColor(school.indiceRiesgo);
   return (
     <div className="flex-1 flex flex-col items-center text-center gap-3 p-5">
       <div>
@@ -17,7 +17,7 @@ function SchoolPanel({ school }) {
       <RiskGauge value={school.indiceRiesgo} color={color} />
       <span
         className="text-xs font-semibold px-3 py-1 rounded-full"
-        style={{ background: `${color}1a`, color }}
+        style={{ background: "var(--color-surface)", border: `2px solid ${DOMINANT_OUTLINE}`, color: "var(--color-ink)" }}
       >
         {school.driver} · {school.driverNombre}
       </span>
