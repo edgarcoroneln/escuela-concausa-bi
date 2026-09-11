@@ -139,11 +139,18 @@ spacing:
   inspector-panel-width: 26rem
 ---
 
-> Export crudo de la herramienta de diseño (Stitch) para la ruta visual de US-621, referenciado
-> desde [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]] §3 (Ruta seleccionada).
-> No es un artefacto canónico del vault (sin `id`/`owner`/`status` propios); es material de
-> soporte junto con `00_Login.png/.html` y `Guia_Identidad_Visual.png/.html` en esta carpeta.
-> Las menciones originales a "Watson" se corrigieron a **Asistente FARO** (`DEC-024`, P-03).
+> Export crudo de Stitch (paleta de interfaz, tipografía, radios, espaciado, elevación).
+> Referenciado desde [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]] §3. No es un
+> artefacto canónico del vault.
+>
+> **Superado — sección "Calibrated Risk Tiers" y "Systematic Risk Drivers" de abajo.** Fue la
+> primera propuesta de Stitch (rojo/ámbar/verde por nivel de riesgo + 6 colores por driver) y
+> **Marina García la rechazó** por chocar con las reglas de lectura del dato de Monserrat Miranda
+> (`LEER_PRIMERO.md`) y con WCAG 2.1 AA (`ADR-011` §4). El sistema de color de datos **realmente
+> vigente** —rampa secuencial de un tono + acento ámbar `#B45309` + `SIN_DATO` con textura— está
+> documentado en `03_Visual_Identity.md` §3 y ya aplicado en los mockups de las Pantallas 2, 4, 5
+> y 6. El resto de este archivo (tipografía, radios, espaciado, elevación, componentes de
+> interfaz) sigue vigente y no cambió.
 
 ## Brand & Style
 
@@ -213,7 +220,7 @@ This design system deliberately avoids heavy skeuomorphic drop-shadows or floati
 - **Level 1 (Cards & Data Nodes):** `#FFFFFF` — Inset by hairline border `#E2E8F0`. No shadow at rest.
 - **Level 2 (Hover & Interactive Focus):** `#FFFFFF` with shadow: `0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.03)` and border transition to `#CBD5E1`.
 - **Level 3 (Diagnostic Drawers, Modals & Inspector Panels):** `#FFFFFF` with shadow: `0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05)`.
-- **Telemetry Float (Asistente FARO Node):** `#0F172A` resting surface accented with ambient beacon bloom: `0 0 0 1px rgba(2, 132, 199, 0.4), 0 8px 24px -4px rgba(2, 132, 199, 0.35)`.
+- **Telemetry Float (Watson AI Node):** `#0F172A` resting surface accented with ambient beacon bloom: `0 0 0 1px rgba(2, 132, 199, 0.4), 0 8px 24px -4px rgba(2, 132, 199, 0.35)`.
 
 ## Shapes
 
@@ -252,11 +259,11 @@ The design system employs **Soft Minimal Radii (Level 1)** to maintain the struc
 
 ### School Diagnostic Inspector (Side Sheet)
 - A persistent right-hand intelligence drawer that activates upon selecting any school record.
-- Houses the comprehensive multi-driver risk score, Asistente FARO predictive recommendations, local infrastructure logs, and historical risk progression graphs.
+- Houses the comprehensive multi-driver risk score, Watson AI predictive recommendations, local infrastructure logs, and historical risk progression graphs.
 
-### Floating Asistente FARO Intelligence Node
+### Floating Watson AI Intelligence Node
 - Form Factor: Fixed floating circular dock element or compact pill pinned to the lower-right workspace (`bottom: 24px`, `right: 24px`).
 - Styling: Deep Navy surface (`#0F172A`) framed by an illuminated Beacon Cyan micro-border (`#38BDF8`).
 - Glow: Ambient radial dispersion (`box-shadow: 0 0 20px rgba(2, 132, 199, 0.25)`).
-- Iconography: Precise algorithmic sparkle/beacon geometry paired with `JetBrains Mono` status badge: `ASISTENTE FARO // ONLINE`.
+- Iconography: Precise algorithmic sparkle/beacon geometry paired with `JetBrains Mono` status badge: `WATSON.AI // ONLINE`.
 - Behavior: Expands smoothly into an analytical natural-language prompt interface that accepts investigative queries (e.g., *"¿Qué planteles en la Región Norte combinan estrés hídrico y rezago crítico?"*).

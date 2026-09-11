@@ -16,9 +16,17 @@ tags: [ui, identidad-visual, design-system, s7, us-621]
 > → [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]] ·
 > [[vault/04_UX_Design/Accessibility]]
 
-**Estado:** borrador — primer entregable liberado (2026-09-10): identidad visual (§3) y mockup de
-Login (Pantalla 0). Quedan 6 de 7 mockups y el PDF final; el doc completo sigue `draft` hasta
-cerrarlos.
+**Estado:** borrador — los 7 mockups de escritorio están listos y liberados para Equipo 5
+(2026-09-10/11). Queda pendiente el PDF final (`FARO_UX_UI_Guide.pdf`, §8) y la auditoría formal
+de contraste WCAG (§6); el doc completo sigue `draft` hasta cerrar esos dos puntos.
+
+> **Revisión de Marina García del Buey (lead UX/UI), 2026-09-10.** La primera entrega (solo
+> Login) tenía tres problemas reales: dibujaba un formulario de usuario/contraseña que no existe
+> (el acceso real es un único botón OAuth de Google, `src/frontend/auth.py:194`); la paleta de
+> datos usaba semáforo rojo/ámbar/verde y un color por driver, que choca con la regla de
+> Monserrat Miranda de una rampa de un solo tono + acento para el dominante
+> (`ejemplos_graficas/referencias/LEER_PRIMERO.md`); y faltaba `SIN_DATO` por completo. Las tres
+> se corrigieron antes de esta entrega — ver §3 y §7.
 
 > **Convivencia con lo existente — ya resuelta.** `ADR-011` y `DEC-023` (2026-09-10) declararon que
 > este paquete gobierna el diseño de S7, y [[vault/04_UX_Design/UX_Guidelines]] pasó a `superseded`.
@@ -58,16 +66,32 @@ eléctrico contra slate profundo y blanco puro, como una torre de señal tempran
 - **Logo FARO:** no se recibió un archivo de logo/isotipo independiente en esta entrega; el
   wordmark "FARO Intelligence" se resuelve tipográficamente en `Space Grotesk` (ver mockups). Un
   isotipo dedicado queda **pendiente**.
-- **Paleta** (con valores; contraste formal contra [[vault/04_UX_Design/Accessibility]] aún sin
-  medir — ver advertencia en §6):
+- **Paleta de interfaz** (con valores; contraste formal contra [[vault/04_UX_Design/Accessibility]]
+  aún sin medir — ver advertencia en §6):
   - Base institucional (Command Base): `#0F172A` (slate-900), `#1E293B` (slate-800).
   - Acento "señal" (The Signal): `#0284C7` (cyan-700), `#38BDF8` (cyan-400).
   - Lienzo analítico: `#FFFFFF`, `#F8FAFC`, `#F1F5F9`.
-  - Riesgo, escala tri-estado estricta — **nunca decorativa, solo para indicar riesgo**:
-    Alto `#E11D48` · Medio `#D97706` · Bajo `#059669`.
-  - Los 6 drivers, un color fijo cada uno (no escala secuencial): Pobreza y rezago `#6366F1` ·
-    Inseguridad `#F43F5E` · Infraestructura `#EA580C` · Conectividad `#0284C7` · Estrés hídrico
-    `#0D9488` · Calidad del aire `#8B5CF6`.
+  - Paleta categórica de las 4 entidades del alcance (fija, un color por entidad, prohibido
+    degradado): Ciudad de México `#4C72B0` · Estado de México `#DD8452` · Nuevo León `#55A868` ·
+    Jalisco `#C44E52` — **idéntica a la que ya usa Manuel Serranía en "Cómo funciona" (`US-601`)**,
+    no se reinventa.
+- **Paleta de color de datos** (para índice de riesgo y los 6 drivers — **no confundir con la
+  paleta de interfaz de arriba**; corregida el 2026-09-10 tras el rechazo de Marina a la primera
+  versión, que usaba semáforo rojo/ámbar/verde y un color por driver):
+  - **Rampa secuencial, un solo tono, 5 pasos** — magnitud de cualquier valor 0→1 (índice de
+    riesgo, presión de cada driver): `#EEF2F7 → #C7D2E0 → #93A5C0 → #56698C → #0F172A`. El número
+    siempre va dentro de la celda; el color nunca es la única fuente de lectura.
+  - **Acento del dominante, un solo color, reservado exclusivamente para eso:** `#B45309`
+    (ámbar). Se usa como contorno de la celda/barra del driver dominante — **nunca como relleno**,
+    nunca para otro propósito (así el dominante no compite por canal con la magnitud, que ya usa
+    la rampa).
+  - **Gris de contexto** (lo que no destaca): `#94A3B8`.
+  - **Textura `SIN_DATO`**: rayado a 45°, `repeating-linear-gradient(45deg, #CBD5E1 0 2px,
+    transparent 2px 8px)` sobre `#F8FAFC`, con la etiqueta corta "S/D" dentro de la celda y el
+    motivo completo ("SIN DATO — pista que no pudimos verificar" + causa) en tooltip/detalle —
+    nunca el paso más claro de la rampa, nunca un `0.00`.
+  - **Los 6 drivers ya no tienen un color propio.** Se identifican por posición fija D1…D6 y por
+    etiqueta de texto, nunca por color — el color de su celda es siempre la rampa de magnitud.
 - **Tipografías:** `Space Grotesk` (encabezados y títulos de módulo, peso 500/600 únicamente,
   nunca decorativo) · `Inter` (interfaz y texto analítico) · `JetBrains Mono` (todo dato
   cuantitativo: CCT, coeficientes de riesgo, timestamps — obligatorio, para eliminar deriva
@@ -93,31 +117,35 @@ eléctrico contra slate profundo y blanco puro, como una torre de señal tempran
   `#38BDF8` iluminado y resplandor ambiental (`box-shadow: 0 0 20px rgba(2,132,199,.25)`);
   badge de estado `ASISTENTE FARO // ONLINE` en `JetBrains Mono`. Al expandirse abre una
   interfaz de prompt en lenguaje natural para consultas investigativas.
-- **Estados de riesgo:** Alto → fondo `#FFF1F2` / borde `#FECDD3` / texto `#E11D48`; Medio →
-  fondo `#FFFBEB` / borde `#FDE68A` / texto `#D97706`; Bajo → fondo `#ECFDF5` / borde `#A7F3D0`
-  / texto `#059669`. **Pendiente de reconciliar** con el nivel de atención oficial de
-  `DEC-024` (derivado de `indice_riesgo`: alta `>=0.50`, media `>=0.30`, baja `<0.30`) antes de
-  que Equipo 5 lo implemente — esta entrega no trae la lógica de corte, solo el tratamiento
-  visual de las 3 bandas.
-- **Tratamiento del driver dominante:** badge compacto con cuadro/barra de color del driver +
-  índice de impacto (escala 0.0–10.0), un color fijo por driver (ver paleta arriba).
+- **Nivel de atención (alta/media/baja):** **sin color propio** — icono + texto únicamente, para
+  no competir con la rampa de magnitud y para no repetir el semáforo que Marina rechazó. Iconos
+  fijos, tomados de los ejemplos reales de Monserrat: **▲ alta · ■ media · ● baja**, en tinta
+  `#0F172A`. La lógica de corte es la de `DEC-024` sobre `indice_riesgo`: alta `>=0.50`, media
+  `>=0.30`, baja `<0.30` — el front la deriva, nunca consume `gold.recomendaciones.prioridad`.
+- **Tratamiento del driver dominante:** contorno de `2px` en el acento `#B45309` alrededor de la
+  celda/barra completa, más el icono ▲ y la etiqueta "Driver dominante" — sin relleno de color
+  distinto, sin badge de escala 0–10 (la escala real de presión es 0 a 1, ver `02_Data_Visualization_Spec.md`
+  §1.2).
 
 ## 4. Componentes
 
-> Inventario base entregado por Stitch (Login + guía de identidad). Variantes de estado
-> (hover, foco, deshabilitado, carga, error) **no vienen completas** para todos — Equipo 5 debe
-> completarlas al implementar; se marca lo que sí trae la entrega.
+> Inventario de los 7 mockups + guía de identidad. Variantes de estado (hover, foco,
+> deshabilitado, carga, error) **no vienen completas** para todos — Equipo 5 debe completarlas al
+> implementar; se marca lo que sí trae la entrega.
 
 | Componente | Qué trae esta entrega | Estados definidos |
 |---|---|---|
 | Precision Data Card | contenedor, header, métrica | reposo únicamente |
-| Chip de riesgo (Alto/Medio/Bajo) | color, borde, texto, punto de estado | reposo únicamente |
-| Badge de driver dominante | color fijo + barra de impacto | reposo únicamente |
+| Matriz escuelas × 6 drivers (Pantalla 2) | rampa de magnitud, contorno de dominante, `S/D` con textura, leyenda de degradado + 2 swatches | reposo únicamente |
+| Barras de presión por driver (Pantalla 4) | misma rampa/acento/textura que la matriz, orden D1…D6 fijo | reposo únicamente |
+| Badge de nivel de atención | icono ▲■● + texto, sin color propio | reposo únicamente |
+| Badge de driver dominante | contorno ámbar `#B45309` + icono, sin relleno de color | reposo únicamente |
 | Botón primario / beacon / secundario | color, radio, hover | reposo + hover |
 | Input / control de formulario | fondo, borde, radio | reposo + foco (anillo cian) |
 | Panel inspector de escuela (side sheet) | ancho (`26rem`), contenido esperado | reposo únicamente |
 | Nodo flotante Asistente FARO | forma, color, glow, badge | reposo + expandido |
-| Pantalla de Login completa | ver `mockups/00_Login.html` | reposo, validación de error visible |
+| Selector de OAuth simulado (Login) | 3 estados: reposo, redirigiendo, error de callback | los 3 explícitos |
+| Riel de navegación lateral (Pantallas 1-6) | logo, tagline único, 7 rutas + referencia técnica | reposo + activo |
 
 Foco visible, estado deshabilitado y estado de carga **no están cubiertos** por esta entrega en
 ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
@@ -136,13 +164,18 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 
 ## 6. Accesibilidad
 
-> **Advertencia explícita:** los pares de color de esta sección (texto sobre fondo, chips de
-> riesgo, botones) **no fueron auditados formalmente contra WCAG 2.1 AA** — son los tokens tal
-> como los generó Stitch. Antes de que Equipo 5 implemente, corresponde correr una validación de
-> contraste real (por ejemplo con los mismos criterios que ya aplica
-> [[vault/04_UX_Design/Accessibility]]) sobre: texto `on-surface` (`#0F172A`) contra los fondos
-> `surface-container-*`, texto de los 3 chips de riesgo contra su propio fondo, y el texto blanco
-> de los botones primario/beacon contra `#0F172A`/`#0284C7`.
+> **Advertencia explícita:** los pares de color de esta sección **no fueron auditados
+> formalmente contra WCAG 2.1 AA** con una herramienta de contraste — son los tokens tal como
+> quedaron tras la corrección de Marina. Antes de que Equipo 5 implemente, corresponde correr una
+> validación de contraste real (por ejemplo con los mismos criterios que ya aplica
+> [[vault/04_UX_Design/Accessibility]] o el script de Monserrat en `ejemplos_graficas/`) sobre:
+> texto `on-surface` (`#0F172A`) contra los fondos `surface-container-*`, cada paso de la rampa
+> de magnitud contra el texto que lleva encima, el acento `#B45309` contra el fondo de su celda,
+> y el texto blanco de los botones primario/beacon contra `#0F172A`/`#0284C7`.
+- **Nada se codifica solo por color, por diseño desde esta corrección:** nivel de atención
+  (icono + texto), dominante (contorno + icono + etiqueta), `SIN_DATO` (textura + etiqueta "S/D"
+  + motivo) — ninguno depende únicamente del tono para leerse. Esto resuelve directamente el
+  criterio de `ADR-011` §4 que la primera versión (semáforo) violaba.
 - Todo identificador alfanumérico (CCT, coeficientes, timestamps) va en `JetBrains Mono` para
   legibilidad tabular — no es solo estético, reduce error de lectura en matrices densas.
 - Tamaño mínimo de texto, foco visible y orden de tabulación: **no definidos** en esta entrega
@@ -151,20 +184,37 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 
 ## 7. Mockups
 
+Los 7, de escritorio, **listos y liberados para Equipo 5** (2026-09-10/11):
+
 | # | Pantalla | Archivo | Estado |
 |---|---|---|---|
-| 0 | Login | [`mockups/00_Login.png`](mockups/00_Login.png) / [`mockups/00_Login.html`](mockups/00_Login.html) | **listo — liberado para Equipo 5** |
-| 1 | Entrada | `mockups/01_Entrada.png` | pendiente |
-| 2 | Panorama | `mockups/02_Panorama_Escuelas_Riesgo.png` | pendiente |
-| 3 | Selección de caso | `mockups/03_Seleccion_Caso.png` | pendiente |
-| 4 | Expediente | `mockups/04_Expediente_Escuela.png` | pendiente |
-| 5 | Conclusión Top 3 | `mockups/05_Conclusion_Top3.png` | pendiente |
-| 6 | Explorador | `mockups/06_Explorador.png` | pendiente |
+| 0 | Login | [`mockups/00_Login.png`](mockups/00_Login.png) / [`.html`](mockups/00_Login.html) | listo |
+| 1 | Entrada | [`mockups/01_Entrada.png`](mockups/01_Entrada.png) / [`.html`](mockups/01_Entrada.html) | listo |
+| 2 | Panorama | [`mockups/02_Panorama_Escuelas_Riesgo.png`](mockups/02_Panorama_Escuelas_Riesgo.png) / [`.html`](mockups/02_Panorama_Escuelas_Riesgo.html) | listo |
+| 3 | Selección de caso | [`mockups/03_Seleccion_Caso.png`](mockups/03_Seleccion_Caso.png) / [`.html`](mockups/03_Seleccion_Caso.html) | listo |
+| 4 | Expediente | [`mockups/04_Expediente_Escuela.png`](mockups/04_Expediente_Escuela.png) / [`.html`](mockups/04_Expediente_Escuela.html) | listo |
+| 5 | Conclusión (Top 2 real; el rótulo "Top 3" es el máximo de casillas, no una cuenta fija) | [`mockups/05_Conclusion_Top3.png`](mockups/05_Conclusion_Top3.png) / [`.html`](mockups/05_Conclusion_Top3.html) | listo |
+| 6 | Explorador | [`mockups/06_Explorador.png`](mockups/06_Explorador.png) / [`.html`](mockups/06_Explorador.html) | listo |
 
-Material de soporte adicional en `mockups/`: [`Guia_Identidad_Visual.png`](mockups/Guia_Identidad_Visual.png)
-/ [`Guia_Identidad_Visual.html`](mockups/Guia_Identidad_Visual.html) (guía de identidad completa,
-no es una de las 7 pantallas numeradas) y [`Design_Tokens_Stitch.md`](mockups/Design_Tokens_Stitch.md)
-(tokens crudos: color, tipografía, radios, espaciado — fuente de los valores citados en §3).
+Todos usan el dataset real de 7 escuelas verificado en producción (10-sep-2026, commit
+`457715a`) — mismo conjunto que `02_Data_Visualization_Spec.md` de Monserrat Miranda, no datos de
+ejemplo inventados.
+
+Material de soporte en `mockups/`, no numerado (no es de las 7 pantallas de la historia):
+
+- [`Guia_Identidad_Visual.png`](mockups/Guia_Identidad_Visual.png) / [`.html`](mockups/Guia_Identidad_Visual.html)
+  — guía de identidad completa (paleta de interfaz, sistema de color de datos, tipografía,
+  componentes).
+- [`Design_Tokens_Stitch.md`](mockups/Design_Tokens_Stitch.md) — tokens crudos de tipografía,
+  radios, espaciado y elevación (su sección de color quedó superada, ver nota al inicio del
+  archivo; el color vigente es el de §3 de este documento).
+- [`Como_Funciona_Preview.png`](mockups/Como_Funciona_Preview.png) / [`.html`](mockups/Como_Funciona_Preview.html)
+  — borrador de identidad para la superficie *Cómo funciona* de Equipo 1 (`US-601`, §5.bis de
+  `PLAN_TRABAJO`). **No es un octavo mockup formal ni reemplaza el trabajo de Manuel Serranía**:
+  el plan es explícito en que esta superficie "no necesita mockup propio" y que Juan solo le da
+  identidad con los componentes ya definidos arriba. Se deja como referencia de cómo se vería,
+  pendiente de coordinar con Manuel/Héctor antes de darla por final — las dos rutas de la API que
+  la alimentan (`GET /api/v1/about/secciones*`) todavía no están en `main`.
 
 ## 8. PDF final
 
