@@ -38,12 +38,23 @@ tags: [devlog, agent, chat, historial, prompt]
   cliente envíe `historial` y probarlo con el LLM real. También traza a `US-611` (Equipo 2, S7),
   no solo a `US-305`, y se quita `SEC-003` de los IDs tocados (ese ID es rate limiting en memoria,
   no aplica a este cambio — el mismo error está en el DevLog de Karla, a corregir en su próximo PR).
+- **Segunda corrección, mismo aviso de Edgar:** la respuesta del redactor (`src/agente/llm.py`)
+  solo hacía `.strip()`, así que una lista de escuelas con saltos de línea rompía las reglas de
+  `HistorialTurnoIn` (`isprintable()`) si un cliente la reenviaba tal cual en `historial`. Esa
+  parte vive en `src/agente/**` (mi alcance), así que se corrige aquí: `redactar_respuesta_con_llm`
+  ahora colapsa cualquier corrida de espacios/saltos de línea/tabs a un solo espacio antes de
+  devolver la respuesta, sin esperar a que el cliente o `src/api/schemas.py` (Karla) lo resuelvan.
+  La cota de 500 caracteres de `HistorialTurnoIn` **sigue sin resolverse** aquí a propósito: truncar
+  la respuesta que ve el usuario en el turno actual es una decisión de producto que no es solo mía
+  — sigue pendiente de acuerdo con Karla/Diana (ver Bloqueantes).
 
 ## 🤖 Sesión de IA
 - **Agente / modelo:** GitHub Copilot / claude-sonnet-5
 - **Archivos modificados:**
   - `src/agente/prompt.py`
+  - `src/agente/llm.py`
   - `tests/test_agente_prompt.py`
+  - `tests/test_agente_llm.py`
 - **Decisiones autónomas del agente:**
   - Tratar `historial` como bloque separado del contexto conversacional estructurado (no fusionarlo
     en el mismo párrafo de `ccts`/`ciclo`/`filtros`/`resumen`), porque conceptualmente es una
@@ -57,9 +68,11 @@ tags: [devlog, agent, chat, historial, prompt]
 - [x] Tests agregados (`test_construir_prompt_agrega_historial_de_turnos`,
   `test_construir_prompt_sin_historial_no_agrega_el_bloque`,
   `test_construir_prompt_historial_vacio_no_agrega_el_bloque`,
-  `test_construir_prompt_advierte_no_seguir_instrucciones_del_historial`)
+  `test_construir_prompt_advierte_no_seguir_instrucciones_del_historial`,
+  `test_redactar_respuesta_colapsa_saltos_de_linea_y_tabs`)
 - [x] `ruff check` limpio en los archivos tocados
-- [x] `pytest tests/test_agente_prompt.py tests/test_agente_historial.py -q` → 32 passed
+- [x] `pytest tests/test_agente_prompt.py tests/test_agente_historial.py tests/test_agente_llm.py -q`
+  → 40 passed
 - [x] DevLog enlaza a los IDs afectados
 
 ## Bloqueantes
@@ -68,19 +81,21 @@ tags: [devlog, agent, chat, historial, prompt]
 #302 (`frontend/src/lib/api.js:67`) manda solo `{ pregunta }`. Tampoco hay prueba de este cambio
 con el LLM real. Es el mismo residual que `Execution_Status.md` ya registra para `US-611`.
 
-Aviso para el E2E (a coordinar con Diana/Karla): la respuesta del redactor (`src/agente/llm.py:159`)
-solo hace `.strip()` — no colapsa saltos de línea internos ni la acota a 500 caracteres, así que una
-respuesta con lista de escuelas puede violar las reglas de `HistorialTurnoIn` (sin caracteres de
-control, máx. 500 chars) si un cliente la reenvía tal cual en `historial`. Falta decidir si
-normaliza el cliente (recortar y mandar los últimos 10 turnos) o la API (normalizar en vez de
-rechazar).
+Aviso para el E2E (a coordinar con Diana/Karla): **la parte de caracteres de control ya está
+resuelta** — `redactar_respuesta_con_llm` (`src/agente/llm.py`) ahora colapsa saltos de línea/tabs
+a un espacio, así que la respuesta ya es segura de reenviar como turno. **Sigue sin resolver la
+cota de 500 caracteres**: una respuesta larga (lista extensa de escuelas) puede seguir superando
+`MAX_LARGO_TURNO` de `HistorialTurnoIn`. No la truncamos en el redactor porque eso recortaría lo que
+ve el usuario en el turno actual, no solo lo que viaja como historial — decisión de producto, no
+solo de C3. Falta decidir si normaliza el cliente (recortar y mandar los últimos 10 turnos) o la
+API (`src/api/schemas.py`, Karla: normalizar en vez de rechazar).
 
 ## Próximos pasos
 - Coordinar con quien construya los clientes (Streamlit/React) para que empiecen a enviar
   `historial` — sin eso el backend no tiene efecto observable.
 - Validar este cambio con el LLM real (Anthropic) antes de darlo por probado end-to-end.
-- Definir con Karla/Diana quién normaliza la respuesta del agente antes de que viaje como turno de
-  `historial`.
+- Definir con Karla/Diana quién trunca la respuesta del agente a `MAX_LARGO_TURNO` (500 chars)
+  antes de que viaje como turno de `historial` — lo de caracteres de control ya quedó resuelto.
 - Avisar a Alejandro (Fase 3, streaming + redeploy) del estado real: backend listo, E2E pendiente.
 - Pedir a QA que agregue como caso de regresión el reenvío de una respuesta larga del agente como
   turno de `historial`.
