@@ -44,6 +44,20 @@ export const getEscuela = (cct) => request(`/api/v1/escuelas/${cct}`);
 // disponible es ordenar. Se pide el catálogo ordenado desc por indice_riesgo
 // y se valida/recorta contra el conteo real de KpisOut.escuelas_en_riesgo.
 //
+// Fix 11-sep (segunda revisión de Edgar, PR #302): la versión anterior
+// desenvolvía el sobre de paginación pero devolvía data.items completo sin
+// aplicar la línea de alerta ni el recorte que este mismo comentario ya
+// prometía -- "Los 7 casos" podía mostrar escuelas fuera del umbral, más de
+// siete registros, y tronaba en LosSieteCasos.jsx (`e.indice_riesgo.toFixed(2)`)
+// si entraba un registro con indice_riesgo: null. Ahora:
+//   1. descarta indice_riesgo no numérico (nunca truena .toFixed() en quien
+//      consume esto);
+//   2. aplica la línea de alerta real, indice_riesgo >= 0.50 (DEC-019, misma
+//      que src/api/repositorio_gold.py);
+//   3. recorta al conteo oficial de KpisOut.escuelas_en_riesgo -- ese número
+//      es la fuente de verdad del backend, no "los que alcancen el umbral
+//      en esta página".
+//
 // OJO -- gap de contrato encontrado al implementar esto: EscuelaOut (la
 // forma real de cada fila) trae cct/nombre/nivel/indice_riesgo/
 // driver_dominante/matricula_total/tiene_prediccion, pero NO latitud/
@@ -51,17 +65,27 @@ export const getEscuela = (cct) => request(`/api/v1/escuelas/${cct}`);
 // matrícula por escuela. El mapa (MapaRiesgo/MapaCasos) y esos 2 campos NO
 // se pueden conectar al API real todavía -- falta que alguien (DS/API) los
 // agregue al contrato. Documentado también en PLAN_TRABAJO_E5.md.
+const LINEA_ALERTA_RIESGO = 0.5;
+
 export const getEscuelasEnRiesgo = async (size = 50) => {
   // El endpoint de lista devuelve un sobre de paginación (Page[EscuelaOut]:
   // { items, total, page, size }), no un arreglo -- bug encontrado 11-sep en
   // pruebas de "Los 7 casos" (la página se quedaba en blanco sin error
   // porque escuelas.length de un objeto es undefined). Se desenvuelve aquí
   // para que el resto del código siga tratando el resultado como arreglo.
-  const { data, error } = await request(
-    `/api/v1/escuelas?${new URLSearchParams({ order_by: "indice_riesgo", order: "desc", size: String(size) })}`
+  const [escuelasRes, kpisRes] = await Promise.all([
+    request(
+      `/api/v1/escuelas?${new URLSearchParams({ order_by: "indice_riesgo", order: "desc", size: String(size) })}`
+    ),
+    request("/api/v1/kpis"),
+  ]);
+  if (escuelasRes.error) return { data: null, error: escuelasRes.error };
+  if (kpisRes.error) return { data: null, error: kpisRes.error };
+
+  const enRiesgo = escuelasRes.data.items.filter(
+    (e) => typeof e.indice_riesgo === "number" && e.indice_riesgo >= LINEA_ALERTA_RIESGO
   );
-  if (error) return { data: null, error };
-  return { data: data.items, error: null };
+  return { data: enRiesgo.slice(0, kpisRes.data.escuelas_en_riesgo), error: null };
 };
 export const getMunicipios = (params = {}) =>
   request(`/api/v1/municipios?${new URLSearchParams(params)}`);
@@ -96,7 +120,16 @@ export const postAgenteConsulta = (pregunta, historial = []) =>
 
 // --- Auth (US-402, C4) ---
 export const getAuthMe = () => request("/api/v1/auth/me");
-export const getAuthLoginUrl = () => `${BASE_URL}/api/v1/auth/login`;
+// Login (pendiente, revisión Edgar PR #302, 11-sep): NO hay boton/UI de login
+// todavia en este PR, asi que se retira el helper en vez de dejarlo mal armado.
+// Cuando se implemente, el link debe apuntar DIRECTO al origen del API (NO al
+// proxy nginx de este frontend), con el `redirect` exacto del frontend:
+//   `${API_ORIGIN}/api/v1/auth/login?redirect=${encodeURIComponent(window.location.origin)}`
+// Motivo (ADR-012): la cookie httpOnly `faro_oauth_state` se debe fijar en el
+// origen del API mismo -- si se pide via el proxy /api/* de este frontend, el
+// flujo de OAuth de Google regresa al origen del frontend, no al del API, y la
+// cookie nunca se setea. Falta definir `API_ORIGIN` (VITE_API_BASE_URL hoy
+// esta vacio a propósito, ver .env / .env.production) -- coordinar con PR #304.
 // Cierre de sesión (agregado 11-sep, revisión de seguridad de Christian):
 // el frontend no guarda ni refresca tokens -- solo pide logout y la cookie
 // httpOnly la borra el API. Falta el botón/UI que lo dispare (Topbar.jsx
