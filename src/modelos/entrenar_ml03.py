@@ -1,10 +1,9 @@
-"""Entrenamiento temporal de ML-03 — clustering de escuelas (US-321).
+"""Entrenamiento temporal de ML-03 — clustering de escuelas (US-321, US-631).
 
-La política definitiva de imputación aún no está ratificada. Por eso este
-módulo sólo admite ``casos_completos``: excluye de forma auditable las filas
-con algún driver ausente y nunca sustituye ``SIN_DATO`` por cero. El pipeline,
-la selección de ``k`` y el backtesting quedan listos para incorporar una
-política aprobada sin mezclarla con el diagnóstico de US-322/US-325.
+La política ratificada usa D1--D4 e ``indice_completitud_drivers``. D5/D6 se
+conservan únicamente para auditar cobertura: no entran al vector ni se
+imputan como cero. El módulo aplica ``casos_completos`` sólo al vector
+operativo, con exclusiones auditables y validación temporal sin fuga.
 """
 
 from __future__ import annotations
