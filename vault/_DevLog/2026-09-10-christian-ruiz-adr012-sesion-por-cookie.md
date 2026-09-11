@@ -52,8 +52,9 @@ servicio nuevo ni destino de despliegue nuevo.
   - **La cookie de refresco va acotada a `/api/v1/auth/refresh`**, derivando la ruta de
     `url_path_for` en vez de escribirla a mano. El navegador no manda la credencial de **7 días** en
     ninguna otra petición: un fallo en cualquier otro endpoint no puede filtrarla.
-  - **El cambio es aditivo**: el cuerpo de `/auth/exchange` **sigue trayendo el par**, así que el
-    shell de Streamlit sigue vivo mientras dura la migración. Los dos frontends conviven.
+  - **El cambio es opt-in**: sin `?sesion=cookie`, `/auth/exchange` se comporta como siempre, así
+    que el shell de Streamlit sigue vivo mientras dura la migración. Los dos frontends conviven.
+    *(La primera versión devolvía el par también en modo cookie; ver la corrección del PO abajo.)*
 - **`src/api/v1/auth.py`** — `exchange` y `refresh` siembran la sesión; `refresh` acepta el token
   del cuerpo **o** de la cookie; **`POST /auth/logout` nuevo** (204).
 - **`src/api/security/deps.py`** — segundo portador. **El encabezado tiene precedencia**: un
@@ -90,7 +91,8 @@ no *"hay logout"*.
 - [x] OpenAPI reexportado; `test_api_contract.py` verde
 - [x] Los atributos de la cookie están **fijados por pruebas**, no solo escritos: `HttpOnly`,
       `SameSite=Lax`, `Path` de la de refresco y **ausencia de `Domain`**
-- [x] Retrocompatibilidad probada: el cuerpo sigue trayendo el par y el refresco por cuerpo funciona
+- [x] Retrocompatibilidad probada: el modo legacy devuelve el par sin cookies y el refresco por
+      cuerpo funciona
 
 ## La corrección que pidió el PO, y que es la parte importante
 
@@ -118,6 +120,23 @@ Dos detalles del diseño:
 
 Seis pruebas nuevas lo fijan, **verificadas reprobando** con la fuga reintroducida. Una busca la
 forma `eyJ` en el texto crudo por si alguien anidara el token bajo otro nombre.
+
+## Revisión de Marina (E3), 11-sep — las tres condiciones
+
+1. **La cita de `ADR-012` ya no cuelga.** Se respetó el orden: entró primero el PR #302 de Diana
+   (`ADR-012`, `accepted` 11-sep) y este PR se sincronizó con `main` después. Los docstrings ya no
+   dicen "llega por su PR".
+2. **La decisión de sesión sí tiene registro propio:** `ADR-012 §Auth — decisión cerrada 10-sep`
+   la asienta de forma explícita (cookie `httpOnly` de un solo origen, descarte de Bearer y de BFF,
+   residual CSRF). No se abre un ADR aparte para no partir una decisión en dos.
+3. **El frontend de React usa el modo cookie** (`/auth/exchange?sesion=cookie`). Streamlit sigue en
+   legacy. El flujo visible no cambia; cambia dónde vive la credencial, así que el Mockup 0 de E3 ya
+   no puede decir "no cambia autenticación". Los estados de sesión para `01_UX_Architecture.md` quedan
+   en `Threat_Model §Qué modo usa cada cliente`.
+
+**Pendiente de Diana en `ADR-012`** (su archivo; no lo toco): el paso 2 debe decir
+`?sesion=cookie`, y el paso 4 ("ni los refresca") debe precisar que el front **llama**
+`POST /auth/refresh` sin cuerpo —el access token vive 15 min—, aunque nunca vea el token.
 
 ## Residuales aceptados — registrados, no resueltos
 

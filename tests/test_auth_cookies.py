@@ -10,8 +10,8 @@ solo origen, basta con que la API emita la cookie. Lo que este archivo fija:
 1. **`/auth/exchange` siembra la sesión** — y `/auth/refresh` la renueva.
 2. **`get_current_user` acepta la cookie** cuando no hay `Authorization`, y el encabezado **tiene
    precedencia** cuando llegan los dos.
-3. **El cambio es aditivo**: el cuerpo sigue trayendo el par, así que el shell de Streamlit y las
-   pruebas existentes no se enteran. Es lo que permite que los dos frontends convivan.
+3. **Dos modos que no se mezclan**: el legacy (default) devuelve el par y no toca cookies, así que
+   el shell de Streamlit no se entera; el modo cookie siembra la sesión y responde **sin JWT**.
 4. **Los atributos de la cookie son la protección, no un detalle**: `httpOnly` contra XSS,
    `SameSite=Lax` contra CSRF, y la de refresco **acotada a la ruta que la canjea**.
 5. **El logout borra las dos.** Olvidar la de refresco dejaría la sesión viva 7 días.

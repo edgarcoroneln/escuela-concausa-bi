@@ -1,12 +1,12 @@
 """Sesión por cookie `httpOnly` para el frontend de React.
 
 > **Dónde vive la decisión.** El mecanismo se acordó en el gate de E5 del 10-sep (Luis Téllez +
-> Christian Ruiz) y está redactado en **`ADR-012`** (*Retiro del embebido de Superset/Streamlit*),
-> que es de Diana Álvarez y llega por su PR. Este módulo lo **implementa**; no lo decide. Hasta que
-> ese ADR entre a `main`, la justificación completa —incluidos los residuales— está en
-> `vault/07_Security/Threat_Model.md §Sesión del frontend de React`, que sí viene en este cambio.
-> No se escribe un ADR paralelo a propósito: dos documentos con el mismo número apuntando a `main`
-> es la colisión que `DEC-013` existe para evitar, y partiría una sola decisión en dos.
+> Christian Ruiz) y está asentado en **`ADR-012` §Auth** (*Retiro del embebido de Superset/Streamlit*,
+> de Diana Álvarez, `accepted` 11-sep, PR #302). Este módulo lo **implementa**; no lo decide. Los
+> residuales (CSRF, XSS) están en `vault/07_Security/Threat_Model.md §Sesión del frontend de React`.
+> No se escribe un ADR aparte a propósito: partiría una sola decisión en dos documentos.
+>
+> **El frontend de React usa el modo cookie** (`?sesion=cookie`); el shell de Streamlit, el legacy.
 
 
 **Por qué existe.** Hasta `ADR-010`, el servidor de Streamlit canjeaba el `code_faro` y guardaba
@@ -73,9 +73,9 @@ def ruta_de_refresco(request: Request) -> str:
 def sembrar_sesion(respuesta: Response, par: TokenPair, request: Request) -> None:
     """Escribe las dos cookies de sesión sobre `respuesta`.
 
-    **Aditivo, no sustitutivo:** el cuerpo de la respuesta sigue trayendo el par de tokens, así que
-    el shell de Streamlit y cualquier cliente que ya consuma `/auth/exchange` no se rompen. Es lo
-    que permite que los dos frontends convivan mientras dura la migración.
+    Solo se llama en el **modo cookie**, cuyo cuerpo es `SesionOut` —**sin JWT**—: si el cuerpo
+    trajera el par, un XSS lo leería y `HttpOnly` no serviría de nada. El modo legacy (default) no
+    pasa por aquí, así que el shell de Streamlit no recibe cookies que no pidió.
 
     Nunca se fija `Domain`: la cookie queda **host-only** del origen que respondió.
     """

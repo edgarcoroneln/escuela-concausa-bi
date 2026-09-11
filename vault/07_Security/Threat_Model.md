@@ -181,7 +181,19 @@ Sin construir un servicio nuevo. Detalle en `src/api/security/cookies.py`.
 | Refresh token acotado a `/api/v1/auth/refresh` | ✅ El navegador no lo manda en ninguna otra petición |
 | Logout borra **ambas** cookies | ✅ |
 | `X-Content-Type-Options`, `Referrer-Policy`, HSTS | ✅ Middleware de la API |
-| `Content-Security-Policy`, `X-Frame-Options` | ⏳ **nginx (C5)** — es donde contienen el XSS del chat |
+| `Content-Security-Policy`, `X-Frame-Options` | ✅ **nginx (C5)**, `docker/nginx-frontend.conf.template` (PR #302) — es donde contienen el XSS del chat |
+
+### Qué modo usa cada cliente
+
+| Cliente | Modo | Qué hace |
+|---|---|---|
+| **Frontend de React** (`ADR-012`) | **cookie** | `POST /api/v1/auth/exchange?sesion=cookie` con el `code_faro`; después solo `credentials: "same-origin"`; `POST /api/v1/auth/refresh` **sin cuerpo** antes de `expira_en` (el access token vive 15 min) o ante un 401; `POST /api/v1/auth/logout` para cerrar |
+| Shell de Streamlit, pruebas, clientes no-navegador | legacy | Sin cambios: `TokenPair` en el cuerpo y `Authorization: Bearer` |
+
+Para UX (`E3`): **el flujo visible no cambia** —mismo Google OAuth, mismas pantallas—; cambia dónde
+vive la credencial. Los estados de sesión del front se diseñan contra este contrato: *sin sesión*
+(`/auth/me` → 401 → "Inicia sesión"), *sesión activa*, *sesión por vencer* (refresco silencioso
+guiado por `expira_en`) y *sesión cerrada* (logout o refresco fallido → vuelve a "Inicia sesión").
 
 ### Corrección tras la revisión del PO (PR #304)
 
