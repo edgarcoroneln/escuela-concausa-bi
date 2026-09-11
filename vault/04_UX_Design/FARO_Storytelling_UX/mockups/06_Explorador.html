@@ -1,0 +1,543 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>FARO Intelligence Platform</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-container":"#5bb8fe","surface-container-lowest":"#ffffff","on-tertiary-fixed-variant":"#004c69","on-secondary":"#ffffff","primary":"#000000","inverse-on-surface":"#eaf1ff","on-tertiary-container":"#008ebf","inverse-primary":"#bec6e0","secondary-fixed":"#cce5ff","on-secondary-container":"#00476e","surface-variant":"#d3e4fe","outline":"#76777d","on-surface":"#0b1c30","on-primary-fixed-variant":"#3f465c","on-error-container":"#93000a","on-secondary-fixed-variant":"#004b73","on-primary-container":"#7c839b","error-container":"#ffdad6","surface":"#f8f9ff","inverse-surface":"#213145","background":"#f8f9ff","on-secondary-fixed":"#001d31","surface-container-high":"#dce9ff","tertiary-fixed-dim":"#7bd0ff","primary-container":"#131b2e","on-tertiary-fixed":"#001e2c","surface-dim":"#cbdbf5","on-background":"#0b1c30","surface-container":"#e5eeff","on-surface-variant":"#45464d","surface-tint":"#565e74","error":"#ba1a1a","secondary-fixed-dim":"#93ccff","secondary":"#006398","surface-container-low":"#eff4ff","surface-container-highest":"#d3e4fe","tertiary":"#000000","tertiary-container":"#001e2c","on-error":"#ffffff","outline-variant":"#c6c6cd","primary-fixed":"#dae2fd","on-primary-fixed":"#131b2e","on-primary":"#ffffff","tertiary-fixed":"#c4e7ff","on-tertiary":"#ffffff","primary-fixed-dim":"#bec6e0","surface-bright":"#f8f9ff"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"sidebar-width-expanded":"17.5rem","space-xs":"0.25rem","space-lg":"1.5rem","space-2xl":"3rem","inspector-panel-width":"26rem","space-sm":"0.5rem","layout-gutter":"1rem","layout-margin-desktop":"2rem","space-xl":"2rem","space-2xs":"0.125rem","space-md":"0.75rem","layout-margin-mobile":"1rem","sidebar-width-collapsed":"4.5rem","space-base":"1rem"},fontFamily:{"body-md":["Inter"],"label-data-mono":["JetBrains Mono"],"headline-sm":["Space Grotesk"],"body-sm":["Inter"],"headline-lg":["Space Grotesk"],"label-ui":["Inter"],"headline-xl-mobile":["Space Grotesk"],"title-md":["Inter"],"headline-xl":["Space Grotesk"],"label-micro-mono":["JetBrains Mono"],"headline-lg-mobile":["Space Grotesk"]},fontSize:{"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"label-data-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-ui":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"headline-xl-mobile":["26px",{"lineHeight":"34px","letterSpacing":"-0.015em","fontWeight":"600"}],"title-md":["15px",{"lineHeight":"22px","letterSpacing":"-0.005em","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-micro-mono":["10px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"600"}],"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-secondary selection:text-on-secondary"><aside class="fixed left-0 top-0 h-screen w-sidebar-width-expanded bg-surface-container-lowest border-r border-outline-variant/40 z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="px-space-lg py-space-lg border-b border-outline-variant/30"><div class="flex items-center gap-space-sm"><div class="w-2.5 h-2.5 rounded-none bg-secondary animate-pulse"></div><span class="font-headline-lg text-headline-lg text-primary tracking-tight">FARO</span></div><p class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold uppercase tracking-wider mt-space-2xs">INTELLIGENCE // VIGILANCIA TERRITORIAL</p><div class="mt-space-sm inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container border border-outline-variant/50 rounded"><span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">SISTEMA SENSOR SOCIAL</span></div></div><div class="px-space-md pt-space-md pb-space-2xs"><span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider px-space-sm">Flujo de Investigación</span></div><nav class="flex flex-col gap-space-2xs px-space-sm" data-active-classes="bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container"><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="login" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">00</span><span class="flex-1">Iniciar Sesión</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="entrada-faro" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">01</span><span class="flex-1">Entrada a FARO</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="panorama-riesgo" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">02</span><span class="flex-1">Panorama de Riesgo</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="seleccion-caso" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">03</span><span class="flex-1">Selección de Caso</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="expediente-escuela" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">04</span><span class="flex-1">Expediente de Escuela</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="conclusion-global" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">05</span><span class="flex-1">Conclusión Global</span></a><a aria-current="page" class="flex items-center justify-between px-space-sm py-space-xs rounded-lg transition-colors bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container" data-path="explorador-escuelas" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">06</span><span class="flex-1">Explorador de Escuelas</span></a></nav><div class="my-space-md border-t border-outline-variant/30"></div><div class="px-space-md pb-space-2xs"><span class="font-label-micro-mono text-label-micro-mono uppercase text-outline font-semibold tracking-wider px-space-sm">Referencia Técnica</span></div><nav class="flex flex-col gap-space-2xs px-space-sm mb-space-lg" data-active-classes="bg-primary-container text-on-primary font-semibold border-l-2 border-secondary-container"><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="como-funciona" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">US</span><span class="flex-1">Cómo funciona FARO</span></a><a class="flex items-center justify-between px-space-sm py-space-xs rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="guia-identidad" href="#"><span class="font-label-micro-mono text-label-micro-mono text-outline font-semibold mr-space-xs">ID</span><span class="flex-1">Guía de Identidad</span></a></nav></div><div class="p-space-md border-t border-outline-variant/30 bg-surface-container-low"><div class="flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono uppercase text-on-surface-variant font-semibold">ROLES &amp; ALCANCE</span><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span></div><p class="font-label-ui text-label-ui text-on-surface font-semibold truncate">Analista de Políticas</p><p class="font-label-micro-mono text-label-micro-mono text-on-surface-variant truncate">Coordinación Federal</p><div class="mt-space-xs px-space-xs py-space-2xs bg-surface-container-lowest border border-outline-variant/60 rounded flex items-center justify-between"><span class="font-label-micro-mono text-label-micro-mono text-secondary font-medium">4 Entidades</span><span class="font-label-micro-mono text-label-micro-mono text-outline font-normal">(09, 15, 19, 14)</span></div></div></div></aside><div class="pl-sidebar-width-expanded min-h-screen flex flex-col"><header class="fixed top-0 left-sidebar-width-expanded right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/40 z-40 flex items-center justify-between px-space-xl"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs font-label-data-mono text-label-data-mono text-on-surface-variant"><span class="text-primary font-semibold">FARO</span><span class="text-outline">/</span><span class="text-secondary font-medium">SURVEILLANCE_NODE</span></div><div class="h-4 w-px bg-outline-variant"></div><div class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container border border-outline-variant/40 rounded-full"><span class="font-label-micro-mono text-label-micro-mono text-on-surface font-medium">Alcance: 4 Entidades · CDMX, Edomex, NL, Jalisco</span></div></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs bg-surface-container-low border border-outline-variant/40 rounded"><span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span><span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">TELEMETRÍA // EN VIVO</span></div><div class="flex items-center gap-space-sm pl-space-md border-l border-outline-variant/40"><div class="text-right hidden sm:block"><p class="font-label-ui text-label-ui text-on-surface font-semibold">ANALISTA_04</p><p class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">FEDERAL_NODE</p></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background flex-1"><div class="flex flex-col w-full">
+<!-- Modal de Inducción Obligatorio (§6) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm p-space-md transition-opacity duration-300" id="induction-modal">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-xl shadow-2xl p-space-xl flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 bg-secondary"></span>
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-secondary font-semibold">INDUCCIÓN OPERATIVA // NODO 06</span>
+</div>
+<span class="font-label-data-mono text-label-data-mono text-outline">SYS_REV:2024.11</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Bienvenido al Explorador de Escuelas</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Esta herramienta permite consultar el índice de riesgo algorítmico FARO y su descomposición por vectores para cualquier centro educativo dentro del marco territorial operativo (CDMX, Edomex, Nuevo León y Jalisco).
+        </p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold">Marco de Cobertura Homologado</span>
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">4 Entidades Federativas · Conectividad CCT a nivel manzana censal INEGI/SEP.</span>
+</div>
+</div>
+<div class="flex justify-end pt-space-xs">
+<button class="bg-primary text-on-primary hover:bg-primary-container px-space-lg py-space-sm rounded-lg font-label-ui text-label-ui font-semibold shadow-md transition-all flex items-center gap-space-xs" id="close-modal-btn">
+<span class="">Entendido, comenzar exploración</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Workspace Principal (Desktop High-Density Matrix) -->
+<div class="p-space-xl flex flex-col gap-space-lg">
+<!-- Header Operativo & Restricción Territorial Explícita -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-space-2xs">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold tracking-wider uppercase">VISTA MAESTRA // EXPLORADOR MULTI-VECTOR</span>
+<span class="text-outline">·</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">DIAGNÓSTICO TERRITORIAL ESTRATIFICADO</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Explorador de Centros Educativos</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Exploración acotada estrictamente a las 4 entidades federativas del alcance del proyecto (Ciudad de México, Estado de México, Nuevo León y Jalisco).
+        </p>
+</div>
+<div class="flex items-center gap-space-sm self-start lg:self-center">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-space-md py-space-sm rounded-lg font-label-ui text-label-ui font-semibold flex items-center gap-space-xs transition-colors" id="btn-glosario">
+<span class="material-symbols-outlined text-[16px] text-secondary">help_outline</span>
+<span class="">Glosario de Vectores</span>
+</button>
+<div class="px-space-md py-space-sm bg-surface-container-high rounded-lg flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-data-mono text-label-data-mono text-on-surface font-semibold">18,492 PLANTALES VIGILADOS</span>
+</div>
+</div>
+</div>
+<!-- Barra de Filtros Obligatorios (Estrictamente los 3 soportados por backend) -->
+<section class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono uppercase text-secondary font-semibold">PARÁMETROS DE CONSULTA HOMOLOGADOS (BACKEND V1.4)</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">3 DE 3 FILTROS ACTIVOS</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- 1. Ciclo Escolar -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-ui text-label-ui text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[15px] text-secondary">calendar_month</span>
+<span class="">1. Ciclo Escolar</span>
+</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-space-md py-space-sm pr-space-xl rounded-lg focus:outline-none focus:bg-surface-container-lowest" id="filter-cycle">
+<option selected="" value="2024-2025">2024 - 2025 (En Proceso / Vigente)</option>
+<option value="2023-2024">2023 - 2024 (Consolidado Histórico)</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-sm top-2.5 text-[18px] text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- 2. Entidad Federativa (Acotada a 09, 15, 19, 14) -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-ui text-label-ui text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[15px] text-secondary">location_on</span>
+<span class="">2. Entidad Federativa (Marco 4 Entidades)</span>
+</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-space-md py-space-sm pr-space-xl rounded-lg focus:outline-none focus:bg-surface-container-lowest" id="filter-state">
+<option value="ALL">Todas las 4 entidades del alcance</option>
+<option value="09">09 - Ciudad de México</option>
+<option selected="" value="15">15 - Estado de México</option>
+<option value="19">19 - Nuevo León</option>
+<option value="14">14 - Jalisco</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-sm top-2.5 text-[18px] text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- 3. Nivel Educativo -->
+<div class="flex flex-col gap-space-2xs">
+<label class="font-label-ui text-label-ui text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[15px] text-secondary">school</span>
+<span class="">3. Nivel Educativo</span>
+</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm px-space-md py-space-sm pr-space-xl rounded-lg focus:outline-none focus:bg-surface-container-lowest" id="filter-level">
+<option value="ALL">Todos los niveles autorizados</option>
+<option value="PRE">Preescolar</option>
+<option value="PRI">Primaria</option>
+<option selected="" value="SEC">Secundaria</option>
+<option value="MED">Media Superior</option>
+</select>
+<span class="material-symbols-outlined absolute right-space-sm top-2.5 text-[18px] text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Layout Dividido: Maestro (Tabla y Triage) + Detalle (Expediente Activo) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Columna Izquierda / Central: Tabla de Resultados CCT (7 cols) -->
+<div class="xl:col-span-7 bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Encabezado de la Tabla -->
+<div class="p-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold uppercase">Muestra Filtrada: Estado de México (15) · Secundaria</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline font-normal">(k registros con nivel de atención alta)</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">ORDEN:</span>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold">FARO_INDEX DESC</span>
+</div>
+</div>
+<!-- Tabla Interactiva -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface font-label-micro-mono text-label-micro-mono uppercase tracking-wider">
+<th class="p-space-sm pl-space-md">CCT / Nombre del Plantel</th>
+<th class="p-space-sm">Municipio / Estado</th>
+<th class="p-space-sm text-center">Nivel</th>
+<th class="p-space-sm text-center">FARO Score</th>
+<th class="p-space-sm text-center">Atención</th>
+<th class="p-space-sm text-right pr-space-md">Acción</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y-0" id="school-table-body">
+<!-- Fila 1 (Seleccionada por defecto) -->
+<tr class="school-row bg-surface-container-high/60 cursor-pointer hover:bg-surface-container-high transition-colors" data-school-id="15EPR2390Z">
+<td class="p-space-sm pl-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">15EPR2390Z</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Secundaria Técnica No. 84 Lic. Isidro Fabela</span>
+</div>
+</td>
+<td class="p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold">Ecatepec de Morelos</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">Edomex (15)</span>
+</div>
+</td>
+<td class="p-space-sm text-center font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">Secundaria</td>
+<td class="p-space-sm text-center">
+<span class="font-label-data-mono text-label-data-mono font-semibold text-error">0.892</span>
+</td>
+<td class="p-space-sm text-center">
+<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs bg-error-container text-on-error-container rounded font-label-micro-mono text-label-micro-mono font-bold">
+                    ▲ ALTA
+                  </span>
+</td>
+<td class="p-space-sm text-right pr-space-md">
+<button class="bg-primary text-on-primary px-space-xs py-1 rounded font-label-micro-mono text-label-micro-mono hover:bg-primary-container">EXPEDIENTE</button>
+</td>
+</tr>
+<!-- Fila 2 -->
+<tr class="school-row hover:bg-surface-container transition-colors cursor-pointer" data-school-id="15DST0012A">
+<td class="p-space-sm pl-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">15DST0012A</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Secundaria Federalizada Netzahualcóyotl</span>
+</div>
+</td>
+<td class="p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold">Nezahualcóyotl</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">Edomex (15)</span>
+</div>
+</td>
+<td class="p-space-sm text-center font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">Secundaria</td>
+<td class="p-space-sm text-center">
+<span class="font-label-data-mono text-label-data-mono font-semibold text-error">0.814</span>
+</td>
+<td class="p-space-sm text-center">
+<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs bg-error-container text-on-error-container rounded font-label-micro-mono text-label-micro-mono font-bold">
+                    ▲ ALTA
+                  </span>
+</td>
+<td class="p-space-sm text-right pr-space-md">
+<button class="bg-surface-container-high text-on-surface px-space-xs py-1 rounded font-label-micro-mono text-label-micro-mono hover:bg-surface-variant">VER</button>
+</td>
+</tr>
+<!-- Fila 3 -->
+<tr class="school-row hover:bg-surface-container transition-colors cursor-pointer" data-school-id="09DES0045B">
+<td class="p-space-sm pl-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">09DES0045B</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Secundaria General Benito Juárez</span>
+</div>
+</td>
+<td class="p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold">Iztapalapa</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">CDMX (09)</span>
+</div>
+</td>
+<td class="p-space-sm text-center font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">Secundaria</td>
+<td class="p-space-sm text-center">
+<span class="font-label-data-mono text-label-data-mono font-semibold text-secondary font-bold">0.590</span>
+</td>
+<td class="p-space-sm text-center">
+<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono font-bold rounded">
+                    ■ MEDIA
+                  </span>
+</td>
+<td class="p-space-sm text-right pr-space-md">
+<button class="bg-surface-container-high text-on-surface px-space-xs py-1 rounded font-label-micro-mono text-label-micro-mono hover:bg-surface-variant">VER</button>
+</td>
+</tr>
+<!-- Fila 4 -->
+<tr class="school-row hover:bg-surface-container transition-colors cursor-pointer" data-school-id="14DST0109P">
+<td class="p-space-sm pl-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">14DST0109P</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Secundaria Técnica 109 Ramón López Velarde</span>
+</div>
+</td>
+<td class="p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold">Zapopan</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">Jalisco (14)</span>
+</div>
+</td>
+<td class="p-space-sm text-center font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">Secundaria</td>
+<td class="p-space-sm text-center">
+<span class="font-label-data-mono text-label-data-mono font-semibold text-secondary font-bold">0.420</span>
+</td>
+<td class="p-space-sm text-center">
+<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs bg-surface-container-high text-on-surface font-label-micro-mono text-label-micro-mono font-bold rounded">
+                    ■ MEDIA
+                  </span>
+</td>
+<td class="p-space-sm text-right pr-space-md">
+<button class="bg-surface-container-high text-on-surface px-space-xs py-1 rounded font-label-micro-mono text-label-micro-mono hover:bg-surface-variant">VER</button>
+</td>
+</tr>
+<!-- Fila 5 -->
+<tr class="school-row hover:bg-surface-container transition-colors cursor-pointer" data-school-id="19DST0021K">
+<td class="p-space-sm pl-space-md">
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">19DST0021K</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Secundaria Alfonso Reyes</span>
+</div>
+</td>
+<td class="p-space-sm">
+<div class="flex flex-col">
+<span class="font-label-ui text-label-ui text-on-surface font-semibold">Guadalupe</span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline">Nuevo León (19)</span>
+</div>
+</td>
+<td class="p-space-sm text-center font-label-micro-mono text-label-micro-mono text-on-surface-variant font-medium">Secundaria</td>
+<td class="p-space-sm text-center">
+<span class="font-label-data-mono text-label-data-mono font-semibold text-on-surface-variant">0.180</span>
+</td>
+<td class="p-space-sm text-center">
+<span class="inline-flex items-center gap-space-2xs px-space-xs py-space-2xs bg-surface-container-low text-secondary font-label-micro-mono text-label-micro-mono font-bold rounded">
+                    ● BAJA
+                  </span>
+</td>
+<td class="p-space-sm text-right pr-space-md">
+<button class="bg-surface-container-high text-on-surface px-space-xs py-1 rounded font-label-micro-mono text-label-micro-mono hover:bg-surface-variant">VER</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Footer Paginación y Criterios Metodológicos -->
+<div class="p-space-sm bg-surface-container-low flex items-center justify-between">
+<span class="font-label-micro-mono text-label-micro-mono text-on-surface-variant">k de M planteles en coincidencia zonal</span>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-xs py-1 bg-surface-container-lowest text-outline rounded font-label-micro-mono text-label-micro-mono" disabled="">ANT</button>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-bold px-space-xs">1 / 823</span>
+<button class="px-space-xs py-1 bg-surface-container-lowest text-on-surface rounded font-label-micro-mono text-label-micro-mono hover:bg-surface-container-high">SIG</button>
+</div>
+</div>
+</div>
+<!-- Columna Derecha: Expediente de Escuela Reutilizado (§6 y §4) (5 cols) -->
+<div class="xl:col-span-5 flex flex-col gap-space-md">
+<!-- Expediente Card Principal -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg flex flex-col gap-space-md">
+<!-- Cabecera del Plantel Seleccionado -->
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-space-2xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary font-semibold uppercase">EXPEDIENTE DIAGNÓSTICO EN TIEMPO REAL</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface" id="exp-cct">15EPR2390Z</h2>
+<p class="font-body-md text-body-md text-on-surface-variant" id="exp-name">Secundaria Técnica No. 84 Lic. Isidro Fabela</p>
+<span class="font-label-micro-mono text-label-micro-mono text-outline" id="exp-loc">Ecatepec de Morelos, Estado de México (15) · Turno Matutino</span>
+</div>
+<div class="flex flex-col items-end" id="exp-badge">
+<span class="px-space-sm py-space-xs bg-error-container text-on-error-container rounded font-label-ui text-label-ui font-bold flex items-center gap-space-2xs">
+                ▲ ATENCIÓN ALTA
+              </span>
+<span class="font-label-micro-mono text-label-micro-mono text-outline mt-1">PERCENTIL NACIONAL: 96.4%</span>
+</div>
+</div>
+<!-- Métrica Central de Riesgo Global -->
+<div class="bg-surface-container-low p-space-md rounded-xl flex items-center justify-between"><div class="flex flex-col"><span class="font-label-micro-mono text-label-micro-mono uppercase text-on-surface-variant font-semibold">Índice Algorítmico FARO (Normalizado)</span><div class="flex items-baseline gap-space-xs"><span class="font-label-data-mono text-3xl font-bold text-on-surface tracking-tight" id="exp-score">0.572</span><span class="font-label-micro-mono text-label-micro-mono text-outline">/ 1.000</span></div><span class="font-label-micro-mono text-label-micro-mono text-outline font-medium">Cálculo sobre 3 de 6 vectores con cobertura censal activa</span></div><div class="w-20 h-20 relative flex items-center justify-center bg-surface-container-lowest rounded-xl border border-outline-variant/50 p-space-xs"><div class="flex flex-col items-center justify-center text-center"><span class="font-label-data-mono text-headline-sm font-bold text-on-surface">57.2</span><span class="font-label-micro-mono text-[9px] uppercase tracking-wider text-outline">Percentil</span></div></div></div>
+<!-- Descomposición por Vectores (6 Drivers D1-D6 con Rayado SIN_DATO) -->
+<div class="flex flex-col gap-space-sm"><div class="flex items-center justify-between"><span class="font-label-ui text-label-ui text-on-surface font-semibold uppercase">Descomposición por Drivers (0.0 - 10.0)</span><span class="font-label-micro-mono text-label-micro-mono text-outline">ESCALA OPERATIVA HOMOLOGADA</span></div><div class="flex flex-col gap-space-xs"><!-- D1: Pobreza Multidimensional --><div class="flex flex-col gap-1 p-space-2xs rounded bg-surface-container-low/40"><div class="flex justify-between font-label-micro-mono text-label-micro-mono"><span class="text-on-surface font-medium">D1 · Pobreza Multidimensional (INEGI)</span><span class="font-label-data-mono font-semibold text-on-surface">6.4 / 10.0</span></div><div class="w-full h-2 bg-surface-container rounded overflow-hidden"><div class="h-full bg-primary/70 rounded" style="width: 64%"></div></div></div><!-- D2: Inseguridad Perimetral (Dominante con contorno ámbar) --><div class="flex flex-col gap-1 p-space-2xs rounded bg-surface-container-low/80 border-2" style="border-color: #B45309;"><div class="flex justify-between font-label-micro-mono text-label-micro-mono items-center"><div class="flex items-center gap-space-2xs"><span class="w-1.5 h-1.5 rounded-full" style="background-color: #B45309;"></span><span class="text-on-surface font-bold">D2 · Inseguridad Perimetral (SESNSP)</span></div><span class="font-label-data-mono font-bold" style="color: #B45309;">7.8 / 10.0 [DOMINANTE]</span></div><div class="w-full h-2 bg-surface-container rounded overflow-hidden"><div class="h-full rounded" style="width: 78%; background-color: #0F172A;"></div></div></div><!-- D3: Rezago de Infraestructura Física (SIN_DATO) --><div class="flex flex-col gap-1 p-space-2xs rounded bg-surface-container-low/40"><div class="flex justify-between font-label-micro-mono text-label-micro-mono"><span class="text-on-surface-variant font-medium">D3 · Rezago de Infraestructura Física</span><span class="text-outline font-medium flex items-center gap-space-2xs"><span class="material-symbols-outlined text-[12px]">sensors_off</span><span class="">SIN_DATO</span></span></div><div class="w-full h-2 rounded overflow-hidden bg-surface-container relative" style="background-image: repeating-linear-gradient(45deg, #c6c6cd 0, #c6c6cd 2px, #e5eeff 2px, #e5eeff 6px);"></div></div><!-- D4: Conectividad Digital --><div class="flex flex-col gap-1 p-space-2xs rounded bg-surface-container-low/40"><div class="flex justify-between font-label-micro-mono text-label-micro-mono"><span class="text-on-surface font-medium">D4 · Conectividad Digital y Red</span><span class="font-label-data-mono font-semibold text-on-surface">4.2 / 10.0</span></div><div class="w-full h-2 bg-surface-container rounded overflow-hidden"><div class="h-full bg-primary/40 rounded" style="width: 42%"></div></div></div><!-- D5: Estrés Hídrico (SIN_DATO rayado según directriz) --><div class="flex flex-col gap-1 p-space-2xs rounded bg-surface-container-low/40"><div class="flex justify-between font-label-micro-mono text-label-micro-mono"><span class="text-on-surface-variant font-medium">D5 · Estrés Hídrico (Red Hidráulica)</span><span class="text-outline font-medium flex items-center gap-space-2xs"><span class="material-symbols-outlined text-[12px]">sensors_off</span><span class="">SIN_DATO (En integración)</span></span></div><div class="w-full h-2 rounded overflow-hidden bg-surface-container relative" style="background-image: repeating-linear-gradient(45deg, #c6c6cd 0, #c6c6cd 2px, #e5eeff 2px, #e5eeff 6px);"></div></div><!-- D6: Calidad del Aire (SIN_DATO rayado) --><div class="flex flex-col gap-1 p-space-2xs rounded bg-surface-container-low/40"><div class="flex justify-between font-label-micro-mono text-label-micro-mono"><span class="text-on-surface-variant font-medium">D6 · Calidad del Aire y Emisiones</span><span class="text-outline font-medium flex items-center gap-space-2xs"><span class="material-symbols-outlined text-[12px]">sensors_off</span><span class="">SIN_DATO (Estación fuera de radio)</span></span></div><div class="w-full h-2 rounded overflow-hidden bg-surface-container relative" style="background-image: repeating-linear-gradient(45deg, #c6c6cd 0, #c6c6cd 2px, #e5eeff 2px, #e5eeff 6px);"></div></div></div></div>
+<!-- Driver Dominante y Recomendación Institucional Mandatoria -->
+<div class="bg-surface-container p-space-md rounded-xl flex flex-col gap-space-sm"><div class="flex items-center justify-between"><span class="font-label-ui text-label-ui text-on-surface font-bold flex items-center gap-space-xs"><span class="material-symbols-outlined text-[18px]" style="color: #B45309;">crisis_alert</span><span class="">Driver Crítico Territorial</span></span><span class="px-space-xs py-space-2xs text-white rounded font-label-micro-mono text-label-micro-mono font-semibold uppercase" style="background-color: #B45309;">D2: INSEGURIDAD PERIMETRAL</span></div><div class="flex flex-col gap-space-2xs"><p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">El centro educativo registra una concentración relativa alta en la tasa de incidencia delictiva perimetral dentro del buffer censal de 500 metros en comparación con el promedio municipal.</p></div><div class="bg-surface-container-lowest p-space-sm rounded-lg flex flex-col gap-space-2xs border border-outline-variant/40"><span class="font-label-micro-mono text-label-micro-mono uppercase text-secondary font-semibold">RECOMENDACIÓN INSTITUCIONAL FARO (CATÁLOGO HOMOLOGADO):</span><p class="font-body-sm text-body-sm text-on-surface font-medium">Coordinar con seguridad pública rutas escolares seguras y entornos protegidos en los horarios de entrada y salida del turno matutino.</p></div></div>
+<!-- Botón de Acción Directa -->
+<div class="flex justify-end gap-space-sm">
+<button class="bg-surface-container-high hover:bg-surface-variant text-on-surface px-space-md py-space-sm rounded-lg font-label-ui text-label-ui font-semibold flex items-center gap-space-xs transition-colors">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span class="">Exportar Ficha CCT (PDF)</span>
+</button>
+<button class="bg-primary hover:bg-primary-container text-on-primary px-space-md py-space-sm rounded-lg font-label-ui text-label-ui font-semibold flex items-center gap-space-xs transition-colors">
+<span class="material-symbols-outlined text-[16px]">assignment_add</span>
+<span class="">Vincular a Mesa de Enlace</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Desplegable del Glosario de Vectores D1-D6 -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm p-space-md hidden" id="glosario-modal">
+<div class="bg-surface-container-lowest max-w-2xl w-full rounded-xl shadow-2xl p-space-xl flex flex-col gap-space-md">
+<div class="flex items-center justify-between border-b-0 pb-space-2xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">menu_book</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Glosario de Vectores de Riesgo (D1 - D6)</h3>
+</div>
+<button class="text-outline hover:text-on-surface p-1 rounded" id="close-glosario-btn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md max-h-[60vh] overflow-y-auto pr-space-xs">
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<span class="font-label-ui text-label-ui text-secondary font-bold">D1 · Pobreza Multidimensional</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Índice CONEVAL georreferenciado por AGEB que mide carencias sociales, rezago educativo en el hogar e ingresos per cápita.</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<span class="font-label-ui text-label-ui text-secondary font-bold">D2 · Inseguridad Perimetral</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Carpetas de investigación del Secretariado Ejecutivo (SESNSP) en un radio buffer de 500m del plantel (robos, armas, violencia).</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<span class="font-label-ui text-label-ui text-secondary font-bold">D3 · Infraestructura Física</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Diagnóstico de estado estructural de aulas, baños operativos, techumbres y bardas perimetrales según censo SEP/INIFED.</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<span class="font-label-ui text-label-ui text-secondary font-bold">D4 · Conectividad Digital</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Disponibilidad real de ancho de banda, acceso a terminales por alumno y cobertura de la Red Nacional de Telecomunicaciones.</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<span class="font-label-ui text-label-ui text-secondary font-bold">D5 · Estrés Hídrico</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Frecuencia de tandeo, salubridad del agua y proximidad a acuíferos sobreexplotados con datos de CONAGUA y organismos locales.</p>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1">
+<span class="font-label-ui text-label-ui text-secondary font-bold">D6 · Calidad del Aire</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Promedios de PM2.5, PM10 y Ozono en estaciones de monitoreo ambiental del SINICA dentro de un radio de influencia de 10 km.</p>
+</div>
+</div>
+<div class="flex justify-end pt-space-xs">
+<button class="bg-primary text-on-primary px-space-lg py-space-sm rounded-lg font-label-ui text-label-ui font-semibold" id="close-glosario-footer-btn">Cerrar Glosario</button>
+</div>
+</div>
+</div>
+<!-- Asistente FARO Flotante (Cero menciones de terceros, estrictamente FARO AI) -->
+<div class="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+<!-- Ventana de Consulta Inteligente Expandible -->
+<div class="hidden mb-space-sm w-96 bg-primary-container text-on-primary rounded-xl shadow-2xl p-space-md flex flex-col gap-space-sm transition-all transform origin-bottom-right" id="faro-assistant-window">
+<div class="flex items-center justify-between pb-space-2xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-ping"></div>
+<span class="font-label-micro-mono text-label-micro-mono text-secondary-container font-semibold tracking-wider">FARO // ASISTENTE TERRITORIAL</span>
+</div>
+<button class="text-on-primary-container hover:text-on-primary" id="btn-close-faro-assistant">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-inverse-on-surface">
+        Consulta patrones contextuales en las 4 entidades operativas (CDMX, Edomex, Nuevo León, Jalisco).
+      </p>
+<div class="bg-inverse-surface p-space-sm rounded-lg flex flex-col gap-space-xs">
+<span class="font-label-micro-mono text-label-micro-mono text-secondary-fixed-dim uppercase">SUGERENCIA DE CONSULTA:</span>
+<span class="font-body-sm text-body-sm text-on-primary italic">"¿Cuántas secundarias en Ecatepec presentan estrés hídrico mayor a 8.5?"</span>
+</div>
+<div class="relative mt-space-xs">
+<input class="w-full bg-inverse-surface text-on-primary placeholder-on-primary-container px-space-md py-space-sm pr-space-xl rounded-lg font-body-sm text-body-sm focus:outline-none" placeholder="Escribe tu consulta territorial..." type="text">
+<button class="absolute right-2 top-2 text-secondary-container hover:text-on-primary">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+<!-- Botón / Dock Flotante del Asistente FARO -->
+<button class="bg-primary-container hover:bg-inverse-surface text-on-primary px-space-md py-space-sm rounded-full shadow-2xl flex items-center gap-space-sm transition-transform hover:scale-105" id="btn-toggle-faro-assistant">
+<div class="w-3 h-3 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="font-label-ui text-label-ui font-semibold tracking-wide">FARO // COPILOT</span>
+<span class="material-symbols-outlined text-[18px] text-secondary-container">psychology</span>
+</button>
+</div>
+<!-- Script para interactividad y manejo de datos de escuela -->
+<script>
+    (function() {
+      // Manejo del Modal de Inducción
+      const inductionModal = document.getElementById('induction-modal');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+
+      closeModalBtn.addEventListener('click', () => {
+        inductionModal.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          inductionModal.classList.add('hidden');
+        }, 300);
+      });
+
+      // Manejo del Modal de Glosario
+      const glosarioModal = document.getElementById('glosario-modal');
+      const btnGlosario = document.getElementById('btn-glosario');
+      const closeGlosarioBtn = document.getElementById('close-glosario-btn');
+      const closeGlosarioFooterBtn = document.getElementById('close-glosario-footer-btn');
+
+      btnGlosario.addEventListener('click', () => {
+        glosarioModal.classList.remove('hidden');
+      });
+
+      const hideGlosario = () => {
+        glosarioModal.classList.add('hidden');
+      };
+
+      closeGlosarioBtn.addEventListener('click', hideGlosario);
+      closeGlosarioFooterBtn.addEventListener('click', hideGlosario);
+
+      // Manejo de la Ventana del Asistente FARO
+      const assistantBtn = document.getElementById('btn-toggle-faro-assistant');
+      const assistantWindow = document.getElementById('faro-assistant-window');
+      const closeAssistantBtn = document.getElementById('btn-close-faro-assistant');
+
+      assistantBtn.addEventListener('click', () => {
+        assistantWindow.classList.toggle('hidden');
+      });
+
+      closeAssistantBtn.addEventListener('click', () => {
+        assistantWindow.classList.add('hidden');
+      });
+
+      // Selección de filas y reactividad del Expediente
+      const schoolRows = document.querySelectorAll('.school-row');
+      const expCct = document.getElementById('exp-cct');
+      const expName = document.getElementById('exp-name');
+      const expLoc = document.getElementById('exp-loc');
+      const expScore = document.getElementById('exp-score');
+      const expBadge = document.getElementById('exp-badge');
+
+      const mockData = {
+        '15EPR2390Z': {
+          cct: '15EPR2390Z',
+          name: 'Secundaria Técnica No. 84 Lic. Isidro Fabela',
+          loc: 'Ecatepec de Morelos, Estado de México (15) · Turno Matutino',
+          score: '0.892',
+          badge: '▲ ATENCIÓN ALTA',
+          badgeBg: 'bg-error-container',
+          badgeText: 'text-on-error-container',
+          scoreColor: 'text-error'
+        },
+        '15DST0012A': {
+          cct: '15DST0012A',
+          name: 'Secundaria Federalizada Netzahualcóyotl',
+          loc: 'Nezahualcóyotl, Estado de México (15) · Turno Mixto',
+          score: '0.814',
+          badge: '▲ ATENCIÓN ALTA',
+          badgeBg: 'bg-error-container',
+          badgeText: 'text-on-error-container',
+          scoreColor: 'text-error'
+        },
+        '09DES0045B': {
+          cct: '09DES0045B',
+          name: 'Secundaria General Benito Juárez',
+          loc: 'Iztapalapa, Ciudad de México (09) · Turno Vespertino',
+          score: '0.590',
+          badge: '■ ATENCIÓN MEDIA',
+          badgeBg: 'bg-surface-container-high',
+          badgeText: 'text-on-surface',
+          scoreColor: 'text-secondary'
+        },
+        '14DST0109P': {
+          cct: '14DST0109P',
+          name: 'Secundaria Técnica 109 Ramón López Velarde',
+          loc: 'Zapopan, Jalisco (14) · Turno Matutino',
+          score: '0.420',
+          badge: '■ ATENCIÓN MEDIA',
+          badgeBg: 'bg-surface-container-high',
+          badgeText: 'text-on-surface',
+          scoreColor: 'text-secondary'
+        },
+        '19DST0021K': {
+          cct: '19DST0021K',
+          name: 'Secundaria Alfonso Reyes',
+          loc: 'Guadalupe, Nuevo León (19) · Turno Continuo',
+          score: '0.180',
+          badge: '● ATENCIÓN BAJA',
+          badgeBg: 'bg-surface-container-low',
+          badgeText: 'text-secondary',
+          scoreColor: 'text-on-surface-variant'
+        }
+      };
+
+      schoolRows.forEach(row => {
+        row.addEventListener('click', () => {
+          schoolRows.forEach(r => r.classList.remove('bg-surface-container-high/60'));
+          row.classList.add('bg-surface-container-high/60');
+
+          const schoolId = row.getAttribute('data-school-id');
+          const data = mockData[schoolId];
+          if (data) {
+            expCct.textContent = data.cct;
+            expName.textContent = data.name;
+            expLoc.textContent = data.loc;
+            expScore.textContent = data.score;
+            expScore.className = `font-label-data-mono text-3xl font-bold tracking-tight ${data.scoreColor}`;
+
+            expBadge.innerHTML = `
+              <span class="px-space-sm py-space-xs ${data.badgeBg} ${data.badgeText} rounded font-label-ui text-label-ui font-bold flex items-center gap-space-2xs">
+                ${data.badge}
+              </span>
+              <span class="font-label-micro-mono text-label-micro-mono text-outline mt-1">PERCENTIL REGIONAL OPERATIVO</span>
+            `;
+          }
+        });
+      });
+    })();
+  </script>
+</div></main></div>
+
+</body></html>

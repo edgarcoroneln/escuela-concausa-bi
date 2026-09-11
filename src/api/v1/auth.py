@@ -22,16 +22,19 @@ from __future__ import annotations
 import secrets
 from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from typing import Literal
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import RedirectResponse
 
 from src.api.config import get_settings
-from src.api.schemas import ExchangeIn, RefreshIn, TokenPair, UserOut
+from src.api.schemas import ExchangeIn, RefreshIn, SesionOut, TokenPair, UserOut
 from src.api.security.codigos_login import (
     AlmacenCodigos,
     IdentidadSesion,
     get_almacen_codigos,
 )
+from src.api.security.cookies import COOKIE_REFRESCO, borrar_sesion, sembrar_sesion
 from src.api.security.deps import get_current_user, get_google_verifier
 from src.api.security.google import (
     GoogleNotConfigured,
@@ -176,11 +179,37 @@ def callback(
     )
 
 
-@router.post("/refresh", response_model=TokenPair)
-def refresh(body: RefreshIn) -> TokenPair:
-    """Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente."""
+@router.post("/refresh", response_model=TokenPair | SesionOut)
+def refresh(
+    request: Request,
+    respuesta: Response,
+    body: RefreshIn | None = None,
+) -> TokenPair | SesionOut:
+    """Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.
+
+    **Dos modos que nunca se mezclan** (ADR-012). El modo lo determina *de dónde vino el token*, que
+    es un dato inequívoco y no una bandera que el cliente pueda equivocarse en mandar:
+
+    | Token en | Modo | Cookies | Cuerpo de la respuesta |
+    |---|---|---|---|
+    | `body.refresh_token` | **legacy** | no las toca | `TokenPair` |
+    | cookie `faro_refresco` | **cookie** | las renueva | `SesionOut` — **sin JWT** |
+
+    **Por qué el modo cookie no devuelve los tokens.** La cookie de refresco está acotada a esta
+    ruta, así que el navegador la adjunta aquí y solo aquí. Si la respuesta trajera el `TokenPair`,
+    un XSS podría hacer `fetch()` contra este endpoint y **leer los dos tokens del JSON**, anulando
+    el beneficio de `HttpOnly`: la credencial volvería a ser alcanzable desde JavaScript. Por eso el
+    modo cookie responde solo con `expira_en`, que es una duración y no un secreto.
+
+    El modo legacy **no siembra cookies**: quien administra el token él mismo (el shell de Streamlit,
+    las pruebas, cualquier cliente que no sea navegador) recibe exactamente lo de siempre.
+    """
+    desde_cookie = body is None
+    token = request.cookies.get(COOKIE_REFRESCO) if desde_cookie else body.refresh_token
+    if not token:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Falta el refresh token.")
     try:
-        claims = verify_refresh_token(body.refresh_token)
+        claims = verify_refresh_token(token)
     except AuthError as exc:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, detail="Refresh token inválido o expirado."
@@ -188,37 +217,87 @@ def refresh(body: RefreshIn) -> TokenPair:
     email = claims.get("email", "")
     role = resolve_role(email)
     # El `name` viaja tambien en el refresh: al renovar no hay id_token de Google que reconsultar.
-    return create_token_pair(
+    par = create_token_pair(
         sub=claims["sub"], role=role, email=email, name=claims.get("name", "")
     )
+    if not desde_cookie:
+        return par
+    sembrar_sesion(respuesta, par, request)
+    return SesionOut(expira_en=par.expires_in)
 
 
-@router.post("/exchange", response_model=TokenPair)
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(request: Request, respuesta: Response) -> None:
+    """Cierra la sesión borrando **las dos** cookies (ADR-012).
+
+    No exige token: cerrar sesión con una credencial ya vencida tiene que funcionar igual, o la
+    persona se queda con cookies muertas y sin forma de deshacerse de ellas. Y borra la de refresco
+    además de la de acceso — olvidarla dejaría la sesión viva 7 días.
+
+    Los clientes que administran el token ellos mismos (Streamlit, pruebas) no necesitan llamarlo:
+    para ellos cerrar sesión sigue siendo descartar el par que tienen guardado.
+    """
+    # Se mutan las cabeceras de la respuesta inyectada en vez de construir una nueva: `dict()` sobre
+    # las cabeceras **colapsa los `Set-Cookie` repetidos en uno solo**, y así se borraba la cookie de
+    # sesión pero no la de refresco -- dejando la sesión reconstruible 7 días.
+    borrar_sesion(respuesta, request)
+
+
+@router.post("/exchange", response_model=TokenPair | SesionOut)
 def exchange(
+    request: Request,
+    respuesta: Response,
     body: ExchangeIn,
+    sesion: Literal["cookie", "token"] = Query(
+        default="token",
+        description=(
+            "`token` (por defecto): devuelve el `TokenPair` y no toca cookies — el comportamiento "
+            "de siempre. `cookie`: siembra la sesión `httpOnly` y responde **sin JWT** (ADR-012)."
+        ),
+    ),
     almacen: AlmacenCodigos = Depends(get_almacen_codigos),
-) -> TokenPair:
+) -> TokenPair | SesionOut:
     """Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).
 
-    Lo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo
-    de la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento
+    Quién lo llama depende del modo: en **legacy** lo llama el **servidor** de Streamlit, y por eso
+    los tokens viajan en el cuerpo y nunca por la URL; en **cookie** lo llama el **navegador** del
+    frontend de React, a través del proxy same-origin de nginx, y los tokens no salen de las cookies
+    `httpOnly`. El codigo se consume en el primer canje; un segundo intento
     con el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir
     entre los casos.
 
     El rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:
     si `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.
+
+    **Dos modos que nunca se mezclan** (`ADR-012`), elegidos con `?sesion=`:
+
+    | `?sesion=` | Cookies | Cuerpo de la respuesta |
+    |---|---|---|
+    | `token` *(por defecto)* | no las toca | `TokenPair` — **el comportamiento de siempre** |
+    | `cookie` | siembra la sesion | `SesionOut` — **sin JWT** |
+
+    Aqui el modo tiene que ser explicito porque el cuerpo es identico en los dos casos: no hay nada
+    en la peticion que distinga al servidor de Streamlit del navegador. El **default es el legacy**,
+    asi que ningun cliente existente cambia de comportamiento al desplegar esto.
+
+    **Por que el modo cookie no devuelve los tokens:** si lo hiciera, el JWT volveria a ser
+    alcanzable desde JavaScript y `HttpOnly` dejaria de servir para nada. Ver `SesionOut`.
     """
     identidad = almacen.canjear(body.code)
     if identidad is None:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, detail="Codigo de sesion invalido o expirado."
         )
-    return create_token_pair(
+    par = create_token_pair(
         sub=identidad.sub,
         role=resolve_role(identidad.email),
         email=identidad.email,
         name=identidad.name,
     )
+    if sesion == "token":
+        return par
+    sembrar_sesion(respuesta, par, request)
+    return SesionOut(expira_en=par.expires_in)
 
 
 @router.get("/me", response_model=UserOut)
