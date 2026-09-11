@@ -84,12 +84,40 @@ no *"hay logout"*.
 
 ## Seguridad / calidad
 
-- [x] **28 casos** en `test_auth_cookies.py`; 174 verdes en toda la superficie de auth y contrato
+- [x] **34 casos** en `test_auth_cookies.py`; 150 verdes en toda la superficie de auth y contrato
+- [x] Las seis pruebas de la fuga de token, **verificadas reprobando** con el defecto reintroducido
 - [x] `ruff check .` (todo el repo, como el CI) limpio
 - [x] OpenAPI reexportado; `test_api_contract.py` verde
 - [x] Los atributos de la cookie están **fijados por pruebas**, no solo escritos: `HttpOnly`,
       `SameSite=Lax`, `Path` de la de refresco y **ausencia de `Domain`**
 - [x] Retrocompatibilidad probada: el cuerpo sigue trayendo el par y el refresco por cuerpo funciona
+
+## La corrección que pidió el PO, y que es la parte importante
+
+Edgar solicitó cambios al revisar el PR, y **el punto de seguridad era real y mío**: `/auth/refresh`
+aceptaba la cookie y **devolvía el `TokenPair` en el JSON**. Como la cookie de refresco está acotada
+a esa ruta, el navegador la adjunta ahí — así que un XSS podía hacer `fetch()` contra el endpoint y
+**leer los dos tokens**, dejando `HttpOnly` sin ningún efecto. Todo el diseño se caía por ahí.
+
+Corregido separando los modos, que ya **no se mezclan**:
+
+| Endpoint | Modo | Cómo se elige | Cookies | Cuerpo |
+|---|---|---|---|---|
+| `/auth/exchange` | legacy *(default)* | sin `?sesion` | no las toca | `TokenPair` |
+| `/auth/exchange` | cookie | `?sesion=cookie` | siembra | `SesionOut` — **sin JWT** |
+| `/auth/refresh` | legacy | token en el **cuerpo** | no las toca | `TokenPair` |
+| `/auth/refresh` | cookie | token en la **cookie** | renueva | `SesionOut` — **sin JWT** |
+
+Dos detalles del diseño:
+
+- **En `refresh` el modo se infiere de dónde vino el token**, que es inequívoco. En `exchange` hace
+  falta `?sesion=` porque el cuerpo es idéntico en los dos casos: nada distingue al servidor de
+  Streamlit del navegador.
+- **El default es el legacy**, así que ahora la retrocompatibilidad es más fuerte que antes: ningún
+  cliente existente cambia de comportamiento, ni siquiera recibiendo cookies que no pidió.
+
+Seis pruebas nuevas lo fijan, **verificadas reprobando** con la fuga reintroducida. Una busca la
+forma `eyJ` en el texto crudo por si alguien anidara el token bajo otro nombre.
 
 ## Residuales aceptados — registrados, no resueltos
 

@@ -82,6 +82,14 @@ def _codigo(almacen: AlmacenMemoria) -> str:
 
 
 def _canjear(client: TestClient, almacen: AlmacenMemoria):
+    """Canje en **modo cookie**: siembra la sesion y NO devuelve JWT."""
+    return client.post(
+        RUTA_EXCHANGE, params={"sesion": "cookie"}, json={"code": _codigo(almacen)}
+    )
+
+
+def _canjear_legacy(client: TestClient, almacen: AlmacenMemoria):
+    """Canje en **modo legacy** (el default): devuelve el `TokenPair` y no toca cookies."""
     return client.post(RUTA_EXCHANGE, json={"code": _codigo(almacen)})
 
 
@@ -97,19 +105,23 @@ def test_el_canje_siembra_las_dos_cookies(client: TestClient, almacen: AlmacenMe
     assert COOKIE_REFRESCO in r.cookies
 
 
-def test_el_cuerpo_sigue_trayendo_el_par(client: TestClient, almacen: AlmacenMemoria) -> None:
-    """Aditivo, no sustitutivo: el shell de Streamlit consume el cuerpo y no debe romperse."""
-    cuerpo = _canjear(client, almacen).json()
+def test_el_modo_legacy_sigue_trayendo_el_par(
+    client: TestClient, almacen: AlmacenMemoria
+) -> None:
+    """El default no cambia: el shell de Streamlit consume el cuerpo y no debe romperse."""
+    cuerpo = _canjear_legacy(client, almacen).json()
     assert cuerpo["access_token"]
     assert cuerpo["refresh_token"]
     assert cuerpo["token_type"] == "bearer"
 
 
-def test_la_cookie_de_sesion_lleva_el_access_token(
+def test_el_modo_legacy_no_siembra_cookies(
     client: TestClient, almacen: AlmacenMemoria
 ) -> None:
-    r = _canjear(client, almacen)
-    assert r.cookies[COOKIE_SESION] == r.json()["access_token"]
+    """Los modos no se mezclan: quien administra el token el mismo no recibe sesion por cookie."""
+    r = _canjear_legacy(client, almacen)
+    assert COOKIE_SESION not in r.cookies
+    assert COOKIE_REFRESCO not in r.cookies
 
 
 def test_un_codigo_invalido_no_siembra_nada(client: TestClient, almacen: AlmacenMemoria) -> None:
@@ -232,7 +244,7 @@ def test_el_refresco_funciona_solo_con_la_cookie(
     _canjear(client, almacen)
     r = client.post(RUTA_REFRESH)
     assert r.status_code == 200, r.text
-    assert r.json()["access_token"]
+    assert r.json()["expira_en"] > 0
 
 
 def test_el_refresco_renueva_la_cookie(client: TestClient, almacen: AlmacenMemoria) -> None:
@@ -246,6 +258,7 @@ def test_el_refresco_por_cuerpo_sigue_funcionando(client: TestClient) -> None:
     par = create_token_pair(sub="u-1", role=Rol.ciudadano, email=EMAIL, name="")
     r = client.post(RUTA_REFRESH, json={"refresh_token": par.refresh_token})
     assert r.status_code == 200
+    assert r.json()["access_token"]
 
 
 def test_refrescar_sin_cuerpo_ni_cookie_da_401(client: TestClient) -> None:
@@ -256,7 +269,7 @@ def test_un_access_token_no_sirve_para_refrescar(
     client: TestClient, almacen: AlmacenMemoria
 ) -> None:
     """Los dos tokens son distintos: confundirlos sería aceptar el de vida corta como el de 7 días."""
-    acceso = _canjear(client, almacen).json()["access_token"]
+    acceso = _canjear_legacy(client, almacen).json()["access_token"]
     assert client.post(RUTA_REFRESH, json={"refresh_token": acceso}).status_code == 401
 
 
@@ -310,3 +323,67 @@ def test_las_cabeceras_acompanan_tambien_a_un_error(client: TestClient) -> None:
     r = client.post(RUTA_EXCHANGE, json={"code": "x" * 32})
     assert r.status_code == 401
     assert r.headers["X-Content-Type-Options"] == "nosniff"
+
+
+# --------------------------------------------------------------------------- #
+# 7. El modo cookie NUNCA devuelve un JWT en el cuerpo
+#
+# Es el núcleo de la corrección que pidió el PO al revisar el PR #304, y es la razón de ser del
+# modo: la cookie de refresco está acotada a `/auth/refresh`, así que el navegador la adjunta ahí.
+# Si la respuesta trajera el par, un XSS podría hacer `fetch()` contra ese endpoint y **leer los dos
+# tokens del JSON**, dejando `HttpOnly` sin ningún efecto. Estas pruebas existen para que nadie
+# "mejore" la respuesta devolviendo el token por comodidad del frontend.
+# --------------------------------------------------------------------------- #
+
+_CLAVES_PROHIBIDAS = ("access_token", "refresh_token", "token", "jwt")
+
+
+def _sin_jwt(cuerpo: dict) -> None:
+    for clave in _CLAVES_PROHIBIDAS:
+        assert clave not in cuerpo, f"el modo cookie filtró `{clave}` en el cuerpo"
+
+
+def test_el_canje_en_modo_cookie_no_devuelve_jwt(
+    client: TestClient, almacen: AlmacenMemoria
+) -> None:
+    _sin_jwt(_canjear(client, almacen).json())
+
+
+def test_el_refresco_en_modo_cookie_no_devuelve_jwt(
+    client: TestClient, almacen: AlmacenMemoria
+) -> None:
+    """El caso que un XSS explotaría: llamar al refresh y leer la respuesta."""
+    _canjear(client, almacen)
+    _sin_jwt(client.post(RUTA_REFRESH).json())
+
+
+@pytest.mark.parametrize("ruta", [RUTA_EXCHANGE, RUTA_REFRESH])
+def test_ningun_jwt_aparece_como_texto_en_la_respuesta_del_modo_cookie(
+    client: TestClient, almacen: AlmacenMemoria, ruta: str
+) -> None:
+    """Más fuerte que mirar claves: un JWT tiene forma reconocible (`eyJ...`), así que se busca en
+    el texto crudo. Cubre el caso de que alguien lo anide bajo otro nombre."""
+    if ruta == RUTA_EXCHANGE:
+        texto = _canjear(client, almacen).text
+    else:
+        _canjear(client, almacen)
+        texto = client.post(RUTA_REFRESH).text
+    assert "eyJ" not in texto, "hay algo con forma de JWT en el cuerpo del modo cookie"
+
+
+def test_el_modo_cookie_solo_informa_la_vigencia(
+    client: TestClient, almacen: AlmacenMemoria
+) -> None:
+    """Lo único que viaja es una duración, que no es un secreto: permite al frontend refrescar
+    **antes** del vencimiento en vez de descubrirlo con un 401 a media pantalla."""
+    cuerpo = _canjear(client, almacen).json()
+    assert cuerpo["expira_en"] > 0
+    assert cuerpo["modo"] == "cookie"
+
+
+def test_los_dos_modos_no_se_mezclan_en_el_refresco(client: TestClient) -> None:
+    """Refrescar por cuerpo devuelve el par **y no siembra cookies**; son caminos separados."""
+    par = create_token_pair(sub="u-1", role=Rol.ciudadano, email=EMAIL, name="")
+    r = client.post(RUTA_REFRESH, json={"refresh_token": par.refresh_token})
+    assert r.json()["access_token"]
+    assert COOKIE_SESION not in r.cookies

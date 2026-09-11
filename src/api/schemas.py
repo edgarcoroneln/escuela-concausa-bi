@@ -85,6 +85,22 @@ class RefreshIn(EntradaEstricta):
     refresh_token: StrictStr
 
 
+class SesionOut(BaseModel):
+    """Respuesta del **modo cookie** (ADR-012). Deliberadamente **sin JWT**.
+
+    El modo cookie existe para que el token no sea alcanzable desde JavaScript. Si la respuesta
+    trajera el `TokenPair`, un XSS podría llamar al endpoint —el navegador adjunta la cookie solo—
+    y leer los dos tokens del JSON, **anulando por completo el beneficio de `HttpOnly`**. Por eso
+    aquí solo viaja lo que no es una credencial.
+
+    `expira_en` permite al frontend programar el refresco **antes** de que el token venza, en vez
+    de descubrirlo con un 401 a media pantalla. No es sensible: es una duración, no un secreto.
+    """
+
+    expira_en: StrictInt = Field(description="Segundos de vida del access token recién emitido.")
+    modo: str = "cookie"
+
+
 class ExchangeIn(EntradaEstricta):
     """Canje del codigo de un solo uso por la sesion (US-405). Ver ADR-010."""
 

@@ -4,7 +4,7 @@ title: "Threat Model & Security Policy — FARO"
 owner: "Luis Téllez Domínguez"
 co_owners: ["Christian Ruiz"]
 status: approved
-version: "1.1"
+version: "1.2"
 traces_up: ["US-502"]
 traces_down: ["SEC-HARDENING-S3", "SEC-HARDENING-S4"]
 last_reviewed: "2026-09-10"
@@ -182,6 +182,27 @@ Sin construir un servicio nuevo. Detalle en `src/api/security/cookies.py`.
 | Logout borra **ambas** cookies | ✅ |
 | `X-Content-Type-Options`, `Referrer-Policy`, HSTS | ✅ Middleware de la API |
 | `Content-Security-Policy`, `X-Frame-Options` | ⏳ **nginx (C5)** — es donde contienen el XSS del chat |
+
+### Corrección tras la revisión del PO (PR #304)
+
+La primera implementación tenía un hueco que el PO detectó al revisar: `/auth/refresh` aceptaba la
+cookie **y devolvía el `TokenPair` en el JSON**. Como la cookie de refresco está acotada a esa ruta,
+el navegador la adjunta ahí — así que **un XSS podía hacer `fetch()` contra ese endpoint y leer los
+dos tokens de la respuesta**, dejando `HttpOnly` sin ningún efecto.
+
+Corregido separando los dos modos, que ya **no se mezclan**:
+
+| Endpoint | Modo | Cómo se elige | Cookies | Cuerpo |
+|---|---|---|---|---|
+| `/auth/exchange` | legacy *(default)* | sin `?sesion` | no las toca | `TokenPair` |
+| `/auth/exchange` | cookie | `?sesion=cookie` | siembra | `SesionOut` — **sin JWT** |
+| `/auth/refresh` | legacy | token en el **cuerpo** | no las toca | `TokenPair` |
+| `/auth/refresh` | cookie | token en la **cookie** | renueva | `SesionOut` — **sin JWT** |
+
+El modo cookie solo informa `expira_en`, que es una duración y no un secreto: permite al frontend
+refrescar **antes** del vencimiento en vez de descubrirlo con un 401. Seis pruebas lo fijan,
+incluida una que busca la forma `eyJ` en el texto crudo de la respuesta por si alguien anidara el
+token bajo otro nombre.
 
 ### Residual: CSRF
 

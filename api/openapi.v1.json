@@ -1193,8 +1193,26 @@
     },
     "/api/v1/auth/exchange": {
       "post": {
-        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.\n\n**Desde ADR-012 tambien siembra la sesion por cookie `httpOnly`**, para que el frontend de React\n—que es estatico y no tiene servidor donde guardar el token— no tenga que tocarlo. El cuerpo\n**sigue trayendo el par**: el cambio es aditivo y el shell de Streamlit no se entera.",
+        "description": "Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).\n\nLo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo\nde la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento\ncon el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir\nentre los casos.\n\nEl rol se **re-resuelve** aqui con la politica vigente, no se confia en el que quedo guardado:\nsi `ANALISTA_EMAILS` cambio entre el callback y el canje, manda la politica actual.\n\n**Dos modos que nunca se mezclan** (`ADR-012`), elegidos con `?sesion=`:\n\n| `?sesion=` | Cookies | Cuerpo de la respuesta |\n|---|---|---|\n| `token` *(por defecto)* | no las toca | `TokenPair` — **el comportamiento de siempre** |\n| `cookie` | siembra la sesion | `SesionOut` — **sin JWT** |\n\nAqui el modo tiene que ser explicito porque el cuerpo es identico en los dos casos: no hay nada\nen la peticion que distinga al servidor de Streamlit del navegador. El **default es el legacy**,\nasi que ningun cliente existente cambia de comportamiento al desplegar esto.\n\n**Por que el modo cookie no devuelve los tokens:** si lo hiciera, el JWT volveria a ser\nalcanzable desde JavaScript y `HttpOnly` dejaria de servir para nada. Ver `SesionOut`.",
         "operationId": "exchange_api_v1_auth_exchange_post",
+        "parameters": [
+          {
+            "description": "`token` (por defecto): devuelve el `TokenPair` y no toca cookies — el comportamiento de siempre. `cookie`: siembra la sesión `httpOnly` y responde **sin JWT** (ADR-012).",
+            "in": "query",
+            "name": "sesion",
+            "required": false,
+            "schema": {
+              "default": "token",
+              "description": "`token` (por defecto): devuelve el `TokenPair` y no toca cookies — el comportamiento de siempre. `cookie`: siembra la sesión `httpOnly` y responde **sin JWT** (ADR-012).",
+              "enum": [
+                "cookie",
+                "token"
+              ],
+              "title": "Sesion",
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1209,9 +1227,7 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenPair"
-                }
+                "schema": {}
               }
             },
             "description": "Successful Response"
@@ -1325,7 +1341,7 @@
     },
     "/api/v1/auth/refresh": {
       "post": {
-        "description": "Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.\n\nEl token puede venir en el cuerpo (clientes que lo administran ellos mismos) **o** en la cookie\n`faro_refresco` (frontend de React, ADR-012). El cuerpo tiene precedencia; si no trae nada, se\nintenta la cookie. Sin ninguno de los dos, 401 igual que con uno inválido.",
+        "description": "Canjea un refresh token válido por un par nuevo, re-resolviendo el rol con la política vigente.\n\n**Dos modos que nunca se mezclan** (ADR-012). El modo lo determina *de dónde vino el token*, que\nes un dato inequívoco y no una bandera que el cliente pueda equivocarse en mandar:\n\n| Token en | Modo | Cookies | Cuerpo de la respuesta |\n|---|---|---|---|\n| `body.refresh_token` | **legacy** | no las toca | `TokenPair` |\n| cookie `faro_refresco` | **cookie** | las renueva | `SesionOut` — **sin JWT** |\n\n**Por qué el modo cookie no devuelve los tokens.** La cookie de refresco está acotada a esta\nruta, así que el navegador la adjunta aquí y solo aquí. Si la respuesta trajera el `TokenPair`,\nun XSS podría hacer `fetch()` contra este endpoint y **leer los dos tokens del JSON**, anulando\nel beneficio de `HttpOnly`: la credencial volvería a ser alcanzable desde JavaScript. Por eso el\nmodo cookie responde solo con `expira_en`, que es una duración y no un secreto.\n\nEl modo legacy **no siembra cookies**: quien administra el token él mismo (el shell de Streamlit,\nlas pruebas, cualquier cliente que no sea navegador) recibe exactamente lo de siempre.",
         "operationId": "refresh_api_v1_auth_refresh_post",
         "requestBody": {
           "content": {
@@ -1348,9 +1364,7 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenPair"
-                }
+                "schema": {}
               }
             },
             "description": "Successful Response"

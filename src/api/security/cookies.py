@@ -1,4 +1,13 @@
-"""Sesión por cookie `httpOnly` para el frontend de React (ADR-012).
+"""Sesión por cookie `httpOnly` para el frontend de React.
+
+> **Dónde vive la decisión.** El mecanismo se acordó en el gate de E5 del 10-sep (Luis Téllez +
+> Christian Ruiz) y está redactado en **`ADR-012`** (*Retiro del embebido de Superset/Streamlit*),
+> que es de Diana Álvarez y llega por su PR. Este módulo lo **implementa**; no lo decide. Hasta que
+> ese ADR entre a `main`, la justificación completa —incluidos los residuales— está en
+> `vault/07_Security/Threat_Model.md §Sesión del frontend de React`, que sí viene en este cambio.
+> No se escribe un ADR paralelo a propósito: dos documentos con el mismo número apuntando a `main`
+> es la colisión que `DEC-013` existe para evitar, y partiría una sola decisión en dos.
+
 
 **Por qué existe.** Hasta `ADR-010`, el servidor de Streamlit canjeaba el `code_faro` y guardaba
 los tokens de su lado: el navegador nunca los veía. El frontend nuevo es estático —Vite compilado,
