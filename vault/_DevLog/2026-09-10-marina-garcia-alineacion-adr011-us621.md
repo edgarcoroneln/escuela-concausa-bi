@@ -311,3 +311,53 @@ Su tabla de filtros dice de P2 *"Limitados"* y en la misma celda *"ninguno de lo
 expone"*: son dos cosas distintas y hay que elegir una. Y queda una pregunta de narrativa, no un
 defecto: el logo lleva de P6 a P1, pero P1 no revela el número, así que quien ya vio la revelación
 vuelve a una entrada que finge no saber. Es decisión de la líder.
+
+---
+
+## Addendum 5 — dos correcciones de la §10 que salen de la revisión de Monserrat
+
+### La explicación SHAP se prometía y no existe
+
+La tabla de la §10 listaba `/predicciones/{cct}/explicacion` → `contribuciones` como evidencia
+disponible del driver dominante. **Era una promesa vacía**, y la detectó Monserrat al construir su
+especificación.
+
+`BUG-053` está `fixed` en el sentido correcto —el código lee `gold.recomendaciones.shap_d1…shap_d6`—
+pero las columnas **no están pobladas en producción**: existen tras el `ALTER` de C5 y siguen en
+`NULL`. Ella lo midió el 10-sep: **0 de 42**. El endpoint responde 200 con las contribuciones vacías,
+que es la peor forma de fallar, porque parece que funciona.
+
+Corregido en la tabla y con una nueva §10.quater que lo explica. El expediente muestra el driver
+dominante, que sí viene en `PrediccionOut`, y declara la explicación como `SIN_DATO`. Si el Equipo 4
+puebla las columnas, la pieza entra sin cambio de contrato.
+
+Se escribe en el plan y no sólo en el documento de visualizaciones **porque era esta §10 la que lo
+prometía**: dejarlo corregido únicamente en el documento de ella habría dejado el error en pie donde
+lo van a leer Oscar, Juan y el Equipo 5.
+
+### `/kpis` no acepta `nivel`
+
+Segunda verificación suya. La §10 decía que los filtros de la exploración son `ciclo`, `cve_ent`,
+`cve_mun` y `nivel` "en `/escuelas` y `/kpis`", como si los dos aceptaran los cuatro. **`/kpis` sólo
+acepta `ciclo`, `cve_ent` y `cve_mun`.**
+
+Consecuencia real: el filtro de nivel educativo actúa sobre la lista de escuelas pero **nunca sobre
+los indicadores**. Si no se dice, el Equipo 5 pasa un parámetro que la API ignora y los números de
+arriba dejan de corresponder con la lista de abajo, sin error visible.
+
+Corregido en la tabla. Es además lo que obliga a Oscar a corregir su §3, donde escribió que los tres
+filtros obligatorios están soportados por los dos endpoints.
+
+### Lo que esta sesión hizo mal, y hay que decirlo
+
+Se le dijo a Monserrat "ya los subo" y a Juan "ya subí el plan completo a `main`". **Las dos cosas
+eran falsas.** Lo que se hizo fue empujar a `dev/marina-garcia`; **nunca se abrió el PR**, así que
+`main` se quedó en `e775ff4` (PR #297/#303) y las secciones §4.ter, §5.bis, §7.bis, §10.bis, §10.ter
+y el alta de `ejemplos_graficas/` en el `_index` del paquete no llegaron a nadie.
+
+Monserrat lo detectó revisando `main` (`108be11`) y tenía razón en los dos puntos que reclamó.
+
+El costo es medible y ya se cobró tres veces: Oscar escribió contra un plan sin esas secciones,
+Monserrat también, y Juan dibujó un login con campos de usuario y contraseña que no existen porque la
+corrección del Mockup 0 vivía en un commit sin mergear. **Empujar a la rama propia no entrega nada;
+lo que entrega es el PR.**

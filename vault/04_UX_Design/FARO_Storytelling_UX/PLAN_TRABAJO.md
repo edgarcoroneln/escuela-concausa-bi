@@ -538,11 +538,32 @@ guardarraíl de §3: lo que no está aquí, no se dibuja.
 | Las escuelas en riesgo, ordenadas | `GET /api/v1/escuelas` con `order_by=indice_riesgo` y `order=desc` | `cct`, `nombre`, `nivel`, `matricula_total`, `indice_riesgo`, `driver_dominante`, `tiene_prediccion` |
 | Los 6 drivers de una escuela | `GET /api/v1/escuelas/{cct}` | `d1`…`d6`, `indice_completitud_drivers`, `es_estimado_por_grupo`, `sostenimiento`, `latitud`, `longitud` |
 | Recomendación y driver dominante | `GET /api/v1/predicciones/{cct}` | `indice_riesgo`, `driver_dominante`, `recomendacion`, `cluster` |
-| Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante` |
+| Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante`. **El endpoint responde, pero las contribuciones vienen vacías** — ver §10.quater |
 | Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
-| Filtros de la exploración | parámetros de `/escuelas` y `/kpis` | `ciclo`, `cve_ent`, `cve_mun`, `nivel` |
+| Filtros de la exploración | `/escuelas`: `ciclo`, `cve_ent`, `cve_mun`, `nivel` · **`/kpis`: sólo `ciclo`, `cve_ent`, `cve_mun`** | **`/kpis` no acepta `nivel`.** El filtro de nivel actúa sobre la lista de escuelas, nunca sobre los indicadores. Verificado por Monserrat Miranda |
 | Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2. **Nombre técnico**, no de producto: lo que ve el usuario es *Asistente FARO* |
 | Sección *Cómo funciona* (§5.bis) | `GET /api/v1/about/secciones` · `GET /api/v1/about/secciones/{id_seccion}` | manifest `[{id, titulo, orden}]` y sobre `{id, titulo, fuente, advertencias, bloques}`. **Pendientes de merge**: viven en `dev/manuel-serrania` |
+
+### 10.quater La explicación SHAP existe como endpoint y no como dato
+
+**Corrección del 2026-09-10, hallazgo de Monserrat Miranda.** La versión anterior de la tabla de
+arriba listaba `/predicciones/{cct}/explicacion` → `contribuciones` como evidencia disponible del
+driver dominante. **Prometía algo que hoy no se puede dibujar.**
+
+`BUG-053` está `fixed` en el sentido correcto —el código lee `gold.recomendaciones.shap_d1…shap_d6`
+por `RepositorioModelos`— pero **esas columnas no están pobladas en producción**: existen tras el
+`ALTER` de C5 y siguen en `NULL`. Monserrat lo midió el 10-sep: **0 de 42**. El endpoint responde
+200 y las contribuciones vienen vacías.
+
+**Consecuencia para el diseño:** el expediente **no** puede mostrar la contribución de cada driver.
+Muestra el driver dominante, que sí viene en `PrediccionOut` y en `EscuelaOut`, y declara la
+explicación como `SIN_DATO` explícito. Si el Equipo 4 puebla las columnas, la pieza entra sin cambio
+de contrato.
+
+Queda dicho aquí y no sólo en el documento de visualizaciones, porque era esta §10 la que lo
+prometía.
+
+---
 
 ### 10.bis Dos cosas que el contrato no hace, y cómo se resuelven
 
