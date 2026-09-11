@@ -25,11 +25,11 @@ class AgenteHTTPFake(BaseHTTPRequestHandler):
         pregunta = json.loads(self.rfile.read(longitud))["pregunta"]
         if "falla parcial" in pregunta.lower():
             cuerpo = (
-                "event: fragmento\n"
-                'data: {"texto":"Texto parcial"}\n\n'
-                "event: fragmento\n"
-                "data: no-json\n\n"
-            ).encode("utf-8")
+                b"event: fragmento\n"
+                b'data: {"texto":"Texto parcial"}\n\n'
+                b"event: fragmento\n"
+                b"data: no-json\n\n"
+            )
             self.send_response(200)
             self.send_header("Content-Type", "text/event-stream")
             self.send_header("Content-Length", str(len(cuerpo)))
