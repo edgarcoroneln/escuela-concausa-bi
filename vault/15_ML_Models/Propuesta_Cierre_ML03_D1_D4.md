@@ -35,9 +35,15 @@ La variante candidata es:
 | Ausencias | Casos completos sobre D1-D4; sin imputar `SIN_DATO` |
 | Completitud | Visible para auditoría, fuera del vector |
 | D5/D6 | Fuera del vector y sin reemplazo por cero |
+| MLflow | `ML03_ClusteringEscuelas` v1, corrida `d971ab7271df45629c9a50c27514890f` |
 
 La evidencia agregada reproducible está en
 [ML03_Comparacion_RISK011_20260910.json](ML03_Comparacion_RISK011_20260910.json).
+
+La corrida candidata quedó registrada para revisión en el MLflow local con estado `FINISHED`; la
+versión 1 está `READY` y su artefacto `StandardScaler + KMeans` fue descargado y cargado nuevamente
+con `mlflow.pyfunc`. Este registro aporta trazabilidad, pero no constituye promoción a producción ni
+aprobación de `RISK-011`.
 
 ## 2. Por qué se propone D1-D4
 
@@ -93,6 +99,51 @@ Texto sugerido para ML-03:
 > Con cuatro de las seis líneas de investigación disponibles, esta escuela comparte un patrón de
 > presión principalmente asociado con [perfil]. Agua y calidad del aire no participan en esta
 > segmentación por cobertura insuficiente.
+
+### Presentación para el usuario final
+
+La interfaz no debe mostrar términos técnicos como `ML-03`, `cluster`, `feature`, `observación no
+elegible` o `SIN_DATO`. La salida técnica se traduce a la metáfora de investigación de FARO.
+
+Cuando existe evidencia suficiente para reconocer un patrón:
+
+> **Lo que nos dicen las pistas**
+>
+> Esta escuela comparte características con otros planteles donde destacan principalmente los
+> problemas de conectividad e infraestructura.
+>
+> Contamos con evidencia comparable en **4 de las 6 pistas**: pobreza, inseguridad,
+> infraestructura y conectividad.
+>
+> La investigación sobre estrés hídrico y calidad del aire continúa abierta porque todavía no
+> contamos con información suficiente. Esto no significa que no existan problemas, sino que aún
+> no tenemos evidencia para evaluarlos.
+
+Resumen visual sugerido:
+
+```text
+Evidencia encontrada: 4 de 6 pistas
+
+✓ Pobreza y rezago
+✓ Inseguridad
+✓ Infraestructura
+✓ Conectividad
+○ Estrés hídrico: investigación pendiente
+○ Calidad del aire: información insuficiente
+```
+
+Cuando falta alguna de las cuatro pistas necesarias para comparar escuelas:
+
+> **Aún no tenemos evidencia suficiente**
+>
+> Todavía no es posible comparar esta escuela de manera responsable con otros planteles.
+> Encontramos información en **[X] de las 6 pistas**, pero falta evidencia necesaria sobre
+> [pistas faltantes]. Esto no significa que la escuela no tenga dificultades; significa que
+> necesitamos reunir más información antes de presentar una conclusión.
+
+Los títulos visibles recomendados son `Lo que nos dicen las pistas`, `Estado de la investigación`,
+`Evidencia encontrada` y `Pistas pendientes`. D5 y D6 conservan sus valores y estados originales;
+esta presentación sólo explica la cobertura y no modifica los datos ni el agrupamiento.
 
 ## 4. Estado real de D5 y D6
 
@@ -164,15 +215,15 @@ Estas limitaciones se mitigan mostrando cobertura por pista, evitando lenguaje c
 
 ## 7. Alcance para cerrar ML-03
 
-Después de la aprobación formal, la ruta mínima incluye:
+La corrida y el registro técnico ya se completaron. Después de la aprobación formal, la ruta mínima
+restante incluye:
 
 1. Ratificar D1-D4 como vector de ML-03 y actualizar su model card.
-2. Ejecutar la corrida final sobre el Gold canónico y registrar un `mlflow_run_id` real.
-3. Persistir `cct × id_ciclo × cluster` en un contrato Gold aprobado e idempotente.
-4. Hacer que la API consulte la asignación real en lugar de fijar `cluster = None`.
-5. Mostrar perfil, cobertura y limitaciones en el panel.
-6. Validar el mismo CCT, ciclo, cluster y versión mediante una prueba E2E sobre base real.
-7. Conservar `null`/`SIN_DATO` cuando una escuela no tenga asignación elegible.
+2. Persistir `cct × id_ciclo × cluster` en un contrato Gold aprobado e idempotente.
+3. Hacer que la API consulte la asignación real en lugar de fijar `cluster = None`.
+4. Mostrar perfil, cobertura y limitaciones en el panel.
+5. Validar el mismo CCT, ciclo, cluster y versión mediante una prueba E2E sobre base real.
+6. Conservar `null`/`SIN_DATO` cuando una escuela no tenga asignación elegible.
 
 Quedan fuera de este cierre:
 
@@ -224,5 +275,6 @@ ciclo, manteniendo `SIN_DATO` para escuelas fuera de cobertura espacial confiabl
 | Equipo 5 | Aceptar contrato de integración API/frontend | Pendiente después del gate |
 | Equipo 6 | Definir y ejecutar aceptación E2E | Pendiente después del gate |
 
-Hasta completar esas decisiones, no se registra la corrida candidata en MLflow, no se publica Gold
-y no se afirma que ML-03 esté integrado en el producto.
+La corrida candidata está registrada en MLflow únicamente como evidencia técnica para revisión.
+Hasta completar esas decisiones, no se promueve el modelo, no se publica Gold y no se afirma que
+ML-03 esté aprobado o integrado en el producto.
