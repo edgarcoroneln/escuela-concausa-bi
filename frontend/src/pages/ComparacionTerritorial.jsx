@@ -1,7 +1,11 @@
 import PageContainer from "../components/PageContainer.jsx";
-import RankingList from "../components/RankingList.jsx";
-import { rankingMunicipios } from "../data/mock.js";
+import EnConstruccion from "../components/EnConstruccion.jsx";
 
+// Pendiente de conectar (revisión de Edgar, PR #302, 11-sep): el ranking
+// municipal necesita el nombre del municipio/entidad por escuela; el
+// contrato del API solo expone cve_mun (código), no el nombre. Ver el gap
+// de contrato documentado en lib/api.js (getEscuelasEnRiesgo) y en
+// Arquitectura_Frontend_React.md §9.
 export default function ComparacionTerritorial() {
   return (
     <PageContainer>
@@ -9,14 +13,7 @@ export default function ComparacionTerritorial() {
       <p className="text-sm -mt-4" style={{ color: "var(--color-ink-faint)" }}>
         Compara cada escuela con su municipio, nivel educativo y escuelas similares.
       </p>
-      <RankingList
-        title="Ranking municipal por número de escuelas"
-        subtitle="Municipios con mayor número de escuelas en el universo cubierto"
-        data={rankingMunicipios}
-        labelKey="municipio"
-        sublabelKey="entidad"
-        valueKey="escuelas"
-      />
+      <EnConstruccion nota="El ranking municipal necesita el nombre del municipio/entidad por escuela -- el API hoy solo expone el código cve_mun. Se conecta en cuanto el contrato incluya el nombre." />
     </PageContainer>
   );
 }

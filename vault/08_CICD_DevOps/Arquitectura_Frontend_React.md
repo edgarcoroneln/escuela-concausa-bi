@@ -224,10 +224,17 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
     paginación completo (`Page[EscuelaOut]`: `{items, total, page, size}`) en vez del arreglo de
     escuelas, así que la página se quedaba en blanco sin ningún error (`escuelas.length` de un
     objeto es `undefined`). Corregido desenvolviendo `data.items` en `frontend/src/lib/api.js`.
-  - Mientras tanto, `VistaGeneral`, `MapaCasos`, `MatrizDrivers`, `ComparacionTerritorial` y
-    `Comparativa` siguen en `mock.js` — pendiente rotularlos con `DemoBadge` y decidir, por
-    pantalla, qué se conecta ya (identidad/orden/driver de cada escuela sí se puede, ver
-    `getEscuelasEnRiesgo()` en `api.js`) contra qué espera al gap de arriba.
+  - **Actualizado 11-sep (revisión de Edgar, PR #302): decidido pantalla por pantalla.**
+    `MapaCasos.jsx`, `MatrizDrivers.jsx`, `ComparacionTerritorial.jsx` y `Comparativa.jsx` ahora
+    muestran `EnConstruccion` (nota explicando el gap puntual de cada una) en vez de datos de
+    `mock.js` sin rotular — las 4 dependen de campos que el contrato del API todavía no expone
+    (lat/lon y nombre de municipio/entidad para el mapa y el ranking territorial; d1..d6 en lote
+    para la matriz; serie histórica de matrícula para la comparativa). `VistaGeneral.jsx` se
+    conectó parcialmente: el bloque "El diferenciador" (el par `15DPR0920D`/`15DPR2254O` de
+    `Guion_Demo_US006`) ya llama a `getEscuela(cct)` + `getPrediccion(cct)` reales para las dos
+    escuelas del par, con estado de carga/error explícito y `DemoBadge` solo en modo demo (mismo
+    patrón de `useApiResource`). El resto de `VistaGeneral` (KPIs, mapa,
+    matrícula por ciclo, distribución por nivel) sigue en mock por los mismos gaps de arriba.
 - Code-splitting por ruta (`React.lazy`) si sobra tiempo — el bundle pesa ~940KB, no bloqueante para
   la demo pero señalado por Vite en el build.
 
