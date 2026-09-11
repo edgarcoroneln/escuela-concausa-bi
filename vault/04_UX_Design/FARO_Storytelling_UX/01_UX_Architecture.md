@@ -32,7 +32,7 @@ Login (P0) → Entrada (P1) → Panorama (P2) → Selección de caso (P3) → Ex
 | P3 Selección | "Volver al panorama" | P2 |
 | P4 Expediente | "Regresar a selección" | P3, mostrando el panorama completo de nuevo (no un estado a medias) |
 | P4 Expediente | "Ver la conclusión" (avance, no regreso) | P5 |
-| P6 Exploración | Logo FARO en la barra superior | P1 (reinicia la narrativa; no cierra sesión) |
+| P6 Exploración | Logo FARO en la barra superior | P1 en su **estado de visita recurrente** (§2) — no cierra sesión ni finge que la investigación no avanzó |
 
 No existe un botón de regreso de P5 a P4: la conclusión cierra la investigación guiada. Si el usuario
 quiere revisar otro caso, el único camino hacia atrás es reiniciar desde el logo (a P1) o avanzar a P6,
@@ -49,18 +49,45 @@ que es libre.
     el usuario llega así, sin pasar por P2/P3, el expediente se muestra igual, pero "Regresar a
     selección" lo manda a P3 con el panorama completo, para que no quede sin contexto.
 
+### Superficie hermana — "Cómo funciona" (plan §5.bis)
+
+No es una octava pantalla ni entra al recorrido P0–P6: es contenido del Equipo 1 (siete apartados —
+arquitectura, modelo-datos, capas, cubos, stack, decisiones, modelos-ml) al que este frente solo le da
+identidad y ubicación.
+
+- **Acceso:** un enlace discreto desde P1 (junto a la frase de apoyo, sin competir con el CTA
+  principal) y desde cada término del glosario que lo amerite (igual que el enlace a "Pregúntale al
+  Asistente"). No hay un tercer punto de entrada.
+- **Cómo se muestra:** overlay a pantalla completa sobre la pantalla actual, no una ruta nueva del
+  recorrido — igual mecánica que el Asistente FARO (§6): abre encima, no navega.
+- **Cómo se vuelve:** cerrar el overlay regresa exactamente a la pantalla y al estado desde donde se
+  abrió (misma posición de scroll, mismo caso seleccionado si se abrió desde el expediente vía
+  glosario). Nunca reinicia el recorrido ni cuenta como "reinicio" a P1.
+- Los bloques `mapa`, `barras` y `diagrama_flujo` (D3) viven en iframes propios con `color-scheme:
+  light` forzado por el Equipo 1 — si la identidad de Juan es oscura, esos tres bloques quedan
+  claros a propósito dentro del overlay oscuro; no es un defecto a corregir, es una restricción a
+  respetar en el diseño.
+- Depende de que `dev/manuel-serrania` llegue a `main`; mientras no aterrice, este acceso no tiene
+  contenido que mostrar y se declara como recorte, no se dibuja.
+
 ## 2. Ficha por pantalla
 
 ### Mockup 0 — Login
 
+> **Corrección del 2026-09-10 (hallazgo de Marina, verificado en `src/frontend/auth.py:194`).** El
+> acceso es un único `st.link_button("Iniciar sesión con Google", ...)` que redirige al consentimiento
+> de Google. No hay campos de usuario ni contraseña, y por lo tanto **no existe un estado de
+> "credenciales inválidas"**: un fallo de OAuth vuelve por el callback, no por un formulario.
+
 - **Objetivo:** homologar el acceso a la nueva identidad de FARO, sin tocar la autenticación existente.
-- **Contenido:** nuevo logo/identidad; los campos y la acción de acceso ya existentes; recurso visual
-  alineado a la narrativa de investigación.
-- **Botones y CTA:** "Iniciar sesión" (único).
+- **Contenido:** nuevo logo/identidad; **un único botón de acceso con Google**, sin campos de usuario o
+  contraseña, sin "¿olvidaste tu contraseña?" ni registro. Es una pantalla de una sola acción: el
+  diseño debe aprovechar ese espacio para identidad y narrativa, no para un formulario que no existe.
+- **Botones y CTA:** "Iniciar sesión con Google" (único).
 - **A dónde conecta:** al autenticar, avanza a P1 — o a la URL solicitada si venía de un enlace directo
   a P4/P6 (§1).
-- **Estados:** carga (verificando credenciales); error (credenciales inválidas, mensaje genérico sin
-  detalle interno); sin sesión (estado por defecto de esta pantalla).
+- **Estados:** en reposo; redirigiendo a Google; error de vuelta del callback (mensaje genérico, sin
+  detalle interno).
 
 ### Pantalla 1 — Entrada
 
@@ -68,11 +95,19 @@ que es libre.
   todavía cuántas escuelas están en riesgo.
 - **Contenido:** qué es FARO; objetivo del proyecto; imágenes narrativas de introducción; la frase de
   apoyo *"La matrícula nos dio la primera pista. Ahora descubramos qué está pasando."*; acceso al
-  glosario; Asistente FARO flotante; walkthrough único (§4).
+  glosario; enlace discreto a "Cómo funciona" (§1); Asistente FARO flotante; walkthrough único (§4).
 - **Botones y CTA:** un único CTA principal (copy final a cargo de Marina/Juan).
 - **A dónde conecta:** CTA principal → P2.
-- **Estados:** carga (mientras se prepara el panorama); no aplica error propio, es una pantalla
-  estática.
+- **Estados:**
+  - **Primera visita de la sesión:** carga (mientras se prepara el panorama); walkthrough automático
+    (§4); copy completo de introducción, sin revelar el número.
+  - **Visita recurrente** (el usuario ya vio la revelación en P2 y volvió por el logo desde P6, §1):
+    el walkthrough no se dispara solo (sigue accesible por el ícono "?"); la frase de apoyo cambia de
+    tono — deja de fingir que no sabemos nada y reconoce que la investigación continúa (p. ej. "Sigues
+    en la misma investigación. Estos son los mismos casos."). **P1 sigue sin decir el número:** la
+    revelación es siempre trabajo de P2, lo único que cambia aquí es que no se repite la finta de
+    partir de cero.
+  - No aplica error propio, es una pantalla estática.
 
 ### Pantalla 2 — Panorama de las escuelas en riesgo
 
@@ -80,9 +115,10 @@ que es libre.
   (§3.5 del scope).
 - **Contenido:** la frase central *"N escuelas están en riesgo. Tenemos N casos por investigar."* (`N`
   siempre resuelto en vivo, nunca escrito a mano); la matriz o visualización principal que compara las
-  escuelas contra los 6 drivers (decisión de Monserrat); matrícula general de los casos — única
-  pantalla donde se muestra dentro de la historia; filtros limitados dentro del universo revelado;
-  Asistente FARO flotante.
+  escuelas contra los 6 drivers (decisión de Monserrat), con espacio reservado para su leyenda
+  obligatoria (plan §7.bis, contenido de Monserrat); matrícula general de los casos — única pantalla
+  donde se muestra dentro de la historia; filtros que sólo atenúan filas, nunca recortan el conjunto
+  (§3); Asistente FARO flotante.
 - **Botones y CTA:** "Elegir un caso" (o el copy que se defina).
 - **A dónde conecta:** CTA → P3.
 - **Estados:** carga (mientras resuelve `escuelas_en_riesgo` y la matriz); error de API → "No pudimos
@@ -103,13 +139,15 @@ que es libre.
 
 - **Objetivo:** entender qué driver destaca en esa escuela y cuál es la recomendación asociada.
 - **Contenido:** nombre de la escuela; índice de riesgo numérico + nivel de atención, con nota/tooltip
-  que explica ambos; gráfica comparativa de los 6 drivers (Monserrat); driver dominante resaltado;
-  recomendación; indicador de completitud de la evidencia (`indice_completitud_drivers`); Asistente
-  FARO flotante. No incluye evolución histórica de matrícula ni explicabilidad adicional a la que ya
-  entrega `/explicacion`.
+  que explica ambos; gráfica comparativa de los 6 drivers (Monserrat), con espacio reservado para su
+  leyenda obligatoria (plan §7.bis); driver dominante resaltado; recomendación; indicador de
+  completitud de la evidencia (`indice_completitud_drivers`); Asistente FARO flotante. No incluye
+  evolución histórica de matrícula. El panel de evidencia SHAP existe en el diseño, pero hoy no tiene
+  datos que mostrar (§8) — no se dibuja como si `/explicacion` ya entregara esa evidencia.
 - **Botones y CTA:** "Regresar a selección"; "Ver la conclusión".
 - **A dónde conecta:** "Regresar a selección" → P3; "Ver la conclusión" → P5.
-- **Estados:** carga; `tiene_prediccion = false` (§8); drivers con `SIN_DATO` (§8); error de API.
+- **Estados:** carga; `tiene_prediccion = false` (§8); drivers con `SIN_DATO` (§8); evidencia SHAP sin
+  poblar (§8); ciclo distinto al más reciente (§8); error de API.
 
 ### Pantalla 5 — Conclusión Top 3
 
@@ -139,11 +177,11 @@ que es libre.
 | Pantalla | Filtros disponibles |
 |---|---|
 | P1 Entrada | Ninguno |
-| P2 Panorama | Limitados, dentro del universo ya revelado. Ninguno de los 3 obligatorios se expone aquí como filtro de exploración; el panorama se presenta completo |
+| P2 Panorama | **La revelación es siempre el total sin filtros, y los filtros de P2 solo atenúan filas de la matriz, no recortan el conjunto** (decisión cerrada con Monserrat y Marina, PR #308) — con esto la nota obligatoria de P5 se sostiene sola. Ningún control en P2 dispara una llamada nueva a la API |
 | P3 Selección | Ninguno adicional; hereda el universo de P2 |
 | P4 Expediente | No aplica (una sola escuela) |
 | P5 Conclusión | Ninguno — se calcula siempre sobre el conjunto completo |
-| P6 Exploración | Los 3 obligatorios: **ciclo escolar, entidad, nivel educativo**, soportados hoy por `/escuelas` y `/kpis`. Un filtro adicional sólo se añade si ya existe como parámetro soportado |
+| P6 Exploración | Los 3 obligatorios: **ciclo escolar, entidad, nivel educativo**. Ciclo y entidad (`cve_ent`) son soportados por `/escuelas` **y** `/kpis`; **`nivel` sólo existe en `/escuelas`** — filtra la lista de escuelas, no los indicadores de `/kpis`. Un filtro adicional sólo se añade si ya existe como parámetro soportado |
 
 ## 4. Walkthrough inicial
 
@@ -151,8 +189,8 @@ Aparece una sola vez, sobre la Pantalla 1, la primera vez que el usuario entra t
 
 1. "Bienvenido a FARO. Vamos a investigar juntos qué está pasando con la matrícula escolar."
 2. "La matrícula nos dio la primera pista. Ahora vamos a revisar la evidencia detrás de cada caso."
-3. "En cualquier momento puedes preguntarle al Asistente FARO —el botón flotante— sobre lo que estás
-   viendo."
+3. "En cualquier momento puedes preguntarle al Asistente FARO —el botón flotante— sobre los datos de
+   FARO."
 
 Cierre: botón "Empezar", que lo regresa al CTA principal de P1 (el walkthrough se sobrepone a P1, no
 la reemplaza ni navega a otra pantalla).
@@ -184,6 +222,11 @@ Botón único: "Entendido". No vuelve a aparecer para ese usuario/sesión.
   - *Fuera de alcance:* "Esa pregunta está fuera de lo que el Asistente FARO puede consultar hoy."
   - *Sin datos:* "No encontré información para responder eso con los datos disponibles."
   - *Timeout:* "El Asistente FARO está tardando más de lo esperado. Intenta de nuevo."
+- **El SQL generado no se muestra por defecto** (plan §4.ter — decisión de presentación, alcance de
+  este frente; la lógica es del Equipo 2). El campo `sql_generado` se conserva en el contrato, pero
+  queda detrás de una acción opcional y cerrada al abrir la conversación (p. ej. "Ver la consulta"):
+  sirve para auditar y para que el evaluador confirme que la respuesta sale de la base real, sin que
+  la explicación se reduzca a mostrar SQL.
 - **Preguntas conceptuales:** cada término del glosario puede ofrecer "Pregúntale al Asistente", que
   precarga la pregunta (p. ej. "¿qué significa SIN_DATO?").
 - **Al navegar entre pantallas:** el panel permanece abierto y conserva la conversación; no se
@@ -203,6 +246,21 @@ P5 (§2) y cualquier referencia de navegación (logo, breadcrumbs) que apunte a 
 
 ## 8. Estados vacíos, de error y SIN_DATO
 
+- **Carga fila por fila en la matriz de P2:** revelar el panorama cuesta 11 llamadas hoy (2 del
+  conjunto + 1 por escuela para sus 6 drivers + municipios, verificado por Monserrat). Riesgo y
+  matrícula se pintan de inmediato porque llegan en la primera llamada; las celdas de drivers llegan
+  después, fila por fila. Mientras cargan, cada fila muestra **su propio estado de carga** — nunca una
+  celda vacía ni un cero, porque se leería como `SIN_DATO` sin serlo.
+- **Ciclo distinto al más reciente en el Expediente (P4):** `/escuelas`, `/kpis` y `/predicciones`
+  deben recibir el mismo `ciclo` para no divergir entre sí, pero `/escuelas/{cct}` no acepta ese
+  parámetro. Si el usuario investiga con un ciclo que no es el más reciente materializado, los 6
+  drivers que ve en el expediente son del ciclo más reciente, no del que eligió — el expediente lo
+  tiene que decir explícito (p. ej. "Estos drivers son del ciclo 2024-2025, el más reciente
+  disponible"), nunca en silencio.
+- **Evidencia SHAP sin poblar:** las columnas `shap_d1…shap_d6` no están pobladas en producción hoy
+  (0 de 42 verificado por Monserrat); `/explicacion` responde, pero sin esa evidencia. El panel de
+  SHAP en P4 muestra `SIN_DATO` explícito — el driver dominante y la recomendación siguen viniendo de
+  `PrediccionOut`, no dependen de esto.
 - **Driver sin dato (`SIN_DATO`):** se muestra como "una pista que no pudimos verificar" (§5.4 del
   scope), nunca como cero ni como espacio vacío. En la gráfica de los 6 drivers, ese driver se marca
   visualmente distinto a los que sí tienen valor.
