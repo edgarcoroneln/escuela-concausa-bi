@@ -14,6 +14,7 @@ from src.modelos.entrenar_ml03 import (
     FEATURES_ML03,
     NOMBRE_MODELO,
     entrenar_y_evaluar,
+    evaluar_estabilidad_semillas,
     evaluar_k_temporal,
     preparar_casos_completos,
     registrar_en_mlflow,
@@ -207,6 +208,46 @@ def test_evidencia_insuficiente_no_inventa_cluster(
     assert incompleto.loc[incompleto.index[0], "d6_aire"] == perfiles_sinteticos.loc[
         perfiles_sinteticos.index[0], "d6_aire"
     ]
+
+
+def test_estabilidad_semillas_ari_perfecto_en_clusters_separados(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    """Réplica reproducible del hallazgo publicado en
+    `ML03_Comparacion_RISK011_20260910.json` / `Propuesta_Cierre_ML03_D1_D4.md`
+    (ARI mínimo y promedio 1.0 en cinco semillas): con grupos bien separados, KMeans
+    debe converger a la misma partición sin importar la semilla."""
+    resultado = evaluar_estabilidad_semillas(
+        perfiles_sinteticos, k=3, semillas=(7, 21, 42, 84, 2026)
+    )
+
+    assert resultado["semillas"] == [7, 21, 42, 84, 2026]
+    assert resultado["k"] == 3
+    assert len(resultado["ari_por_par"]) == 10  # C(5, 2)
+    assert resultado["ari_minimo"] == pytest.approx(1.0)
+    assert resultado["ari_promedio"] == pytest.approx(1.0)
+    assert all(valor == pytest.approx(1.0) for valor in resultado["ari_por_par"].values())
+
+
+def test_estabilidad_semillas_requiere_al_menos_dos(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    with pytest.raises(ValueError, match="al menos 2 semillas"):
+        evaluar_estabilidad_semillas(perfiles_sinteticos, k=3, semillas=(42,))
+
+
+def test_estabilidad_semillas_usa_casos_completos(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    """Debe excluir filas incompletas igual que `entrenar_y_evaluar`, no tronar con
+    NaN en el vector operativo."""
+    incompleto = perfiles_sinteticos.copy()
+    incompleto.loc[incompleto.index[0], "d1_pobreza"] = None
+    incompleto.loc[incompleto.index[0], "d1_cobertura"] = "SIN_DATO"
+
+    resultado = evaluar_estabilidad_semillas(incompleto, k=3, semillas=(7, 21, 42))
+
+    assert resultado["ari_minimo"] == pytest.approx(1.0)
 
 
 def test_registra_version_canonica_en_mlflow(

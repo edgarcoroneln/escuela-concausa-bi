@@ -10,11 +10,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from importlib.metadata import version
+from itertools import combinations
 
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import adjusted_rand_score, silhouette_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -338,6 +339,70 @@ def entrenar_y_evaluar(
         filas_entrenadas=len(completas),
         filas_excluidas=excluidas,
     )
+
+
+SEMILLAS_ESTABILIDAD_DEFAULT: tuple[int, ...] = (7, 21, 42, 84, 2026)
+
+
+def evaluar_estabilidad_semillas(
+    df: pd.DataFrame,
+    k: int,
+    semillas: tuple[int, ...] = SEMILLAS_ESTABILIDAD_DEFAULT,
+) -> dict[str, object]:
+    """Mide la estabilidad de las asignaciones de KMeans ante el cambio de semilla,
+    vía el Índice de Rand Ajustado (ARI) por cada par de semillas.
+
+    ARI = 1.0 entre dos semillas significa que ambas particiones asignan las mismas
+    escuelas a los mismos clusters (salvo el número de etiqueta, que KMeans no fija);
+    valores menores indican que el resultado depende de dónde arrancó el algoritmo, no
+    solo de los datos. Es la evidencia detrás de `estabilidad.ari_minimo/ari_promedio`
+    en `ML03_Comparacion_RISK011_20260910.json` -- ver `Propuesta_Cierre_ML03_D1_D4.md`
+    §1 para el resultado ya publicado (ARI mínimo y promedio 1.0 en cinco semillas).
+
+    Se comparan TODOS los pares de semillas (`C(n, 2)`), no cada una contra una sola
+    semilla de referencia: así el resultado no depende de qué semilla se eligió como
+    ancla.
+
+    Args:
+        df: mismo contrato de entrada que `entrenar_y_evaluar` (Gold `features_escuela`
+            o equivalente). Se filtra a casos completos con `preparar_casos_completos`.
+        k: número de clusters ya seleccionado (p. ej. `ResultadoML03.k_seleccionado`);
+            esta función no vuelve a elegir `k`, solo mide su estabilidad.
+        semillas: semillas de `KMeans` a comparar entre sí. Requiere al menos 2.
+
+    Returns:
+        Diccionario con `semillas`, `k`, `ari_por_par` (clave `"semilla_a-semilla_b"`)
+        y los agregados `ari_minimo`/`ari_promedio` -- mismos nombres que ya consume
+        `registrar_en_mlflow`.
+
+    Raises:
+        ValueError: si `semillas` trae menos de 2 elementos.
+    """
+    if len(semillas) < 2:
+        raise ValueError("Se requieren al menos 2 semillas para medir estabilidad (ARI).")
+
+    completas, _ = preparar_casos_completos(df)
+    matriz = completas.loc[:, FEATURES_ML03]
+
+    etiquetas_por_semilla = {
+        semilla: _pipeline(k, semilla).fit_predict(matriz) for semilla in semillas
+    }
+
+    ari_por_par = {
+        f"{a}-{b}": float(
+            adjusted_rand_score(etiquetas_por_semilla[a], etiquetas_por_semilla[b])
+        )
+        for a, b in combinations(semillas, 2)
+    }
+    valores = list(ari_por_par.values())
+
+    return {
+        "semillas": list(semillas),
+        "k": k,
+        "ari_por_par": ari_por_par,
+        "ari_minimo": min(valores),
+        "ari_promedio": sum(valores) / len(valores),
+    }
 
 
 def registrar_en_mlflow(

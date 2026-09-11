@@ -18,7 +18,7 @@ tags: [index, moc, ml]
 |---|---|---|---|---|---|
 | ML-01 | Regresión de matrícula | Supervisado · regresión | Variación de matrícula por escuela | MAE / RMSE | entrenado · cumple umbrales en fixture |
 | ML-02 | Clasificación de driver | Supervisado · multiclase | Cuál de los 6 drivers explica el riesgo | F1 macro | en progreso |
-| ML-03 | Clustering de escuelas | No supervisado | Grupos de perfil similar | Silhouette | evidencia real: `k=3`, 0.4645; sin promoción por RISK-011 |
+| ML-03 | Clustering de escuelas | No supervisado | Grupos de perfil similar | Silhouette | evidencia real (D1-D4): `k=2`, 0.4621, ARI=1.0/5 semillas; sin promoción, RISK-011 mitigado en código pero abierto en gobernanza |
 
 **ML-02 es el corazón prescriptivo del proyecto**: permite que dos escuelas con el mismo riesgo
 reciban recomendaciones distintas.
