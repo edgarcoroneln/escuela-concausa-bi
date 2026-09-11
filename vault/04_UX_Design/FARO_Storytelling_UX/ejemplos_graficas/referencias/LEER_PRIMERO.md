@@ -46,7 +46,7 @@ componentes y el acabado los define `03_Visual_Identity.md`.
 
 ---
 
-## Cinco reglas que el diseño no puede romper
+## Seis reglas que el diseño no puede romper
 
 1. **Un solo tono para magnitud**, de claro a oscuro, en pasos discretos. Nunca arcoíris,
    nunca rojo/verde de semáforo.

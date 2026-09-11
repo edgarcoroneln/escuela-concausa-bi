@@ -582,3 +582,33 @@ dibujable hoy.
   en las siete. Cuando Gold avance de ciclo dejarán de coincidir, así que Front debe pasar el mismo
   `ciclo` a `/escuelas`, `/kpis` y `/predicciones`. `/escuelas/{cct}` no acepta `ciclo`: si el ciclo
   elegido no es el más reciente, sus `d1…d6` son de otro ciclo y el expediente lo tiene que decir.
+
+### 8.3 Revisión de Marina García (PR #308, 2026-09-10) — visto bueno con dos correcciones a su plan
+
+Marina revisó y dio **visto bueno**. Registro aquí sus dos hallazgos, porque corrigen `PLAN_TRABAJO`
+y ella los aplica ahí, no en este documento:
+
+1. **§10 del plan prometía `/predicciones/{cct}/explicacion` como evidencia disponible del driver
+   dominante.** Con `shap_d1…shap_d6` sin poblar (§4.4 de aquí), esa evidencia no existe hoy. Marina
+   corrige el mapeo del plan.
+2. **El Top 3 que hoy son dos drivers.** Confirmado: la pantalla muestra los que realmente dominan,
+   sin rellenar hasta tres, con la copy explicando que sólo hay dato de D1, D2 y D4 en las siete y que
+   D1 no destaca. El paso 6 de la §5.1 ya lo resuelve tal cual; no cambia.
+
+También resolvió a mi favor un choque con Oscar: `/kpis` no acepta `nivel` (verificado en la §3.4),
+y adoptó mi recomendación de que la revelación de la P2 es siempre el total sin filtros, con los
+filtros atenuando filas de la matriz — así la leyenda obligatoria de la P5 (§5.2) se sostiene con
+cualquier filtro que el usuario haya usado antes.
+
+**Pendiente de su lado, aún no llega a `main`** (Marina: "ya los subo"): al sincronizar hay que
+revisar tres piezas nuevas del plan y, si hace falta, ajustar este documento —Marina pidió verlo el
+mismo día si hay contradicción:
+
+- **§7.bis, leyenda de las gráficas.** No es la leyenda de colores de una librería: cada gráfica debe
+  explicar en lenguaje de negocio qué mide cada eje o serie, la unidad del valor, cómo se ve un
+  `SIN_DATO` dentro de ella, y de qué ciclo y qué recorte habla. La forma la decide Monserrat; el
+  tratamiento visual, Juan.
+- **§4.ter, el SQL del Asistente FARO no se muestra por defecto.** No toca directamente a las
+  gráficas de este documento; queda anotado por si alguna pieza futura lo asumiera.
+- **§5.bis, "Cómo funciona" del Equipo 1** (mapa, barras y diagrama de flujo de D3, ya existentes).
+  No son de este frente; se revisan contra las reglas de forma de aquí en cuanto lleguen.

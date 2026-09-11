@@ -15,6 +15,25 @@ tags: [devlog, equipo-3, ux, dataviz, storytelling, s7, us-621]
 [[vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec]] ·
 [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]]
 
+## Tercera entrega: corrección tras revisión de Marina García (PR #308)
+
+Marina revisó y dio **visto bueno**, con dos hallazgos que corrigen `PLAN_TRABAJO` (los corrige ella,
+no este documento): §10 prometía `/explicacion` como evidencia del dominante y SHAP sigue sin poblar;
+y confirmó el Top 3 que hoy son dos drivers sin rellenar. Resolvió a mi favor el choque con Oscar
+sobre el filtro de `nivel` en `/kpis` y adoptó la recomendación de que la P2 revela siempre sin
+filtros. Registrado en la §8.3 del documento.
+
+- **Sincronía:** `origin/main` avanzó con el PR #307 de Estefany (`US-631`, explicación ML-03);
+  hice `git merge origin/main` sin conflictos — mi fila en `_DevLog/_index.md` y mi sección en la
+  matriz sobrevivieron intactas.
+- **Corrección de forma:** `LEER_PRIMERO.md` decía "Cinco reglas" con seis listadas; corregido a
+  "Seis reglas".
+- **Pendiente, del lado de Marina:** §7.bis (leyenda de las gráficas, es mía de escribir cuando
+  llegue), §4.ter (SQL del Asistente FARO no se muestra por defecto) y §5.bis ("Cómo funciona" del
+  Equipo 1) todavía no están en `main` ("ya los subo"). Se revisan al sincronizar.
+- `generar_ejemplos.py` se queda donde está (decisión de Marina): reproducibilidad de los ejemplos
+  vale más que la pureza de tener código fuera de la carpeta de documentación.
+
 ## Qué se hizo
 
 - **`02_Data_Visualization_Spec.md` lleno en sus ocho secciones**, con la estructura y el frontmatter
