@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FARO Intelligence — Identidad Visual & Styleguide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9ff;
+      color: #0b1c30;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-headline {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#f8f9ff] text-[#0b1c30] p-4 sm:p-6 pb-20 max-w-md mx-auto">
+
+  <!-- Header Barra Superior -->
+  <header class="flex items-center justify-between border-b border-[#e2e8f0] pb-4 mb-6 bg-white -mx-4 -mt-4 px-4 pt-4 shadow-sm">
+    <div class="flex items-center space-x-2.5">
+      <div class="w-8 h-8 rounded bg-[#0f172a] flex items-center justify-center text-white">
+        <svg class="w-4 h-4 text-[#38bdf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="9" stroke="currentColor"/>
+          <path d="M12 3v18M3 12h18"/>
+          <circle cx="12" cy="12" r="3" fill="#38bdf8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center space-x-1.5">
+          <span class="font-headline font-bold text-sm tracking-tight text-[#0f172a]">FARO</span>
+          <span class="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#eff4ff] text-[#0284c7]">DESIGN SYSTEM</span>
+        </div>
+        <p class="text-[11px] text-[#64748b]">Guía Oficial de Identidad Visual</p>
+      </div>
+    </div>
+    <span class="text-[10px] font-mono font-medium px-2 py-1 rounded bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]">
+      v2.4 Gold
+    </span>
+  </header>
+
+  <!-- Resumen de Identidad -->
+  <section class="bg-white rounded-xl p-4 border border-[#e2e8f0] shadow-sm mb-5">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-[11px] font-semibold tracking-wider text-[#0284c7] uppercase font-headline">Concepto de Marca</span>
+      <span class="text-[10px] text-[#64748b] bg-[#eff4ff] px-2 py-0.5 rounded-full font-medium">Investigación & Datos</span>
+    </div>
+    <h1 class="text-xl font-bold font-headline text-[#0f172a] tracking-tight mb-1.5">
+      FARO Intelligence Platform
+    </h1>
+    <p class="text-xs text-[#45464d] leading-relaxed">
+      Lenguaje visual analítico, sobrio y de alta precisión para la salvaguarda de entornos escolares. Combina rigor de ingeniería de datos con accesibilidad institucional (WCAG 2.1 AA).
+    </p>
+  </section>
+
+  <!-- 1. Paleta de Colores Primaria -->
+  <section class="bg-white rounded-xl p-4 border border-[#e2e8f0] shadow-sm mb-5">
+    <div class="flex items-center justify-between mb-3 border-b border-[#f1f5f9] pb-2">
+      <h2 class="text-xs font-bold font-headline uppercase tracking-wider text-[#0f172a] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-[#0f172a]"></span>
+        1. Paleta Cromática Base
+      </h2>
+      <span class="text-[10px] text-[#64748b] font-mono">HEX / TOKENS</span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2.5 mb-3">
+      <!-- Slate Command -->
+      <div class="p-2.5 rounded-lg border border-[#e2e8f0] bg-[#f8fafc]">
+        <div class="h-10 rounded-md bg-[#0f172a] mb-2 shadow-inner flex items-end p-1.5">
+          <span class="text-[10px] text-white font-mono opacity-90">#0F172A</span>
+        </div>
+        <p class="text-xs font-bold text-[#0f172a] font-headline">Slate Command</p>
+        <p class="text-[10px] text-[#64748b]">Primary · Titulares, botones y mandatos</p>
+      </div>
+
+      <!-- Analytical Cyan -->
+      <div class="p-2.5 rounded-lg border border-[#e2e8f0] bg-[#f8fafc]">
+        <div class="h-10 rounded-md bg-[#0284c7] mb-2 shadow-inner flex items-end p-1.5">
+          <span class="text-[10px] text-white font-mono opacity-90">#0284C7</span>
+        </div>
+        <p class="text-xs font-bold text-[#0284c7] font-headline">Analytical Cyan</p>
+        <p class="text-[10px] text-[#64748b]">Secondary · Focos interactivos y datos</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2">
+      <!-- Background / Canvas -->
+      <div class="p-2 rounded-lg border border-[#e2e8f0] bg-white">
+        <div class="h-6 rounded bg-[#f8f9ff] border border-[#cbd5e1] mb-1.5 flex items-center justify-center">
+          <span class="text-[9px] font-mono text-[#475569]">#F8F9FF</span>
+        </div>
+        <p class="text-[11px] font-semibold text-[#0f172a]">Canvas</p>
+        <p class="text-[9px] text-[#64748b]">Fondo base</p>
+      </div>
+
+      <!-- Container Low -->
+      <div class="p-2 rounded-lg border border-[#e2e8f0] bg-white">
+        <div class="h-6 rounded bg-[#eff4ff] border border-[#cbd5e1] mb-1.5 flex items-center justify-center">
+          <span class="text-[9px] font-mono text-[#00476e]">#EFF4FF</span>
+        </div>
+        <p class="text-[11px] font-semibold text-[#0f172a]">Tinted Sub</p>
+        <p class="text-[9px] text-[#64748b]">Contenedores</p>
+      </div>
+
+      <!-- Structural Borders -->
+      <div class="p-2 rounded-lg border border-[#e2e8f0] bg-white">
+        <div class="h-6 rounded bg-[#cbd5e1] mb-1.5 flex items-center justify-center">
+          <span class="text-[9px] font-mono text-[#0f172a]">#CBD5E1</span>
+        </div>
+        <p class="text-[11px] font-semibold text-[#0f172a]">Border</p>
+        <p class="text-[9px] text-[#64748b]">Filetes 1px</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Señales de Severidad y Riesgo -->
+  <section class="bg-white rounded-xl p-4 border border-[#e2e8f0] shadow-sm mb-5">
+    <div class="flex items-center justify-between mb-3 border-b border-[#f1f5f9] pb-2">
+      <h2 class="text-xs font-bold font-headline uppercase tracking-wider text-[#0f172a] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-[#ef4444]"></span>
+        2. Escala de Riesgo & Alertas
+      </h2>
+      <span class="text-[10px] text-[#64748b] font-mono">SEVERIDAD</span>
+    </div>
+
+    <div class="space-y-2">
+      <!-- Alto Riesgo -->
+      <div class="flex items-center justify-between p-2 rounded-lg bg-[#fef2f2] border border-[#fca5a5]">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ef4444] animate-pulse"></span>
+          <div>
+            <span class="text-xs font-bold text-[#991b1b]">Alto Riesgo / Crítico</span>
+            <span class="text-[10px] text-[#7f1d1d] block">Puntaje > 8.0 · Vulnerabilidad severa</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold text-[#991b1b] bg-white px-2 py-0.5 rounded border border-[#fca5a5]">
+          #EF4444
+        </span>
+      </div>
+
+      <!-- Medio Riesgo -->
+      <div class="flex items-center justify-between p-2 rounded-lg bg-[#fffbeb] border border-[#fcd34d]">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span>
+          <div>
+            <span class="text-xs font-bold text-[#92400e]">Riesgo Medio / Alerta</span>
+            <span class="text-[10px] text-[#78350f] block">Puntaje 5.0 – 7.9 · En observación</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold text-[#92400e] bg-white px-2 py-0.5 rounded border border-[#fcd34d]">
+          #F59E0B
+        </span>
+      </div>
+
+      <!-- Resiliencia / Bajo -->
+      <div class="flex items-center justify-between p-2 rounded-lg bg-[#f0fdf4] border border-[#86efac]">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
+          <div>
+            <span class="text-xs font-bold text-[#166534]">Línea Base / Resiliente</span>
+            <span class="text-[10px] text-[#14532d] block">Puntaje < 5.0 · Control normativo</span>
+          </div>
+        </div>
+        <span class="text-[10px] font-mono font-bold text-[#166534] bg-white px-2 py-0.5 rounded border border-[#86efac]">
+          #10B981
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Paleta Categórica Geográfica & Medallion -->
+  <section class="bg-white rounded-xl p-4 border border-[#e2e8f0] shadow-sm mb-5">
+    <div class="flex items-center justify-between mb-3 border-b border-[#f1f5f9] pb-2">
+      <h2 class="text-xs font-bold font-headline uppercase tracking-wider text-[#0f172a] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-[#d4af37]"></span>
+        3. Entidades & Pipeline Medallion
+      </h2>
+      <span class="text-[10px] text-[#64748b] font-mono">FIJAS</span>
+    </div>
+
+    <div class="mb-3">
+      <p class="text-[11px] font-semibold text-[#475569] mb-1.5">Entidades Oficiales (No secuenciales):</p>
+      <div class="grid grid-cols-2 gap-2 text-[11px]">
+        <div class="flex items-center space-x-1.5 p-1.5 bg-[#f8fafc] rounded border border-[#e2e8f0]">
+          <span class="w-3 h-3 rounded" style="background:#4C72B0;"></span>
+          <span class="font-medium text-[#0f172a]">CDMX (09)</span>
+          <span class="text-[9px] font-mono text-[#64748b] ml-auto">#4C72B0</span>
+        </div>
+        <div class="flex items-center space-x-1.5 p-1.5 bg-[#f8fafc] rounded border border-[#e2e8f0]">
+          <span class="w-3 h-3 rounded" style="background:#DD8452;"></span>
+          <span class="font-medium text-[#0f172a]">Edomex (15)</span>
+          <span class="text-[9px] font-mono text-[#64748b] ml-auto">#DD8452</span>
+        </div>
+        <div class="flex items-center space-x-1.5 p-1.5 bg-[#f8fafc] rounded border border-[#e2e8f0]">
+          <span class="w-3 h-3 rounded" style="background:#55A868;"></span>
+          <span class="font-medium text-[#0f172a]">N. León (19)</span>
+          <span class="text-[9px] font-mono text-[#64748b] ml-auto">#55A868</span>
+        </div>
+        <div class="flex items-center space-x-1.5 p-1.5 bg-[#f8fafc] rounded border border-[#e2e8f0]">
+          <span class="w-3 h-3 rounded" style="background:#C44E52;"></span>
+          <span class="font-medium text-[#0f172a]">Jalisco (14)</span>
+          <span class="text-[9px] font-mono text-[#64748b] ml-auto">#C44E52</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-[11px] font-semibold text-[#475569] mb-1.5">Capas de Datos Medallion:</p>
+      <div class="flex items-center justify-between text-[10px] font-mono p-1.5 bg-[#f8fafc] rounded border border-[#e2e8f0]">
+        <span class="flex items-center gap-1 text-[#0f172a]">
+          <span class="w-2 h-2 rounded-full" style="background:#B08968;"></span> Bronze (#B08968)
+        </span>
+        <span class="flex items-center gap-1 text-[#0f172a]">
+          <span class="w-2 h-2 rounded-full" style="background:#8D99AE;"></span> Silver (#8D99AE)
+        </span>
+        <span class="flex items-center gap-1 text-[#0f172a]">
+          <span class="w-2 h-2 rounded-full" style="background:#D4AF37;"></span> Gold (#D4AF37)
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Tipografía & Escala de Fuentes -->
+  <section class="bg-white rounded-xl p-4 border border-[#e2e8f0] shadow-sm mb-5">
+    <div class="flex items-center justify-between mb-3 border-b border-[#f1f5f9] pb-2">
+      <h2 class="text-xs font-bold font-headline uppercase tracking-wider text-[#0f172a] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-[#0284c7]"></span>
+        4. Jerarquía Tipográfica
+      </h2>
+      <span class="text-[10px] text-[#64748b] font-mono">TIPO / SCALE</span>
+    </div>
+
+    <!-- Font Family Badges -->
+    <div class="grid grid-cols-2 gap-2 mb-4">
+      <div class="p-2.5 rounded bg-[#eff4ff] border border-[#dbeafe]">
+        <span class="text-[10px] uppercase font-bold text-[#0284c7] block">Titulares</span>
+        <span class="font-headline font-bold text-sm text-[#0f172a]">Space Grotesk</span>
+        <span class="text-[10px] text-[#64748b] block mt-0.5">Semibold / Bold (-0.02em)</span>
+      </div>
+      <div class="p-2.5 rounded bg-[#f8fafc] border border-[#e2e8f0]">
+        <span class="text-[10px] uppercase font-bold text-[#475569] block">Cuerpo & Tablas</span>
+        <span class="font-sans font-bold text-sm text-[#0f172a]">Inter</span>
+        <span class="text-[10px] text-[#64748b] block mt-0.5">Regular / Med · Tabular nums</span>
+      </div>
+    </div>
+
+    <!-- Escala de Tipografías -->
+    <div class="space-y-3 divide-y divide-[#f1f5f9] text-xs">
+      <div class="pt-2">
+        <div class="flex items-baseline justify-between mb-1">
+          <span class="text-[10px] font-mono text-[#64748b]">display-lg · 28px / Bold</span>
+          <span class="text-[10px] text-[#0284c7] font-semibold">Space Grotesk</span>
+        </div>
+        <div class="text-2xl font-bold font-headline tracking-tight text-[#0f172a]">
+          7 escuelas en riesgo.
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <div class="flex items-baseline justify-between mb-1">
+          <span class="text-[10px] font-mono text-[#64748b]">headline-md · 18px / Semibold</span>
+          <span class="text-[10px] text-[#0284c7] font-semibold">Space Grotesk</span>
+        </div>
+        <div class="text-lg font-semibold font-headline text-[#0f172a]">
+          Esc. Primaria Benito Juárez
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <div class="flex items-baseline justify-between mb-1">
+          <span class="text-[10px] font-mono text-[#64748b]">data-tabular-lg · 24px / Tabular</span>
+          <span class="text-[10px] text-[#64748b] font-semibold">Inter (tnum)</span>
+        </div>
+        <div class="text-2xl font-bold tabular-nums text-[#ef4444] flex items-baseline space-x-2">
+          <span>9.4</span>
+          <span class="text-xs text-[#64748b] font-normal">/ 10.0 Índice Global</span>
+          <span class="text-xs font-mono text-[#0f172a] ml-auto tabular-nums">14,820 est.</span>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <div class="flex items-baseline justify-between mb-1">
+          <span class="text-[10px] font-mono text-[#64748b]">body-md · 14px / Regular</span>
+          <span class="text-[10px] text-[#64748b]">Inter 400</span>
+        </div>
+        <p class="text-sm text-[#45464d] leading-relaxed">
+          Condición socioeconómica y rezago educativo consolidan la mayor correlación de vulnerabilidad en el entorno del plantel.
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <div class="flex items-baseline justify-between mb-1">
+          <span class="text-[10px] font-mono text-[#64748b]">label-sm · 11px / Uppercase (+0.05em)</span>
+          <span class="text-[10px] text-[#64748b]">Inter 600</span>
+        </div>
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-[#64748b] font-mono">
+          CCT: 15EPR0921Z · FASE 03 / TRIAGE
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Componentes UI: Botones, Badges y Drivers -->
+  <section class="bg-white rounded-xl p-4 border border-[#e2e8f0] shadow-sm mb-5">
+    <div class="flex items-center justify-between mb-3 border-b border-[#f1f5f9] pb-2">
+      <h2 class="text-xs font-bold font-headline uppercase tracking-wider text-[#0f172a] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-[#0f172a]"></span>
+        5. Componentes & Controles
+      </h2>
+      <span class="text-[10px] text-[#64748b] font-mono">UI CONTROLS</span>
+    </div>
+
+    <!-- Botones -->
+    <div class="space-y-2 mb-4">
+      <p class="text-[11px] font-semibold text-[#475569]">Estilos de Botón:</p>
+      
+      <!-- Primary -->
+      <button class="w-full py-2.5 px-4 rounded-lg bg-[#0f172a] text-white text-xs font-semibold flex items-center justify-center space-x-2 shadow-sm hover:bg-[#1e293b] active:scale-[0.99] transition">
+        <span>Acceder al Sistema</span>
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+
+      <!-- Secondary / Outline -->
+      <button class="w-full py-2.5 px-4 rounded-lg bg-white border border-[#cbd5e1] text-[#0f172a] text-xs font-semibold flex items-center justify-center space-x-2 hover:bg-[#f8fafc] active:scale-[0.99] transition">
+        <span>Explorar Esquema y Diccionario</span>
+      </button>
+
+      <!-- Action Cyan -->
+      <button class="w-full py-2 px-4 rounded-lg bg-[#0284c7] text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-sm hover:bg-[#0369a1] active:scale-[0.99] transition">
+        <span>Consultar Driver</span>
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- Badges y Chips -->
+    <div class="mb-4">
+      <p class="text-[11px] font-semibold text-[#475569] mb-2">Etiquetas de Estado (Pills):</p>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#fef2f2] text-[#991b1b] border border-[#fca5a5]">
+          Alto Riesgo
+        </span>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#fffbeb] text-[#92400e] border border-[#fcd34d]">
+          Medio Riesgo
+        </span>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#f0fdf4] text-[#166534] border border-[#86efac]">
+          Bajo Riesgo
+        </span>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#991b1b] text-white">
+          Dominante
+        </span>
+        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#fee2e2] text-[#b91c1c]">
+          [SIN DATO]
+        </span>
+      </div>
+    </div>
+
+    <!-- 6 Drivers Oficiales Muestra -->
+    <div>
+      <p class="text-[11px] font-semibold text-[#475569] mb-2">Visualizador de Driver Paramétrico:</p>
+      <div class="p-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc]">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+          <span class="font-medium text-[#0f172a] flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-[#ef4444]"></span>
+            1. Pobreza y rezago
+          </span>
+          <span class="font-bold tabular-nums text-[#0f172a]">9.8 <span class="text-[#64748b] font-normal">/ 10</span></span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-[#e2e8f0] overflow-hidden">
+          <div class="h-full bg-[#ef4444] rounded-full" style="width: 98%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[10px] text-[#64748b] mt-1.5 font-mono">
+          <span>COBERTURA: CEMS + CONEVAL</span>
+          <span class="text-[#991b1b] font-semibold">PRIORIDAD NIVEL 1</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Asistente Conversacional FARO -->
+  <section class="bg-[#0f172a] rounded-xl p-4 text-white shadow-md mb-6 border border-[#334155]">
+    <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-full bg-[#1e293b] border border-[#38bdf8] flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-[#38bdf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="font-headline font-bold text-xs text-white">Asistente FARO</span>
+      </div>
+      <span class="text-[9px] font-mono uppercase tracking-wider text-[#38bdf8] px-1.5 py-0.5 rounded bg-[#1e293b] border border-[#38bdf8]/30">
+        AI Copilot
+      </span>
+    </div>
+    <p class="text-xs text-[#cbd5e1] mb-3 leading-relaxed">
+      Módulo conversacional para resolver dudas metodológicas, triangulación de fuentes y cálculo de índices algorítmicos.
+    </p>
+    <div class="flex items-center justify-between bg-[#1e293b] p-2 rounded-lg border border-[#334155]">
+      <span class="text-[11px] text-[#94a3b8]">Consultar especificaciones...</span>
+      <span class="text-[10px] font-semibold bg-[#0284c7] text-white px-2 py-1 rounded">Preguntar</span>
+    </div>
+  </section>
+
+  <!-- Footer con Especificaciones Normativas -->
+  <footer class="text-center text-[11px] text-[#64748b] border-t border-[#e2e8f0] pt-4">
+    <p class="font-semibold text-[#0f172a] font-headline">FARO Intelligence System Guide</p>
+    <p class="text-[10px] mt-0.5">Cumple con la norma técnica de accesibilidad WCAG 2.1 AA · Tema claro nativo forzado</p>
+  </footer>
+
+</body>
+</html>
