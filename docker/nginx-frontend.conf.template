@@ -20,10 +20,13 @@ http {
   gzip          on;
   gzip_types    text/css application/javascript application/json image/svg+xml;
 
-  # Mismo motivo que el pid de arriba: los directorios temporales default de
-  # nginx tampoco son escribibles por "nginx". No hacen falta todavía (no hay
-  # proxy_pass ni bodies que bufferear), pero se dejan listos para cuando Luis
-  # conecte /api/* -- así no se repite este mismo ciclo de prueba y error.
+  # No anunciar la versión de nginx (CIS / anti-fingerprinting).
+  server_tokens off;
+
+  # Directorios temporales en /tmp: "nginx" (non-root) no puede escribir en los
+  # default. Diana los dejó listos en el PR #302; ahora que hay proxy_pass,
+  # proxy_temp_path deja de ser opcional -> nginx bufferea ahí la respuesta del
+  # upstream (sin esto el proxy falla en runtime con "Permission denied").
   client_body_temp_path /tmp/client_temp;
   proxy_temp_path       /tmp/proxy_temp;
   fastcgi_temp_path     /tmp/fastcgi_temp;
@@ -36,10 +39,47 @@ http {
     root  /usr/share/nginx/html;
     index index.html;
 
-    # Assets con hash de Vite -> cache largo
+    # --- Headers de seguridad (CIS Control 16 / OWASP Secure Headers) ---
+    # CSP y X-Frame-Options los pone el front aquí; la API pone
+    # X-Content-Type-Options / Referrer-Policy / HSTS (ver src/api/app.py, ADR-012).
+    # OJO nginx: add_header NO se hereda en un location que tenga su propio
+    # add_header -> por eso X-Content-Type-Options se repite abajo en /assets/.
+    # El CSP es un punto de partida: si la tipografía Inter u otro recurso se
+    # carga desde un origen externo (p.ej. fonts.googleapis.com / fonts.gstatic.com),
+    # hay que añadirlo a style-src / font-src. Verificar en la consola del navegador.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header Content-Security-Policy "default-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" always;
+
+    # --- Proxy al API en el MISMO origen (ADR-012: habilita la cookie httpOnly host-only) ---
+    # BUG-059: .run.app está en la Public Suffix List, así que la cookie de sesión NO
+    # puede compartirse entre subdominios -> el front debe servir /api y /auth desde
+    # su propio origen para que la cookie host-only viaje. Cloud Run enruta por SNI +
+    # Host: proxy_ssl_server_name y el Host explícito son OBLIGATORIOS (sin ellos, el
+    # edge de Cloud Run responde 404). proxy_pass SIN "/" final => preserva el path
+    # completo (/api/v1/... llega intacto a la API).
+    location /api/ {
+      proxy_pass https://faro-api-eanzfglvyq-uc.a.run.app;
+      proxy_set_header Host faro-api-eanzfglvyq-uc.a.run.app;
+      proxy_ssl_server_name on;
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location /auth/ {
+      proxy_pass https://faro-api-eanzfglvyq-uc.a.run.app;
+      proxy_set_header Host faro-api-eanzfglvyq-uc.a.run.app;
+      proxy_ssl_server_name on;
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Assets con hash de Vite -> cache largo (repite nosniff; ver nota arriba).
     location /assets/ {
       expires 1y;
       add_header Cache-Control "public, immutable";
+      add_header X-Content-Type-Options "nosniff" always;
     }
 
     # SPA: cualquier ruta que no sea un archivo real cae a index.html
