@@ -115,8 +115,10 @@ eléctrico contra slate profundo y blanco puro, como una torre de señal tempran
   timestamp) en `label-micro-mono` a la derecha; métricas en `JetBrains Mono` con indicador de
   tendencia (`+2.4%`, `-0.8%`).
 - **Botones:** primario fondo `#0F172A` / texto blanco / radio `4px` / hover `#1E293B`
-  ("Generar Dictamen", "Exportar Censo"); "beacon" (acción analítica) fondo `#0284C7` / hover
-  `#0369A1` ("Ejecutar Simulación", "Filtrar Matriz"); secundario/sutil fondo blanco, borde
+  ("Generar Dictamen", "Exportar Censo"); "beacon" (acción analítica) fondo `#0369A1` / hover
+  `#0284C7` ("Ejecutar Simulación", "Filtrar Matriz") — **corregido 2026-09-11**: el texto blanco
+  sobre el fondo original (`#0284C7`) daba 4.10:1, bajo WCAG 2.1 AA; se intercambió con su propio
+  hover (`#0369A1`, 5.93:1), sin inventar color nuevo; secundario/sutil fondo blanco, borde
   `#CBD5E1`, texto `#334155`.
 - **Iconografía:** Material Symbols Outlined, trazo fino, coherente con el tono instrumental —
   ver uso en `mockups/00_Login.html`.
@@ -178,23 +180,35 @@ ningún componente — quedan abiertos para que Equipo 5 los defina siguiendo
 
 ## 6. Accesibilidad
 
-> **Advertencia explícita:** los pares de color de esta sección **no fueron auditados
-> formalmente contra WCAG 2.1 AA** con una herramienta de contraste — son los tokens tal como
-> quedaron tras la corrección de Marina. Antes de que Equipo 5 implemente, corresponde correr una
-> validación de contraste real (por ejemplo con los mismos criterios que ya aplica
-> [[vault/04_UX_Design/Accessibility]] o el script de Monserrat en `ejemplos_graficas/`) sobre:
-> texto `on-surface` (`#0F172A`) contra los fondos `surface-container-*`, cada paso de la rampa
-> de magnitud contra el texto que lleva encima, el acento `#B45309` contra el fondo de su celda,
-> y el texto blanco de los botones primario/beacon contra `#0F172A`/`#0284C7`.
+> **Contraste — dos hallazgos corregidos el 2026-09-11**, verificados con la fórmula real de WCAG
+> 2.1 (no a ojo): (1) `text-outline` (`#76777d`) usado como texto micro fallaba en los 6 fondos —
+> 4.46:1 sobre blanco, hasta 3.46:1 sobre `surface-container-highest` — porque es un token pensado
+> para bordes (umbral 3:1), no para texto (umbral 4.5:1). Sustituido por `text-on-surface-variant`
+> (`#45464d`, 7.29–9.39:1 en los 6 fondos) en los **266 usos como texto** de los 7 mockups —
+> `text-outline-variant`, que es un token distinto, no se tocó. (2) Texto blanco sobre el botón
+> Beacon Action fallaba en su fondo de reposo (`#0284C7`, 4.10:1); corregido intercambiando
+> reposo/hover con su propio hover (`#0369A1`, 5.93:1), sin inventar color — ver §3 y el anexo de
+> tokens. El acento ámbar `#B45309` **sí pasa** (4.56:1) en el fondo donde realmente vive
+> (`surface-container-low`); solo fallaría si se moviera a un contenedor más oscuro, así que queda
+> como regla de uso, no como defecto.
+>
+> **Pendiente de una auditoría formal más amplia** (14 pares medidos, incluida la rampa de
+> magnitud completa contra `on-surface`) — existe pero vive sin PR en `dev/marina-garcia`; se
+> reconcilia con esta sección cuando aterrice.
 - **Nada se codifica solo por color, por diseño desde esta corrección:** nivel de atención
   (icono + texto), dominante (contorno + icono + etiqueta), `SIN_DATO` (textura + etiqueta "S/D"
   + motivo) — ninguno depende únicamente del tono para leerse. Esto resuelve directamente el
   criterio de `ADR-011` §4 que la primera versión (semáforo) violaba.
 - Todo identificador alfanumérico (CCT, coeficientes, timestamps) va en `JetBrains Mono` para
   legibilidad tabular — no es solo estético, reduce error de lectura en matrices densas.
-- Tamaño mínimo de texto, foco visible y orden de tabulación: **no definidos** en esta entrega
-  (es un export estático de diseño, no un prototipo interactivo completo) — criterio exigible
-  sigue siendo [[vault/04_UX_Design/Accessibility]], sin excepción.
+- **Tamaño mínimo de texto:** `label-micro-mono` (10px) es el piso — no baja de ahí en ningún
+  componente; por debajo de 10px WCAG deja de considerarlo legible en pantalla estándar.
+- **Foco visible:** anillo de `2px` en el acento cian `#38BDF8` con `offset` de `2px` sobre el
+  fondo, mismo tratamiento en todo control interactivo (botones, inputs, filas de tabla
+  seleccionables) — un solo estilo, no uno por componente.
+- Orden de tabulación: **no es alcance de este documento** (es interacción/navegación, no
+  identidad visual) — lo define Oscar Quiroz en `01_UX_Architecture.md` §8. Criterio exigible en
+  ambos casos sigue siendo [[vault/04_UX_Design/Accessibility]], sin excepción.
 
 ## 7. Mockups
 
