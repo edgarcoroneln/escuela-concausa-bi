@@ -1,4 +1,32 @@
 ---
+id: DOC-FARO-UX-TOKENS
+title: "Design Tokens (Stitch) — anexo tecnico de 03_Visual_Identity"
+owner: "Juan Carlos Macias Mayen"
+status: draft
+traces_up: ["US-621", "REQ-002", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
+last_reviewed: "2026-09-11"
+tags: [ui, identidad-visual, design-tokens, s7, us-621]
+---
+
+# Design Tokens (Stitch) — anexo tecnico
+
+> Anexo tecnico de [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]]. No sustituye a
+> ese documento -- ahi vive el sistema de color de datos vigente (§3). Aqui vive la paleta de
+> interfaz, tipografia, radios, espaciado y elevacion en su forma cruda (YAML de Stitch), para que
+> Equipo 5 copie valores exactos sin transcribir un PDF.
+
+> **Superado — sección "Calibrated Risk Tiers" y "Systematic Risk Drivers" de abajo.** Fue la
+> primera propuesta de Stitch (rojo/ámbar/verde por nivel de riesgo + 6 colores por driver) y
+> **Marina García la rechazó** por chocar con las reglas de lectura del dato de Monserrat Miranda
+> (`LEER_PRIMERO.md`) y con WCAG 2.1 AA (`ADR-011` §4). El sistema de color de datos **realmente
+> vigente** —rampa secuencial de un tono + acento ámbar `#B45309` + `SIN_DATO` con textura— está
+> documentado en `03_Visual_Identity.md` §3 y ya aplicado en los mockups de las Pantallas 2, 4, 5
+> y 6. El resto de este archivo (tipografía, radios, espaciado, elevación, componentes de
+> interfaz) sigue vigente y no cambió.
+
+## Tokens crudos (YAML original de Stitch)
+
+```yaml
 name: FARO Intelligence Platform
 colors:
   surface: '#f8f9ff'
@@ -137,20 +165,7 @@ spacing:
   sidebar-width-collapsed: 4.5rem
   sidebar-width-expanded: 17.5rem
   inspector-panel-width: 26rem
----
-
-> Export crudo de Stitch (paleta de interfaz, tipografía, radios, espaciado, elevación).
-> Referenciado desde [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]] §3. No es un
-> artefacto canónico del vault.
->
-> **Superado — sección "Calibrated Risk Tiers" y "Systematic Risk Drivers" de abajo.** Fue la
-> primera propuesta de Stitch (rojo/ámbar/verde por nivel de riesgo + 6 colores por driver) y
-> **Marina García la rechazó** por chocar con las reglas de lectura del dato de Monserrat Miranda
-> (`LEER_PRIMERO.md`) y con WCAG 2.1 AA (`ADR-011` §4). El sistema de color de datos **realmente
-> vigente** —rampa secuencial de un tono + acento ámbar `#B45309` + `SIN_DATO` con textura— está
-> documentado en `03_Visual_Identity.md` §3 y ya aplicado en los mockups de las Pantallas 2, 4, 5
-> y 6. El resto de este archivo (tipografía, radios, espaciado, elevación, componentes de
-> interfaz) sigue vigente y no cambió.
+```
 
 ## Brand & Style
 
