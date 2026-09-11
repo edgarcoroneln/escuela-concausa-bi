@@ -51,8 +51,18 @@ export const getEscuela = (cct) => request(`/api/v1/escuelas/${cct}`);
 // matrícula por escuela. El mapa (MapaRiesgo/MapaCasos) y esos 2 campos NO
 // se pueden conectar al API real todavía -- falta que alguien (DS/API) los
 // agregue al contrato. Documentado también en PLAN_TRABAJO_E5.md.
-export const getEscuelasEnRiesgo = (size = 50) =>
-  request(`/api/v1/escuelas?${new URLSearchParams({ order_by: "indice_riesgo", order: "desc", size: String(size) })}`);
+export const getEscuelasEnRiesgo = async (size = 50) => {
+  // El endpoint de lista devuelve un sobre de paginación (Page[EscuelaOut]:
+  // { items, total, page, size }), no un arreglo -- bug encontrado 11-sep en
+  // pruebas de "Los 7 casos" (la página se quedaba en blanco sin error
+  // porque escuelas.length de un objeto es undefined). Se desenvuelve aquí
+  // para que el resto del código siga tratando el resultado como arreglo.
+  const { data, error } = await request(
+    `/api/v1/escuelas?${new URLSearchParams({ order_by: "indice_riesgo", order: "desc", size: String(size) })}`
+  );
+  if (error) return { data: null, error };
+  return { data: data.items, error: null };
+};
 export const getMunicipios = (params = {}) =>
   request(`/api/v1/municipios?${new URLSearchParams(params)}`);
 export const getMunicipio = (cveMun) => request(`/api/v1/municipios/${cveMun}`);

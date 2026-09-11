@@ -218,11 +218,16 @@ procedimiento que ya está probado para el API, una vez por cada punto de la lis
     matrícula, que sí es real, en `Home.jsx`).
   - No existe endpoint de **serie histórica de matrícula por ciclo**, ni de **matriz de drivers en
     lote** (solo por escuela individual vía `EscuelaDetalleOut`).
-  - Mientras tanto, `VistaGeneral`, `LosSieteCasos`, `MapaCasos`, `ExpedienteEscuela`,
-    `MatrizDrivers`, `ComparacionTerritorial` y `Comparativa` siguen en `mock.js` — pendiente
-    rotularlos con `DemoBadge` y decidir, por pantalla, qué se conecta ya (identidad/orden/driver de
-    cada escuela sí se puede, ver `getEscuelasEnRiesgo()` en `api.js`) contra qué espera al gap de
-    arriba.
+  - **Actualizado 11-sep: `LosSieteCasos.jsx` y `ExpedienteEscuela.jsx` ya conectados al API real**
+    (verificado en navegador contra `localhost:8000` vía el proxy de Vite). Al conectar
+    `LosSieteCasos.jsx` se encontró y corrigió un bug: `getEscuelasEnRiesgo()` devolvía el sobre de
+    paginación completo (`Page[EscuelaOut]`: `{items, total, page, size}`) en vez del arreglo de
+    escuelas, así que la página se quedaba en blanco sin ningún error (`escuelas.length` de un
+    objeto es `undefined`). Corregido desenvolviendo `data.items` en `frontend/src/lib/api.js`.
+  - Mientras tanto, `VistaGeneral`, `MapaCasos`, `MatrizDrivers`, `ComparacionTerritorial` y
+    `Comparativa` siguen en `mock.js` — pendiente rotularlos con `DemoBadge` y decidir, por
+    pantalla, qué se conecta ya (identidad/orden/driver de cada escuela sí se puede, ver
+    `getEscuelasEnRiesgo()` en `api.js`) contra qué espera al gap de arriba.
 - Code-splitting por ruta (`React.lazy`) si sobra tiempo — el bundle pesa ~940KB, no bloqueante para
   la demo pero señalado por Vite en el build.
 
