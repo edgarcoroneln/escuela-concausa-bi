@@ -86,7 +86,19 @@
   "conclusion_tecnica": "D1-D4 conserva una separacion temporal comparable y estable sin crear un cluster equivalente a la disponibilidad de D6.",
   "recomendacion": "Retirar indice_completitud_drivers del vector y conservarlo solo como atributo de auditoria de los perfiles.",
   "decision_formal": "pendiente_revision_estefany_y_decision_edgar",
-  "mlflow_run_id": null,
+  "mlflow": {
+    "experimento": "ML-03-clustering-escuelas",
+    "modelo": "ML03_ClusteringEscuelas",
+    "version_modelo": "1",
+    "run_id": "d971ab7271df45629c9a50c27514890f",
+    "estado_run": "FINISHED",
+    "estado_version": "READY",
+    "artefacto_descargado_y_cargado": true,
+    "version_numpy": "2.4.6",
+    "version_pandas": "2.3.3",
+    "version_scikit_learn": "1.9.0"
+  },
+  "mlflow_run_id": "d971ab7271df45629c9a50c27514890f",
   "publicacion_gold": false,
   "commit_base": "914af0198faf587a4becc6b4aebb765bd0523c6b"
 }
