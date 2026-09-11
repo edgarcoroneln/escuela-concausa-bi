@@ -179,7 +179,7 @@ def callback(
     )
 
 
-@router.post("/refresh", response_model=None)
+@router.post("/refresh", response_model=TokenPair | SesionOut)
 def refresh(
     request: Request,
     respuesta: Response,
@@ -243,7 +243,7 @@ def logout(request: Request, respuesta: Response) -> None:
     borrar_sesion(respuesta, request)
 
 
-@router.post("/exchange", response_model=None)
+@router.post("/exchange", response_model=TokenPair | SesionOut)
 def exchange(
     request: Request,
     respuesta: Response,
@@ -259,8 +259,10 @@ def exchange(
 ) -> TokenPair | SesionOut:
     """Canjea el codigo de un solo uso de `?code_faro=` por el par de JWT (US-405, ADR-010).
 
-    Lo llama el **servidor** del frontend, no el navegador: por eso los tokens viajan en el cuerpo
-    de la respuesta y nunca por la URL. El codigo se consume en el primer canje; un segundo intento
+    Quién lo llama depende del modo: en **legacy** lo llama el **servidor** de Streamlit, y por eso
+    los tokens viajan en el cuerpo y nunca por la URL; en **cookie** lo llama el **navegador** del
+    frontend de React, a través del proxy same-origin de nginx, y los tokens no salen de las cookies
+    `httpOnly`. El codigo se consume en el primer canje; un segundo intento
     con el mismo codigo (o uno expirado, inventado o ya usado) responde **401**, sin distinguir
     entre los casos.
 

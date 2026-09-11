@@ -85,7 +85,9 @@ no *"hay logout"*.
 
 ## Seguridad / calidad
 
-- [x] **34 casos** en `test_auth_cookies.py`; 150 verdes en toda la superficie de auth y contrato
+- [x] **36 casos** en `test_auth_cookies.py`; 301 verdes en auth, contrato, agente y vault
+- [x] El OpenAPI publica `TokenPair | SesionOut` en el `200` de `exchange` y `refresh` (antes `{}`
+      por `response_model=None`); fijado por prueba — segunda revisión del PO, PR #304
 - [x] Las seis pruebas de la fuga de token, **verificadas reprobando** con el defecto reintroducido
 - [x] `ruff check .` (todo el repo, como el CI) limpio
 - [x] OpenAPI reexportado; `test_api_contract.py` verde

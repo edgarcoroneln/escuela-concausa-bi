@@ -387,3 +387,17 @@ def test_los_dos_modos_no_se_mezclan_en_el_refresco(client: TestClient) -> None:
     r = client.post(RUTA_REFRESH, json={"refresh_token": par.refresh_token})
     assert r.json()["access_token"]
     assert COOKIE_SESION not in r.cookies
+
+
+@pytest.mark.parametrize("sufijo", ["/auth/exchange", "/auth/refresh"])
+def test_el_openapi_publica_los_dos_modos_de_respuesta(client: TestClient, sufijo: str) -> None:
+    """El `200` declara `TokenPair | SesionOut`: con `response_model=None` se publicaba `{}`.
+
+    Un contrato vacío obliga a quien consume la API a leer el código para saber qué recibe; es
+    justo lo que el OpenAPI existe para evitar (revisión del PO, PR #304).
+    """
+    rutas = client.app.openapi()["paths"]
+    ruta = next(p for p in rutas if p.endswith(sufijo))
+    esquema = rutas[ruta]["post"]["responses"]["200"]["content"]["application/json"]["schema"]
+    referencias = {opcion["$ref"].rsplit("/", 1)[-1] for opcion in esquema["anyOf"]}
+    assert referencias == {"TokenPair", "SesionOut"}
