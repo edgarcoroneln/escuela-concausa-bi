@@ -1,11 +1,11 @@
 {
   "meta": {
-    "generated_at": "2026-09-11T19:43:20+00:00",
+    "generated_at": "2026-09-11T19:57:45+00:00",
     "generated_date": "2026-09-11",
-    "commit": "75e072f",
+    "commit": "14fd20a",
     "branch": "main",
     "working_tree": "clean",
-    "source_fingerprint": "42aa6e69f0d2",
+    "source_fingerprint": "72d7885b13eb",
     "source": "Fuentes canónicas del vault",
     "offline": true,
     "schema_version": "2.4"
@@ -2451,8 +2451,8 @@
         "US-224"
       ],
       "pr_count": 11,
-      "pr_open": 1,
-      "pr_merged": 10,
+      "pr_open": 0,
+      "pr_merged": 11,
       "stories": 4,
       "done": 4,
       "wip": 0,
@@ -3429,7 +3429,7 @@
         "name": "Luis Enrique García Vázquez",
         "cell": "Célula 4",
         "engagement": 100.0,
-        "commits": 7,
+        "commits": 6,
         "prs_merged": 5,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3475,7 +3475,7 @@
         "name": "Luis Téllez Domínguez",
         "cell": "Célula 5",
         "engagement": 100.0,
-        "commits": 129,
+        "commits": 126,
         "prs_merged": 53,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3613,9 +3613,9 @@
         "name": "Oscar Antonio Quiroz Lázaro",
         "cell": "Célula 3",
         "engagement": 100.0,
-        "commits": 28,
-        "prs_merged": 10,
-        "prs_open": 1,
+        "commits": 41,
+        "prs_merged": 11,
+        "prs_open": 0,
         "risk": "en_tiempo",
         "by_sprint": {
           "S1": {
@@ -3659,7 +3659,7 @@
         "name": "Marina García del Buey",
         "cell": "Célula 3",
         "engagement": 90.7,
-        "commits": 55,
+        "commits": 52,
         "prs_merged": 19,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -3843,7 +3843,7 @@
         "name": "Edgar Edmundo Coronel Navarrete",
         "cell": "Célula 6",
         "engagement": 81.4,
-        "commits": 545,
+        "commits": 541,
         "prs_merged": 48,
         "prs_open": 0,
         "risk": "en_tiempo",
@@ -4070,6 +4070,17 @@
         "signal": "15 PR · 17 DevLog · 6 US activas"
       },
       {
+        "name": "Oscar Antonio Quiroz Lázaro",
+        "cell": "Célula 3",
+        "cell_group": "Célula 2 · Analytics & Business Intelligence",
+        "active": true,
+        "prs_merged": 11,
+        "devlogs": 16,
+        "active_us": 4,
+        "activity": 31,
+        "signal": "11 PR · 16 DevLog · 4 US activas"
+      },
+      {
         "name": "Deni Garrido Fragoso",
         "cell": "Célula 4",
         "cell_group": "Célula 1 · Data Engineering & Quality",
@@ -4079,17 +4090,6 @@
         "active_us": 3,
         "activity": 29,
         "signal": "8 PR · 18 DevLog · 3 US activas"
-      },
-      {
-        "name": "Oscar Antonio Quiroz Lázaro",
-        "cell": "Célula 3",
-        "cell_group": "Célula 2 · Analytics & Business Intelligence",
-        "active": true,
-        "prs_merged": 10,
-        "devlogs": 13,
-        "active_us": 4,
-        "activity": 27,
-        "signal": "10 PR · 13 DevLog · 4 US activas"
       },
       {
         "name": "Monserrat Xcaret Miranda Olivas",
@@ -4524,9 +4524,21 @@
   "git_activity": {
     "available": true,
     "repository": "edgarcoroneln/escuela-concausa-bi",
-    "generated_at": "2026-09-11T19:43:19+00:00",
+    "generated_at": "2026-09-11T19:57:45+00:00",
     "scope": "Todos los PR del repositorio, hasta 2,000 por ejecución",
     "prs": [
+      {
+        "number": 319,
+        "title": "[Oscar Quiroz] - Arquitectura UX final: flujo, navegación y Asistente FARO (US-621) - [sync|CI|DoF|DevLog]",
+        "state": "merged",
+        "author": "oscarqlazaro-lab",
+        "created_at": "2026-09-11T15:26:01Z",
+        "merged_at": "2026-09-11T19:56:44Z",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/319",
+        "story_ids": [
+          "US-621"
+        ]
+      },
       {
         "number": 321,
         "title": "[Diana Alvarez] - Fase 2 identidad visual: rampa de riesgo + iconos de nivel (US-621/US-641) - [sync|CI|DoF|DevLog]",
@@ -4538,18 +4550,6 @@
         "story_ids": [
           "US-621",
           "US-641"
-        ]
-      },
-      {
-        "number": 319,
-        "title": "[Oscar Quiroz] - Arquitectura UX final: flujo, navegación y Asistente FARO (US-621) - [sync|CI|DoF|DevLog]",
-        "state": "open",
-        "author": "oscarqlazaro-lab",
-        "created_at": "2026-09-11T15:26:01Z",
-        "merged_at": null,
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/pull/319",
-        "story_ids": [
-          "US-621"
         ]
       },
       {
@@ -8946,17 +8946,17 @@
     "commits": [
       {
         "author": "edgarcoroneln",
-        "count": 545,
-        "last_at": "2026-09-11T19:42:18Z"
+        "count": 541,
+        "last_at": "2026-09-11T19:56:43Z"
       },
       {
         "author": "github-actions[bot]",
-        "count": 235,
-        "last_at": "2026-09-11T18:51:24Z"
+        "count": 233,
+        "last_at": "2026-09-11T19:43:20Z"
       },
       {
         "author": "LuisTellez03",
-        "count": 129,
+        "count": 126,
         "last_at": "2026-09-11T00:41:06Z"
       },
       {
@@ -8971,13 +8971,18 @@
       },
       {
         "author": "marina-gdb",
-        "count": 55,
+        "count": 52,
         "last_at": "2026-09-11T06:55:41Z"
       },
       {
         "author": "monserratxmiranda",
         "count": 44,
         "last_at": "2026-09-11T17:45:00Z"
+      },
+      {
+        "author": "oscarqlazaro-lab",
+        "count": 41,
+        "last_at": "2026-09-11T19:50:23Z"
       },
       {
         "author": "ImanolRuiz00",
@@ -8998,11 +9003,6 @@
         "author": "mserraniaa-png",
         "count": 33,
         "last_at": "2026-09-08T20:48:19Z"
-      },
-      {
-        "author": "oscarqlazaro-lab",
-        "count": 28,
-        "last_at": "2026-09-08T04:35:06Z"
       },
       {
         "author": "stephi-coder",
@@ -9040,11 +9040,6 @@
         "last_at": "2026-09-04T19:30:50Z"
       },
       {
-        "author": "LuisEGarciaV",
-        "count": 7,
-        "last_at": "2026-09-04T03:48:45Z"
-      },
-      {
         "author": "cmayorgat44",
         "count": 7,
         "last_at": "2026-09-03T05:42:04Z"
@@ -9055,6 +9050,11 @@
         "last_at": "2026-09-11T18:38:50Z"
       },
       {
+        "author": "LuisEGarciaV",
+        "count": 6,
+        "last_at": "2026-09-04T03:48:45Z"
+      },
+      {
         "author": "Dr4wde064",
         "count": 1,
         "last_at": "2026-08-22T04:09:42Z"
@@ -9062,9 +9062,45 @@
     ],
     "ci": [
       {
+        "name": "Refresh PM Dashboard",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34641551044"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34641551032"
+      },
+      {
         "name": "CI",
         "status": "in_progress",
         "conclusion": null,
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34641551030"
+      },
+      {
+        "name": "PM Dashboard",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34640973725"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34640973719"
+      },
+      {
+        "name": "PR Quality Gate",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34640973675"
+      },
+      {
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34640274469"
       },
       {
@@ -9075,8 +9111,8 @@
       },
       {
         "name": "Refresh PM Dashboard",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34640274461"
       },
       {
@@ -9144,42 +9180,6 @@
         "status": "completed",
         "conclusion": "success",
         "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554493"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554422"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "failure",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34635554416"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34634458499"
-      },
-      {
-        "name": "PR Quality Gate",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34634458468"
-      },
-      {
-        "name": "PM Dashboard",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34634458454"
-      },
-      {
-        "name": "CI",
-        "status": "completed",
-        "conclusion": "success",
-        "url": "https://github.com/edgarcoroneln/escuela-concausa-bi/actions/runs/34633781623"
       }
     ],
     "note": "Actividad agregada; no determina Done ni se usa como ranking individual."
