@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -156,4 +157,7 @@ def redactar_respuesta_con_llm(
     respuesta = objeto.get("respuesta")
     if not isinstance(respuesta, str) or not respuesta.strip():
         raise ErrorLLM("El LLM no devolvio una respuesta valida.")
-    return respuesta.strip()
+    # Colapsa saltos de linea/tabs a un solo espacio: el cliente puede reenviar esta respuesta tal
+    # cual como turno de `historial`, y ese contrato (HistorialTurnoIn) rechaza caracteres de
+    # control (US-305/US-611).
+    return re.sub(r"\s+", " ", respuesta).strip()

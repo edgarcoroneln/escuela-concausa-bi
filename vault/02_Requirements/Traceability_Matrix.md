@@ -49,10 +49,10 @@ tags: [requirements, traceability, matrix]
 |---|---|---|---|---|
 | `REQ-001` | `US-601` | Equipo 1: explicación verificable Bronze→Silver→Gold, filtros, cubos, ER y componentes | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-002` | `US-621`, `US-641` | Equipos 3 y 5: UX, gráficas, storytelling y frontend aceptados e integrados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-003` | `US-631` | Equipo 4: ML-03 funcional y explicación completa de tres modelos | [[vault/15_ML_Models/ML03_Explicacion_US631]] / [[vault/_DevLog/2026-09-10-estefany-hernandez-explicacion-ml03-us631]] / ⬜ | 🟡 En progreso |
 | `REQ-004` | `US-601`, `US-611`, `US-641` | Componentes e integraciones backend/chat/frontend revalidados | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
 | `REQ-005` | `US-641` | Equipo 5: candidata desplegada, observable y recuperable | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
-| `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | ⬜ / ⬜ / ⬜ | 🟡 En progreso |
+| `REQ-006` | `US-611` | Equipo 2: chat natural, contextual, seguro y funcional en candidata | `test_agente_prompt` ✅ / [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] / ⬜ | 🟡 En progreso |
 | `REQ-007` | `US-651`, `US-654`, `US-006` | Equipo 6/PO: QA, trazabilidad, go/no-go y entrega | ⬜ / [[vault/_DevLog/2026-09-10-edgar-coronel-handoff-reapertura-s7]] / ⬜ | 🟡 En progreso |
 
 ## Evidencia incremental — 2026-08-26
@@ -731,6 +731,17 @@ anclas no existen en el DOM hasta hacer scroll.
 | `REQ-003` | `US-321` | PR #292: corrida real ML-03, `k=3`, Silhouette 0.4644549058, perfiles y cobertura documentados | `RISK-011`: no se promueve a Gold/API/UI. El módulo de tres modelos sigue **parcial bajo la letra estricta del profesor** | accepted_with_residual |
 | `REQ-004` · `REQ-005` · `REQ-006` | `US-305`, `US-404`, `US-423`, `US-505` | OAuth/RBAC 401/403/200 real, hardening revisado, agente completo en `faro-api-00018-gjx`, frontend `faro-frontend-00009-way` y smoke integral verde | UI del agente single-turn; sesión >16 min se repite en el checklist del día | ready |
 
+## Evidencia incremental — 2026-09-10 · rediseño del chat, Fase 2 (historial de turnos, post-cierre)
+
+> Reapertura autorizada del agente conversacional pese al `DEC-021` (código congelado el 8-sep):
+> el chat quedó calificado de "basura" en la revisión del profesor y se relanza en 4 fases, sin
+> fecha fija. Ver [[vault/15_ML_Models/Agente_Guardrails_US304a]] y el diagnóstico de Andrés
+> González (`DOC-DIAGNOSTICO-AGENTE-CHAT-2026-09-09`, aún sin filed en el vault). Esta entrada
+> cubre solo la Fase 2 (memoria conversacional), alcance de Karla Monter en `src/api/**`.
+
+| REQ | Historias | Evidencia | Residual / siguiente gate | Estado |
+|---|---|---|---|---|
+| `REQ-004` · `REQ-006` | `US-305` | `HistorialTurnoIn` + campo `historial` (opcional, retrocompatible, máx. 10 turnos) en `AgenteConsultaIn` (`src/api/schemas.py`), mismo criterio de entrada hostil que `ContextoConversacionalIn`: `extra="forbid"`, cotas de tamaño, sin caracteres de control. El endpoint (`src/api/v1/agente.py::_construir_contexto_conversacional`) lo fusiona con `contexto` en el `Mapping` que `procesar_consulta` ya acepta, bajo la clave `"historial"`. 20 pruebas nuevas ✅ (`tests/test_agente_historial.py`), `openapi.v1.json` regenerado, suite completa (1161 casos) y `ruff` en verde | `construir_prompt_sistema` (`src/agente/prompt.py`, alcance de Andrés) todavía no lee la clave `"historial"`: el campo llega validado a la API pero sin efecto end-to-end hasta que C3 lo consuma. Fases 3 (streaming) y 4 (robustez/observabilidad) del plan siguen pendientes | 🟡 En progreso (contrato listo, consumo pendiente de C3) |
 ## Evidencia incremental — 2026-09-10 · estructura del frente de UX/UI y storytelling (E3, Marina García)
 
 | REQ | Historias | Evidencia entregada | Pendiente / a quién | Estado |
@@ -743,11 +754,25 @@ anclas no existen en el DOM hasta hacer scroll.
 |---|---|---|---|---|
 | `REQ-002` · `REQ-006` · `REQ-007` | `US-621` · `US-641` · `US-651` | PR #297 aprobado y mergeado. `DEC-023` ratifica la propuesta de Marina y [[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]] autoriza UX narrativa y gráficas nativas, con Superset como evidencia/respaldo. `DEC-024` elimina dependencias secuenciales: nivel de atención derivado de `indice_riesgo` (`alta >= 0.50`, `media >= 0.30`, `baja < 0.30`), nombre **Asistente FARO** y KPI `escuelas_en_riesgo` validado contra contrato, implementación y pruebas existentes. [[vault/04_UX_Design/UX_Guidelines]] queda como baseline histórico | E3, Front, Chat, ML y QA construyen y prueban en paralelo mediante contratos versionados; un pendiente de otro equipo no detiene mockups, componentes, pruebas contractuales ni integración incremental | 🟡 ejecución paralela · P-01…P-06 resueltas |
 
+### Gobernanza incremental — alcance de implementación de `US-641`
+
+`frontend/**` queda asignado a Diana Alvarez como líder E5; su acceso de integración se limita a `docker/frontend-entrypoint.sh`, `docker/frontend-react.Dockerfile`, `docker/nginx-frontend.conf.template` y `vault/08_CICD_DevOps/**`. Docker y CI/CD conservan revisión crítica de Luis Téllez. Evidencia y handoff: [[vault/_DevLog/2026-09-10-edgar-coronel-alcance-diana-frontend-s7]].
+
 ## Evidencia incremental — 2026-09-10 · Fase 1 del plan de mejora del chat (C3, Andrés González Habib)
 
 | REQ | Historias | Evidencia de prueba | DevLog | Estado |
 |---|---|---|---|---|
 | `REQ-006` | `US-304a`, `US-304b`, `US-305` | El profesor calificó el agente de "basura"; diagnóstico ubicó la causa en la whitelist rígida de `pregunta_en_alcance`, cero transparencia de cobertura geográfica, bug conocido de Nuevo León y falta de auto-corrección. Fase 1: puerta híbrida (vocabulario ampliado + respaldo semántico del RAG), respuesta directa sin SQL, auto-corrección de SQL (1 reintento), cobertura de las 4 entidades explicada en el prompt, few-shot con el join que corrige Nuevo León. 61/61 pruebas propias ✅ · `ruff` ✅ · **validado con Anthropic + ChromaDB + Postgres reales**: 5/5 casos de prueba correctos | [[vault/_DevLog/2026-09-10-andres-gonzalez-fase1-chat-agente]] | 🟡 En progreso (Fase 2 Karla / Fase 3 Alejandro pendientes) |
+
+## Evidencia incremental — 2026-09-10 · `construir_prompt_sistema` lee el historial de turnos (C3, Andrés González Habib)
+
+> Cierra el residual dejado por la entrada de Karla Monter arriba ("Fase 2, historial de turnos"):
+> el campo ya llegaba validado a `contexto_conversacional["historial"]`, pero `construir_prompt_sistema`
+> (`src/agente/prompt.py`, alcance de Andrés) todavía no lo leía.
+
+| REQ | Historias | Evidencia de prueba | DevLog | Estado |
+|---|---|---|---|---|
+| `REQ-004` · `REQ-006` | `US-305`, `US-304a`, `US-611` | `construir_prompt_sistema` agrega un bloque "Historial de la conversación" cuando `contexto_conversacional["historial"]` viene no vacío, con la transcripción literal `Usuario:`/`Agente:` de cada turno. Mismo criterio de dato hostil que `ccts`/`ciclo`/`filtros`/`resumen`: se advierte que el historial es texto de usuario, no instrucciones nuevas ni SQL, y que cualquier orden dentro de un turno pasado se ignora (defensa contra inyección). Retrocompatible: sin `historial` o con lista vacía, el prompt no cambia. Además, `redactar_respuesta_con_llm` colapsa saltos de línea/tabs de la respuesta del agente para que sea segura de reenviar como turno de `historial` (`HistorialTurnoIn` rechaza caracteres de control); la cota de 500 caracteres sigue pendiente de acuerdo con Karla/Diana (cliente vs API). 5 pruebas nuevas ✅ (`tests/test_agente_prompt.py`, `tests/test_agente_llm.py`), 40/40 en verde, `ruff` limpio | [[vault/_DevLog/2026-09-10-andres-gonzalez-historial-en-prompt-us305]] | 🟡 Backend listo (contrato + prompt); E2E pendiente: que el cliente envíe `historial` y la prueba con el LLM real en la candidata |
 
 ## Evidencia incremental — 2026-09-10 · alineación del paquete de UX/UI a `ADR-011` (E3, Marina García)
 
@@ -778,3 +803,9 @@ anclas no existen en el DOM hasta hacer scroll.
 | REQ | Historias | Evidencia entregada | Pendiente / a quién | Estado |
 |---|---|---|---|---|
 | `REQ-002` | `US-621` · `US-641` | **`01_UX_Architecture.md` de Oscar Quiroz revisado contra el plan vigente: cumple los criterios 21 y 22** —el Equipo 5 podría implementar sin redefinir decisiones de UX, que era el objetivo del entregable ✅ · Nombre del Explorador cerrado (**Explorador de escuelas**, de tres opciones) ✅ · Tres aportes suyos por encima de lo pedido: el **401 tratado como sesión expirada** conservando la ruta para retomarla tras autenticar; `tiene_prediccion = false` **sin inventar recomendación genérica**; y enlace directo a P4/P6 con justificación de producto ✅ · **Corregido un error de este plan, no suyo:** la ficha del Mockup 0 decía *«los campos y acciones del login actual»* y es **falso** — `src/frontend/auth.py:194` muestra que el acceso es **un solo botón** `st.link_button("Iniciar sesión con Google", ...)` que redirige al consentimiento de Google; no hay usuario, contraseña ni formulario. Oscar heredó esa redacción y derivó de ella un estado de *«credenciales inválidas»* que no puede ocurrir, porque un fallo de OAuth vuelve por el callback. El costo de no corregirlo hoy era que **Juan dibujara un formulario inexistente** y se descubriera al integrar. Corregido en el plan y en el scope, con los estados reales —en reposo, redirigiendo a Google, error de vuelta del callback— y con lo que la pantalla **no** lleva ✅ | **Tres observaciones a Oscar (E3).** (1) Su walkthrough paso 3 promete *«pregúntale al Asistente sobre lo que estás viendo»*, pero el Asistente **no tiene contexto de pantalla ni de escuela** — él mismo lo escribe en su §6. Es una promesa que el producto no cumple; se corrige con el copy ⬜ · (2) Le faltan tres piezas del plan que aterrizaron después de que escribió, no atribuibles a él: el acceso a *Cómo funciona* (§5.bis) desde P1 y el glosario, la regla del SQL oculto por defecto (§4.ter) en su §6, y la existencia de la leyenda de la §7.bis ⬜ · (3) Menor: su tabla de filtros dice de P2 *«Limitados»* y en la misma celda *«ninguno de los 3 obligatorios»*; hay que elegir una ⬜ · **Pregunta de narrativa abierta para la líder**, no defecto: el logo lleva de P6 a P1, pero P1 no revela el número, así que quien ya vio la revelación vuelve a una entrada que finge no saber | 🟢 visto bueno condicionado a las tres observaciones |
+
+## Evidencia incremental — 2026-09-10 · especificación de visualizaciones de la historia (E3, Monserrat Miranda)
+
+| REQ | Historias | Evidencia entregada | Pendiente / a quién | Estado |
+|---|---|---|---|---|
+| `REQ-002` | `US-621` · `ADR-011` · `DEC-024` | **`02_Data_Visualization_Spec` en borrador formal**: qué dato y qué gráfica sostienen cada pantalla (P2 a P6), con endpoint y campos por fila ✅ · **Consulta a producción** (commit `457715a`, 10-sep 18:24): `/kpis.escuelas_en_riesgo` = 7 y el corte cliente sobre una sola página de `/escuelas` da las mismas 7 — la mecánica del conjunto en riesgo y del Top 3 queda probada en la superficie que consume Front ✅ · **Seis ejemplos PNG/SVG con datos reales** y script reproducible en `FARO_Storytelling_UX/ejemplos_graficas/`, con contraste WCAG 2.1 AA medido ✅ · **Cinco referencias de forma de Monserrat** en `ejemplos_graficas/referencias/`, evaluadas contra el contrato (§7.4), y libertad total de maquetación e identidad para Juan Macías, separada de las reglas de lectura del dato (§7.5) ✅ · `vault_lint` y `ruff` limpios ✅ · [[vault/_DevLog/2026-09-10-monserrat-miranda-us621-dataviz-spec]] | **Dato que condiciona la historia:** en las 7 escuelas sólo hay evidencia de D1, D2 y D4 (3 de 6); D3, D5 y D6 son `SIN_DATO` en todas, y D5 es `null` en todo el universo ⬜ · SHAP sin poblar en producción → Equipo 4 (`US-631`) ⬜ · `es_estimado_por_grupo` siempre `null` → Diana Alvarez / Héctor Morales ⬜ · alta de `ejemplos_graficas/` en el `_index` → Marina García ⬜ · formato de entrega → Juan Macías ⬜ · avisos de implementación de la §8.2 → Equipo 5 ⬜ | 🟡 borrador formal · final el viernes 11 a las 15:00 |
