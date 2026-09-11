@@ -5,7 +5,7 @@ owner: "Oscar Antonio Quiroz Lázaro"
 status: draft
 traces_up: ["US-621", "REQ-002", "vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope"]
 traces_down: ["US-641"]
-last_reviewed: "2026-09-10"
+last_reviewed: "2026-09-11"
 tags: [ux, navegacion, interaccion, s7, us-621]
 ---
 
@@ -32,7 +32,7 @@ Login (P0) → Entrada (P1) → Panorama (P2) → Selección de caso (P3) → Ex
 | P3 Selección | "Volver al panorama" | P2 |
 | P4 Expediente | "Regresar a selección" | P3, mostrando el panorama completo de nuevo (no un estado a medias) |
 | P4 Expediente | "Ver la conclusión" (avance, no regreso) | P5 |
-| P6 Exploración | Logo FARO en la barra superior | P1 en su **estado de visita recurrente** (§2) — no cierra sesión ni finge que la investigación no avanzó |
+| P6 Exploración | Logo FARO en la barra superior | P1 en su **estado de visita recurrente** (§2) — **decisión cerrada con Marina**: no cierra sesión ni finge que la investigación no avanzó |
 
 No existe un botón de regreso de P5 a P4: la conclusión cierra la investigación guiada. Si el usuario
 quiere revisar otro caso, el único camino hacia atrás es reiniciar desde el logo (a P1) o avanzar a P6,
@@ -55,9 +55,11 @@ No es una octava pantalla ni entra al recorrido P0–P6: es contenido del Equipo
 arquitectura, modelo-datos, capas, cubos, stack, decisiones, modelos-ml) al que este frente solo le da
 identidad y ubicación.
 
-- **Acceso:** un enlace discreto desde P1 (junto a la frase de apoyo, sin competir con el CTA
-  principal) y desde cada término del glosario que lo amerite (igual que el enlace a "Pregúntale al
-  Asistente"). No hay un tercer punto de entrada.
+- **Acceso:** un enlace discreto en P1 (junto a la frase de apoyo, sin competir con el CTA principal)
+  y desde cada término del glosario que lo amerite (igual que el enlace a "Pregúntale al Asistente").
+  El glosario está disponible en **todas las pantallas posteriores al login** (§1 de la ficha por
+  pantalla lo repite en cada una), así que el overlay se abre igual desde cualquiera de las 7 — P1 es
+  solo donde además tiene su propio enlace directo, no el único punto de entrada.
 - **Cómo se muestra:** overlay a pantalla completa sobre la pantalla actual, no una ruta nueva del
   recorrido — igual mecánica que el Asistente FARO (§6): abre encima, no navega.
 - **Cómo se vuelve:** cerrar el overlay regresa exactamente a la pantalla y al estado desde donde se
@@ -101,7 +103,8 @@ identidad y ubicación.
 - **Estados:**
   - **Primera visita de la sesión:** carga (mientras se prepara el panorama); walkthrough automático
     (§4); copy completo de introducción, sin revelar el número.
-  - **Visita recurrente** (el usuario ya vio la revelación en P2 y volvió por el logo desde P6, §1):
+  - **Visita recurrente — decisión cerrada con Marina** (el usuario ya vio la revelación en P2 y
+    volvió por el logo desde P6, §1):
     el walkthrough no se dispara solo (sigue accesible por el ícono "?"); la frase de apoyo cambia de
     tono — deja de fingir que no sabemos nada y reconoce que la investigación continúa (p. ej. "Sigues
     en la misma investigación. Estos son los mismos casos."). **P1 sigue sin decir el número:** la
@@ -129,7 +132,8 @@ identidad y ubicación.
 - **Objetivo:** que el usuario elija libremente una de las escuelas reveladas, sin obligación de
   revisarlas todas.
 - **Contenido:** listado/tarjetas de las escuelas identificables; índice de riesgo numérico y **nivel
-  de atención** (alta/media/baja) de cada una.
+  de atención** (alta/media/baja) de cada una, mostrado como pista 0–1 con la línea de alerta marcada
+  (Monserrat) — con espacio reservado para su leyenda obligatoria (plan §7.bis).
 - **Botones y CTA:** CTA por escuela ("Abrir expediente"); "Volver al panorama".
 - **A dónde conecta:** CTA de escuela → P4; "Volver al panorama" → P2.
 - **Estados:** carga; sin estado vacío propio (el universo ya viene filtrado desde P2); escuelas sin
@@ -153,8 +157,10 @@ identidad y ubicación.
 
 - **Objetivo:** cerrar la investigación general con el hallazgo principal.
 - **Contenido:** los 3 drivers dominantes más frecuentes sobre el conjunto completo de escuelas en
-  riesgo (nunca sobre lo filtrado); en cuántas escuelas aparece cada uno como dominante; problemática
-  sustentada solo en los datos existentes; recomendación general por driver; la nota obligatoria:
+  riesgo (nunca sobre lo filtrado); en cuántas escuelas aparece cada uno como dominante, en la gráfica
+  de unidades del Top 3 (Monserrat) — con espacio reservado para su leyenda obligatoria (plan §7.bis);
+  problemática sustentada solo en los datos existentes; recomendación general por driver; la nota
+  obligatoria:
   *"Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, independientemente de
   los filtros utilizados durante la exploración."*
 - **Botones y CTA:** un único CTA principal — **"Ir al Explorador de escuelas"** (§7).
@@ -166,8 +172,9 @@ identidad y ubicación.
 - **Objetivo:** permitir que el usuario siga investigando otros casos con libertad, fuera de la
   narrativa guiada.
 - **Contenido:** pop-up único de bienvenida la primera vez (§5); filtros obligatorios (ciclo, entidad,
-  nivel); selección de escuela; misma lógica de expediente que P4; Asistente FARO flotante; acceso al
-  glosario.
+  nivel); selección de escuela; misma lógica de expediente que P4, **reutilizando sus mismas gráficas
+  y su misma leyenda obligatoria** (plan §7.bis) — no se rediseñan ni se duplican; Asistente FARO
+  flotante; acceso al glosario.
 - **Botones y CTA:** selección de escuela; logo FARO en la barra superior.
 - **A dónde conecta:** selección de escuela → vista de expediente (misma que P4); logo → P1.
 - **Estados:** carga; combinación de filtros sin resultados (§8); error de API.
