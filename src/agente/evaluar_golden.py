@@ -12,13 +12,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+from src.agente.prompt import NO_SQL_NECESARIO
 from src.agente.llm import generar_sql_con_llm, redactar_respuesta_con_llm
 from src.agente.recuperacion import recuperar_contexto
-from src.agente.servicio import procesar_consulta_con_rag
+from src.agente.servicio import procesar_consulta
 from src.api.ejecutor_gold import ejecutar_sql_read_only
 
 FIXTURE_POR_DEFECTO = Path("tests/fixtures/preguntas_evaluacion.json")
@@ -35,6 +39,9 @@ class ResultadoGolden:
     fuera_de_alcance: bool | None
     tiene_sql: bool
     respuesta_no_vacia: bool
+    contexto_recuperado: bool
+    modo_llm: str
+    etapa_error: str | None = None
     error: str | None = None
 
 
@@ -64,10 +71,33 @@ def _cumple_expectativa(categoria: str, fuera_de_alcance: bool, tiene_sql: bool)
 def evaluar_caso(indice: int, caso: dict[str, str]) -> ResultadoGolden:
     pregunta = caso["pregunta"]
     categoria = caso["categoria"]
+    diagnostico = {
+        "contexto_recuperado": False,
+        "modo_llm": "no_llamado",
+        "etapa_error": None,
+    }
+
+    def recuperar_contexto_instrumentado(texto: str) -> str:
+        try:
+            contexto = recuperar_contexto(texto)
+        except Exception as exc:  # noqa: BLE001 - solo se conserva la clase, no el detalle.
+            diagnostico["etapa_error"] = f"RAG:{type(exc).__name__}"
+            raise
+        diagnostico["contexto_recuperado"] = True
+        return contexto
+
+    def generar_sql_instrumentado(prompt: str, texto: str) -> str:
+        sql = generar_sql_con_llm(prompt, texto)
+        diagnostico["modo_llm"] = (
+            "no_sql_necesario" if sql.strip() == NO_SQL_NECESARIO else "sql"
+        )
+        return sql
+
     try:
-        resultado = procesar_consulta_con_rag(
+        resultado = procesar_consulta(
             pregunta,
-            generar_sql=generar_sql_con_llm,
+            recuperar_contexto=recuperar_contexto_instrumentado,
+            generar_sql=generar_sql_instrumentado,
             ejecutar_sql=ejecutar_sql_read_only,
             redactar_respuesta=redactar_respuesta_con_llm,
         )
@@ -85,6 +115,9 @@ def evaluar_caso(indice: int, caso: dict[str, str]) -> ResultadoGolden:
             fuera_de_alcance=fuera_de_alcance,
             tiene_sql=tiene_sql,
             respuesta_no_vacia=respuesta_no_vacia,
+            contexto_recuperado=diagnostico["contexto_recuperado"],
+            modo_llm=diagnostico["modo_llm"],
+            etapa_error=diagnostico["etapa_error"],
         )
     except Exception as exc:  # noqa: BLE001 - el reporte debe continuar con los demás casos.
         return ResultadoGolden(
@@ -95,6 +128,9 @@ def evaluar_caso(indice: int, caso: dict[str, str]) -> ResultadoGolden:
             fuera_de_alcance=None,
             tiene_sql=False,
             respuesta_no_vacia=False,
+            contexto_recuperado=diagnostico["contexto_recuperado"],
+            modo_llm=diagnostico["modo_llm"],
+            etapa_error=diagnostico["etapa_error"],
             error=str(exc),
         )
 
@@ -121,6 +157,13 @@ def _argumentos() -> argparse.Namespace:
 
 
 def main() -> int:
+    load_dotenv()
+    # Desde el host Windows, `chromadb` solo existe dentro de la red de Compose; el puerto
+    # publicado para las pruebas locales es localhost:8001. Dentro del contenedor este ajuste no
+    # se aplica porque el runner recibe un host distinto o se ejecuta en el servicio api.
+    if os.getenv("CHROMA_HOST") == "chromadb":
+        os.environ["CHROMA_HOST"] = "localhost"
+        os.environ.setdefault("CHROMA_PORT", "8001")
     args = _argumentos()
     try:
         resultados = evaluar_fixture(args.fixture)
