@@ -391,6 +391,79 @@ NOMBRE_ENTIDAD = {"09": "Ciudad de México", "15": "Estado de México", "19": "N
                   "14": "Jalisco"}
 ICONO_NIVEL = {"alta": "▲", "media": "■", "baja": "●"}
 
+#: Leyenda de cada gráfica (§7.bis del plan y §7.bis.2 del documento). Cuatro declaraciones por
+#: gráfica, en lenguaje de negocio: qué se ve, en qué unidad, cómo se ve aquí un SIN_DATO y de qué
+#: ciclo y recorte habla. Bloque fijo y visible, nunca sólo un tooltip.
+LEYENDAS = {
+    "P2": [
+        ("Qué se ve",
+         ("Una fila por escuela en riesgo y una columna por pista del entorno. El tono de la celda "
+          "dice cuánta presión ejerce esa pista sobre esa escuela; el recuadro con ▲ marca la que "
+          "más destaca.")),
+        ("Unidad",
+         ("Posición relativa de 0 a 1 frente al resto de escuelas observadas, no porcentaje: 0 es "
+          "la menor presión observada y 1 la mayor.")),
+        ("Sin dato",
+         ("Celda rayada con «sin dato»: esa pista no se pudo verificar para esa escuela. No es un "
+          "cero ni quiere decir que no haya problema.")),
+        ("Ciclo y recorte",
+         ("Ciclo {ciclo}. Las N escuelas que cruzan la línea de alerta, de las M del alcance "
+          "(Ciudad de México, Estado de México, Nuevo León y Jalisco).")),
+    ],
+    "P3": [
+        ("Qué se ve",
+         ("Una fila por escuela. El número es su índice de riesgo y la pista muestra dónde cae ese "
+          "índice, con dos marcas fijas: riesgo estable y línea de alerta.")),
+        ("Unidad",
+         ("Índice de 0 a 1 que traduce la variación de matrícula que el modelo proyecta. No es "
+          "probabilidad ni porcentaje.")),
+        ("Sin dato",
+         ("Una escuela sin predicción lo dice en su fila y no recibe marca en la pista; no se "
+          "coloca en 0.")),
+        ("Ciclo y recorte",
+         "Ciclo {ciclo}. Las N escuelas en riesgo, de mayor a menor índice."),
+    ],
+    "P4": [
+        ("Qué se ve",
+         ("Las seis pistas del entorno de esta escuela, siempre en el mismo orden. La barra mide "
+          "cuánta presión ejerce cada una; la marcada con ▲ es la que más destaca según el modelo.")),
+        ("Unidad",
+         ("Posición relativa de 0 a 1 entre las escuelas observadas. Infraestructura y conectividad "
+          "se leen como falta: 1 es carencia total del servicio.")),
+        ("Sin dato",
+         ("Pista rayada de punta a punta, con el motivo por el que falta. Un cero real se dibuja "
+          "como una línea mínima con su «0.00»: no se parecen.")),
+        ("Ciclo y recorte",
+         ("Ciclo {ciclo}, una sola escuela. Pobreza y rezago e inseguridad son valores de su "
+          "municipio, compartidos con las demás escuelas de ahí.")),
+    ],
+    "P5": [
+        ("Qué se ve",
+         ("Cada casilla es una escuela en riesgo, agrupada bajo la pista que más destaca en ella. "
+          "Cuantas más casillas, más se repite esa pista.")),
+        ("Unidad",
+         ("Conteo de escuelas, k de N. La proporción es secundaria: con N pequeño una escuela mueve "
+          "muchos puntos.")),
+        ("Sin dato",
+         ("Las pistas que no pudieron verificarse en ninguna escuela no aparecen en el Top, y la "
+          "nota de cobertura dice cuáles son. Una pista con 0 no deja de existir.")),
+        ("Ciclo y recorte",
+         ("Ciclo {ciclo}. El conjunto completo de escuelas en riesgo, sin filtros, sin importar lo "
+          "que el usuario haya filtrado antes.")),
+    ],
+    "P6": [
+        ("Qué se ve",
+         ("La pista del índice de la P3, reutilizada sin cambios: una fila por escuela, su índice y "
+          "su nivel de atención. Al abrir una, el expediente de la P4 tampoco cambia de forma.")),
+        ("Unidad", "Índice de 0 a 1, el mismo de la P3."),
+        ("Sin dato", "El mismo de la P3: sin predicción, sin marca; nunca en 0."),
+        ("Ciclo y recorte",
+         ("Lo único que cambia al reutilizarlas: ciclo {ciclo} y el filtro activo de entidad, "
+          "municipio y nivel, en vez del conjunto en riesgo. El filtro de nivel no cambia los "
+          "indicadores de la derecha.")),
+    ],
+}
+
 
 def _canal_lineal(c: float) -> float:
     return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
@@ -567,6 +640,10 @@ class Lienzo:
         self.estable = float(cortes["RIESGO_ESTABLE"]["valor"])
         self.fuente_linea = cortes["LINEA_DE_ALERTA"]["fuente"]
         self.fuente_estable = cortes["RIESGO_ESTABLE"]["fuente"]
+        # El ciclo se resuelve del dato (`id_ciclo` de PrediccionOut), nunca se teclea (§7.bis.1).
+        ciclos = {p.get("id_ciclo") for p in evidencia.get("prediccion", {}).values()
+                  if isinstance(p, dict) and p.get("id_ciclo")}
+        self.ciclo = ciclos.pop() if len(ciclos) == 1 else "el ciclo vigente"
 
     def figura(self, ancho: float, alto: float):
         return self.plt.figure(figsize=(ancho, alto), facecolor=PALETA["fondo"])
@@ -593,10 +670,26 @@ class Lienzo:
                        color=PALETA["tinta_2"], ha="center", va="center",
                        bbox={"boxstyle": "round,pad=0.25", "fc": PALETA["fondo"], "ec": "none"})
 
-    def pie(self, fig, fuente: str, campos: str, extra: str = "") -> None:
-        """Pie obligatorio: fuente, campos, fecha, entorno y aviso de paleta provisional."""
+    def pie(self, fig, fuente: str, campos: str, extra: str = "",
+            clave_leyenda: str | None = None) -> float:
+        """La leyenda de la §7.bis, seguida del pie: fuente, campos, fecha, entorno y paleta.
+
+        Un único bloque de texto, anclado por su base (`va="bottom"`): crece hacia arriba solo.
+        La leyenda va **fija y visible**, nunca en un tooltip — ningún dato puede vivir sólo en el
+        *hover* (§4.5). El texto es el de la §7.bis.2 y no se reescribe al maquetar (§7.5).
+
+        Devuelve la fracción de figura (0-1, desde abajo) donde termina el bloque: **se mide el
+        texto ya renderizado**, no se adivina su altura. Llamar `pie()` antes que cualquier otro
+        elemento cercano al borde inferior y usar el valor de retorno para colocarlo por encima.
+        """
         import textwrap
-        lineas = [
+        lineas = []
+        if clave_leyenda:
+            lineas.append("QUÉ ESTÁS VIENDO")
+            for etiqueta, valor in LEYENDAS[clave_leyenda]:
+                lineas.append(f"{etiqueta.upper()} — {valor.format(ciclo=self.ciclo)}")
+            lineas.append("")
+        lineas += [
             f"Fuente: {fuente} · campos: {campos}.",
             (f"Consulta del {self.fecha} a la API v1 en producción (commit {self.commit}). "
              f"Cortes leídos del código: LINEA_DE_ALERTA ({self.fuente_linea}) y "
@@ -605,10 +698,14 @@ class Lienzo:
              "provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías)."),
         ]
         if extra:
-            lineas.insert(1, extra)
-        texto = "\n".join(textwrap.fill(linea, 190) for linea in lineas)
-        fig.text(0.03, 0.012, texto, fontsize=7.6, color=PALETA["tinta_2"], va="bottom",
-                 linespacing=1.35)
+            lineas.insert(-3 if clave_leyenda else 1, extra)
+        texto = "\n".join(textwrap.fill(linea, 190) if linea else "" for linea in lineas)
+        objeto = fig.text(0.03, 0.012, texto, fontsize=7.6, color=PALETA["tinta_2"], va="bottom",
+                          linespacing=1.4)
+        fig.canvas.draw()
+        caja = objeto.get_window_extent(renderer=fig.canvas.get_renderer())
+        _, y_top_fig = fig.transFigure.inverted().transform((caja.x0, caja.y1))
+        return y_top_fig
 
     def guardar(self, fig, nombre: str) -> list[Path]:
         rutas = []
@@ -649,7 +746,7 @@ def ejemplo_p2(lz: Lienzo, casos: list[Caso]) -> list[Path]:
     import textwrap
     kpis = lz.evidencia["kpis"]
     universo = lz.evidencia["escuelas_ordenadas_paginas"][0]["total"]
-    fig = lz.figura(16, 10.2)
+    fig = lz.figura(16, 14.2)
     fig.text(0.03, 0.962, "Pantalla 2 · Panorama de las escuelas en riesgo — visualización "
              "principal (ejemplo con datos reales)", fontsize=10.5, color=PALETA["tinta_2"])
     fig.text(0.03, 0.915, "N escuelas están en riesgo. Tenemos N casos por investigar.",
@@ -742,8 +839,19 @@ def ejemplo_p2(lz: Lienzo, casos: list[Caso]) -> list[Path]:
                 ax.add_patch(lz.patches.Rectangle((xs, ys), lado, lado,
                                                   facecolor=PALETA["tinta_2"], linewidth=0))
 
-    # Leyenda
-    ly = 0.185
+    # El pie (con la leyenda de la §7.bis) se dibuja PRIMERO para medir dónde termina de verdad;
+    # "Cómo se lee" se coloca encima de esa medición, nunca de una posición adivinada.
+    piso = lz.pie(fig, "GET /api/v1/kpis (sin filtros) · GET /api/v1/escuelas?order_by="
+           "indice_riesgo&order=desc&size=100 con corte en LINEA_DE_ALERTA · GET "
+           "/api/v1/escuelas/{cct} por fila · GET /api/v1/municipios/{cve_mun}",
+           "escuelas_en_riesgo, matricula_total, variacion_matricula, indice_completitud_drivers; "
+           "cct, nombre, nivel, cve_mun, matricula_total, indice_riesgo, driver_dominante; d1…d6; "
+           "nombre_municipio",
+           extra="N se resuelve en vivo de /kpis.escuelas_en_riesgo; en la copy de los mockups va "
+                 "como N, nunca como número tecleado.",
+           clave_leyenda="P2")
+
+    ly = piso + 0.065
     fig.text(0.03, ly, "Cómo se lee", fontsize=9.5, fontweight="bold", color=PALETA["tinta"])
     for k in range(11):
         relleno, _ = color_presion(k / 10)
@@ -758,14 +866,6 @@ def ejemplo_p2(lz: Lienzo, casos: list[Caso]) -> list[Path]:
              "SIN_DATO, pista que no pudimos verificar   ·   D1 y D2 son valores del municipio   ·"
              "   D3 y D4 = falta (1 − servicios presentes)", fontsize=8.6,
              color=PALETA["tinta_2"])
-    lz.pie(fig, "GET /api/v1/kpis (sin filtros) · GET /api/v1/escuelas?order_by=indice_riesgo&"
-           "order=desc&size=100 con corte en LINEA_DE_ALERTA · GET /api/v1/escuelas/{cct} por fila "
-           "· GET /api/v1/municipios/{cve_mun}",
-           "escuelas_en_riesgo, matricula_total, variacion_matricula, indice_completitud_drivers; "
-           "cct, nombre, nivel, cve_mun, matricula_total, indice_riesgo, driver_dominante; d1…d6; "
-           "nombre_municipio",
-           extra="N se resuelve en vivo de /kpis.escuelas_en_riesgo; en la copy de los mockups va "
-                 "como N, nunca como número tecleado.")
     return lz.guardar(fig, "P2_matriz_casos")
 
 
@@ -784,7 +884,7 @@ def _pista_riesgo(lz: Lienzo, ax, x0: float, ancho: float, yc: float, riesgo: fl
 
 def ejemplo_p3(lz: Lienzo, casos: list[Caso]) -> list[Path]:
     """P3 — lista de casos con el índice en número y en una pista 0–1 con la línea de alerta."""
-    fig = lz.figura(14, 8.6)
+    fig = lz.figura(14, 11.0)
     fig.text(0.03, 0.955, "Pantalla 3 · Selección de caso (ejemplo con datos reales)",
              fontsize=10.5, color=PALETA["tinta_2"])
     fig.text(0.03, 0.905, "Elige una escuela para abrir su expediente.", fontsize=19,
@@ -827,21 +927,22 @@ def ejemplo_p3(lz: Lienzo, casos: list[Caso]) -> list[Path]:
                                                facecolor=PALETA["fondo"],
                                                edgecolor=PALETA["tinta"], linewidth=1))
         lz.texto(ax, 15.075, yc, "Abrir expediente →", size=8.6, ha="center", va="center")
+    piso = lz.pie(fig, "los mismos datos que la P2 (GET /api/v1/escuelas?order_by=indice_riesgo&"
+           "order=desc&size=100 y GET /api/v1/municipios/{cve_mun}); ninguna llamada nueva",
+           "cct, nombre, nivel, cve_mun, indice_riesgo, nombre_municipio; nivel de atención "
+           "derivado en Front (PLAN_TRABAJO §3.quater)",
+           clave_leyenda="P3")
     repetidos = len(casos) - len({c.riesgo for c in casos})
     nota = ("Las escuelas con el mismo índice van juntas y en orden alfabético: la lista no "
             "inventa un orden entre valores iguales." if repetidos else "")
-    fig.text(0.03, 0.175, nota, fontsize=9, color=PALETA["tinta_2"])
-    lz.pie(fig, "los mismos datos que la P2 (GET /api/v1/escuelas?order_by=indice_riesgo&order="
-           "desc&size=100 y GET /api/v1/municipios/{cve_mun}); ninguna llamada nueva",
-           "cct, nombre, nivel, cve_mun, indice_riesgo, nombre_municipio; nivel de atención "
-           "derivado en Front (PLAN_TRABAJO §3.quater)")
+    fig.text(0.03, piso + 0.02, nota, fontsize=9, color=PALETA["tinta_2"])
     return lz.guardar(fig, "P3_seleccion_caso")
 
 
 def ejemplo_p4(lz: Lienzo, caso: Caso) -> list[Path]:
     """P4 — expediente: barras de presión D1…D6 en orden fijo, dominante por forma y etiqueta."""
     import textwrap
-    fig = lz.figura(15, 9.6)
+    fig = lz.figura(15, 15.5)
     nivel = nivel_atencion(caso.riesgo, lz.linea, lz.estable)
     fig.text(0.03, 0.958, "Pantalla 4 · Expediente de una escuela (ejemplo con datos reales)",
              fontsize=10.5, color=PALETA["tinta_2"])
@@ -971,6 +1072,7 @@ def ejemplo_p4(lz: Lienzo, caso: Caso) -> list[Path]:
            "/api/v1/predicciones/{cct}/explicacion · GET /api/v1/municipios/{cve_mun}",
            "nombre, nivel, sostenimiento, d1…d6, indice_completitud_drivers, es_estimado_por_grupo; "
            "indice_riesgo, driver_dominante, recomendacion; contribuciones; pobreza_pct",
+           clave_leyenda="P4",
            extra="D3 y D4 se dibujan como falta (1 − servicios presentes), la misma lectura con la "
                  "que el pipeline elige el dominante (dbt/models/gold/features_escuela.sql:385-410).")
     return lz.guardar(fig, f"P4_expediente_{caso.cct}")
@@ -983,7 +1085,7 @@ def ejemplo_p5(lz: Lienzo, casos: list[Caso]) -> list[Path]:
     ranking, sin_dominante = top3(conjunto)
     n = len(conjunto)
     por_cct = {c.cct: c for c in casos}
-    fig = lz.figura(15, 9.8)
+    fig = lz.figura(15, 11.2)
     fig.text(0.03, 0.958, "Pantalla 5 · Conclusión Top 3 (ejemplo con datos reales)",
              fontsize=10.5, color=PALETA["tinta_2"])
     fig.text(0.03, 0.905, "Lo que más se repite entre las N escuelas en riesgo", fontsize=20,
@@ -1074,27 +1176,30 @@ def ejemplo_p5(lz: Lienzo, casos: list[Caso]) -> list[Path]:
                  "mismo corte, por eso aquí no se grafica una distribución de niveles.", size=10,
                  color=PALETA["tinta_2"], va="center")
 
+    piso = lz.pie(fig, "GET /api/v1/kpis (sin filtros) · GET /api/v1/escuelas?order_by="
+           "indice_riesgo&order=desc&size=100 SIN filtros, con corte en LINEA_DE_ALERTA · GET "
+           "/api/v1/predicciones/{cct} (recomendacion) · GET /api/v1/municipios/{cve_mun}",
+           "escuelas_en_riesgo; driver_dominante, cve_mun, indice_riesgo; recomendacion; d1…d6 e "
+           "indice_completitud_drivers de /escuelas/{cct}; nombre_municipio",
+           clave_leyenda="P5",
+           extra="Conteo por driver_dominante de EscuelaOut; rango con empates compartidos "
+                 "(generar_ejemplos.py::top3). Cada casilla es una escuela. Los conteos se "
+                 "resuelven en vivo; en los mockups van como N y k.")
+
+    y_caja = piso + 0.045
     fig.add_artist(lz.patches.FancyBboxPatch(
-        (0.03, 0.195), 0.62, 0.06, boxstyle="round,pad=0.004,rounding_size=0.008",
+        (0.03, y_caja), 0.62, 0.06, boxstyle="round,pad=0.004,rounding_size=0.008",
         transform=fig.transFigure, facecolor=PALETA["panel"], edgecolor=PALETA["tinta"],
         linewidth=1))
-    fig.text(0.04, 0.225, textwrap.fill(
+    fig.text(0.04, y_caja + 0.03, textwrap.fill(
         "Esta conclusión se calcula sobre el conjunto completo de escuelas en riesgo, "
         "independientemente de los filtros utilizados durante la exploración.", 100),
         fontsize=10.5, fontweight="bold", color=PALETA["tinta"], va="center")
     fig.add_artist(lz.patches.FancyBboxPatch(
-        (0.74, 0.2), 0.2, 0.05, boxstyle="round,pad=0.004,rounding_size=0.012",
+        (0.74, y_caja + 0.005), 0.2, 0.05, boxstyle="round,pad=0.004,rounding_size=0.012",
         transform=fig.transFigure, facecolor=PALETA["tinta"], linewidth=0))
-    fig.text(0.84, 0.225, "Explorar otras escuelas →", fontsize=11.5, fontweight="bold",
+    fig.text(0.84, y_caja + 0.03, "Explorar otras escuelas →", fontsize=11.5, fontweight="bold",
              color=PALETA["fondo"], ha="center", va="center")
-    lz.pie(fig, "GET /api/v1/kpis (sin filtros) · GET /api/v1/escuelas?order_by=indice_riesgo&"
-           "order=desc&size=100 SIN filtros, con corte en LINEA_DE_ALERTA · GET "
-           "/api/v1/predicciones/{cct} (recomendacion) · GET /api/v1/municipios/{cve_mun}",
-           "escuelas_en_riesgo; driver_dominante, cve_mun, indice_riesgo; recomendacion; d1…d6 e "
-           "indice_completitud_drivers de /escuelas/{cct}; nombre_municipio",
-           extra="Conteo por driver_dominante de EscuelaOut; rango con empates compartidos "
-                 "(generar_ejemplos.py::top3). Cada casilla es una escuela. Los conteos se "
-                 "resuelven en vivo; en los mockups van como N y k.")
     return lz.guardar(fig, "P5_conclusion_top3")
 
 
@@ -1104,7 +1209,7 @@ def ejemplo_p6(lz: Lienzo, cve_ent: str) -> list[Path]:
     escuelas = sorted(datos["escuelas"]["items"], key=lambda e: (-(e["indice_riesgo"] or 0),
                                                                   e["nombre"], e["cct"]))[:12]
     kpis = datos["kpis"]
-    fig = lz.figura(15, 9.6)
+    fig = lz.figura(15, 13.5)
     fig.text(0.03, 0.958, "Pantalla 6 · Exploración de otras escuelas (ejemplo con datos reales)",
              fontsize=10.5, color=PALETA["tinta_2"])
     for i, chip in enumerate(("Ciclo: 2024-2025", f"Entidad: {NOMBRE_ENTIDAD[cve_ent]}",
@@ -1171,20 +1276,24 @@ def ejemplo_p6(lz: Lienzo, cve_ent: str) -> list[Path]:
                color=PALETA["tinta_2"])
     panel.text(0.07, 0.2, "El filtro de nivel no cambia estos\nindicadores: /kpis no acepta "
                "nivel.", fontsize=8.4, va="top", color=PALETA["tinta_2"])
+    piso = lz.pie(fig, f"GET /api/v1/escuelas?cve_ent={cve_ent}&order_by=indice_riesgo&order="
+           f"desc&size={TAM_EXPLORACION} · GET /api/v1/kpis?cve_ent={cve_ent}",
+           "cct, nombre, nivel, indice_riesgo, driver_dominante; escuelas_en_riesgo, "
+           "indice_completitud_drivers",
+           clave_leyenda="P6",
+           extra="Filtro de ejemplo. La matrícula no se muestra aquí: dentro de la historia sólo "
+                 "aparece en la Pantalla 2.")
+
     repetidos = len(escuelas) - len({e["indice_riesgo"] for e in escuelas})
     notas = [(f"Nivel de atención: ▲ alta desde {lz.linea:.2f} · ■ media desde {lz.estable:.2f} · "
               "● baja debajo. Forma y texto, no sólo color.")]
     if repetidos:
         notas.append("Varias escuelas comparten exactamente el mismo índice: la lista las pone "
                      "juntas en orden alfabético y no inventa un orden entre ellas.")
-    fig.text(0.03, 0.8 - 0.0725 * alto - 0.03, "\n".join(notas), fontsize=9,
-             color=PALETA["tinta_2"], va="top", linespacing=1.4)
-    lz.pie(fig, f"GET /api/v1/escuelas?cve_ent={cve_ent}&order_by=indice_riesgo&order=desc&"
-           f"size={TAM_EXPLORACION} · GET /api/v1/kpis?cve_ent={cve_ent}",
-           "cct, nombre, nivel, indice_riesgo, driver_dominante; escuelas_en_riesgo, "
-           "indice_completitud_drivers",
-           extra="Filtro de ejemplo. La matrícula no se muestra aquí: dentro de la historia sólo "
-                 "aparece en la Pantalla 2.")
+    # va="bottom" (crece hacia arriba desde `piso`), igual que pie(): nunca puede invadir la
+    # leyenda por construcción, sin necesidad de adivinar cuántas líneas ocupa.
+    fig.text(0.03, piso + 0.02, "\n".join(notas), fontsize=9, color=PALETA["tinta_2"],
+             va="bottom", linespacing=1.4)
     return lz.guardar(fig, "P6_exploracion")
 
 

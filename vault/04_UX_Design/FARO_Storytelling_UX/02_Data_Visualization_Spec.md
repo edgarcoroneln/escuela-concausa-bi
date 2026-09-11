@@ -5,7 +5,7 @@ owner: "Monserrat Xcaret Miranda Olivas"
 status: draft
 traces_up: ["US-621", "REQ-002", "ADR-011", "DEC-023", "DEC-024", "vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope"]
 traces_down: ["US-641", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
-last_reviewed: "2026-09-10"
+last_reviewed: "2026-09-11"
 tags: [ux, dataviz, storytelling, s7, us-621]
 ---
 
@@ -542,6 +542,51 @@ una textura para `SIN_DATO` y tres etiquetas de nivel de atención con texto e i
 
 ---
 
+## 7.bis Leyenda de las gráficas
+
+Responde a la §7.bis del plan y al criterio de aceptación **28**. Va aquí, en el documento canónico
+de visualizaciones, y no en un archivo aparte (regla 1 del vault).
+
+**Ninguna gráfica se entrega sin su leyenda.** No es la leyenda de colores que trae cualquier
+librería: es el bloque que permite leer la gráfica sin que nadie la explique en voz alta. Va directo
+contra el hallazgo del profesor del 9-sep — una gráfica que hay que explicar en vivo no comunica sola.
+
+### 7.bis.1 Qué declara toda leyenda
+
+Cuatro cosas, en este orden y en lenguaje de negocio:
+
+| # | Declara | Regla |
+|---|---|---|
+| 1 | **Qué se está viendo** | Qué representa cada eje, fila, columna, serie o marca, con el nombre que usa el usuario y no el del campo: `indice_riesgo` es "índice de riesgo"; `d2` es "inseguridad del entorno"; `cve_mun` no aparece |
+| 2 | **En qué unidad está el valor** | Si es índice, proporción, conteo o posición relativa, con su rango. Un driver **nunca** se rotula con `%` (§4.1): son posiciones relativas, no porcentajes |
+| 3 | **Cómo se ve aquí un `SIN_DATO`** | La marca concreta *de esa gráfica* —celda rayada, pista rayada, fila sin marca— y la frase de que no es un cero (§6) |
+| 4 | **De qué ciclo y qué recorte habla** | El ciclo, resuelto del dato (`id_ciclo`, nunca tecleado), y si el conjunto son las `N` escuelas en riesgo, el universo del alcance o una lista filtrada |
+
+**Forma: bloque fijo y visible, nunca sólo tooltip.** La §4.5 ya prohíbe que un valor viva únicamente
+en el *hover*; la leyenda cae en la misma regla. El tooltip puede repetirla, no sustituirla, y la
+tabla gemela accesible incluye el mismo texto. Juan le da tratamiento visual; el texto es de este
+documento y no se reescribe al maquetar (§7.5).
+
+### 7.bis.2 Leyenda resuelta, gráfica por gráfica
+
+**El alcance es por gráfica, no por pantalla:** son cinco gráficas más el panel de explicación del
+modelo. Texto listo para implementar; los conteos van como `N` y `k` y se resuelven en vivo (§1.1).
+
+| Gráfica | Qué se está viendo | Unidad | `SIN_DATO` aquí | Ciclo y recorte |
+|---|---|---|---|---|
+| **P2 · Matriz de casos** (§3) | Una fila por escuela en riesgo y una columna por pista del entorno. El tono de la celda dice cuánta presión ejerce esa pista sobre esa escuela; el recuadro con ▲ marca la que más destaca | Posición relativa de 0 a 1 frente al resto de escuelas observadas, **no porcentaje**: 0 es la menor presión observada y 1 la mayor | Celda rayada con "sin dato": esa pista no se pudo verificar para esa escuela. No es un cero ni quiere decir que no haya problema | Ciclo `{id_ciclo}`. Las `N` escuelas que cruzan la línea de alerta, de las `M` del alcance (CDMX, Estado de México, Nuevo León y Jalisco) |
+| **P3 · Pista del índice de riesgo** (§2) | Una fila por escuela. El número es su índice de riesgo y la pista muestra dónde cae ese índice, con dos marcas fijas: `RIESGO_ESTABLE` y la línea de alerta | Índice de 0 a 1 que traduce la variación de matrícula que el modelo proyecta. No es probabilidad ni porcentaje | Una escuela sin predicción lo dice en su fila y no recibe marca en la pista; no se coloca en 0 | Ciclo `{id_ciclo}`. Las `N` escuelas en riesgo, de mayor a menor índice |
+| **P4 · Comparativa de los 6 drivers** (§4) | Las seis pistas del entorno de esta escuela, siempre en el mismo orden. La barra mide cuánta presión ejerce cada una; la marcada con ▲ es la que más destaca según el modelo | Posición relativa de 0 a 1 entre las escuelas observadas. Infraestructura y conectividad se leen como **falta**: 1 es carencia total del servicio (§4.1) | Pista rayada de punta a punta, con el motivo por el que falta. Un cero real se dibuja como una línea mínima con su "0.00": no se parecen | Ciclo `{id_ciclo}`, una sola escuela. Pobreza y rezago e inseguridad son **valores de su municipio**, compartidos con las demás escuelas de ahí |
+| **P4 · Panel de explicación del modelo** (§4.4) | Cuánto pesó cada pista en el cálculo del modelo. Es una pregunta distinta a la presión: describe al modelo, no a la escuela | Contribución con signo alrededor de cero | Hoy el panel completo está en `SIN_DATO`: la explicación aún no se publica en producción | Ciclo `{id_ciclo}`, una sola escuela |
+| **P5 · Gráfica de unidades del Top** (§5) | Cada casilla es una escuela en riesgo, agrupada bajo la pista que más destaca en ella. Cuantas más casillas, más se repite esa pista | Conteo de escuelas, `k de N`. La proporción es secundaria: con `N` pequeño una escuela mueve muchos puntos | Las pistas que no pudieron verificarse en ninguna escuela no aparecen en el Top, y la nota de cobertura dice cuáles son. Una pista con 0 no deja de existir | Ciclo `{id_ciclo}`. El **conjunto completo** de escuelas en riesgo, sin filtros, sin importar lo que el usuario haya filtrado antes |
+| **P6 · Las reutilizadas del expediente** (§2) | La pista del índice y la comparativa de los 6 drivers, idénticas a la P3 y la P4. No cambian de forma al reutilizarse | La misma de cada gráfica original | El mismo de cada gráfica original | **Lo único que cambia es esta línea:** ciclo `{id_ciclo}` y el filtro activo de entidad, municipio y nivel, en vez del conjunto en riesgo. El filtro de nivel **no** cambia los indicadores de arriba (§8.1) |
+
+Que la leyenda de la P6 sólo cambie en el recorte es deliberado: es lo que hace que el usuario
+reconozca la gráfica que ya aprendió a leer en la historia, y que la única diferencia —de qué
+escuelas habla ahora— quede dicha en lugar de suponerse.
+
+---
+
 ## 8. Lo que NO se puede graficar hoy
 
 ### 8.1 Recortes explícitos
@@ -600,15 +645,47 @@ y adoptó mi recomendación de que la revelación de la P2 es siempre el total s
 filtros atenuando filas de la matriz — así la leyenda obligatoria de la P5 (§5.2) se sostiene con
 cualquier filtro que el usuario haya usado antes.
 
-**Pendiente de su lado, aún no llega a `main`** (Marina: "ya los subo"): al sincronizar hay que
-revisar tres piezas nuevas del plan y, si hace falta, ajustar este documento —Marina pidió verlo el
-mismo día si hay contradicción:
+**Las tres piezas nuevas del plan ya están en `main`** (PR #312, mergeado el 2026-09-11). Efecto en
+este documento:
 
-- **§7.bis, leyenda de las gráficas.** No es la leyenda de colores de una librería: cada gráfica debe
-  explicar en lenguaje de negocio qué mide cada eje o serie, la unidad del valor, cómo se ve un
-  `SIN_DATO` dentro de ella, y de qué ciclo y qué recorte habla. La forma la decide Monserrat; el
-  tratamiento visual, Juan.
-- **§4.ter, el SQL del Asistente FARO no se muestra por defecto.** No toca directamente a las
-  gráficas de este documento; queda anotado por si alguna pieza futura lo asumiera.
-- **§5.bis, "Cómo funciona" del Equipo 1** (mapa, barras y diagrama de flujo de D3, ya existentes).
-  No son de este frente; se revisan contra las reglas de forma de aquí en cuanto lleguen.
+- **§7.bis, leyenda de las gráficas** → resuelta en la **§7.bis de aquí**, como sección propia y con
+  alcance por gráfica: cinco gráficas más el panel de explicación del modelo.
+- **§4.ter, el SQL del Asistente FARO no se muestra por defecto** → no toca ninguna gráfica de este
+  documento. Queda anotado por si una pieza futura lo asumiera.
+- **§5.bis, "Cómo funciona" del Equipo 1** → revisada contra las reglas de forma de aquí en la §8.4.
+
+### 8.4 "Cómo funciona" (§5.bis) contra las reglas de forma de este documento
+
+Revisión pedida por Marina. La sección es del Equipo 1 y **este frente no la rediseña**; lo que sigue
+son los puntos donde sus tres bloques D3 —`mapa`, `barras` y `diagrama_flujo`— se cruzan con las
+reglas de aquí. Ninguno es un defecto suyo: son decisiones que hay que tomar a propósito.
+
+1. **El criterio 28 no distingue superficies.** Dice "toda gráfica explica qué se está viendo". Leído
+   literal, los tres bloques D3 también necesitan su leyenda (§7.bis.1). Tiene sentido que la lleven
+   —son justo las piezas que el profesor pidió ver—, pero el texto es del Equipo 1, que es quien sabe
+   qué mide cada una. **Decisión para Marina:** o el criterio 28 se acota explícitamente a las
+   gráficas de la historia, o el Equipo 1 escribe las cuatro declaraciones de sus tres bloques. Lo que
+   no se sostiene es dejarlo ambiguo y que QA lo descubra el domingo.
+2. **Contenido fijo con cifras dentro.** La §5.bis dice que el único dato vivo son los conteos de
+   filas por capa y que el resto es contenido fijo. Si alguno de esos bloques lleva una cifra escrita
+   —cuántas escuelas, cuántos municipios—, es el mismo patrón contra el que existe la regla de `N`
+   (§1.1): el día que cambie el ciclo, esa cifra miente y nada la detecta. **Recomendación:** que las
+   cifras de esos bloques salgan del conteo vivo o no aparezcan.
+3. **`SIN_DATO` de estructura.** Que un tipo de bloque desconocido se pinte con advertencia y no tumbe
+   la página es la misma regla de aquí, bien aplicada. Para que se lea igual en las dos superficies,
+   esa advertencia debe verse como se ve un `SIN_DATO` en la historia —textura y texto, no un hueco
+   en blanco (§6).
+4. **El fondo blanco forzado de los iframes.** El Equipo 1 fijó `color-scheme: light` para no quedar
+   con letras negras sobre fondo negro. Si la identidad de Juan resulta oscura, esos tres bloques van
+   a quedar en una isla clara. Desde la lectura del dato eso importa menos que dos cosas que sí son
+   innegociables: que **no usen semáforo rojo/ámbar/verde** ni rampa multicolor para magnitud (§7.5),
+   porque entonces la misma idea se leería de dos formas distintas según la superficie.
+5. **Una oportunidad, no un pendiente.** Su bloque `mapa` demuestra que el front ya puede pintar una
+   base cartográfica. Eso **no** habilita por sí solo el mapa de la historia —el suyo ilustra la
+   arquitectura, no dibuja escuelas de Gold, y sigue sin haber geometría en la API v1—, pero sí
+   responde la mitad de la condición que la §8.1 pone en "si se aprueba". Si el PO quiere el mapa en
+   la P2 o en el expediente, el camino más corto pasa por ahí y no por un endpoint nuevo.
+
+Las dos rutas (`/api/v1/about/secciones` y `/api/v1/about/secciones/{id_seccion}`) siguen sin llegar
+a `main`: mientras eso no ocurra, esta revisión es sobre la especificación del Equipo 1, no sobre algo
+que se pueda mirar funcionando.
