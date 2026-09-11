@@ -168,6 +168,39 @@ def test_consulta_stream_parsea_meta_fragmentos_y_fin() -> None:
     assert fragmentos == ["1 escuela ", "encontrada."]
 
 
+def test_consulta_stream_retrocede_al_endpoint_sincrono_si_no_existe() -> None:
+    def stream(method: str, url: str, **kwargs):
+        request = httpx.Request(method, url)
+        response = httpx.Response(404, request=request)
+        raise httpx.HTTPStatusError("ruta inexistente", request=request, response=response)
+
+    def post(url: str, **kwargs) -> RespuestaHTTPFake:
+        assert url == "http://api:8000/api/v1/agente/consulta"
+        assert kwargs["json"] == {
+            "pregunta": "Pregunta nueva",
+            "historial": [{"pregunta": "Anterior", "respuesta": "Respuesta anterior"}],
+        }
+        return RespuestaHTTPFake(
+            {
+                "respuesta": "Respuesta síncrona",
+                "sql_generado": None,
+                "fuera_de_alcance": False,
+            }
+        )
+
+    respuesta = consultar_agente_stream(
+        "http://api:8000",
+        "Pregunta nueva",
+        stream=stream,
+        post=post,
+        historial=[
+            {"pregunta": "Anterior", "respuesta": "Respuesta anterior"},
+        ],
+    )
+
+    assert respuesta.respuesta == "Respuesta síncrona"
+
+
 def test_prepara_historial_con_turnos_completos_y_acotados() -> None:
     mensajes = [
         {"rol": "user", "contenido": "¿Cuántas escuelas hay?\n"},
@@ -178,6 +211,25 @@ def test_prepara_historial_con_turnos_completos_y_acotados() -> None:
     assert preparar_historial(mensajes) == [
         {"pregunta": "¿Cuántas escuelas hay?", "respuesta": "Hay 4 escuelas."}
     ]
+
+
+def test_prepara_historial_conserva_los_diez_turnos_mas_recientes() -> None:
+    mensajes = []
+    for indice in range(12):
+        mensajes.extend(
+            [
+                {"rol": "user", "contenido": f"Pregunta {indice}"},
+                {"rol": "assistant", "contenido": f"Respuesta {indice}"},
+            ]
+        )
+    mensajes.append({"rol": "user", "contenido": "Pregunta actual"})
+
+    historial = preparar_historial(mensajes)
+
+    assert len(historial) == 10
+    assert historial[0] == {"pregunta": "Pregunta 2", "respuesta": "Respuesta 2"}
+    assert historial[-1] == {"pregunta": "Pregunta 11", "respuesta": "Respuesta 11"}
+    assert all(turno["pregunta"] != "Pregunta actual" for turno in historial)
 
 
 def test_consulta_stream_envia_historial_sin_la_pregunta_actual() -> None:

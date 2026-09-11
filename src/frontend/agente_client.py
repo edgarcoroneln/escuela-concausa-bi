@@ -70,7 +70,7 @@ def preparar_historial(
             if pregunta and respuesta:
                 turnos.append({"pregunta": pregunta, "respuesta": respuesta})
             pregunta_pendiente = None
-            return _normalizar_historial(turnos)
+    return _normalizar_historial(turnos)
 
 
 def _normalizar_texto_historial(texto: str) -> str:
@@ -93,16 +93,20 @@ def consultar_agente(
     pregunta: str,
     post: Callable[..., Any] = httpx.post,
     access_token: str | None = None,
+    historial: list[dict[str, str]] | None = None,
 ) -> RespuestaAgente:
     """Consulta `/api/v1/agente/consulta` y valida su respuesta mínima."""
     texto = _validar_pregunta(pregunta)
 
     headers = {"Authorization": f"Bearer {access_token}"} if access_token else None
+    payload = {"pregunta": texto}
+    if historial:
+        payload["historial"] = _normalizar_historial(historial)
 
     try:
         response = post(
             f"{api_base_url.rstrip('/')}/api/v1/agente/consulta",
-            json={"pregunta": texto},
+            json=payload,
             headers=headers,
             timeout=15.0,
         )
@@ -131,8 +135,9 @@ def consultar_agente_stream(
     access_token: str | None = None,
     on_fragment: Callable[[str], None] | None = None,
     historial: list[dict[str, str]] | None = None,
+    post: Callable[..., Any] = httpx.post,
 ) -> RespuestaAgente:
-    """Consulta `/api/v1/agente/consulta/stream` y devuelve la respuesta final con streaming."""
+    """Consulta streaming y usa el endpoint síncrono si streaming aún no existe."""
     texto = _validar_pregunta(pregunta)
     headers = {"Authorization": f"Bearer {access_token}"} if access_token else None
     sql_generado: str | None = None
@@ -180,6 +185,14 @@ def consultar_agente_stream(
                             on_fragment(texto_fragmento)
                     evento_actual = None
     except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 404:
+            return consultar_agente(
+                api_base_url,
+                texto,
+                post=post,
+                access_token=access_token,
+                historial=historial,
+            )
         if exc.response.status_code == 401:
             raise ErrorAutorizacionAgente(
                 "La sesión no es válida o expiró; inicia sesión nuevamente."
