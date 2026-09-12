@@ -86,6 +86,7 @@ if pregunta:
 					],
 				)
 		except (ValueError, OSError) as exc:
+			placeholder.empty()
 			st.error(f"No se pudo consultar el agente: {exc}")
 		else:
 			estilo = st.warning if respuesta.fuera_de_alcance else st.markdown
