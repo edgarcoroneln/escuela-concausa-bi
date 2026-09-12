@@ -185,6 +185,10 @@ _CAMPOS_ESCUELA_OUT = (
     "matricula_total", "indice_riesgo", "driver_dominante", "tiene_prediccion",
     # US-621 (2026-09-11): el listado ya trae coordenadas para el mapa del frontend.
     "latitud", "longitud",
+    # US-621 (2026-09-12): los seis drivers y la comparacion con el ciclo anterior, para que la
+    # matriz de drivers y el mapa se llenen con UNA peticion en vez de una por escuela.
+    "d1", "d2", "d3", "d4", "d5", "d6", "indice_completitud_drivers",
+    "matricula_ciclo_anterior", "variacion_matricula",
 )
 
 

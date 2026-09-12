@@ -166,19 +166,41 @@ class EscuelaOut(BaseModel):
     # georreferencia, y el front las omite del mapa en vez de dibujarlas en el (0, 0).
     latitud: float | None = None
     longitud: float | None = None
-
-
-class EscuelaDetalleOut(EscuelaOut):
-    # `latitud`/`longitud` se heredan de EscuelaOut desde el 2026-09-11 (antes vivian solo aqui).
-    sostenimiento: StrictStr
-    indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
-    # None => SIN_DATO explícito (regla de cobertura parcial del CLAUDE.md §4)
+    # --- Los seis drivers, en el listado desde 2026-09-12 (US-621) ---
+    # Subidos del detalle porque la matriz de drivers y el mapa los piden para muchas escuelas a la
+    # vez: antes costaba una peticion por escuela. `fact_escuela_ciclo` ya esta unida al listado, asi
+    # que no agrega consultas.
+    #
+    # **`None` es SIN_DATO, nunca cero** (regla de cobertura parcial, CLAUDE.md §4): D5 es regional y
+    # D6 cubre ~80 zonas urbanas, asi que el hueco es el caso **normal**, no la excepcion. Un `0.0`
+    # afirmaria que ese driver no influyo, que es una afirmacion falsa sobre la causa.
     d1: float | None = None
     d2: float | None = None
     d3: float | None = None
     d4: float | None = None
     d5: float | None = None
     d6: float | None = None
+    # Cuantas de las seis pistas tienen dato ("3 de 6" en la UI). **Opcional, y esto es deliberado:**
+    # antes era obligatorio en el detalle, y `BUG-077` acaba de mostrar lo que cuesta -- un nulo en
+    # una fila reventaba la pagina completa. Aqui viaja en el listado, donde el radio de daño es
+    # mayor todavia.
+    indice_completitud_drivers: float | None = Field(default=None, ge=0, le=1)
+    # --- Comparacion con el ciclo anterior (2026-09-12, US-621) ---
+    # Lo mas cercano a una "serie historica" que existe hoy: `/series` se declaro fuera de alcance en
+    # US-411 y la grafica de US-212 se consumia como cubo de Superset, retirado por `ADR-012`. `fact`
+    # ya materializa estas dos columnas (`BUG-031`, Diana). **Con dos puntos se dibuja un cambio, no
+    # una tendencia**, y asi debe presentarse.
+    #
+    # `matricula_ciclo_anterior` es `None` cuando la escuela no tiene ciclo previo materializado --el
+    # primer ciclo de la serie-- y entonces `variacion_matricula` tampoco significa nada.
+    matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
+    variacion_matricula: float | None = None
+
+
+class EscuelaDetalleOut(EscuelaOut):
+    # `latitud`/`longitud` se heredan desde 2026-09-11; los seis drivers,
+    # `indice_completitud_drivers` y la comparacion de matricula, desde 2026-09-12.
+    sostenimiento: StrictStr
     # DEC-008 (Edgar, 2026-08-20): indice_riesgo de gold.predicciones puede repartirse a nivel
     # grupo en vez de ser una predicción directa por cct. None mientras tiene_prediccion=False
     # (todavía no existe la columna en gold.predicciones -- pendiente de Diana/Héctor).

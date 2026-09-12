@@ -147,6 +147,48 @@ def test_municipio_ok_y_404(client: TestClient) -> None:
     assert client.get(f"{API_PREFIX}/municipios/00000").status_code == 404
 
 
+def test_escuelas_listado_trae_los_seis_drivers(client: TestClient) -> None:
+    """US-621: la matriz de drivers y el mapa se llenan con UNA peticion, no una por escuela.
+
+    Las seis claves **siempre estan presentes**, tambien cuando el valor es `null`: el hueco se
+    declara, no se omite. `null` es SIN_DATO y es el caso **normal** en D5 (regional) y D6 (~80 zonas
+    urbanas) -- colapsarlo a `0.0` afirmaria que ese driver no influyo (`BUG-055`).
+    """
+    items = client.get(f"{API_PREFIX}/escuelas").json()["items"]
+    assert items
+
+    for escuela in items:
+        assert all(f"d{i}" in escuela for i in range(1, 7)), escuela["cct"]
+        assert "indice_completitud_drivers" in escuela
+
+    # El fixture modela el hueco a proposito: si todas trajeran los seis, esta prueba no distinguiria
+    # entre "se declara el hueco" y "no hay huecos en los datos de prueba".
+    assert any(escuela["d5"] is None or escuela["d6"] is None for escuela in items)
+    assert any(escuela["d1"] is not None for escuela in items)
+
+    # El detalle los sigue trayendo: se subieron al listado, no se movieron.
+    detalle = client.get(f"{API_PREFIX}/escuelas/09DPR0001A").json()
+    assert "d1" in detalle and "indice_completitud_drivers" in detalle
+
+
+def test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior(client: TestClient) -> None:
+    """US-621: lo mas cercano a una serie que existe hoy son dos puntos, y ya viajan en el contrato.
+
+    `/series` se declaro fuera de alcance en US-411 y la grafica de US-212 vivia en un cubo de
+    Superset, retirado por `ADR-012`. `fact_escuela_ciclo` ya materializa las dos columnas
+    (`BUG-031`), asi que exponerlas no cuesta una consulta.
+    """
+    items = client.get(f"{API_PREFIX}/escuelas").json()["items"]
+    assert items
+
+    for escuela in items:
+        assert "matricula_ciclo_anterior" in escuela
+        assert "variacion_matricula" in escuela
+
+    con_anterior = [e for e in items if e["matricula_ciclo_anterior"] is not None]
+    assert con_anterior, "el fixture debe tener al menos una escuela con ciclo previo"
+
+
 def test_un_municipio_sin_entidad_degrada_a_sin_dato(client: TestClient) -> None:
     """Un hueco en `dim_municipio` devuelve `null`, **no un 500 que tumba la pagina completa**.
 

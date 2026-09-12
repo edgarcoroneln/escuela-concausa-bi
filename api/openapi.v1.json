@@ -246,10 +246,17 @@
             "title": "Es Estimado Por Grupo"
           },
           "indice_completitud_drivers": {
-            "maximum": 1.0,
-            "minimum": 0.0,
-            "title": "Indice Completitud Drivers",
-            "type": "number"
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indice Completitud Drivers"
           },
           "indice_riesgo": {
             "anyOf": [
@@ -285,6 +292,18 @@
               }
             ],
             "title": "Longitud"
+          },
+          "matricula_ciclo_anterior": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricula Ciclo Anterior"
           },
           "matricula_total": {
             "minimum": 0.0,
@@ -306,6 +325,17 @@
           "tiene_prediccion": {
             "title": "Tiene Prediccion",
             "type": "boolean"
+          },
+          "variacion_matricula": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variacion Matricula"
           }
         },
         "required": [
@@ -315,8 +345,7 @@
           "cve_mun",
           "matricula_total",
           "tiene_prediccion",
-          "sostenimiento",
-          "indice_completitud_drivers"
+          "sostenimiento"
         ],
         "title": "EscuelaDetalleOut",
         "type": "object"
@@ -335,6 +364,72 @@
             "title": "Cve Mun",
             "type": "string"
           },
+          "d1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D1"
+          },
+          "d2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D2"
+          },
+          "d3": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D3"
+          },
+          "d4": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D4"
+          },
+          "d5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D5"
+          },
+          "d6": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D6"
+          },
           "driver_dominante": {
             "anyOf": [
               {
@@ -345,6 +440,19 @@
               }
             ],
             "title": "Driver Dominante"
+          },
+          "indice_completitud_drivers": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indice Completitud Drivers"
           },
           "indice_riesgo": {
             "anyOf": [
@@ -381,6 +489,18 @@
             ],
             "title": "Longitud"
           },
+          "matricula_ciclo_anterior": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricula Ciclo Anterior"
+          },
           "matricula_total": {
             "minimum": 0.0,
             "title": "Matricula Total",
@@ -397,6 +517,17 @@
           "tiene_prediccion": {
             "title": "Tiene Prediccion",
             "type": "boolean"
+          },
+          "variacion_matricula": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variacion Matricula"
           }
         },
         "required": [

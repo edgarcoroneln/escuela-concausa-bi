@@ -169,17 +169,26 @@ class RepositorioGoldPostgres:
             # ya esta unida aqui.
             dim_escuela.c.latitud,
             dim_escuela.c.longitud,
+            # Los seis drivers y su completitud, **en el listado** desde el 2026-09-12 (US-621):
+            # la matriz de drivers y el mapa los necesitan para muchas escuelas a la vez, y pedirlos
+            # por `/escuelas/{cct}` costaba una peticion por escuela. Salen de `fact`, que ya esta
+            # unida a esta consulta, asi que no agrega ningun JOIN.
+            fact.c.indice_completitud_drivers,
+            fact.c.d1,
+            fact.c.d2,
+            fact.c.d3,
+            fact.c.d4,
+            fact.c.d5,
+            fact.c.d6,
+            # Comparacion con el ciclo anterior (2026-09-12, US-621). `fact` ya las materializa
+            # --las expuso Diana en `BUG-031`-- y son lo mas cercano a una "serie" que existe hoy:
+            # con dos ciclos se dibuja un cambio, no una tendencia. Ver API_Specification §3.3.
+            fact.c.matricula_ciclo_anterior,
+            fact.c.variacion_matricula,
         ]
         if detalle:
             columnas += [
                 dim_escuela.c.sostenimiento,
-                fact.c.indice_completitud_drivers,
-                fact.c.d1,
-                fact.c.d2,
-                fact.c.d3,
-                fact.c.d4,
-                fact.c.d5,
-                fact.c.d6,
             ]
 
         return select(*columnas).select_from(

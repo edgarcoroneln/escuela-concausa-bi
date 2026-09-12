@@ -183,6 +183,26 @@ ciclos materializados a la vez (**20.6M en vez de ~7M reales** para las 4 entida
 > evitan en otras capas. **No es un bug si una entidad rezagada sale vacía sin `ciclo` explícito**
 > — es el filtro correcto y hay que pasar `ciclo` explícito para leer su último dato disponible.
 
+**Los seis drivers y la comparación de matrícula en `EscuelaOut` (2026-09-12, US-621).** `d1`..`d6`,
+`indice_completitud_drivers`, `matricula_ciclo_anterior` y `variacion_matricula` **suben del detalle al
+listado**. Salen de `gold.fact_escuela_ciclo`, que el listado ya tiene unida, así que **no agregan
+ninguna consulta**; siguen en el detalle, heredados de `EscuelaOut`.
+
+- **La matriz de drivers y el mapa se llenan con UNA petición**, no una por escuela.
+- `indice_completitud_drivers` pasa a **opcional**, y es deliberado: era obligatorio en el detalle, y
+  `BUG-077` mostró lo que cuesta — un nulo en una fila reventaba la página completa. En el listado el
+  radio de daño es mayor.
+- **`null` es SIN_DATO, nunca cero** (CLAUDE.md §4): D5 es regional y D6 cubre ~80 zonas urbanas, así
+  que el hueco es el caso **normal**. Un `0.0` afirmaría que ese driver no influyó (`BUG-055`).
+- **`matricula_ciclo_anterior` / `variacion_matricula` NO son una serie histórica.** Son dos puntos:
+  con ellos se dibuja un **cambio**, no una tendencia, y así deben presentarse. Es lo más cercano que
+  existe hoy — `/series` sigue fuera de alcance (ver abajo) y la gráfica de `US-212` vivía en un cubo
+  de Superset, retirado por `ADR-012`. `fact` ya materializaba las dos columnas (`BUG-031`).
+  `matricula_ciclo_anterior` es `null` en el primer ciclo materializado de una escuela, y entonces
+  `variacion_matricula` no significa nada.
+- Fijado por `tests/test_api_contract.py::test_escuelas_listado_trae_los_seis_drivers` y
+  `::test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior`.
+
 **`latitud` y `longitud` en `EscuelaOut` (2026-09-11, US-621 — mapa de riesgo del frontend):** las
 coordenadas **suben del detalle al listado**. Antes, pintar los 7 casos del storytelling costaba 7
 llamadas a `/escuelas/{cct}`, y el mapa de una entidad completa, una por escuela. `dim_escuela` ya las
@@ -456,12 +476,18 @@ class EscuelaOut(BaseModel):
     # Subidas del detalle al listado el 2026-09-11 (US-621, mapa del frontend). None => SIN_DATO.
     latitud: float | None
     longitud: float | None
+    # Subidos el 2026-09-12 (US-621): matriz de drivers y mapa con UNA petición. None => SIN_DATO.
+    d1: float | None; d2: float | None; d3: float | None
+    d4: float | None; d5: float | None; d6: float | None
+    indice_completitud_drivers: float | None = Field(default=None, ge=0, le=1)
+    # Dos puntos, no una serie: con ellos se dibuja un cambio, no una tendencia (BUG-031).
+    matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
+    variacion_matricula: float | None = None
 
 class EscuelaDetalleOut(EscuelaOut):
-    sostenimiento: StrictStr                  # latitud/longitud se heredan de EscuelaOut
-    indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
-    d1: float | None; d2: float | None; d3: float | None
-    d4: float | None; d5: float | None; d6: float | None   # None => SIN_DATO
+    # Desde 2026-09-12 solo agrega `sostenimiento` y `es_estimado_por_grupo`: drivers, completitud y
+    # comparación de matrícula se heredan de EscuelaOut (están en el listado).
+    sostenimiento: StrictStr
     es_estimado_por_grupo: bool | None        # DEC-008: indice_riesgo repartido a nivel grupo
 
 class MunicipioOut(BaseModel):

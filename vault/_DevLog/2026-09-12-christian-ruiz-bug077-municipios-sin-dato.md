@@ -4,12 +4,12 @@ date: "2026-09-12"
 author_human: "Christian Imanol Ruiz Hurtado"
 agent: "Claude Code"
 model: "claude-opus-5"
-session_duration: "1 sesión — mitad de código de BUG-077: /municipios deja de responder 500 por un nulo"
-touches: ["BUG-077", "US-621", "US-411", "REQ-004", "SEC-006"]
+session_duration: "1 sesión — BUG-077 (el 500 de /municipios) y los dos pendientes de contrato de Diana"
+touches: ["BUG-077", "US-621", "US-411", "US-212", "BUG-031", "REQ-004", "SEC-006"]
 tags: [devlog, api, contrato, bugfix, gold, sin-dato]
 ---
 
-# DevLog — 2026-09-12 — `BUG-077`: un nulo en 307 municipios ya no tumba `/municipios`
+# DevLog — 2026-09-12 — `BUG-077`, y los dos campos que el frontend pedía por escuela
 
 → [[vault/_DevLog/_index|Volver al índice]] ·
 [[vault/06_Quality_Testing/Reporte_QA_Regresion_S7_2026-09-12|Reporte QA de la regresión]] ·
@@ -55,11 +55,45 @@ relajarlo es una decisión de contrato aparte que no corresponde tomar en el fre
   de **módulo**: sin eso, el repositorio con hueco se filtraba al resto del archivo y hacía fallar una
   prueba que no tenía nada que ver con este cambio. Me pasó, y quedó comentado ahí.
 
+## Los dos pendientes de Diana, en el mismo PR
+
+Diana tenía asignados dos puntos y **ninguno estaba resuelto**. Los dos salen del mismo lugar:
+`gold.fact_escuela_ciclo`, que el listado de `/escuelas` **ya tiene unida**, así que ninguno agrega
+una consulta.
+
+### Los seis drivers en lote
+
+`d1`..`d6` e `indice_completitud_drivers` vivían solo en `/escuelas/{cct}`: llenar la matriz de
+drivers o el mapa costaba **una petición por escuela**. Ahora viajan en el listado; el detalle los
+hereda, no los pierde.
+
+`indice_completitud_drivers` pasa a **opcional**, y es a propósito: era obligatorio, y `BUG-077` —de
+este mismo día— mostró exactamente lo que cuesta eso cuando llega un nulo. En el listado el radio de
+daño es mayor que en el detalle, así que no repito el error dos veces en un día.
+
+### La "serie histórica" no existe, y lo que existe son dos puntos
+
+`/series` se declaró fuera de alcance en `US-411`, y la gráfica de matrícula pertenecía a `US-212`,
+que se consumía como cubo de Superset — retirado por `ADR-012`. Así que la petición, tal como está
+escrita, no tiene fuente.
+
+Lo que sí existe es mejor que nada: `fact_escuela_ciclo` ya materializa `matricula_ciclo_anterior` y
+`variacion_matricula` (las expuso Diana en `BUG-031`). Ahora viajan en el contrato. **Con dos puntos
+se dibuja un cambio, no una tendencia**, y eso quedó escrito en la especificación para que la UI no
+lo presente como línea de tiempo. Una serie real de 3 ciclos es una ruta nueva (`/escuelas/{cct}/series`)
+y no se abre alcance nuevo a un día del freeze sin decisión del PO.
+
+Verifiqué antes de tocar nada que un `Decimal` de Postgres —`d3`, `d4` e `indice_completitud_drivers`
+son `numeric`— no rompe la validación de salida, en vez de asumirlo: Pydantic lo convierte. Era el
+riesgo obvio después de `BUG-077`.
+
 ## Seguridad / calidad
 
 - [x] Prueba propia (`test_un_municipio_sin_entidad_degrada_a_sin_dato`), sobre lista **y** detalle
+- [x] Dos pruebas de los campos nuevos; la de drivers exige que el fixture **tenga** un hueco, para
+      que no pueda pasar por casualidad cuando no hay nulos en los datos de prueba
 - [x] Verificado campo por campo que `poblacion` ya degradaba, en vez de asumirlo
-- [x] 453 pruebas focalizadas verdes; `ruff` y `vault_lint` limpios
+- [x] 436 pruebas focalizadas verdes; `ruff` y `vault_lint` limpios
 - [x] OpenAPI reexportado; `API_Specification` §3.3 documenta el `SIN_DATO`
 - [x] Cambio **compatible**: un cliente que ya leía esos campos sigue recibiéndolos cuando hay dato
 
@@ -71,7 +105,8 @@ relajarlo es una decisión de contrato aparte que no corresponde tomar en el fre
 
 - **Agente / modelo:** Claude Code / claude-opus-5.
 - **Creados:** este DevLog.
-- **Modificados:** `src/api/schemas.py`, `tests/test_api_contract.py`, `api/openapi.v1.json`,
+- **Modificados:** `src/api/schemas.py`, `src/api/repositorio_gold.py`,
+  `tests/test_api_contract.py`, `tests/fixtures_gold.py`, `api/openapi.v1.json`,
   `vault/03_Architecture/API_Specification.md`, `vault/_DevLog/_index.md`.
 
 ## Verificación del login en producción (12-sep)
@@ -93,4 +128,8 @@ que agregarlo a `FRONTEND_REDIRECT_URIS` junto con el de producción.
   CONEVAL de los 307 municipios. Con este cambio el endpoint ya **no se cae** en ninguno de los dos
   casos, así que deja de ser bloqueante del freeze, pero el dato sigue faltando y la etiqueta de
   entidad saldrá vacía donde no haya fila.
-- **Edgar Coronel (PO/QA):** el cierre de `BUG-077` queda a tu criterio con las dos mitades.
+- **Edgar Coronel (PO/QA):** el cierre de `BUG-077` queda a tu criterio con las dos mitades. Y queda
+  una decisión tuya pendiente: si se abre `GET /escuelas/{cct}/series` para la serie real de 3 ciclos,
+  que es alcance nuevo. Con los dos puntos actuales el frontend ya puede contar el cambio.
+- **Marina García (E3):** la matriz de drivers ya es construible con una sola petición. `null` sigue
+  siendo "pista que no pudimos verificar", nunca cero.
