@@ -51,9 +51,18 @@ es heredar la cobertura parcial de CONEVAL, sino un catálogo propio:
 Sin `dbt`/Postgres disponibles en este entorno de agente: YAML de `_gold__seeds.yml` validado
 con `yaml.safe_load` (`dim_driver` + `dim_entidad`, ambos parseables); `dim_municipio.sql`
 revisado con balance de paréntesis/llaves Jinja (46/46, 5/5) y lectura manual completa del
-`diff` contra el original. **Pendiente de verificación real contra Postgres** (`dbt seed`,
-`dbt run --select dim_municipio`, `dbt test --select dim_municipio` y `curl /api/v1/municipios`)
-antes de abrir PR — no se afirma "corregido" hasta correrlo contra datos reales.
+`diff` contra el original.
+
+**Verificación real, Diana en su máquina el mismo día:** `dbt seed --select dim_entidad` +
+`dbt run --select dim_municipio` + `dbt test --select dim_municipio` → **17/17 tests en verde,
+0 errores** (incluye `not_null_dim_municipio_nombre_entidad`, el que atrapaba justo este bug).
+Contenedor `api` reiniciado (`docker compose restart api`) para tomar el código actual del
+contrato — necesario porque llevaba corriendo con el `schemas.py` viejo en memoria, sin
+`cve_ent`/`nombre_entidad`, y por eso los ignoraba en vez de fallar. Con el contenedor
+refrescado: `GET /api/v1/municipios/14113` (el caso puntual que Edgar reportó fallando) →
+`200`, `cve_ent: "14"`, `nombre_entidad: "Jalisco"`. Universo completo paginado
+(`GET /api/v1/municipios`, 4 páginas de 100) → **317 de 317 municipios recibidos, 0 con
+`nombre_entidad` vacío**. BUG-077 resuelto de punta a punta en el frente de dato.
 
 ## Fuera de alcance de este fix (frente de código, `src/api/**`, Christian Ruiz)
 
