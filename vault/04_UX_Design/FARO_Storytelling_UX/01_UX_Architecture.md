@@ -2,7 +2,7 @@
 id: DOC-FARO-UX-ARCH
 title: "UX Architecture — flujo, navegación e interacción"
 owner: "Oscar Antonio Quiroz Lázaro"
-status: draft
+status: approved
 traces_up: ["US-621", "REQ-002", "vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope"]
 traces_down: ["US-641"]
 last_reviewed: "2026-09-11"
@@ -17,7 +17,7 @@ tags: [ux, navegacion, interaccion, s7, us-621]
 > → [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]] ·
 > [[vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope]]
 
-**Estado:** borrador.
+**Estado: aprobado** el 2026-09-11 por Marina García del Buey, gate final de UX/UI (plan §7), contra la versión mergeada a `main`. Los cambios posteriores pasan por ella.
 
 ## 1. Mapa de navegación
 

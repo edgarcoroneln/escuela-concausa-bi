@@ -234,7 +234,12 @@ estado de *credenciales inválidas*: un fallo de OAuth vuelve por el callback, n
 escrito. Los estados reales son **en reposo**, **redirigiendo a Google** y **error de vuelta del
 callback**, con mensaje genérico y sin detalle interno.
 
-**No cambia:** autenticación, permisos ni lógica funcional.
+**Qué cambió por debajo, y por qué la pantalla no lo refleja.** `ADR-012` (`accepted`, 2026-09-11)
+movió la sesión a una cookie `httpOnly` que la API pone a través del proxy: el frontend **deja de
+manejar tokens** —no los guarda, no los refresca, no los adjunta— y aparece `POST /auth/logout`. Nada
+de eso es visible en esta pantalla, que sigue siendo el botón de Google, pero **la ficha ya no puede
+decir que no cambia la lógica funcional**, porque cambió. Lo que no cambia son los permisos ni lo que
+el usuario ve aquí.
 
 ### Pantalla 1 — Entrada
 
@@ -533,6 +538,27 @@ el lunes 14 a primera hora.
 
 Definidos inicialmente por este frente. El Equipo 6 (QA, `US-651`) puede ampliarlos.
 
+### 9.bis Cómo se verifica cada criterio
+
+Los 29 criterios no se comprueban igual, y tratarlos como si sí duplica el trabajo de QA. Se
+clasifican en tres formas de verificación, para que el Equipo 6 no tenga que hacer ese triaje:
+
+| Forma | Qué significa | Criterios |
+|---|---|---|
+| **A · En el artefacto** | Se comprueba leyendo los documentos y los mockups de este paquete, sin desplegar nada. Se puede hacer hoy | 6, 7, 10, 11, 13, 15, 16, 17, 20, 21, 23, 24, 25, 26, 28 |
+| **B · En la candidata desplegada** | Exige la URL viva: datos reales, estados de carga y error, comportamiento del Asistente | 2, 3, 4, 8, 12, 14, 18, 19, 27, 29 |
+| **C · Pasada humana** | No se automatiza: alguien que no conoce FARO tiene que recorrerlo y decir si entendió | 1, 5, 9, 22 |
+
+**Los de forma C son los que más valen y los que más fácil se saltan.** El criterio 1 —*"una persona
+que no conoce FARO entiende desde la entrada qué busca el proyecto"*— es exactamente lo que el
+profesor evaluó el 9-sep, y no hay prueba automática que lo cubra. Conviene que QA reserve a alguien
+que no haya trabajado en el frente.
+
+Los de forma A pueden ejecutarse **antes** del despliegue y no deberían esperar a la candidata.
+
+Molde disponible si el Equipo 6 quiere un plan formal:
+[[vault/06_Quality_Testing/Usability_Accessibility_Test_Plan_DB03_DB04]].
+
 1. Una persona que no conoce FARO entiende desde la entrada qué busca el proyecto y qué debe hacer.
 2. La Pantalla 2 revela de forma inequívoca cuántas escuelas están en riesgo.
 3. El usuario puede seleccionar cualquiera de ellas sin tener que revisar las demás.
@@ -565,7 +591,9 @@ Definidos inicialmente por este frente. El Equipo 6 (QA, `US-651`) puede ampliar
 27. La sección *Cómo funciona* comparte la identidad visual del producto y se alcanza desde la
     entrada y desde el glosario, sin interrumpir el recorrido narrativo.
 28. Toda gráfica explica qué se está viendo conforme a la §7.bis: ejes o series, unidad, tratamiento
-    de `SIN_DATO`, ciclo y recorte.
+    de `SIN_DATO`, ciclo y recorte. **Aplica también a los tres bloques D3 de la §5.bis** —`mapa`,
+    `barras` y `diagrama_flujo`—, donde la leyenda puede vivir en el bloque `markdown` adyacente: es
+    el mecanismo que el Equipo 1 ya usa en la sección `cubos` y no exige cambio de contrato.
 29. La conversación del Asistente no muestra el SQL generado por defecto; si se ofrece, es tras una
     acción opcional y cerrada de inicio (§4.ter).
 
@@ -722,3 +750,46 @@ Lo que siga contradiciéndolo en documentos anteriores queda superado por `ADR-0
 
 Los puntos 1 y 2 son de este frente. El 3 y el 4 dependen de E5 y E6, y `DEC-024` impide que se
 usen como pretexto para detener la construcción de nadie.
+
+### Gate de UX/UI — aprobación de los cuatro entregables
+
+**2026-09-11 · Marina García del Buey, gate final de UX/UI (§7).**
+
+Los cuatro entregables de la §7 quedan **aprobados** contra su versión mergeada a `main`. Cada uno
+pasa a `status: approved` en su frontmatter.
+
+| Entregable | Dueño | Aprobado contra |
+|---|---|---|
+| `00_Storytelling_Scope.md` | Marina García del Buey | ya `approved` desde el 2026-09-10 |
+| `01_UX_Architecture.md` | Oscar Antonio Quiroz Lázaro | PR #319 |
+| `02_Data_Visualization_Spec.md` | Monserrat Xcaret Miranda Olivas | PR #318 |
+| `03_Visual_Identity.md` | Juan Carlos Macías Mayen | PR #316 |
+
+**Qué se verificó antes de aprobar**, sobre la versión en `main` y no sobre la revisada en rama:
+
+- **Guardarraíles de la historia:** "Watson" aparece sólo como prohibición en los cuatro documentos;
+  cero ocurrencias de `prioritari*`; `SIN_DATO` y *nivel de atención* presentes donde corresponde.
+- **Regla de `N`:** cero números tecleados en los siete mockups. Ninguno afirma un conteo como
+  hallazgo.
+- **Leyenda (§7.bis):** referenciada en las cinco pantallas con gráfica, no sólo en dos.
+- **Higiene:** `vault_lint.py` limpio.
+
+**Con esto se cumplen los puntos 1 y 2** del criterio de cierre. Quedan abiertos el 3 y el 4, que no
+pertenecen a este frente.
+
+> **Auditoría de contraste: ejecutada el 2026-09-11 desde el gate**, no diferida. Se midieron 14
+> pares con la función WCAG 2.1 que ya vive en el repositorio (`contraste()` de Monserrat Miranda en
+> `ejemplos_graficas/generar_ejemplos.py`). **11 pasan; dos fallan** y están documentados con número
+> y arreglo en la §6 de `03_Visual_Identity.md`: el token `outline` usado como texto micro en 268
+> lugares, y el texto blanco del botón *Beacon Action*. **Los dos arreglos son de Juan Macías** y no
+> se aplicaron desde el gate: cambiar un token de color en siete mockups es decisión de sistema de
+> diseño, no validación.
+>
+> `ADR-011` §4 hace WCAG 2.1 AA no negociable, así que **la aprobación de `03_Visual_Identity.md`
+> queda condicionada a esos dos cambios.** Se aprueba el documento —el resto está completo y el
+> Equipo 5 ya implementa con él— con los dos hallazgos medidos, nombrados y asignados, que es lo
+> contrario de dejarlos como hueco.
+>
+> **Sigue abierto y no se cierra midiendo colores:** tamaño mínimo de texto y foco visible (Juan), y
+> orden de tabulación (Oscar Quiroz — es interacción, no identidad). Los tres estaban marcados como
+> *"no definidos"* en la §6.
