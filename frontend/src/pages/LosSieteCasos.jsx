@@ -6,6 +6,7 @@ import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRies
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelasEnRiesgo } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
+import { useCortesAtencion } from "../lib/cortesAtencion.js";
 
 // Conectado al API real 10-sep (revisión de Edgar, PR #302): ya no son 7
 // CCT con "PLACEHOLDER-*" fijos, sino el catálogo real ordenado desc por
@@ -18,6 +19,9 @@ import { useApiResource } from "../lib/useApiResource.js";
 // inventan) hasta que el API las exponga.
 export default function LosSieteCasos() {
   const { status, data, error } = useApiResource(getEscuelasEnRiesgo, { mock: escuelasMock });
+  // Cortes del nivel de atención desde /version (DEC-026, hallazgo de Diana
+  // 12-sep) -- nivelRiesgo() ya no trae 0.50/0.30 fijos, ver data/mock.js.
+  const { cortes } = useCortesAtencion();
   const esReal = status === "ok";
   const escuelas = status === "ok" ? data : status === "demo" ? data : [];
 
@@ -48,11 +52,11 @@ export default function LosSieteCasos() {
         </p>
       )}
 
-      {escuelas.length > 0 && (
+      {escuelas.length > 0 && cortes && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {escuelas.map((e, i) => {
             const color = riskRampColor(e.indice_riesgo);
-            const riesgo = nivelRiesgo(e.indice_riesgo);
+            const riesgo = nivelRiesgo(e.indice_riesgo, cortes);
             return (
               <Card key={e.cct} hover className="flex flex-col justify-between">
                 <div>

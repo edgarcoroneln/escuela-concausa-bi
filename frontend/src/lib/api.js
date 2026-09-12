@@ -45,6 +45,13 @@ async function request(path, options = {}) {
   }
 }
 
+// --- Version / salud (públicos, sin login -- DEC-023/DEC-026, US-621) ---
+// `cortes_atencion` ({ alta, media, ancla_calibracion }) es la fuente de verdad de los
+// umbrales de nivel de atención. NUNCA se escriben 0.50/0.30 a mano en el frontend --
+// eso es justo el patrón que causó BUG-058 (mismo error, con el diccionario de
+// entidades). Ver nivelRiesgo() en data/mock.js y lib/cortesAtencion.js.
+export const getVersion = () => request("/api/v1/version");
+
 // --- KPIs y catálogos ---
 export const getKpis = () => request("/api/v1/kpis");
 export const getEscuelas = (params = {}) =>
@@ -64,38 +71,43 @@ export const getEscuela = (cct) => request(`/api/v1/escuelas/${cct}`);
 // si entraba un registro con indice_riesgo: null. Ahora:
 //   1. descarta indice_riesgo no numérico (nunca truena .toFixed() en quien
 //      consume esto);
-//   2. aplica la línea de alerta real, indice_riesgo >= 0.50 (DEC-019, misma
-//      que src/api/repositorio_gold.py);
+//   2. aplica la línea de alerta real leída de GET /api/v1/version
+//      (cortes_atencion.alta, DEC-023/DEC-026 -- ya NO un número fijo aquí,
+//      ver hallazgo de Diana 12-sep: escribir 0.50/0.30 a mano en el
+//      frontend es el mismo patrón que causó BUG-058);
 //   3. recorta al conteo oficial de KpisOut.escuelas_en_riesgo -- ese número
 //      es la fuente de verdad del backend, no "los que alcancen el umbral
 //      en esta página".
 //
-// OJO -- gap de contrato encontrado al implementar esto: EscuelaOut (la
-// forma real de cada fila) trae cct/nombre/nivel/indice_riesgo/
-// driver_dominante/matricula_total/tiene_prediccion, pero NO latitud/
-// longitud, NO nombre de municipio/entidad (solo cve_mun) y NO variación de
-// matrícula por escuela. El mapa (MapaRiesgo/MapaCasos) y esos 2 campos NO
-// se pueden conectar al API real todavía -- falta que alguien (DS/API) los
-// agregue al contrato. Documentado también en PLAN_TRABAJO_E5.md.
-const LINEA_ALERTA_RIESGO = 0.5;
-
+// Coordenadas (US-621, 11-sep): EscuelaOut ya trae latitud/longitud en el
+// listado -- ver comentario en schemas.py -- así que el mapa de las 7
+// escuelas ya no necesita una llamada por escuela.
 export const getEscuelasEnRiesgo = async (size = 50) => {
   // El endpoint de lista devuelve un sobre de paginación (Page[EscuelaOut]:
   // { items, total, page, size }), no un arreglo -- bug encontrado 11-sep en
   // pruebas de "Los 7 casos" (la página se quedaba en blanco sin error
   // porque escuelas.length de un objeto es undefined). Se desenvuelve aquí
   // para que el resto del código siga tratando el resultado como arreglo.
-  const [escuelasRes, kpisRes] = await Promise.all([
+  const [escuelasRes, kpisRes, versionRes] = await Promise.all([
     request(
       `/api/v1/escuelas?${new URLSearchParams({ order_by: "indice_riesgo", order: "desc", size: String(size) })}`
     ),
     request("/api/v1/kpis"),
+    getVersion(),
   ]);
   if (escuelasRes.error) return { data: null, error: escuelasRes.error };
   if (kpisRes.error) return { data: null, error: kpisRes.error };
+  if (versionRes.error) return { data: null, error: versionRes.error };
+
+  const lineaAlerta = versionRes.data.cortes_atencion?.alta;
+  if (typeof lineaAlerta !== "number") {
+    // /version todavia sin cortes_atencion (API vieja) -- no se inventa un
+    // 0.50 aqui, se reporta el error tal cual para que la pantalla lo muestre.
+    return { data: null, error: "cortes_atencion_no_disponible" };
+  }
 
   const enRiesgo = escuelasRes.data.items.filter(
-    (e) => typeof e.indice_riesgo === "number" && e.indice_riesgo >= LINEA_ALERTA_RIESGO
+    (e) => typeof e.indice_riesgo === "number" && e.indice_riesgo >= lineaAlerta
   );
   return { data: enRiesgo.slice(0, kpisRes.data.escuelas_en_riesgo), error: null };
 };
@@ -129,6 +141,92 @@ export const postAgenteConsulta = (pregunta, historial = []) =>
     method: "POST",
     body: JSON.stringify({ pregunta, historial }),
   });
+
+// --- Agente (chat), streaming SSE (US-305 Fase 3) ---
+// Contrato: API_Specification.md §3.5 v1.3 (Christian, 11-sep). Ya mergeado
+// a main (12-sep) -- src/api/v1/agente.py registra "/consulta/stream".
+//
+// EventSource no sirve aqui -- el endpoint es POST y EventSource solo hace
+// GET (nota de Christian). Se lee el cuerpo con fetch() + ReadableStream,
+// mismo patron de sesion por cookie que request() (credentials: "same-origin").
+//
+// Mismo cuerpo que postAgenteConsulta (pregunta, historial, + contexto
+// opcional, ver bloque de arriba). Siempre llegan los 3 eventos, tambien si
+// algo falla a medio camino -- el backend convierte el fallo en un
+// `fragmento` con mensaje generico y manda `fin` igual, asi que el cliente
+// nunca se queda esperando:
+//   - "meta"      (una vez, al inicio): { sql_generado, fuera_de_alcance }
+//   - "fragmento" (una o mas veces):    { texto } -- concatenados en orden forman la respuesta
+//   - "fin"       (una vez, al final):  {}
+//
+// onEvento(tipo, data) se llama por cada evento segun llega, para que quien
+// consuma esto pueda ir pintando la burbuja del chat en vivo y cerrarla al
+// recibir "fin". El `texto` de cada fragmento se debe pintar como texto
+// plano, nunca como HTML (nota de Christian) -- esa decision es de quien
+// consuma esto, este cliente no sanea ni interpreta el texto.
+export async function postAgenteConsultaStream(pregunta, { historial = [], contexto = null, onEvento, signal } = {}) {
+  let res;
+  try {
+    res = await fetch(`${BASE_URL}/api/v1/agente/consulta/stream`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ pregunta, historial, ...(contexto ? { contexto } : {}) }),
+      signal,
+    });
+  } catch (err) {
+    return { error: err.message ?? "network_error" };
+  }
+
+  if (!res.ok || !res.body) {
+    return { error: `${res.status} ${res.statusText}` };
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  // Parser minimo de SSE: bloques separados por linea en blanco, cada uno con
+  // "event: <tipo>" + "data: <json>". No hace falta una libreria -- el
+  // contrato (API_Specification.md §3.5) es simple y fijo.
+  const procesarBuffer = () => {
+    const bloques = buffer.split("\n\n");
+    buffer = bloques.pop() ?? ""; // el ultimo bloque puede venir incompleto todavia
+    for (const bloque of bloques) {
+      if (!bloque.trim()) continue;
+      let tipo = "message";
+      let dataRaw = "";
+      for (const linea of bloque.split("\n")) {
+        if (linea.startsWith("event:")) tipo = linea.slice(6).trim();
+        else if (linea.startsWith("data:")) dataRaw += linea.slice(5).trim();
+      }
+      let data = {};
+      try {
+        data = dataRaw ? JSON.parse(dataRaw) : {};
+      } catch {
+        continue; // evento puntual malformado -- no debe tronar la UI
+      }
+      onEvento?.(tipo, data);
+    }
+  };
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      procesarBuffer();
+    }
+  } catch (err) {
+    // Conexion cortada a medias: el contrato promete que "fin" siempre llega,
+    // pero si la conexion se cae antes de que llegue, este cliente avisa
+    // "fin" igual para que la UI no se quede esperando para siempre.
+    onEvento?.("fin", {});
+    return { error: err.message ?? "stream_error" };
+  }
+
+  return { error: null };
+}
 
 // --- Auth (US-402, US-405, C4, ADR-012) ---
 export const getAuthMe = () => request("/api/v1/auth/me");

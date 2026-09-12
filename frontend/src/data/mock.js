@@ -72,20 +72,27 @@ export const driverIcons = {
 };
 
 // Nivel de atención por umbral -- ADR-011 (Edgar) / DEC-024, no el semáforo
-// original del mockup de UX/UI. Reutiliza LINEA_DE_ALERTA (DEC-019, =0.50,
-// src/api/repositorio_gold.py) y RIESGO_ESTABLE del backend: el frontend
-// deriva su propio nivel directo de indice_riesgo y NO consume/reinterpreta
-// gold.recomendaciones.prioridad (esa columna sigue anclada a 0.60, ver
-// ADR-011). Corrige el corte anterior (Alto ≥0.65/Medio 0.50-0.64), que no
-// estaba alineado con el resto del sistema.
+// original del mockup de UX/UI. Deriva su propio nivel directo de
+// indice_riesgo y NO consume/reinterpreta gold.recomendaciones.prioridad
+// (esa columna sigue anclada a 0.60, ver ADR-011 y DEC-023 -- prohibido
+// explícitamente, columna hoy en "media" donde el nivel real es "alta",
+// BUG-063).
+//
+// Fix 12-sep (hallazgo de Diana, mismo patrón que BUG-058): los cortes ya
+// NO están fijos aquí -- vienen de `cortes` (GET /api/v1/version,
+// cortes_atencion, DEC-026), leídos con useCortesAtencion() en
+// lib/cortesAtencion.js. Escribir 0.50/0.30 a mano en este archivo es
+// exactamente el error que ya causó un bug por el mismo motivo (diccionario
+// de entidades hardcodeado); este archivo ya no es la fuente de verdad de
+// esos números, aunque coincidan hoy con los ratificados en DEC-019/DEC-024.
 //
 // Sin color propio (03_Visual_Identity.md S3, revisión de Marina 10-sep):
 // icono + texto únicamente -- ▲ alta · ■ media · ● baja, en tinta única
 // (var(--color-ink)). El semáforo por nivel quedó rechazado igual que el
 // color por driver -- ver src/lib/riskRamp.js.
-export function nivelRiesgo(indice) {
-  if (indice >= 0.5) return { label: "Alta", icon: "▲" };
-  if (indice >= 0.3) return { label: "Media", icon: "■" };
+export function nivelRiesgo(indice, cortes) {
+  if (indice >= cortes.alta) return { label: "Alta", icon: "▲" };
+  if (indice >= cortes.media) return { label: "Media", icon: "■" };
   return { label: "Baja", icon: "●" };
 }
 

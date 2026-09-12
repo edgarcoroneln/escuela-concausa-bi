@@ -8,6 +8,7 @@ import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRies
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuela, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
+import { useCortesAtencion } from "../lib/cortesAtencion.js";
 
 const TABS = ["Resumen", "Drivers", "Comparación", "Predicción", "Recomendación"];
 const DRIVER_CODES = ["D1", "D2", "D3", "D4", "D5", "D6"];
@@ -33,6 +34,9 @@ export default function ExpedienteEscuela() {
     mock: escuelasMock.find((e) => e.cct === cct) ?? null,
     deps: [cct],
   });
+  // Cortes del nivel de atención desde /version (DEC-026, hallazgo de Diana
+  // 12-sep) -- nivelRiesgo() ya no trae 0.50/0.30 fijos, ver data/mock.js.
+  const { cortes } = useCortesAtencion();
 
   const tienePrediccion = data?.tiene_prediccion ?? false;
   const escuelaMock = escuelasMock.find((e) => e.cct === cct) ?? null;
@@ -57,7 +61,7 @@ export default function ExpedienteEscuela() {
     { mock: prediccionMock, deps: [cct, tienePrediccion] }
   );
 
-  if (status === "loading") {
+  if (status === "loading" || !cortes) {
     return (
       <PageContainer>
         <p className="text-sm" style={{ color: "var(--color-ink-faint)" }}>Cargando expediente…</p>
@@ -82,7 +86,7 @@ export default function ExpedienteEscuela() {
 
   const escuela = data;
   const color = riskRampColor(escuela.indice_riesgo);
-  const riesgo = nivelRiesgo(escuela.indice_riesgo);
+  const riesgo = nivelRiesgo(escuela.indice_riesgo, cortes);
   const esReal = status === "ok";
 
   return (

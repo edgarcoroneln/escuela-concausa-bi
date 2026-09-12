@@ -23,6 +23,18 @@ COPY frontend/ .
 # trae, y no hace falta: VITE_API_BASE_URL cae al default "" de api.js (rutas
 # relativas, mismo origen vía proxy_pass de este mismo nginx). Nada que inyectar
 # en este build-arg/ENV.
+# ARG opcional para inyectar VITE_API_ORIGIN en el build de produccion (US-405,
+# ADR-012): variable aparte de VITE_API_BASE_URL a proposito, ver comentario
+# de API_ORIGIN en frontend/src/lib/api.js -- esta SI necesita ser absoluta
+# (la URL real de faro-api, SIN "/" final) para que getAuthLoginUrl() fije la
+# cookie anti-CSRF en el origen del API, no en el de este frontend. Sin
+# --build-arg, ARG queda vacio y el build se comporta exactamente igual que
+# antes (api.js cae a su default ""). Christian valida este mismo valor
+# contra FRONTEND_REDIRECT_URIS del lado del API (comparacion exacta) --
+# coordinar el valor con Christian/Luis antes de pasarlo en el build de C5.
+ARG VITE_API_ORIGIN=""
+ENV VITE_API_ORIGIN=$VITE_API_ORIGIN
+
 RUN npm run build
 
 # --- Etapa 2: runtime (nginx sirviendo estáticos, non-root) ---
