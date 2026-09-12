@@ -54,6 +54,14 @@ ANCLA_SIGMOIDE = 0.60
 #: a la vez), API despues. Ver `BUG-058` y el aviso de Marina Garcia del 2026-09-06.
 LINEA_DE_ALERTA = 0.50
 
+#: Corte inferior del **nivel de atencion** (`DEC-023`): `>= 0.30` es media, por debajo baja.
+#: Es el mismo numero que `src/modelos/riesgo.py::RIESGO_ESTABLE` (matricula estable), que no se
+#: importa aqui porque ese modulo trae `numpy`/`scipy` y la imagen de la API no los instala. La
+#: duplicacion la ata una prueba que **lee** ese archivo y compara -- mismo patron con el que
+#: `tests/test_linea_de_alerta.py` ata el 0.50 a los .sql de dbt, para que la divergencia falle en
+#: el CI en vez de aparecer en la demo (`BUG-058`).
+CORTE_ATENCION_MEDIA = 0.30
+
 # Whitelist de `order_by` (Decisión 3 de US-411, avisada a C2/C3, ver API_Specification.md §3.3).
 # Fuente de verdad para el Literal de FastAPI en `src/api/v1/gold.py` -- un valor fuera de aquí
 # nunca llega a construir SQL (ni siquiera necesita whitelist propia en la Postgres real).

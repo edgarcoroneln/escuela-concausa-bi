@@ -719,6 +719,12 @@ anclas no existen en el DOM hasta hacer scroll.
 |---|---|---|---|---|
 | `REQ-003` | `US-321`, `US-325` · `RISK-011` | Corrida sobre dump final1 verificado y base aislada de solo lectura: 136,046 filas, 114,200 elegibles, 21,846 excluidas; k=2..6 en una ventana temporal, seleccionado k=3 con Silhouette 0.4644549058. Perfiles, exclusión por territorio y proveniencia en [[vault/15_ML_Models/ML03_Entrenamiento_US321]]. Auditoría: cluster 2 coincide con las 1,648 observaciones elegibles con D6 observado por medio de completitud; alta RISK-011 en [[vault/10_Risk_Governance/Risk_Register]]. | Revisión técnica de Andrés y decisión de Edgar sobre RISK-011; registro MLflow, Gold/API y comparación Panel/DB-03 pendientes. No se publica ni se modifica el vector para mejorar la cifra. | Evidencia de corrida entregada para revisión; US-321 continúa `in_progress`, US-325 conserva `done` |
 
+## Evidencia incremental — 2026-09-11 · preflight de cierre ML-03 (Estefany)
+
+| Requisito | Historias | Evidencia entregada | Pendiente | Estado |
+|---|---|---|---|---|
+| `REQ-003` | `US-631` · `RISK-011` · `BUG-030` | [[vault/15_ML_Models/ML03_Preflight_US631]] y `preflight_ml03.py` hacen visible, por ciclo y entidad, la elegibilidad D1--D4, las causas de exclusión y la cobertura D5/D6 sin convertir ausencias reales en valores ni exponer CCT. Las pruebas fijan que D5/D6 no cambian la elegibilidad y que una ausencia D1--D4 se cuenta como exclusión. | Ejecutar sobre dump canónico, conservar hash y conteos; verificar MLflow; resolver contrato D5; aplicar la compuerta de [[vault/15_ML_Models/ML03_RISK011_Gate]] y la decisión de Edgar. Gold/API/Panel y su E2E pertenecen a sus dueños. | 🟡 evidencia preventiva lista; cierre de US-631 bloqueado por compuertas y dependencias reales |
+
 ## Evidencia incremental — 2026-09-08 · el embebido de Superset llega a `main` (C2, Marina García)
 
 | REQ | Historias | Evidencia entregada | Desbloquea | Estado |
