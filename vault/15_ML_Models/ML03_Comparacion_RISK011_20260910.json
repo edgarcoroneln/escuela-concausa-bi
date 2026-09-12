@@ -1,0 +1,132 @@
+{
+  "riesgo": "RISK-011",
+  "estado": "evidencia_candidata_pendiente_revision",
+  "fuente": {
+    "tabla": "gold.features_escuela",
+    "dump_sha256": "07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE",
+    "base_aislada": "faro_gold_bug048_final1_review_20260905",
+    "solo_lectura": true,
+    "filas_totales": 136046,
+    "filas_entrenadas": 114200,
+    "filas_excluidas": 21846,
+    "elegibilidad_ciclo_entidad": [
+      {"id_ciclo": "2022-2023", "cve_ent": "09", "filas": 7082, "elegibles": 6328, "excluidas": 754},
+      {"id_ciclo": "2022-2023", "cve_ent": "14", "filas": 12452, "elegibles": 9904, "excluidas": 2548},
+      {"id_ciclo": "2022-2023", "cve_ent": "15", "filas": 19208, "elegibles": 16771, "excluidas": 2437},
+      {"id_ciclo": "2022-2023", "cve_ent": "19", "filas": 6575, "elegibles": 5404, "excluidas": 1171},
+      {"id_ciclo": "2023-2024", "cve_ent": "09", "filas": 7031, "elegibles": 6238, "excluidas": 793},
+      {"id_ciclo": "2023-2024", "cve_ent": "14", "filas": 12620, "elegibles": 9867, "excluidas": 2753},
+      {"id_ciclo": "2023-2024", "cve_ent": "15", "filas": 19269, "elegibles": 16687, "excluidas": 2582},
+      {"id_ciclo": "2023-2024", "cve_ent": "19", "filas": 6533, "elegibles": 5311, "excluidas": 1222},
+      {"id_ciclo": "2024-2025", "cve_ent": "09", "filas": 6886, "elegibles": 6096, "excluidas": 790},
+      {"id_ciclo": "2024-2025", "cve_ent": "14", "filas": 12603, "elegibles": 9776, "excluidas": 2827},
+      {"id_ciclo": "2024-2025", "cve_ent": "15", "filas": 19249, "elegibles": 16565, "excluidas": 2684},
+      {"id_ciclo": "2024-2025", "cve_ent": "19", "filas": 6538, "elegibles": 5253, "excluidas": 1285}
+    ],
+    "elegibilidad_proveniencia": "ML03_Evidencia_20260908.json; mismo dump_sha256 y mismo corte Gold"
+  },
+  "protocolo": {
+    "semilla": 42,
+    "n_init": 20,
+    "valores_k": [2, 3, 4, 5, 6],
+    "ciclos_entrenamiento": ["2022-2023", "2023-2024"],
+    "ciclo_prueba": "2024-2025",
+    "orden_entrada": ["id_ciclo", "cct"]
+  },
+  "variantes": [
+    {
+      "nombre": "D1-D4",
+      "features": [
+        "d1_pobreza",
+        "d2_inseguridad",
+        "d3_infraestructura",
+        "d4_conectividad"
+      ],
+      "k_seleccionado": 2,
+      "silhouette_temporal": {
+        "2": 0.4620526551,
+        "3": 0.4079969602,
+        "4": 0.3865740499,
+        "5": 0.4004979814,
+        "6": 0.3623481227
+      },
+      "clusters": [
+        {
+          "cluster": 0,
+          "observaciones": 83275,
+          "d6_ok": 501,
+          "d6_sin_dato": 82774,
+          "perfil": "Presion principal: inseguridad; secundaria: brecha de conectividad"
+        },
+        {
+          "cluster": 1,
+          "observaciones": 30925,
+          "d6_ok": 1147,
+          "d6_sin_dato": 29778,
+          "perfil": "Presion principal: brecha de conectividad; secundaria: carencias de infraestructura"
+        }
+      ],
+      "estabilidad": {
+        "semillas": [7, 21, 42, 84, 2026],
+        "ari_por_par": {
+          "7-21": 1.0,
+          "7-42": 1.0,
+          "7-84": 1.0,
+          "7-2026": 1.0,
+          "21-42": 1.0,
+          "21-84": 1.0,
+          "21-2026": 1.0,
+          "42-84": 1.0,
+          "42-2026": 1.0,
+          "84-2026": 1.0
+        },
+        "ari_minimo": 1.0,
+        "ari_promedio": 1.0
+      }
+    },
+    {
+      "nombre": "D1-D4+completitud",
+      "evidencia_origen": "ML03_Evidencia_20260908.json",
+      "features": [
+        "d1_pobreza",
+        "d2_inseguridad",
+        "d3_infraestructura",
+        "d4_conectividad",
+        "indice_completitud_drivers"
+      ],
+      "k_seleccionado": 3,
+      "silhouette_temporal": {
+        "2": 0.4588341487,
+        "3": 0.4644549058,
+        "4": 0.413970491,
+        "5": 0.3939472663,
+        "6": 0.4067550465
+      },
+      "cluster_cobertura_d6": {
+        "cluster": 2,
+        "observaciones": 1648,
+        "d6_ok": 1648,
+        "completitud_promedio": 0.8333333333
+      }
+    }
+  ],
+  "conclusion_tecnica": "La evidencia candidata reporta que D1-D4 conserva una separacion temporal comparable sin crear un cluster equivalente a la disponibilidad de D6; requiere revision tecnica antes de cualquier decision.",
+  "recomendacion": "Evaluar el retiro de indice_completitud_drivers del vector y conservarlo solo como atributo de auditoria de los perfiles; no promocionar ni declarar canónica esta variante sin completar la compuerta.",
+  "decision_formal": "pendiente_revision_estefany_y_decision_edgar",
+  "mlflow": {
+    "experimento": "ML-03-clustering-escuelas",
+    "modelo": "ML03_ClusteringEscuelas",
+    "version_modelo": "1",
+    "run_id": null,
+    "verificacion": "pendiente: el servicio MLflow no fue recuperable independientemente durante la revision",
+    "estado_run": null,
+    "estado_version": null,
+    "artefacto_descargado_y_cargado": null,
+    "version_numpy": "2.4.6",
+    "version_pandas": "2.3.3",
+    "version_scikit_learn": "1.9.0"
+  },
+  "mlflow_run_id": null,
+  "publicacion_gold": false,
+  "commit_base": "914af0198faf587a4becc6b4aebb765bd0523c6b"
+}
