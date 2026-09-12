@@ -592,11 +592,11 @@ escuelas habla ahora— quede dicha en lugar de suponerse.
 
 | Qué | Por qué no | Si se aprueba | Mientras tanto |
 |---|---|---|---|
-| **`prioridad` de Gold** (era P-01) | No aparece en `EscuelaOut`, `EscuelaDetalleOut`, `PrediccionOut` ni `ExplicacionSHAPOut`, y `ADR-011` §5 prohíbe consumir `gold.recomendaciones.prioridad` mientras use el ancla histórica 0.60 (`src/modelos/publicar_gold.py:197`, `BUG-063`) | Si el PO y el Equipo 4 realinean `prioridad` a `LINEA_DE_ALERTA` y el contrato la expone, coincidiría con el nivel de atención: Front podría consumirla y retirar su derivación | **Nivel de atención** derivado (§1.1). Ninguna gráfica, filtro ni texto la llama "prioridad". El glosario explica por qué DB-09 muestra `media` para las mismas escuelas (§1.2) |
+| **`prioridad` de Gold** (era P-01) | **Corregido el 2026-09-11 — ver la nota bajo la tabla.** `PrediccionOut` **ya la expone** (`ec1b43b`), y aun así **no se consume**: `ADR-011` §5 lo prohíbe mientras use el ancla histórica 0.60 (`src/modelos/publicar_gold.py`, `BUG-063`), donde **cero de las 45 276 filas** alcanzan `alta` contra un máximo real de `0.5717` | Lo que falta ya no es exponerla sino **realinear el corte**: si el PO y el TL de C3 la mueven a `LINEA_DE_ALERTA`, coincidiría con el nivel de atención y Front podría consumirla y retirar su derivación | **Nivel de atención** derivado (§1.1). Ninguna gráfica, filtro ni texto la llama "prioridad". El glosario explica por qué DB-09 muestra `media` para las mismas escuelas (§1.2) |
 | **Bandas "oficiales" alto/medio/bajo** (era P-02) | Resuelto por `ADR-011` §5: son el nivel de atención | — | Una sola etiqueta; no existe una segunda |
 | **Distribución de niveles de atención en la P5** | Tautológica: el conjunto en riesgo se define con el mismo corte que "alta" | — | Una línea de texto (§5.2) |
 | **Distribución de niveles en la P6 para todo un filtro** | Contarla exige paginar todas las escuelas del filtro (`size ≤ 100`), y `/kpis` sólo cuenta las de riesgo alto | Un conteo por nivel de atención en `/kpis` (cambio de contrato, Equipo 5) | El nivel va por fila en la página visible, y `escuelas_en_riesgo` del filtro desde `/kpis` |
-| **Mapa de ubicación** | La API no expone geometría y `latitud`/`longitud` sin base no se leen | Exponer la geometría municipal de Gold o aprobar como base cartográfica versionada `superset/assets/geojson/municipios_scope.geojson`, que es lo que usa la referencia 04 (§7.4): municipio resaltado y punto de la escuela en el expediente | Municipio y entidad como texto |
+| **Mapa de ubicación** | **Premisa parcialmente caída el 2026-09-11 — ver la nota bajo la tabla.** La API sigue sin exponer geometría, pero la base cartográfica **ya existe en el front** (`frontend/src/data/geo/mexico-states.json` + `d3-geo`) y es **estatal, no municipal**. Lo que sigue en pie es la razón de fondo: *dónde* no responde *qué situación*, y las siete escuelas caen en dos municipios | Decisión pendiente **en el handoff con el Equipo 5**, no aquí: o el mapa se queda con una lectura que aporte —y entonces esta fila se reescribe— o se recorta y sale la ruta `/mapa`. Si se queda, `ADR-011` §4 exige que el riesgo se pueda leer sin él | Municipio y entidad como texto |
 | **Rezago del municipio contra el promedio estatal** | El promedio estatal no está en la API y el índice de CONEVAL es negativo en estos municipios | Derivación declarada en §1.1 desde `GET /api/v1/municipios?cve_ent=…`, dibujada como franja de municipios con el promedio marcado (§7.4) | Línea de contexto con `pobreza_pct` (§4.2) |
 | **Evolución histórica de matrícula por escuela** | `/escuelas/{cct}` no acepta `ciclo`, y el plan la excluye del expediente | Cambio de plan más petición de endpoint | No se dibuja |
 | **Caída de matrícula de una escuela concreta** | `variacion_matricula` sólo existe agregada (`KpisOut`) | Un campo por escuela en el contrato | Sólo la variación agregada, en la P2 |
@@ -609,6 +609,28 @@ escuelas habla ahora— quede dicha en lugar de suponerse.
 
 Ninguno de estos recortes detiene la construcción (`DEC-024`): cada uno tiene su "mientras tanto"
 dibujable hoy.
+
+> **Nota de corrección — 2026-09-11, Marina García del Buey (gate de UX/UI), con aviso a la autora.**
+> Dos filas de esta tabla quedaron desactualizadas por `ec1b43b` (Christian Imanol Ruiz, PR #332),
+> que entró a `main` **después** de que este documento pasara a `approved`. Se corrigen aquí y no en
+> un documento aparte, porque el Equipo 5 lee esta tabla como la lista de lo que no se dibuja.
+>
+> **`prioridad`:** la fila afirmaba que el campo *no aparece en `PrediccionOut`*. Ya aparece. **La
+> decisión de no consumirlo no cambia** —al contrario, ahora hay que sostenerla a mano— y el motivo
+> está en un número: los tres valores del campo se llaman **igual** que los tres niveles de atención,
+> pero `prioridad` sale del ancla `0.60` y ninguna de las 45 276 filas la alcanza. Un chip cableado a
+> `prioridad` diría *«media»* para las siete escuelas de las que trata toda la historia. El
+> razonamiento completo está en la **§10.quinquies** de
+> [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]].
+>
+> **Mapa de ubicación:** la mitad técnica de la razón —*«la API no expone geometría y
+> `latitud`/`longitud` sin base no se leen»*— dejó de sostenerse: `latitud`/`longitud` subieron al
+> listado y la base cartográfica existe en el front. **No se decide aquí si el mapa entra**: la
+> segunda mitad del argumento original sigue vigente y la decisión pertenece al handoff con el
+> Equipo 5, junto con la reconciliación de rutas. Ver **§10.sexies** del plan.
+>
+> **Lo que no se tocó:** ninguna forma, ningún criterio, ninguna otra fila. La autoría del documento
+> sigue siendo de Monserrat Xcaret Miranda Olivas.
 
 ### 8.2 Avisos para el Equipo 5 que no son gráficas
 

@@ -76,14 +76,31 @@ decir que están en riesgo. Es `BUG-058` otra vez, en otra columna y esta vez en
 - **No se cambió `API_Specification`.** Su §3.4 describe `prioridad` como *"la urgencia con la que el
   storytelling ordena los casos"*, que es falso —el storytelling ordena por `indice_riesgo`
   descendente— pero el archivo es de otro alcance. Se pidió la corrección a su autor.
-- **No se editó `02_Data_Visualization_Spec`.** Descarta el mapa dos veces —§3.3 y §8.1— porque
-  *"ningún endpoint expone geometría"*; esa mitad de la razón dejó de sostenerse: el front trae
-  `d3-geo` y una base versionada en `frontend/src/data/geo/mexico-states.json`, y
-  `Arquitectura_Frontend_React` §5 ya compromete `MapaRiesgo.jsx` y una ruta `/mapa`. La otra mitad
-  sigue en pie —*dónde* no responde *qué situación*, y la base es **estatal**, no municipal—. **El
-  mismo documento repite además la afirmación ya falsa de que `prioridad` no aparece en
-  `PrediccionOut`** (§8.1). Es documento de Monserrat Miranda y afecta al Equipo 5: entra al handoff,
-  no se resuelve por edición unilateral.
+- **No se decidió el estatus del mapa.** `02_Data_Visualization_Spec` lo descarta en §3.3 y §8.1
+  porque *"ningún endpoint expone geometría"*; esa **mitad** de la razón dejó de sostenerse —el front
+  trae `d3-geo` y una base versionada en `frontend/src/data/geo/mexico-states.json`, y
+  `Arquitectura_Frontend_React` §5 ya compromete `MapaRiesgo.jsx` y una ruta `/mapa`—. La otra mitad
+  sigue en pie: *dónde* no responde *qué situación*, y la base disponible es **estatal, no
+  municipal**. La decisión pertenece al handoff con el Equipo 5, no a este documento.
+
+## Corrección en documento ajeno, con aviso
+
+`02_Data_Visualization_Spec.md` §8.1 repetía la misma afirmación falsa —que `prioridad` *"no aparece
+en `PrediccionOut`"*— en su tabla de recortes explícitos, que es **la lista que el Equipo 5 lee como
+"lo que no se dibuja"**. Dejarla falsa en un documento y corregirla en otro es exactamente la regla 1
+del vault al revés.
+
+Se corrigieron **dos celdas** con autorización de la líder del frente, más una **nota de corrección
+fechada y firmada** bajo la tabla que dice qué se cambió, por qué y qué **no** se tocó:
+
+- Fila de `prioridad`: de *"no aparece"* a *"ya aparece y sigue sin consumirse"*, con el número
+  (cero de 45 276 contra un máximo de 0.5717). La columna *"si se aprueba"* deja de pedir que el
+  contrato la exponga —ya lo hace— y pide lo único que falta: realinear el corte.
+- Fila del *mapa de ubicación*: se marca la premisa técnica como parcialmente caída y **se declara
+  explícitamente que la decisión no se toma ahí**, sino en el handoff con el Equipo 5.
+
+No se tocó ninguna forma, ningún criterio ni ninguna otra fila, y la autoría del documento sigue
+siendo de **Monserrat Xcaret Miranda Olivas**. Avisado a la autora el mismo día.
 
 ## Verificación
 
