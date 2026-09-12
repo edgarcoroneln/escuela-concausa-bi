@@ -136,6 +136,15 @@ con la política vigente. Sin `redirect`, `/auth/callback` sigue devolviendo el 
 | GET | `/health` | público | — | `HealthOut` | 200 |
 | GET | `/version` | público | — | `VersionOut` | 200 |
 
+**`/version` publica los cortes del nivel de atención (2026-09-11, US-621).** `VersionOut.cortes_atencion`
+trae `alta` (0.50, `DEC-019`), `media` (0.30) y `ancla_calibracion` (0.60, `DEC-006`). Son
+**definiciones, no datos**: cambian con una decisión, no con el Gold, y por eso viajan en un endpoint
+público — el front necesita etiquetar **antes** de iniciar sesión. Existen en el contrato porque las
+dos constantes viven en capas distintas del repo (la línea de alerta en la API, la matrícula estable
+en `src/modelos/riesgo.py`, alcance de C3) y **teclearlas en el front repetiría `BUG-058`**.
+`ancla_calibracion` **no es un corte de etiqueta**: se expone para que el glosario de la UI pueda
+explicar por qué DB-09 dice `media` donde el front dice *atención alta*, sin escribir el 0.60 a mano.
+
 ### 3.2 Autenticación `/auth/*`
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
@@ -222,14 +231,20 @@ C2/C3), no se retoma como pendiente de US-411.
 
 - `PrediccionOut` combina **ML-01** (`indice_riesgo`), **ML-02** (`driver_dominante` + recomendación)
   y **ML-03** (`cluster`, `None` mientras ML-03 no exista -- US-321, BUG-010).
-- **`prioridad` (2026-09-11, pedido de Marina García / E3):** `"alta" | "media" | "baja"` de
-  `gold.recomendaciones`, la urgencia con la que el storytelling ordena los casos.
-  > **No es la línea de alerta.** La deriva `publicar_gold.prioridad_de_riesgo()` del **ancla de la
-  > sigmoide** (0.60, `DEC-006`) y de la matrícula estable (0.30), **no** del 0.50 con el que `/kpis`
-  > *cuenta* escuelas en riesgo (`DEC-019`). Son dos números distintos a propósito: mover `alta` a
-  > 0.50 reescribiría las 45,276 filas ya publicadas, y `DEC-019` dice que no cambia un solo valor
-  > publicado. Si el PO y el TL de C3 resuelven la pregunta abierta (`BUG-063`), cambia el productor
-  > en Gold, no este contrato.
+- **`prioridad`:** `"alta" | "media" | "baja"` de `gold.recomendaciones`. Es **procedencia auditable
+  de Gold** y la paridad con la columna que muestra DB-09.
+  > **El frontend NO etiqueta con este campo.** La etiqueta de producto es el **nivel de atención**
+  > (`DEC-023`), que el front calcula desde `indice_riesgo` con los cortes de `/version`
+  > (`cortes_atencion`). El paquete de UX lo dice literal: a esa etiqueta *"no se le dice prioridad …
+  > esa palabra nombra una columna de Gold que usa otro corte y que el front no consume"*
+  > (`00_Storytelling_Scope.md` §5.3.bis).
+  >
+  > **Por qué difieren hoy:** `publicar_gold.prioridad_de_riesgo()` llama `alta` solo desde el **ancla
+  > de la sigmoide** (0.60, calibración de `DEC-006`) y el máximo que ML-01 predice sobre el Gold real
+  > es **0.5717**, así que **ninguna de las 45,276 filas es `alta`** y la tarjeta de DB-09 lee 0
+  > (`BUG-063`). **`DEC-026`** alinea la columna a la línea de alerta (0.50) y republica Gold; hasta
+  > que eso corra, este campo dirá `media` donde el front dice *atención alta*. El cambio es de C3
+  > (`src/modelos/publicar_gold.py:197`) y **no altera este contrato**.
   >
   > Es `StrictStr | None`, no un `Literal`: el valor lo escribe C3 en Gold, y uno inesperado debe
   > poder leerse y verse, no reventar la lectura con un 500. Sin fila de recomendación viaja `None`,
@@ -384,9 +399,17 @@ class Page(BaseModel, Generic[T]):
 # ---- salud / auth ----
 class HealthOut(BaseModel):
     status: str = "ok"
+class CortesAtencionOut(BaseModel):
+    # Cortes del nivel de atención (DEC-023). Definiciones, no datos: el front los lee en vez de
+    # teclearlos, porque las dos constantes viven en capas distintas del repo (BUG-058).
+    alta: StrictFloat               # indice_riesgo >= alta  => atención alta (0.50, DEC-019)
+    media: StrictFloat              # >= media y < alta      => media (0.30)
+    ancla_calibracion: StrictFloat  # 0.60 (DEC-006) -- NO es corte de etiqueta
+
 class VersionOut(BaseModel):
     api: str = "v1"
     commit: StrictStr
+    cortes_atencion: CortesAtencionOut | None = None   # 2026-09-11, US-621
 class TokenPair(BaseModel):
     access_token: StrictStr
     refresh_token: StrictStr
