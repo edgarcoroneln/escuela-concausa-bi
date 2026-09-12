@@ -22,6 +22,15 @@ siguen en `draft` porque su contenido está en curso, no porque falte autorizaci
 | [[vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope]] | Marina García del Buey | Historia oficial, público, alcance, reglas y criterios de aceptación |
 | [[vault/04_UX_Design/FARO_Storytelling_UX/01_UX_Architecture]] | Oscar Antonio Quiroz Lázaro | Flujo de las 7 pantallas, navegación, walkthrough y comportamiento del chat |
 | [[vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec]] | Monserrat Xcaret Miranda Olivas | Qué dato responde cada pregunta, gráficas por pantalla y endpoint que las sostiene |
-| [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]] | Juan Carlos Macías Mayen | Identidad visual, componentes, mockups y PDF final |
+| [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]] | Juan Carlos Macías Mayen | Identidad visual, componentes y mockups |
 
-`mockups/` guarda los 7 PNG de escritorio. `FARO_UX_UI_Guide.pdf` se agrega el viernes.
+## Carpetas
+
+| Carpeta | Dueño | Contenido |
+|---|---|---|
+| `ejemplos_graficas/` | Monserrat Xcaret Miranda Olivas | Ejemplos de visualización que Juan integra a la identidad. Alta el 2026-09-10 a petición suya: no tenían ubicación en la estructura original |
+| [[vault/04_UX_Design/FARO_Storytelling_UX/mockups/_index\|mockups/]] | Juan Carlos Macías Mayen | Los 7 mockups de escritorio (PNG + HTML) más guía de identidad y anexo de tokens |
+
+**No hay PDF.** `FARO_UX_UI_Guide.pdf` se retiró del alcance el 2026-09-11 (§7.ter del plan). La guía
+de identidad de referencia es [[vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity]], y
+`mockups/Design_Tokens_Stitch.md` es su anexo técnico.

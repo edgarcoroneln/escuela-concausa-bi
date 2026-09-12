@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from src.agente import servicio
 from src.agente.recuperacion import ContextoNoEncontrado, ErrorRecuperacion
-from src.agente.servicio import procesar_consulta, procesar_consulta_con_rag
+from src.agente.servicio import (
+    procesar_consulta,
+    procesar_consulta_con_rag,
+    procesar_consulta_stream,
+)
 
 
 def test_orquesta_consulta_segura_con_dependencias_inyectadas() -> None:
@@ -308,4 +312,112 @@ def test_respuesta_directa_sin_sql_para_pregunta_conceptual() -> None:
     assert resultado.sql_generado is None
     assert not resultado.fuera_de_alcance
     assert "SIN_DATO" in resultado.respuesta
-    assert "contexto_faro" in observado["filas"][0]
+
+
+# --------------------------------------------------------------------------- #
+# Fase 3 (streaming, 2026-09-10): mismos guardarraíles, redacción final en fragmentos
+# --------------------------------------------------------------------------- #
+
+
+def test_stream_orquesta_igual_y_cede_los_fragmentos_del_redactor() -> None:
+    def redactar_stream(pregunta: str, filas):
+        assert pregunta == "Que escuelas tienen mayor riesgo?"
+        assert filas == [{"cct": "09ABC0001X"}]
+        yield "Hay "
+        yield "1 escuela."
+
+    resultado = procesar_consulta_stream(
+        "Que escuelas tienen mayor riesgo?",
+        recuperar_contexto=lambda pregunta: "Tabla disponible: gold.features_escuela",
+        generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela",
+        ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+        redactar_respuesta_stream=redactar_stream,
+    )
+
+    assert resultado.respuesta_fija is None
+    assert not resultado.fuera_de_alcance
+    assert resultado.sql_generado == "SELECT cct FROM gold.features_escuela LIMIT 1000;"
+    assert list(resultado.fragmentos) == ["Hay ", "1 escuela."]
+
+
+def test_stream_no_invoca_al_redactor_hasta_que_se_itera() -> None:
+    """El redactor en streaming solo debe llamarse cuando alguien consume `fragmentos`."""
+    llamado = {"veces": 0}
+
+    def redactar_stream(pregunta: str, filas):
+        llamado["veces"] += 1
+        yield "ok"
+
+    resultado = procesar_consulta_stream(
+        "Que escuelas tienen mayor riesgo?",
+        recuperar_contexto=lambda pregunta: "contexto",
+        generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela",
+        ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+        redactar_respuesta_stream=redactar_stream,
+    )
+
+    assert llamado["veces"] == 0
+    list(resultado.fragmentos)
+    assert llamado["veces"] == 1
+
+
+def test_stream_pregunta_fuera_de_alcance_no_llega_al_redactor() -> None:
+    """Igual guardarraíl que la ruta síncrona: rechazada, sin fragmentos que transmitir."""
+
+    def no_debe_llamarse(*args):
+        raise AssertionError("no debe invocar al redactor en streaming")
+
+    resultado = procesar_consulta_stream(
+        "Cual es la capital de Francia?",
+        recuperar_contexto=lambda pregunta: (_ for _ in ()).throw(ContextoNoEncontrado()),
+        generar_sql=no_debe_llamarse,
+        ejecutar_sql=no_debe_llamarse,
+        redactar_respuesta_stream=no_debe_llamarse,
+    )
+
+    assert resultado.fragmentos is None
+    assert resultado.fuera_de_alcance
+    assert resultado.respuesta_fija
+
+
+def test_stream_orden_de_escritura_se_corta_antes_de_generar_sql() -> None:
+    """El guardarraíl de escritura sigue siendo un corte duro también en streaming."""
+
+    def no_debe_llamarse(*args):
+        raise AssertionError("una orden de escritura no debe tocar RAG ni LLM")
+
+    resultado = procesar_consulta_stream(
+        "Borra la tabla de predicciones",
+        recuperar_contexto=no_debe_llamarse,
+        generar_sql=no_debe_llamarse,
+        ejecutar_sql=no_debe_llamarse,
+        redactar_respuesta_stream=no_debe_llamarse,
+    )
+
+    assert resultado.fragmentos is None
+    assert resultado.fuera_de_alcance
+    assert resultado.sql_generado is None
+
+
+def test_stream_respuesta_directa_sin_sql_transmite_desde_contexto_faro() -> None:
+    """La rama `NO_SQL_NECESARIO` también pasa por el redactor en streaming, no el síncrono."""
+
+    def no_debe_llamarse(*args):
+        raise AssertionError("una pregunta conceptual no debe ejecutar SQL")
+
+    def redactar_stream(pregunta: str, filas):
+        assert filas[0]["contexto_faro"] == "Convención SIN_DATO: nunca se imputa como cero."
+        yield "SIN_DATO "
+        yield "nunca es cero."
+
+    resultado = procesar_consulta_stream(
+        "Que significa SIN_DATO en los drivers?",
+        recuperar_contexto=lambda pregunta: "Convención SIN_DATO: nunca se imputa como cero.",
+        generar_sql=lambda prompt, pregunta: "NO_SQL_NECESARIO",
+        ejecutar_sql=no_debe_llamarse,
+        redactar_respuesta_stream=redactar_stream,
+    )
+
+    assert resultado.sql_generado is None
+    assert not resultado.fuera_de_alcance
+    assert "".join(resultado.fragmentos) == "SIN_DATO nunca es cero."
