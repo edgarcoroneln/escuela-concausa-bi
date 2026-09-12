@@ -24,14 +24,14 @@ async function pedir(ruta) {
 export const getSecciones = () => pedir("/api/v1/about/secciones");
 export const getSeccion = (id) => pedir(`/api/v1/about/secciones/${id}`);
 
-//: Los tipos que esta pantalla sabe pintar. Cualquier otro cae en el bloque desconocido y
-//: avisa en su propio espacio, sin tumbar la página -- mismo contrato hacia adelante que
-//: `BloqueDesconocido` del cliente de Streamlit.
-export const TIPOS_SOPORTADOS = new Set([
+//: Los tipos que esta pantalla sabe pintar. Están los ocho del contrato: `mermaid` es el único
+//: que no se dibuja, y a propósito — ninguna sección lo emite desde que los cuatro E-R pasaron a
+//: `svg` (ver el encabezado de `BloqueAbout.jsx`). Si volviera a aparecer, cae en el bloque de
+//: "tipo no soportado" y avisa en su propio espacio, sin tumbar la página.
+export const TIPOS_RENDERIZADOS = new Set([
   "markdown",
   "tabla",
   "metricas",
-  "mermaid",
   "svg",
   "barras",
   "mapa",

@@ -506,11 +506,20 @@ def test_about_capas_expone_metrica_sin_dato_para_tabla_ausente(client: TestClie
 
 def test_about_capas_trae_los_tres_er_titulados(client: TestClient) -> None:
     """Pedido del usuario: los E-R de bronze, silver y gold van juntos en `capas`, cada uno con
-    su título -- no solo bronze/silver como antes."""
+    su título -- no solo bronze/silver como antes.
+
+    Los tres pasaron de `mermaid` a `svg` dibujado por la API: obligar a cada frontend a traer un
+    motor de diagramas costaba una dependencia con avisos de severidad alta. Lo que esta prueba
+    protege es lo mismo de antes —**tres** E-R, cada uno con su título—, no la técnica con la que
+    se dibujan.
+    """
     r = client.get(f"{API_PREFIX}/about/secciones/capas")
     bloques = r.json()["bloques"]
-    mermaids = [b for b in bloques if b["tipo"] == "mermaid"]
-    assert len(mermaids) == 3
+    diagramas = [b for b in bloques if b["tipo"] == "svg"]
+    assert len(diagramas) == 3
+    for d in diagramas:
+        assert d["codigo"].startswith("<svg ")
+        assert d["alt"].strip(), "un diagrama sin texto alternativo es invisible para un lector de pantalla"
     titulos = [b["texto"] for b in bloques if b["tipo"] == "markdown" and b["texto"].startswith("### E-R")]
     assert {t.splitlines()[0] for t in titulos} == {"### E-R — Bronze", "### E-R — Silver", "### E-R — Gold"}
 

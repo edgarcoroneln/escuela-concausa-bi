@@ -72,6 +72,19 @@ class BloqueMarkdown(BaseModel):
 
 
 class BloqueMermaid(BaseModel):
+    """Diagrama en código mermaid, para que el frontend lo dibuje.
+
+    **Hoy ninguna sección emite este tipo.** Los cuatro E-R que lo usaban pasaron a `svg`
+    (`_er_gold`, `_er_bronze`, `_er_silver`) porque obligaba a cada interfaz a traer un motor de
+    diagramas: en la SPA de React la única librería disponible arrastra dos avisos de severidad
+    alta, 69 paquetes transitivos y 123 MB.
+
+    Se conserva en el contrato **a propósito y con fecha de revisión**: el tipo lo diseñó Manuel
+    Serranía y retirarlo es una decisión suya, no un efecto colateral de esta portación. Si al
+    revisarlo se confirma que no vuelve, quitarlo deja el contrato honestamente libre de
+    dependencias de dibujo — que es lo que permite estrenar un frontend sin negociar librerías.
+    """
+
     tipo: Literal["mermaid"] = "mermaid"
     codigo: str
     #: Alto sugerido en px para el contenedor del frontend. `components.html` de Streamlit no
@@ -535,16 +548,6 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
 #: Compartido entre `modelo-datos` (responde "cómo está estructurado Gold") y `capas` (responde
 #: "en qué cambió Gold respecto a Silver") -- misma figura, dos preguntas, para no mantener dos
 #: copias del mismo diagrama que puedan desalinearse.
-_ER_GOLD_MERMAID = (
-    "erDiagram\n"
-    "  dim_escuela   ||--o{ fact_escuela_ciclo : cct\n"
-    "  dim_municipio ||--o{ fact_escuela_ciclo : cve_mun\n"
-    "  dim_tiempo    ||--o{ fact_escuela_ciclo : id_ciclo\n"
-    "  dim_driver    ||--o{ recomendaciones : driver_dominante\n"
-    "  fact_escuela_ciclo ||--o{ predicciones : \"cct,id_ciclo\"\n"
-    "  fact_escuela_ciclo ||--o{ recomendaciones : \"cct,id_ciclo\"\n"
-    "  fact_escuela_ciclo ||--|| features_escuela : \"cct,id_ciclo\""
-)
 
 #: Los 4 estados de SCOPE_ENTIDADES, con el mismo color que usa el bloque `mapa` de esta sección.
 #: Un color por entidad, no una escala -- no hay orden entre estados, así que una escala secuencial
@@ -611,7 +614,7 @@ def _seccion_modelo_datos(_repo: RepositorioAbout) -> SeccionOut:
             ),
             # Gold es el más grande de los 4 E-R (8 entidades, esquema estrella completo) --
             # alto generoso para que se lea sin tener que hacer zoom primero.
-            BloqueMermaid(codigo=_ER_GOLD_MERMAID, alto=540),
+            _er_gold(),
             BloqueMarkdown(
                 texto=(
                     "### Diccionario de columnas — `gold.fact_escuela_ciclo`\n"
@@ -800,25 +803,7 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
                     "`gold.cubo_pipeline`, la única tabla que sigue `SIN_DATO`."
                 )
             ),
-            BloqueMermaid(
-                codigo=(
-                    "erDiagram\n"
-                    '  cct ||..o{ formato911 : "cct (sin FK)"\n'
-                    '  cct ||..o{ formato911_historico : "cct (sin FK)"\n'
-                    '  cct ||..o{ cemabe : "cct (sin FK)"\n'
-                    '  conapo ||..o{ sesnsp : "clave municipio (sin FK)"\n'
-                    '  conapo ||..o{ coneval_irs : "clave municipio, hash (sin FK)"\n'
-                    '  conapo ||..o{ coneval_pobreza : "clave municipio, hash (sin FK)"\n'
-                    '  sinaica_estaciones ||..o{ sinaica_observaciones : "id_estacion (sin FK)"\n'
-                    "  conagua_presas {\n"
-                    "    string estado \"SIN_DATO en este ambiente (DB-10)\"\n"
-                    "  }"
-                ),
-                # Medido en vivo con Playwright: Bronze renderiza a ~110px de alto natural, muy
-                # por debajo de lo que Silver/Gold necesitan -- un alto compartido dejaba mucho
-                # espacio en blanco aquí.
-                alto=220,
-            ),
+            _er_bronze(),
             BloqueMarkdown(
                 texto=(
                     "### E-R — Silver\n"
@@ -830,21 +815,7 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
                     "ADR-006), no por coincidencia de clave."
                 )
             ),
-            BloqueMermaid(
-                codigo=(
-                    "erDiagram\n"
-                    "  escuela ||--o{ matricula : cct\n"
-                    "  escuela ||--o{ matricula_historica : cct\n"
-                    "  escuela ||--o| cemabe : cct\n"
-                    "  escuela }o--|| poblacion_municipio : cve_mun\n"
-                    "  poblacion_municipio ||--o| rezago_municipio : cve_mun\n"
-                    "  poblacion_municipio ||--o{ delitos_municipio : cve_mun\n"
-                    '  escuela }o..o{ aire_estacion : "IDW ADR-006, no FK"\n'
-                    '  escuela }o..o{ agua_region : "IDW ADR-006, no FK"'
-                ),
-                # Medido en vivo con Playwright: Silver renderiza a ~260px de alto natural.
-                alto=340,
-            ),
+            _er_silver(),
             BloqueMarkdown(
                 texto=(
                     "### E-R — Gold\n"
@@ -858,7 +829,7 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
             ),
             # Gold es el más grande de los 4 E-R (8 entidades, esquema estrella completo) --
             # alto generoso para que se lea sin tener que hacer zoom primero.
-            BloqueMermaid(codigo=_ER_GOLD_MERMAID, alto=540),
+            _er_gold(),
             BloqueMetricas(items=metricas),
             tabla_detalle,
         ],
@@ -1088,3 +1059,218 @@ def obtener_seccion(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Sección inexistente.")
     _titulo, _orden, constructor = entrada
     return constructor(repo)
+
+
+# --------------------------------------------------------------------------- #
+# Diagramas E-R servidos como SVG (US-601)
+#
+# **Por qué dejaron de ser `mermaid`.** Los cuatro E-R se servían como código mermaid y el
+# frontend los dibujaba. Eso obligaba a que CADA interfaz trajera un motor de diagramas: en la
+# SPA de React la única librería disponible arrastra `chevrotain` → `lodash-es` con dos avisos de
+# severidad alta, 69 paquetes transitivos y 123 MB — para dibujar cuatro cajas con flechas.
+#
+# Dibujarlos aquí una sola vez los vuelve `svg`, el mismo tipo de bloque que ya usa el diagrama
+# de arquitectura: **cero dependencias en cualquier frontend, presente o futuro**, y un solo
+# lugar donde se edita. Es también lo que hace posible retirar Streamlit (`ADR-012`) sin perder
+# los diagramas por el camino.
+#
+# La disposición es a mano, como en `_diagrama_arquitectura`, y por la misma razón: colocar cajas
+# y rodear flechas es una decisión editorial. `tests/test_about_diagrama.py` la protege.
+# --------------------------------------------------------------------------- #
+
+#: Una caja del E-R: (x, y, ancho, alto, nombre, nota). `nota` va en segunda línea, más chica.
+_Entidad = tuple[int, int, int, int, str, str]
+
+#: Una relación: (desde, hacia, etiqueta, cardinalidad, punteada). `cardinalidad` se imprime tal
+#: cual ("1 · N", "1 · 1"); `punteada` marca un cruce que **no** está respaldado por una llave
+#: foránea — en Bronze ninguna lo está, y eso es justo lo que el diagrama debe dejar ver.
+_Relacion = tuple[str, str, str, str, bool]
+
+
+def _caja_por_nombre(entidades: list[_Entidad], nombre: str) -> _Entidad:
+    for e in entidades:
+        if e[4] == nombre:
+            return e
+    raise KeyError(f"El E-R referencia una entidad inexistente: {nombre!r}")
+
+
+def _borde_hacia(origen: _Entidad, destino: _Entidad) -> tuple[float, float, float, float]:
+    """Punto de salida y de llegada entre dos cajas, por el lado que las enfrenta.
+
+    Sale del borde, no del centro: una flecha que arranca dentro de la caja se ve como si la
+    atravesara.
+    """
+    ox, oy, ow, oh, _n, _t = origen
+    dx, dy, dw, dh, _n2, _t2 = destino
+    ocx, ocy = ox + ow / 2, oy + oh / 2
+    dcx, dcy = dx + dw / 2, dy + dh / 2
+
+    if abs(dcx - ocx) >= abs(dcy - ocy):  # se enfrentan de lado
+        if dcx > ocx:
+            return ox + ow, ocy, dx, dcy
+        return ox, ocy, dx + dw, dcy
+    if dcy > ocy:  # se enfrentan de arriba a abajo
+        return ocx, oy + oh, dcx, dy
+    return ocx, oy, dcx, dy + dh
+
+
+def _er_a_svg(
+    entidades: list[_Entidad],
+    relaciones: list[_Relacion],
+    ancho: int,
+    alto: int,
+    alt: str,
+) -> BloqueSvg:
+    """Dibuja un diagrama entidad-relación con la misma paleta que el resto de la sección."""
+    e = html.escape
+    titulo = 'font-family="sans-serif" font-size="12" font-weight="600" fill="#0f172a"'
+    nota = 'font-family="sans-serif" font-size="9.5" fill="#64748b"'
+    etiqueta = 'font-family="sans-serif" font-size="9.5" fill="#64748b"'
+
+    p: list[str] = [
+        (
+            f'<svg viewBox="0 0 {ancho} {alto}" role="img" aria-label="{e(alt)}" '
+            'style="width:100%;min-width:820px;height:auto;display:block">'
+        ),
+        (
+            '<defs><marker id="er-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" '
+            'markerHeight="7" orient="auto-start-reverse">'
+            '<path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>'
+        ),
+    ]
+
+    # Las relaciones van primero: así ninguna línea queda encima de una caja.
+    for desde, hacia, texto, cardinalidad, punteada in relaciones:
+        origen = _caja_por_nombre(entidades, desde)
+        destino = _caja_por_nombre(entidades, hacia)
+        x1, y1, x2, y2 = _borde_hacia(origen, destino)
+        guion = ' stroke-dasharray="4 3"' if punteada else ""
+        p.append(
+            f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" stroke="#94a3b8" '
+            f'stroke-width="1.2"{guion} marker-end="url(#er-f)"/>'
+        )
+        mx, my = (x1 + x2) / 2, (y1 + y2) / 2
+        p.append(
+            f'<text x="{mx:.0f}" y="{my - 5:.0f}" text-anchor="middle" {etiqueta}>'
+            f"{e(texto)}</text>"
+        )
+        if cardinalidad:
+            p.append(
+                f'<text x="{mx:.0f}" y="{my + 8:.0f}" text-anchor="middle" {etiqueta}>'
+                f"{e(cardinalidad)}</text>"
+            )
+
+    for x, y, w, h, nombre, texto in entidades:
+        p.append(
+            f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" fill="#ffffff" '
+            'stroke="#cbd5e1" stroke-width="1"/>'
+        )
+        p.append(f'<text x="{x + 12}" y="{y + 21}" {titulo}>{e(nombre)}</text>')
+        if texto:
+            p.append(f'<text x="{x + 12}" y="{y + 36}" {nota}>{e(texto)}</text>')
+
+    p.append("</svg>")
+    return BloqueSvg(codigo="".join(p), alt=alt, alto=alto + 40)
+
+
+# ── Gold: el esquema estrella ────────────────────────────────────────────────
+_ER_GOLD_ENTIDADES: list[_Entidad] = [
+    (20, 44, 200, 58, "dim_escuela", "cct · nivel · lat/lon"),
+    (20, 166, 200, 58, "dim_municipio", "cve_mun · rezago"),
+    (20, 288, 200, 58, "dim_tiempo", "id_ciclo"),
+    (316, 150, 244, 90, "fact_escuela_ciclo", "grano: cct × id_ciclo"),
+    (316, 392, 244, 54, "dim_driver", "D1…D6 · catálogo"),
+    (660, 44, 232, 58, "features_escuela", "6 drivers + target"),
+    (660, 158, 232, 58, "gold.predicciones", "valor · indice_riesgo"),
+    (660, 288, 232, 58, "gold.recomendaciones", "driver_dominante · SHAP"),
+]
+_ER_GOLD_RELACIONES: list[_Relacion] = [
+    ("dim_escuela", "fact_escuela_ciclo", "cct", "1 · N", False),
+    ("dim_municipio", "fact_escuela_ciclo", "cve_mun", "1 · N", False),
+    ("dim_tiempo", "fact_escuela_ciclo", "id_ciclo", "1 · N", False),
+    ("fact_escuela_ciclo", "features_escuela", "cct · id_ciclo", "1 · 1", False),
+    ("fact_escuela_ciclo", "gold.predicciones", "cct · id_ciclo", "1 · N", False),
+    ("fact_escuela_ciclo", "gold.recomendaciones", "cct · id_ciclo", "1 · N", False),
+    ("dim_driver", "gold.recomendaciones", "driver_dominante", "1 · N", False),
+]
+_ER_GOLD_ALT = (
+    "Esquema estrella de Gold: dim_escuela, dim_municipio y dim_tiempo se unen al hecho central "
+    "fact_escuela_ciclo por cct, cve_mun e id_ciclo; el hecho se une uno a uno con "
+    "features_escuela y uno a muchos con gold.predicciones y gold.recomendaciones; dim_driver se "
+    "une a recomendaciones por driver_dominante."
+)
+
+# ── Bronze: crudo, sin una sola llave foránea ────────────────────────────────
+_ER_BRONZE_ENTIDADES: list[_Entidad] = [
+    (20, 96, 180, 54, "cct", "catálogo SEP"),
+    (330, 20, 220, 48, "formato911", ""),
+    (330, 88, 220, 48, "formato911_historico", ""),
+    (330, 156, 220, 48, "cemabe", ""),
+    (20, 300, 180, 54, "conapo", "población"),
+    (330, 240, 220, 48, "sesnsp", ""),
+    (330, 308, 220, 48, "coneval_irs", ""),
+    (330, 376, 220, 48, "coneval_pobreza", ""),
+    (690, 60, 230, 48, "sinaica_estaciones", ""),
+    (690, 168, 230, 48, "sinaica_observaciones", ""),
+    (690, 320, 230, 62, "conagua_presas", "SIN_DATO en este ambiente"),
+]
+_ER_BRONZE_RELACIONES: list[_Relacion] = [
+    ("cct", "formato911", "cct", "sin FK", True),
+    ("cct", "formato911_historico", "cct", "sin FK", True),
+    ("cct", "cemabe", "cct", "sin FK", True),
+    ("conapo", "sesnsp", "clave municipio", "sin FK", True),
+    ("conapo", "coneval_irs", "clave municipio", "sin FK", True),
+    ("conapo", "coneval_pobreza", "clave municipio", "sin FK", True),
+    ("sinaica_estaciones", "sinaica_observaciones", "id_estacion", "sin FK", True),
+]
+_ER_BRONZE_ALT = (
+    "Bronze: el catálogo cct cruza con formato911, formato911_historico y cemabe; conapo cruza "
+    "con sesnsp, coneval_irs y coneval_pobreza por clave de municipio; sinaica_estaciones con "
+    "sinaica_observaciones por id_estacion. Todas las líneas van punteadas porque ninguna está "
+    "respaldada por una llave foránea: en Bronze los cruces son posibles, no obligados. "
+    "conagua_presas aparece sin relaciones porque la fuente no se ha ingerido."
+)
+
+# ── Silver: tipado y conformado, con llaves ya homologadas ───────────────────
+_ER_SILVER_ENTIDADES: list[_Entidad] = [
+    (30, 150, 200, 58, "escuela", "cct homologado a 10"),
+    (350, 30, 220, 48, "matricula", ""),
+    (350, 98, 220, 48, "matricula_historica", ""),
+    (350, 166, 220, 48, "cemabe", ""),
+    (350, 300, 230, 58, "poblacion_municipio", "cve_mun a 5 dígitos"),
+    (700, 250, 220, 48, "rezago_municipio", ""),
+    (700, 330, 220, 48, "delitos_municipio", ""),
+    (700, 40, 220, 48, "aire_estacion", ""),
+    (700, 120, 220, 48, "agua_region", ""),
+]
+_ER_SILVER_RELACIONES: list[_Relacion] = [
+    ("escuela", "matricula", "cct", "1 · N", False),
+    ("escuela", "matricula_historica", "cct", "1 · N", False),
+    ("escuela", "cemabe", "cct", "1 · 0..1", False),
+    ("escuela", "poblacion_municipio", "cve_mun", "N · 1", False),
+    ("poblacion_municipio", "rezago_municipio", "cve_mun", "1 · 0..1", False),
+    ("poblacion_municipio", "delitos_municipio", "cve_mun", "1 · N", False),
+    ("escuela", "aire_estacion", "IDW · ADR-006", "sin FK", True),
+    ("escuela", "agua_region", "IDW · ADR-006", "sin FK", True),
+]
+_ER_SILVER_ALT = (
+    "Silver: escuela se une a matricula, matricula_historica y cemabe por cct ya homologado, y a "
+    "poblacion_municipio por clave INEGI de 5 dígitos, que a su vez se une a rezago_municipio y "
+    "delitos_municipio. Las dos líneas punteadas hacia aire_estacion y agua_region no son llaves "
+    "foráneas sino interpolación espacial IDW (ADR-006)."
+)
+
+
+@lru_cache
+def _er_gold() -> BloqueSvg:
+    return _er_a_svg(_ER_GOLD_ENTIDADES, _ER_GOLD_RELACIONES, 920, 470, _ER_GOLD_ALT)
+
+
+@lru_cache
+def _er_bronze() -> BloqueSvg:
+    return _er_a_svg(_ER_BRONZE_ENTIDADES, _ER_BRONZE_RELACIONES, 950, 450, _ER_BRONZE_ALT)
+
+
+@lru_cache
+def _er_silver() -> BloqueSvg:
+    return _er_a_svg(_ER_SILVER_ENTIDADES, _ER_SILVER_RELACIONES, 950, 390, _ER_SILVER_ALT)

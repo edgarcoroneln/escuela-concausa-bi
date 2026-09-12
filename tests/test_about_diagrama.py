@@ -1,4 +1,4 @@
-"""Geometría del diagrama de arquitectura (US-601, bloque `svg`).
+"""Geometría de los diagramas servidos como SVG (US-601): arquitectura y los tres E-R.
 
 **Por qué existe este archivo.** El diagrama se coloca a mano: sus coordenadas viven en
 `_ARQ_COMPONENTES` y `_ARQ_FLECHAS`. Nada en Python impide escribir una etiqueta encima de una
@@ -24,7 +24,16 @@ from src.api.v1.about import (
     _ARQ_CELULAS,
     _ARQ_COMPONENTES,
     _ARQ_FLECHAS,
+    _ER_BRONZE_ENTIDADES,
+    _ER_BRONZE_RELACIONES,
+    _ER_GOLD_ENTIDADES,
+    _ER_GOLD_RELACIONES,
+    _ER_SILVER_ENTIDADES,
+    _ER_SILVER_RELACIONES,
     _diagrama_arquitectura,
+    _er_bronze,
+    _er_gold,
+    _er_silver,
 )
 
 #: Ancho medio de un carácter a 10px en la familia sans-serif del diagrama. Es una estimación
@@ -134,3 +143,92 @@ def test_el_svg_no_trae_estilos_ni_scripts_propios() -> None:
     assert "<style" not in codigo
     assert "<script" not in codigo
     assert "<foreignObject" not in codigo
+
+
+# --------------------------------------------------------------------------- #
+# Los tres E-R servidos como SVG (US-601)
+#
+# Mismo motivo que arriba: sus coordenadas se colocaron a mano. Un diagrama con dos cajas
+# encimadas sale del servidor como JSON válido y renderiza sin error — solo se ve mal.
+# --------------------------------------------------------------------------- #
+
+_DIAGRAMAS_ER = [
+    ("gold", _ER_GOLD_ENTIDADES, _ER_GOLD_RELACIONES, _er_gold, 920, 470),
+    ("bronze", _ER_BRONZE_ENTIDADES, _ER_BRONZE_RELACIONES, _er_bronze, 950, 450),
+    ("silver", _ER_SILVER_ENTIDADES, _ER_SILVER_RELACIONES, _er_silver, 950, 390),
+]
+
+
+@pytest.mark.parametrize(
+    ("nombre", "entidades"), [(d[0], d[1]) for d in _DIAGRAMAS_ER], ids=[d[0] for d in _DIAGRAMAS_ER]
+)
+def test_er_sin_cajas_encimadas(nombre: str, entidades: list) -> None:
+    solapes = [
+        (a[4], b[4])
+        for i, a in enumerate(entidades)
+        for b in entidades[i + 1:]
+        if _se_encima(
+            (a[0], a[1], a[0] + a[2], a[1] + a[3]),
+            (b[0], b[1], b[0] + b[2], b[1] + b[3]),
+        )
+    ]
+    assert not solapes, f"E-R de {nombre}: cajas encimadas {solapes}"
+
+
+@pytest.mark.parametrize(
+    ("nombre", "entidades", "ancho", "alto"),
+    [(d[0], d[1], d[4], d[5]) for d in _DIAGRAMAS_ER],
+    ids=[d[0] for d in _DIAGRAMAS_ER],
+)
+def test_er_dentro_del_viewbox(nombre: str, entidades: list, ancho: int, alto: int) -> None:
+    """Lo que se sale del `viewBox` se recorta sin aviso."""
+    fuera = [
+        e[4]
+        for e in entidades
+        if e[0] < 0 or e[1] < 0 or e[0] + e[2] > ancho or e[1] + e[3] > alto
+    ]
+    assert not fuera, f"E-R de {nombre}: fuera del viewBox {fuera}"
+
+
+@pytest.mark.parametrize(
+    ("nombre", "entidades", "relaciones"),
+    [(d[0], d[1], d[2]) for d in _DIAGRAMAS_ER],
+    ids=[d[0] for d in _DIAGRAMAS_ER],
+)
+def test_er_relaciones_apuntan_a_entidades_existentes(
+    nombre: str, entidades: list, relaciones: list
+) -> None:
+    """Una relación hacia una entidad inexistente reventaría al dibujar; se caza aquí."""
+    conocidas = {e[4] for e in entidades}
+    huerfanas = [
+        (desde, hacia)
+        for desde, hacia, *_resto in relaciones
+        if desde not in conocidas or hacia not in conocidas
+    ]
+    assert not huerfanas, f"E-R de {nombre}: relaciones huérfanas {huerfanas}"
+
+
+@pytest.mark.parametrize(
+    ("nombre", "constructor"),
+    [(d[0], d[3]) for d in _DIAGRAMAS_ER],
+    ids=[d[0] for d in _DIAGRAMAS_ER],
+)
+def test_er_genera_svg_valido_y_autocontenido(nombre: str, constructor) -> None:
+    bloque = constructor()
+    codigo = bloque.codigo
+    assert codigo.startswith("<svg ") and codigo.endswith("</svg>")
+    assert codigo.count("<text ") == codigo.count("</text>")
+    assert bloque.alt.strip(), f"E-R de {nombre} sin texto alternativo"
+    # Sin estilos ni scripts propios: el bloque hereda el tema de quien lo pinte.
+    for prohibido in ("<style", "<script", "<foreignObject"):
+        assert prohibido not in codigo, f"E-R de {nombre} trae {prohibido}"
+    referenciados = set(re.findall(r"url\(#([\w-]+)\)", codigo))
+    definidos = set(re.findall(r'<marker id="([\w-]+)"', codigo))
+    assert referenciados <= definidos
+
+
+def test_los_tres_er_son_distintos_entre_si() -> None:
+    """Una regresión plausible: copiar el generador y olvidar cambiar los datos, y que las tres
+    capas muestren el mismo dibujo."""
+    codigos = {_er_gold().codigo, _er_bronze().codigo, _er_silver().codigo}
+    assert len(codigos) == 3

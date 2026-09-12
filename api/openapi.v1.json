@@ -179,6 +179,7 @@
         "type": "object"
       },
       "BloqueMermaid": {
+        "description": "Diagrama en código mermaid, para que el frontend lo dibuje.\n\n**Hoy ninguna sección emite este tipo.** Los cuatro E-R que lo usaban pasaron a `svg`\n(`_er_gold`, `_er_bronze`, `_er_silver`) porque obligaba a cada interfaz a traer un motor de\ndiagramas: en la SPA de React la única librería disponible arrastra dos avisos de severidad\nalta, 69 paquetes transitivos y 123 MB.\n\nSe conserva en el contrato **a propósito y con fecha de revisión**: el tipo lo diseñó Manuel\nSerranía y retirarlo es una decisión suya, no un efecto colateral de esta portación. Si al\nrevisarlo se confirma que no vuelve, quitarlo deja el contrato honestamente libre de\ndependencias de dibujo — que es lo que permite estrenar un frontend sin negociar librerías.",
         "properties": {
           "alto": {
             "anyOf": [

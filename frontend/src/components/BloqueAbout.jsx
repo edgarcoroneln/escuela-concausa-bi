@@ -1,5 +1,7 @@
 import Card from "./Card.jsx";
 import MarkdownLite from "./MarkdownLite.jsx";
+import MapaScope from "./MapaScope.jsx";
+import DiagramaFlujo from "./DiagramaFlujo.jsx";
 
 // Renderizadores de los bloques de "Cómo funciona" (US-601) en la UI nativa.
 //
@@ -7,18 +9,17 @@ import MarkdownLite from "./MarkdownLite.jsx";
 // por tipo. Lo que cambia es el medio — allá cada bloque visual vive en su propio iframe
 // (`components.html`), aquí viven en el mismo documento y heredan los tokens del tema.
 //
-// **Estado de la portación.** Cinco de los ocho tipos están portados. Los tres que faltan
-// —`mermaid`, `mapa` y `diagrama_flujo`— **se declaran en pantalla** en vez de omitirse en
-// silencio: misma política que `SIN_DATO` aplica a los datos, la ausencia se dice.
+// **Estado de la portación: completa.** Los ocho tipos del contrato se pintan aquí, y ninguno
+// necesita una dependencia que el proyecto no tuviera ya.
 //
-// **Por qué `mermaid` no se portó con la librería.** Se probó y se revirtió: `mermaid` arrastra
-// `chevrotain` → `lodash-es` con dos avisos de severidad **alta** (inyección de código y
-// contaminación de prototipo), en la línea 12 y también en la 11 — no hay versión limpia por
-// ahora. Son 69 paquetes transitivos y 123 MB para dibujar cuatro diagramas E-R. Meter eso en
-// `package.json` es un cambio de seguridad y la regla 7 del vault pide revisión humana explícita.
-// **La salida de fondo no es otra librería**: es servir esos cuatro diagramas como bloques `svg`
-// desde la API, igual que ya se hace con el de arquitectura — se dibujan una vez, sin dependencia,
-// y sirven para las dos interfaces a la vez.
+// Los cuatro diagramas E-R que antes llegaban como `mermaid` ahora llegan como `svg` dibujado por
+// la API. Se intentó primero con la librería y se revirtió: arrastra `chevrotain` → `lodash-es`
+// con dos avisos de severidad **alta**, tanto en la línea 12 como en la 11, más 69 paquetes
+// transitivos y 123 MB. Dibujarlos del lado del servidor los deja disponibles para cualquier
+// interfaz sin negociar librerías — que es justo lo que hace viable retirar Streamlit (`ADR-012`)
+// sin perderlos por el camino.
+//
+// `mapa` y `diagrama_flujo` se portaron con `d3-geo`/`d3-shape`, que ya eran dependencias.
 
 // --------------------------------------------------------------------------- svg servido
 
@@ -74,31 +75,6 @@ function Barras({ items }) {
         );
       })}
     </ul>
-  );
-}
-
-// --------------------------------------------------------------------------- no portado
-
-const MOTIVO_NO_PORTADO = {
-  mermaid:
-    "requiere un motor de diagramas; la librería disponible trae avisos de seguridad de severidad alta, así que se deja pendiente de servirse como SVG desde la API",
-  mapa: "todavía se dibuja con D3 dentro del shell de Streamlit",
-  diagrama_flujo: "todavía se dibuja con D3 dentro del shell de Streamlit",
-};
-
-function NoPortado({ tipo }) {
-  return (
-    <div
-      className="rounded-xl p-4 text-sm flex flex-col gap-1"
-      style={{ background: "var(--color-sin-dato-bg)", border: "1px dashed var(--color-border)" }}
-    >
-      <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--color-sin-dato)" }}>
-        Pendiente de portar
-      </span>
-      <span style={{ color: "var(--color-ink-soft)" }}>
-        El bloque <code>{tipo}</code> {MOTIVO_NO_PORTADO[tipo]}. Se declara en vez de omitirlo.
-      </span>
-    </div>
   );
 }
 
@@ -185,10 +161,11 @@ export default function BloqueAbout({ bloque }) {
     case "barras":
       return <Barras items={bloque.items} />;
 
-    case "mermaid":
     case "mapa":
+      return <MapaScope geojson={bloque.geojson} resaltados={bloque.resaltados} fondo={bloque.fondo} />;
+
     case "diagrama_flujo":
-      return <NoPortado tipo={bloque.tipo} />;
+      return <DiagramaFlujo nodos={bloque.nodos} enlaces={bloque.enlaces} />;
 
     default:
       // Contrato hacia adelante: un tipo nuevo del lado de la API no tumba la pantalla.
