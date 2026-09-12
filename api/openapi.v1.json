@@ -332,6 +332,28 @@
             ],
             "title": "Indice Riesgo"
           },
+          "latitud": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitud"
+          },
+          "longitud": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitud"
+          },
           "matricula_total": {
             "minimum": 0.0,
             "title": "Matricula Total",
@@ -516,6 +538,12 @@
       },
       "MunicipioOut": {
         "properties": {
+          "cve_ent": {
+            "maxLength": 2,
+            "minLength": 2,
+            "title": "Cve Ent",
+            "type": "string"
+          },
           "cve_mun": {
             "maxLength": 5,
             "minLength": 5,
@@ -532,6 +560,10 @@
               }
             ],
             "title": "Indice Rezago Social"
+          },
+          "nombre_entidad": {
+            "title": "Nombre Entidad",
+            "type": "string"
           },
           "nombre_municipio": {
             "title": "Nombre Municipio",
@@ -563,7 +595,9 @@
         },
         "required": [
           "cve_mun",
-          "nombre_municipio"
+          "nombre_municipio",
+          "cve_ent",
+          "nombre_entidad"
         ],
         "title": "MunicipioOut",
         "type": "object"
@@ -767,6 +801,17 @@
           "mlflow_run_id": {
             "title": "Mlflow Run Id",
             "type": "string"
+          },
+          "prioridad": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prioridad"
           },
           "recomendacion": {
             "title": "Recomendacion",
@@ -1147,6 +1192,53 @@
           }
         ],
         "summary": "Consulta",
+        "tags": [
+          "Agente"
+        ]
+      }
+    },
+    "/api/v1/agente/consulta/stream": {
+      "post": {
+        "description": "Igual que `/consulta`, pero transmite la redacción final por Server-Sent Events (Fase 3).\n\nMismos guardarraíles, mismo RBAC (`require_lectura`, a nivel de router) y el mismo contrato de\nentrada (`contexto`, `historial`) que `/consulta`; lo único que cambia es cómo viaja la salida.\nTres tipos de evento, en este orden:\n\n- `meta` (una vez, al inicio): `{\"sql_generado\": ..., \"fuera_de_alcance\": ...}`, los mismos\n  campos de `AgenteRespuestaOut`, para que el cliente los tenga sin esperar el fin.\n- `fragmento` (una o más veces): `{\"texto\": \"...\"}`, cada pedazo de la respuesta según llega.\n- `fin` (una vez, al final): `{}`. Siempre llega, también cuando algo falló a medio camino.\n\n`X-Accel-Buffering: no` le pide a nginx que no acumule la respuesta: sin eso, el proxy del\nfrontend (ADR-012) entregaría todos los fragmentos juntos al final y el streaming no se notaría.",
+        "operationId": "consulta_stream_api_v1_agente_consulta_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgenteConsultaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Server-Sent Events. `meta` una vez al inicio: `{sql_generado, fuera_de_alcance}`; `fragmento` una o más veces: `{texto}`; `fin` una vez al final: `{}`."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Consulta Stream",
         "tags": [
           "Agente"
         ]
@@ -1802,6 +1894,8 @@
                   "enum": [
                     "cve_mun",
                     "nombre_municipio",
+                    "cve_ent",
+                    "nombre_entidad",
                     "poblacion",
                     "indice_rezago_social",
                     "pobreza_pct"

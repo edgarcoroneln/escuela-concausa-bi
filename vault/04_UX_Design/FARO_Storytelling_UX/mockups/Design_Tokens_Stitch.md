@@ -271,7 +271,7 @@ The design system employs **Soft Minimal Radii (Level 1)** to maintain the struc
 
 ### Buttons & Operational Actions
 - **Primary:** Background `#0F172A`, text `#FFFFFF`, radius `4px`, hover state `#1E293B`. For high-level operational triggers (e.g., "Generar Dictamen", "Exportar Censo").
-- **Beacon Action:** Background `#0284C7`, text `#FFFFFF`, hover `#0369A1`. Used for analytical exploration tools (e.g., "Ejecutar Simulación", "Filtrar Matriz").
+- **Beacon Action:** Background `#0369A1`, text `#FFFFFF`, hover `#0284C7`. Used for analytical exploration tools (e.g., "Ejecutar Simulación", "Filtrar Matriz"). **Corregido 2026-09-11:** white text on the original resting background (`#0284C7`) measured 4.10:1, below WCAG 2.1 AA (4.5:1). Swapped resting/hover — no new color introduced, `#0369A1` (the former hover) gives 5.93:1 at rest; `#0284C7` now only appears as the hover brighten-on-interact state.
 - **Subtle / Secondary:** Background `#FFFFFF`, border `1px solid #CBD5E1`, text `#334155`, hover background `#F8FAFC`.
 
 ### Form Controls & Query Inputs
