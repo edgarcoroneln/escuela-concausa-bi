@@ -69,6 +69,14 @@ revisión técnica de Estefany Hernández Loredo y la decisión explícita de Ed
 eso ocurra, ML-03 permanece `SIN_DATO` en producción. El resultado demuestra que el entrenamiento
 funciona, pero no autoriza una lectura operativa, recomendación ni prioridad.
 
+## Variante candidata y criterio de revisión
+
+Una variante D1-D4 que retire `indice_completitud_drivers` puede ser una mitigación técnicamente
+razonable, pero no sustituye este corte ni cambia el estado del riesgo por sí sola. Hasta que se
+sincronice, tenga CI verde y sea revisada, sus métricas, ARI y cualquier `run_id` son evidencia
+candidata, no estado canónico. La fuente del proceso y de la redacción permitida para MLflow es
+[[vault/15_ML_Models/ML03_RISK011_Gate]].
+
 ## Qué falta para que sea extremo a extremo
 
 1. Revisión técnica de Estefany sobre el vector D1-D4 (ya implementado en código) y cierre formal

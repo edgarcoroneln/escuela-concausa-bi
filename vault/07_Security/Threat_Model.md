@@ -4,10 +4,10 @@ title: "Threat Model & Security Policy — FARO"
 owner: "Luis Téllez Domínguez"
 co_owners: ["Christian Ruiz"]
 status: approved
-version: "1.2"
+version: "1.3"
 traces_up: ["US-502"]
 traces_down: ["SEC-HARDENING-S3", "SEC-HARDENING-S4"]
-last_reviewed: "2026-09-10"
+last_reviewed: "2026-09-11"
 tags: [security, threat-model, cis-controls, vulnerabilities, audit]
 ---
 
@@ -233,6 +233,43 @@ navegador. El vector concreto de esta app es **la respuesta del agente renderiza
 es texto libre de un LLM. Mitigación acordada con C5 y C1: **nada del chat se renderiza como HTML**
 (sin `dangerouslySetInnerHTML`, `react-markdown` con HTML crudo desactivado) y **CSP en nginx**.
 
+### Cómo llega el `code_faro` al canje: el login (hallazgo del PO, PR #304)
+
+La tabla de modos cubre `exchange`, `refresh` y `logout`. **El login es el paso anterior, y es el
+único que no puede ir por el proxy.**
+
+`GET /auth/login` escribe el `state` anti-CSRF en la cookie `faro_oauth_state` (host-only, `path=/`)
+**en el origen que responde**. Google vuelve al callback registrado en `GOOGLE_REDIRECT_URI`, que es
+el **origen de la API**, y el callback compara el `state` de la URL con el de esa cookie. Si el botón
+"Iniciar sesión" apuntara al proxy del front, la cookie quedaría en el origen del front, el callback
+llegaría a la API sin ella y respondería **401** *"No se pudo verificar el origen de la petición"*.
+
+**Configuración elegida (E5, 11-sep): login y callback directos a la API; solo el canje por el
+proxy.** `GOOGLE_REDIRECT_URI` admite **un solo valor**, y así se conserva el callback que ya está
+registrado en Google. También sigue funcionando el login del shell de Streamlit, que ya llama a la
+API absoluta. La alternativa de pasar todo por el proxy obligaba a mover ese valor, y habría roto el
+login de Streamlit justo mientras sirve de respaldo.
+
+| Paso | Quién | A dónde | Estado |
+|---|---|---|---|
+| 1. Botón "Iniciar sesión" | navegador | `https://<api>/api/v1/auth/login?redirect=<origen exacto del front>`, **absoluto, sin proxy** | ✅ `frontend/src/lib/api.js` (`getAuthLoginUrl`, `VITE_API_ORIGIN`) |
+| 2. `redirect` en la allowlist | API | `FRONTEND_REDIRECT_URIS`, **comparación exacta**, no por prefijo | ✅ código · ⏳ valor de prod |
+| 3. Callback de Google | API | `GOOGLE_REDIRECT_URI` → 302 al front con `?code_faro=` | ✅ |
+| 4. Canje | navegador | `POST /api/v1/auth/exchange?sesion=cookie`, **relativo, por el proxy** | ✅ `frontend/src/lib/api.js` |
+| 5. Limpiar la URL | navegador | `history.replaceState`: el código no se queda en el historial | ✅ `frontend/src/lib/session.jsx` |
+
+**Pendientes explícitos: sin ellos el login no funciona en producción.**
+
+- **`FRONTEND_REDIRECT_URIS` no llega al Cloud Run real.** El `--set-env-vars` de
+  `vault/08_CICD_DevOps/scripts/deploy-cloud-run.sh` no la incluye (hallazgo de Diana Alvarez, 11-sep).
+  Si no llega, el paso 2 responde 400 aunque el valor esté bien definido. El dueño es CI/CD. Luis está
+  ausente, y por `DEC-025` su ausencia no bloquea el cambio. En local, `docker-compose.yml` ya la pasa
+  (PR #322).
+- **El valor de prod** tiene que ser el origen del front **byte a byte** igual a
+  `window.location.origin`: con `https://`, sin `/` final y sin ruta. Se valida con la URL real del
+  front en cuanto exista.
+- **Credenciales de Google** (`GOOGLE_CLIENT_ID/SECRET`) en Secret Manager (C5).
+
 ---
 
 ## ✅ Mitigaciones Implementadas (Nivel 1)
@@ -351,6 +388,8 @@ Si encuentras una vulnerabilidad de seguridad:
 | 2026-08-16 | 1.0 | Creación inicial, threat model, 13 vulnerabilidades documentadas | Luis Téllez |
 | 2026-08-29 | 1.0.1 | Reconciliación de US IDs del roadmap con el catálogo real (US-501..505; elimina el fantasma US-601); corrige tech stale (nginx/self-signed → Cloud LB/Armor + certs administrados); corrige cita CIS 5.3→5.2 en M4 | Luis Téllez |
 | TBD | 1.1 | Actualización post-Sprint 3 (auth implementado) | Christian Ruiz |
+| 2026-09-10 | 1.2 | Sesión del frontend de React por cookie `httpOnly` (ADR-012): controles, modos por cliente, residuales CSRF y XSS | Christian Ruiz |
+| 2026-09-11 | 1.3 | Login del React: por qué va directo a la API y no por el proxy (`faro_oauth_state`), los 5 pasos y los pendientes de prod (hallazgo del PO en PR #304) | Christian Ruiz |
 | TBD | 2.0 | Actualización post-Sprint 4 (GCP production) | Luis Téllez |
 
 ---
