@@ -402,12 +402,49 @@ def test_about_secciones_trae_el_manifest_completo(client: TestClient) -> None:
         "modelo-datos",
         "capas",
         "cubos",
-        "stack",
         "decisiones",
         "modelos-ml",
     }
     for seccion in payload:
         assert set(seccion.keys()) == {"id", "titulo", "orden"}
+    # El orden es 1..N sin huecos: al fundir "stack" en "arquitectura" se renumeró, y un hueco
+    # aquí significaría que alguien quitó una sección sin renumerar (el cliente ordena por este
+    # campo, así que un hueco no rompe nada visible -- por eso conviene cazarlo aquí).
+    assert sorted(s["orden"] for s in payload) == list(range(1, len(payload) + 1))
+
+
+def test_about_memoria_tecnica_vive_dentro_de_arquitectura(client: TestClient) -> None:
+    """`stack` dejó de ser sección propia (US-601): su tabla por capa se fundió en
+    `arquitectura`, que era la sección con más contexto para leerla. Si alguien la vuelve a
+    separar, esta prueba lo dice."""
+    assert client.get(f"{API_PREFIX}/about/secciones/stack").status_code == 404
+
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    tablas = [b for b in bloques if b["tipo"] == "tabla"]
+    por_capa = [t for t in tablas if t["columnas"] == ["Capa", "Herramienta"]]
+    assert len(por_capa) == 1, "la tabla de memoria técnica debe estar una sola vez"
+    herramientas = {fila[1] for fila in por_capa[0]["filas"]}
+    assert "Apache Airflow" in herramientas
+    assert "FastAPI + OAuth2/JWT + RBAC" in herramientas
+
+
+def test_about_arquitectura_trae_el_diagrama(client: TestClient) -> None:
+    """El diagrama de componentes es un bloque `svg` con su texto alternativo.
+
+    Se afirma lo que la página necesita para pintarlo (marcado + `alt` + `alto`), no el trazo
+    exacto: mover una caja no debe reprobar esta prueba, pero servir un SVG sin `alt` sí.
+    """
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    svgs = [b for b in bloques if b["tipo"] == "svg"]
+    assert len(svgs) == 1
+    diagrama = svgs[0]
+    assert diagrama["codigo"].startswith("<svg ")
+    assert diagrama["codigo"].rstrip().endswith("</svg>")
+    assert diagrama["alt"].strip()
+    assert isinstance(diagrama["alto"], int) and diagrama["alto"] > 0
+    # Las cinco células tienen que aparecer con su color: es lo que hace legible la leyenda.
+    for color in ("#4C72B0", "#55A868", "#8172B2", "#C44E52", "#937860"):
+        assert color in diagrama["codigo"], f"falta el color de célula {color}"
 
 
 def test_about_seccion_respeta_el_sobre_generico(client: TestClient) -> None:

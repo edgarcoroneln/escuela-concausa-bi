@@ -1,5 +1,5 @@
-"""Sección "Cómo funciona FARO" (US-601): backend, modelo de datos, capas, cubos, memoria
-técnica, decisiones de arquitectura y modelos de ML, servidos como contrato agnóstico de
+"""Sección "Cómo funciona FARO" (US-601): backend (con su diagrama y su memoria técnica),
+modelo de datos, capas, cubos, decisiones de arquitectura y modelos de ML, servidos como contrato agnóstico de
 frontend (hoy lo consume Streamlit; el mismo contrato sirve para React/Angular más adelante).
 
 **Por qué dos rutas y no siete.** Este hotfix corre en paralelo con el resto del equipo: Gold
@@ -8,7 +8,7 @@ Cards de C3 siguen `in_review`. Si cada sección fuera un endpoint con su propio
 de esos cambios obligaría a tocar también la página de Streamlit. En vez de eso, `/secciones`
 publica un **manifest** (qué secciones hay) y `/secciones/{id}` responde siempre el mismo **sobre
 genérico** de bloques (`markdown` | `mermaid` | `tabla` | `metricas` | `mapa` | `barras` |
-`diagrama_flujo`): agregar, quitar o reordenar una sección es un cambio de este archivo
+`diagrama_flujo` | `svg`): agregar, quitar o reordenar una sección es un cambio de este archivo
 únicamente, la página no se vuelve a tocar. Los tres últimos tipos (mapa/barras/diagrama_flujo)
 se renderizan con D3 vía HTML embebido -- no con widgets nativos de Streamlit -- porque Streamlit
 se va a dejar de usar pronto (migración a React/Angular); HTML/JS puro es lo único de esta página
@@ -25,6 +25,7 @@ en este hotfix. Único dato realmente vivo: los conteos de fila de la sección `
 """
 from __future__ import annotations
 
+import html
 import json
 from collections.abc import Callable
 from functools import lru_cache
@@ -61,7 +62,7 @@ def _geojson_silueta_nacional() -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# El sobre genérico: 7 tipos de bloque, cada uno con su propio renderer en la página.
+# El sobre genérico: 8 tipos de bloque, cada uno con su propio renderer en la página.
 # --------------------------------------------------------------------------- #
 
 
@@ -154,9 +155,34 @@ class BloqueDiagramaFlujo(BaseModel):
     enlaces: list[EnlaceFlujo]
 
 
+class BloqueSvg(BaseModel):
+    """Diagrama dibujado a mano, servido como SVG ya armado.
+
+    Es el único bloque que no manda datos para que el frontend los dibuje. La razón es que su
+    disposición es una decisión editorial, no un resultado de los datos: qué componente va al
+    lado de cuál, por dónde rodea una flecha para no cruzar una caja, cuáles llevan borde grueso.
+    Mandar nodos y aristas obligaría a escribir un motor de layout en el cliente para reproducir
+    una colocación que de todas formas se fijó a mano -- y cualquier reacomodo automático
+    volvería a cruzar las cajas que este trazo evita a propósito.
+
+    El SVG se arma en `_diagrama_arquitectura()` a partir de tablas de datos (`_ARQ_COMPONENTES`,
+    `_ARQ_FLECHAS`), así que editar el diagrama es editar esas tablas, no el marcado.
+
+    `alt` viaja aparte porque el frontend lo necesita para el texto alternativo del iframe: el
+    `aria-label` del `<svg>` no llega a un lector de pantalla desde dentro de `components.html`.
+    """
+
+    tipo: Literal["svg"] = "svg"
+    codigo: str
+    alt: str
+    #: Alto en px del iframe, por el mismo motivo que `BloqueMermaid.alto`: `components.html` no
+    #: hace auto-resize. `None` usa el alto por defecto del cliente.
+    alto: int | None = None
+
+
 Bloque = Annotated[
     BloqueMarkdown | BloqueMermaid | BloqueTabla | BloqueMetricas | BloqueMapa | BloqueBarras
-    | BloqueDiagramaFlujo,
+    | BloqueDiagramaFlujo | BloqueSvg,
     Field(discriminator="tipo"),
 ]
 
@@ -186,6 +212,197 @@ class SeccionOut(BaseModel):
 # --------------------------------------------------------------------------- #
 
 
+#: Color por célula dueña. Los tres primeros son los que ya usa el diagrama de cubos
+#: (`_flujo_html` en el frontend); C3/C4/C5 extienden la misma familia para que las cinco
+#: convivan sin desentonar. El color codifica **quién es dueño**, no en qué etapa va el
+#: componente: la sección afirma que el backend son "5 franjas verticales" y el diagrama lo
+#: enseña en vez de repetirlo.
+_ARQ_CELULAS: dict[str, tuple[str, str]] = {
+    "C1": ("#4C72B0", "C1 · Data Engineering & Quality"),
+    "C2": ("#55A868", "C2 · Analytics & BI"),
+    "C3": ("#8172B2", "C3 · ML & Agente IA"),
+    "C4": ("#C44E52", "C4 · Backend, API & Seguridad"),
+    "C5": ("#937860", "C5 · Cloud & DevOps"),
+}
+
+#: Cajas del diagrama. `enfasis` marca los tres puntos por los que pasa todo lo demás (borde
+#: grueso); `punteado` marca lo que no es código nuestro. `celula=None` => sin dueño interno.
+#: Las coordenadas son a mano y están verificadas contra `_ARQ_FLECHAS` para que ninguna
+#: etiqueta caiga encima de una caja -- ver `tests/test_about_diagrama.py`.
+_ARQ_COMPONENTES: list[dict] = [
+    {"x": 24, "y": 250, "w": 150, "h": 70, "celula": None, "punteado": True,
+     "titulo": "8 fuentes públicas", "subs": ["DS-01 … DS-08"], "centrado": True},
+    {"x": 224, "y": 250, "w": 160, "h": 70, "celula": "C1",
+     "titulo": "Apache Airflow", "subs": ["Orquesta la ingesta", "6 cadencias de DAG"]},
+    {"x": 434, "y": 120, "w": 220, "h": 56, "celula": "C1",
+     "titulo": "dbt-core", "subs": ["9 modelos Silver · 15 Gold"]},
+    {"x": 434, "y": 222, "w": 220, "h": 126, "celula": "C1", "enfasis": True,
+     "titulo": "PostgreSQL", "subs": ["Cloud SQL en producción"], "capas": True,
+     "subs_bajas": ["Bronze y Silver nacionales", "Gold acotado a 4 entidades"]},
+    {"x": 434, "y": 396, "w": 220, "h": 62, "celula": "C1",
+     "titulo": "Great Expectations", "subs": ["+ Pydantic — por capa", "y por registro"]},
+    {"x": 714, "y": 196, "w": 180, "h": 78, "celula": "C3",
+     "titulo": "scikit-learn · XGBoost",
+     "subs": ["+ MLflow (registro)", "ML-01 · ML-02 · ML-03", "partición temporal"]},
+    {"x": 714, "y": 330, "w": 180, "h": 78, "celula": "C3",
+     "titulo": "ChromaDB",
+     "subs": ["+ sentence-transformers", "recuperación de contexto", "(RAG) del agente"]},
+    {"x": 954, "y": 250, "w": 180, "h": 82, "celula": "C4", "enfasis": True,
+     "titulo": "FastAPI",
+     "subs": ["OAuth2 · JWT · RBAC", "Gold, predicciones,", "agente y esta sección"]},
+    {"x": 954, "y": 110, "w": 180, "h": 64, "celula": "C2",
+     "titulo": "Apache Superset", "subs": ["10 dashboards", "sobre los 9 cubos"]},
+    {"x": 1194, "y": 200, "w": 150, "h": 112, "celula": "C2", "enfasis": True,
+     "titulo": "FARO Web",
+     "subs": ["Streamlit — shell único", "· dashboards", "· panel de ML",
+              "· chat del agente", "· login por rol"]},
+]
+
+#: Las tres capas dentro de la caja de PostgreSQL, con los mismos colores que las barras de
+#: la sección "Capas" (`_barras_capas`), para que se lean como la misma cosa en las dos.
+_ARQ_CAPAS: list[tuple[int, int, str, str]] = [
+    (450, 62, "BRONZE", "#B08968"),
+    (518, 58, "SILVER", "#8D99AE"),
+    (582, 56, "GOLD", "#D4AF37"),
+]
+
+#: Flechas. `d` es un `path` cuando la flecha tiene que rodear una caja; `linea` cuando es
+#: recta. `punteada` = escritura de vuelta sobre una capa que ya existía.
+_ARQ_FLECHAS: list[dict] = [
+    {"linea": (174, 285, 218, 285), "etq": "descarga", "ex": 196, "ey": 277, "anc": "middle"},
+    {"linea": (384, 285, 428, 285), "etq": "carga", "ex": 406, "ey": 277, "anc": "middle"},
+    {"linea": (544, 176, 544, 216), "etq": "bronze → silver → gold", "ex": 552, "ey": 200},
+    {"linea": (544, 396, 544, 354), "etq": "valida cada capa", "ex": 552, "ey": 380},
+    {"linea": (660, 238, 708, 224), "etq": "features_escuela", "ex": 666, "ey": 214,
+     "anc": "middle"},
+    {"linea": (708, 256, 660, 270), "etq": "predicciones", "ex": 690, "ey": 290,
+     "anc": "middle", "punteada": True},
+    {"d": "M 660 232 H 684 V 142 H 948", "etq": "9 cubos de Gold", "ex": 820, "ey": 134,
+     "anc": "middle"},
+    {"linea": (894, 240, 948, 266), "etq": "models:/", "ex": 921, "ey": 238, "anc": "middle"},
+    {"linea": (894, 360, 948, 318), "etq": "contexto RAG", "ex": 935, "ey": 382,
+     "anc": "middle"},
+    {"d": "M 660 332 H 690 V 478 H 1044 V 338",
+     "etq": "lee Gold · predicciones · recomendaciones", "ex": 866, "ey": 470, "anc": "middle"},
+    {"linea": (1134, 288, 1188, 272), "etq": "REST", "ex": 1161, "ey": 303, "anc": "middle"},
+    {"d": "M 1134 142 H 1164 V 230 H 1188", "etq": "embebido", "ex": 1160, "ey": 192,
+     "anc": "end"},
+]
+
+_ARQ_ANCHO, _ARQ_ALTO = 1360, 620
+_ARQ_ALT = (
+    "Diagrama de flujo de la arquitectura de FARO: ocho fuentes públicas entran por Apache "
+    "Airflow a PostgreSQL, donde dbt-core transforma bronze a silver a gold y Great "
+    "Expectations valida cada capa; desde gold, scikit-learn con MLflow entrena los modelos y "
+    "escribe predicciones de vuelta, ChromaDB aporta contexto RAG, FastAPI expone todo por "
+    "REST, Apache Superset lee los nueve cubos, y FARO Web en Streamlit reúne dashboards, "
+    "panel de ML y chat. Docker y GCP Cloud Run empaquetan y despliegan el sistema completo."
+)
+
+
+def _diagrama_arquitectura() -> BloqueSvg:
+    """Arma el SVG del diagrama a partir de `_ARQ_COMPONENTES` y `_ARQ_FLECHAS`.
+
+    Todo va con atributos de presentación en línea, sin clases ni `<style>`: el bloque vive en
+    su propio iframe (`components.html`) y así no depende de que el frontend defina un CSS que
+    haga juego. Los colores son los mismos que ya usa la página, no una paleta nueva.
+    """
+    e = html.escape
+    p: list[str] = [
+        (
+            f'<svg viewBox="0 0 {_ARQ_ANCHO} {_ARQ_ALTO}" role="img" aria-label="{e(_ARQ_ALT)}" '
+            'style="width:100%;min-width:1100px;height:auto;display:block">'
+        ),
+        (
+            '<defs><marker id="arq-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" '
+            'markerHeight="7" orient="auto-start-reverse">'
+            '<path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>'
+        ),
+    ]
+    rotulo = 'font-family="sans-serif" font-size="10.5" font-weight="600" letter-spacing="0.9" fill="#94a3b8"'  # noqa: E501
+    titulo = 'font-family="sans-serif" font-size="12.5" font-weight="600" fill="#0f172a"'
+    sub = 'font-family="sans-serif" font-size="10.5" fill="#64748b"'
+    flecha = 'font-family="sans-serif" font-size="10" fill="#64748b"'
+
+    for x, txt in ((99, "FUENTES"), (304, "INGESTA"), (544, "ALMACÉN Y TRANSFORMACIÓN"),
+                   (804, "INTELIGENCIA"), (1044, "EXPOSICIÓN"), (1269, "PRESENTACIÓN")):
+        p.append(f'<text x="{x}" y="34" text-anchor="middle" {rotulo}>{e(txt)}</text>')
+
+    for c in _ARQ_COMPONENTES:
+        borde = "#94a3b8" if c.get("enfasis") else "#cbd5e1"
+        grosor = "1.6" if c.get("enfasis") else "1"
+        relleno = "#f8fafc" if c.get("punteado") else "#ffffff"
+        guion = ' stroke-dasharray="4 3"' if c.get("punteado") else ""
+        p.append(
+            f'<rect x="{c["x"]}" y="{c["y"]}" width="{c["w"]}" height="{c["h"]}" rx="4" '
+            f'fill="{relleno}" stroke="{borde}" stroke-width="{grosor}"{guion}/>'
+        )
+        if c.get("centrado"):
+            cx = c["x"] + c["w"] / 2
+            p.append(f'<text x="{cx}" y="{c["y"] + 30}" text-anchor="middle" {titulo}>{e(c["titulo"])}</text>')  # noqa: E501
+            for i, s in enumerate(c["subs"]):
+                p.append(f'<text x="{cx}" y="{c["y"] + 48 + i * 15}" text-anchor="middle" {sub}>{e(s)}</text>')  # noqa: E501
+            continue
+
+        tx, ty = c["x"] + 16, c["y"] + 18
+        if c["celula"]:
+            p.append(f'<circle cx="{tx}" cy="{ty}" r="4.5" fill="{_ARQ_CELULAS[c["celula"]][0]}"/>')
+        p.append(f'<text x="{tx + 13}" y="{ty + 4}" {titulo}>{e(c["titulo"])}</text>')
+        for i, s in enumerate(c["subs"]):
+            p.append(f'<text x="{tx}" y="{ty + 23 + i * 15}" {sub}>{e(s)}</text>')
+
+        if c.get("capas"):
+            for cx0, ancho, nombre, color in _ARQ_CAPAS:
+                p.append(f'<rect x="{cx0}" y="278" width="{ancho}" height="22" rx="3" fill="{color}"/>')  # noqa: E501
+                p.append(
+                    f'<text x="{cx0 + ancho / 2}" y="293" text-anchor="middle" '
+                    f'font-family="sans-serif" font-size="9.5" font-weight="600" '
+                    f'fill="#ffffff">{e(nombre)}</text>'
+                )
+            for i, s in enumerate(c.get("subs_bajas", [])):
+                p.append(f'<text x="{c["x"] + 16}" y="{323 + i * 15}" {sub}>{e(s)}</text>')
+
+    for f in _ARQ_FLECHAS:
+        guion = ' stroke-dasharray="4 3"' if f.get("punteada") else ""
+        if "d" in f:
+            p.append(
+                f'<path d="{f["d"]}" fill="none" stroke="#94a3b8" stroke-width="1.3"'
+                f'{guion} marker-end="url(#arq-f)"/>'
+            )
+        else:
+            x1, y1, x2, y2 = f["linea"]
+            p.append(
+                f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#94a3b8" '
+                f'stroke-width="1.3"{guion} marker-end="url(#arq-f)"/>'
+            )
+        anc = f' text-anchor="{f["anc"]}"' if f.get("anc") else ""
+        p.append(f'<text x="{f["ex"]}" y="{f["ey"]}"{anc} {flecha}>{e(f["etq"])}</text>')
+
+    # Banda de despliegue: no es un paso del flujo, envuelve a los demás -- por eso va como
+    # banda punteada al pie y no como una caja más en la fila.
+    p.append(
+        '<rect x="24" y="500" width="1320" height="58" rx="4" fill="#f8fafc" stroke="#cbd5e1" '
+        'stroke-width="1" stroke-dasharray="5 4"/>'
+    )
+    p.append(f'<circle cx="44" cy="522" r="4.5" fill="{_ARQ_CELULAS["C5"][0]}"/>')
+    p.append(f'<text x="57" y="526" {titulo}>Docker + docker-compose · GCP Cloud Run</text>')
+    p.append(
+        f'<text x="44" y="545" {sub}>Empaqueta y despliega todo lo anterior detrás de una URL '
+        'pública. No es un paso del flujo: envuelve los nueve componentes de arriba.</text>'
+    )
+
+    for cx0, clave in ((30, "C1"), (266, "C2"), (436, "C3"), (616, "C4"), (850, "C5")):
+        color, nombre = _ARQ_CELULAS[clave]
+        p.append(f'<circle cx="{cx0}" cy="590" r="4.5" fill="{color}"/>')
+        p.append(
+            f'<text x="{cx0 + 12}" y="594" font-family="sans-serif" font-size="11" '
+            f'fill="#334155">{e(nombre)}</text>'
+        )
+
+    p.append("</svg>")
+    return BloqueSvg(codigo="".join(p), alt=_ARQ_ALT, alto=560)
+
+
 def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
     return SeccionOut(
         id="arquitectura",
@@ -205,6 +422,19 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     "MLflow. Cada componente tiene un dueño de célula distinto."
                 )
             ),
+            BloqueMarkdown(
+                texto=(
+                    "**Cómo leer el diagrama de abajo.** El color de cada punto indica la "
+                    "célula dueña, no la etapa del flujo. Las flechas dicen qué le pasa a "
+                    "quién: si una desaparece, algo deja de funcionar. La única punteada "
+                    "—`predicciones`— es una escritura de vuelta: los modelos leen de Gold y "
+                    "publican en Gold, no en una base aparte. Los tres recuadros de borde "
+                    "grueso (PostgreSQL, FastAPI y FARO Web) son los puntos por los que pasa "
+                    "todo lo demás. El recuadro punteado de las fuentes no tiene dueño porque "
+                    "no es código nuestro: son los portales públicos de las dependencias."
+                )
+            ),
+            _diagrama_arquitectura(),
             BloqueTabla(
                 columnas=["Componente", "Responsabilidad", "Dueño"],
                 filas=[
@@ -274,6 +504,28 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                             "lo anterior detrás de una URL pública."
                         ),
                     ],
+                ],
+            ),
+            BloqueMarkdown(
+                texto=(
+                    "### Memoria técnica\n"
+                    "Las mismas piezas de arriba, vistas por capa en vez de por dueño. Python "
+                    "3.11 en todo el backend (PEP 8, docstrings, type hints)."
+                )
+            ),
+            BloqueTabla(
+                columnas=["Capa", "Herramienta"],
+                filas=[
+                    ["Orquestación", "Apache Airflow"],
+                    ["Transformación", "dbt-core"],
+                    ["Calidad de datos", "Great Expectations + Pydantic"],
+                    ["Almacén", "PostgreSQL (Cloud SQL en producción)"],
+                    ["ML", "scikit-learn, XGBoost + MLflow"],
+                    ["API", "FastAPI + OAuth2/JWT + RBAC"],
+                    ["Agente", "ChromaDB + sentence-transformers"],
+                    ["BI", "Apache Superset"],
+                    ["Contenedores", "Docker + docker-compose"],
+                    ["Nube", "GCP (Cloud Run + Cloud SQL + Artifact Registry)"],
                 ],
             ),
         ],
@@ -728,32 +980,6 @@ def _seccion_cubos(_repo: RepositorioAbout) -> SeccionOut:
     )
 
 
-def _seccion_stack(_repo: RepositorioAbout) -> SeccionOut:
-    return SeccionOut(
-        id="stack",
-        titulo="Memoria técnica",
-        fuente=["CLAUDE.md §5 Stack técnico"],
-        bloques=[
-            BloqueMarkdown(texto="Python 3.11 en todo el backend (PEP 8, docstrings, type hints)."),
-            BloqueTabla(
-                columnas=["Capa", "Herramienta"],
-                filas=[
-                    ["Orquestación", "Apache Airflow"],
-                    ["Transformación", "dbt-core"],
-                    ["Calidad de datos", "Great Expectations + Pydantic"],
-                    ["Almacén", "PostgreSQL (Cloud SQL en producción)"],
-                    ["ML", "scikit-learn, XGBoost + MLflow"],
-                    ["API", "FastAPI + OAuth2/JWT + RBAC"],
-                    ["Agente", "ChromaDB + sentence-transformers"],
-                    ["BI", "Apache Superset"],
-                    ["Contenedores", "Docker + docker-compose"],
-                    ["Nube", "GCP (Cloud Run + Cloud SQL + Artifact Registry)"],
-                ],
-            ),
-        ],
-    )
-
-
 def _seccion_decisiones(_repo: RepositorioAbout) -> SeccionOut:
     return SeccionOut(
         id="decisiones",
@@ -835,9 +1061,8 @@ _REGISTRO: dict[str, tuple[str, int, Callable[[RepositorioAbout], SeccionOut]]] 
     "modelo-datos": ("Modelo de datos", 2, _seccion_modelo_datos),
     "capas": ("Capas: bronze, silver, gold", 3, _seccion_capas),
     "cubos": ("Cubos de Gold", 4, _seccion_cubos),
-    "stack": ("Memoria técnica", 5, _seccion_stack),
-    "decisiones": ("Decisiones de arquitectura (ADRs)", 6, _seccion_decisiones),
-    "modelos-ml": ("Modelos de Machine Learning", 7, _seccion_modelos_ml),
+    "decisiones": ("Decisiones de arquitectura (ADRs)", 5, _seccion_decisiones),
+    "modelos-ml": ("Modelos de Machine Learning", 6, _seccion_modelos_ml),
 }
 
 

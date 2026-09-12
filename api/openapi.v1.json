@@ -230,6 +230,42 @@
         "title": "BloqueMetricas",
         "type": "object"
       },
+      "BloqueSvg": {
+        "description": "Diagrama dibujado a mano, servido como SVG ya armado.\n\nEs el único bloque que no manda datos para que el frontend los dibuje. La razón es que su\ndisposición es una decisión editorial, no un resultado de los datos: qué componente va al\nlado de cuál, por dónde rodea una flecha para no cruzar una caja, cuáles llevan borde grueso.\nMandar nodos y aristas obligaría a escribir un motor de layout en el cliente para reproducir\nuna colocación que de todas formas se fijó a mano -- y cualquier reacomodo automático\nvolvería a cruzar las cajas que este trazo evita a propósito.\n\nEl SVG se arma en `_diagrama_arquitectura()` a partir de tablas de datos (`_ARQ_COMPONENTES`,\n`_ARQ_FLECHAS`), así que editar el diagrama es editar esas tablas, no el marcado.\n\n`alt` viaja aparte porque el frontend lo necesita para el texto alternativo del iframe: el\n`aria-label` del `<svg>` no llega a un lector de pantalla desde dentro de `components.html`.",
+        "properties": {
+          "alt": {
+            "title": "Alt",
+            "type": "string"
+          },
+          "alto": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alto"
+          },
+          "codigo": {
+            "title": "Codigo",
+            "type": "string"
+          },
+          "tipo": {
+            "const": "svg",
+            "default": "svg",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codigo",
+          "alt"
+        ],
+        "title": "BloqueSvg",
+        "type": "object"
+      },
       "BloqueTabla": {
         "properties": {
           "columnas": {
@@ -1207,6 +1243,7 @@
                   "markdown": "#/components/schemas/BloqueMarkdown",
                   "mermaid": "#/components/schemas/BloqueMermaid",
                   "metricas": "#/components/schemas/BloqueMetricas",
+                  "svg": "#/components/schemas/BloqueSvg",
                   "tabla": "#/components/schemas/BloqueTabla"
                 },
                 "propertyName": "tipo"
@@ -1232,6 +1269,9 @@
                 },
                 {
                   "$ref": "#/components/schemas/BloqueDiagramaFlujo"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueSvg"
                 }
               ]
             },

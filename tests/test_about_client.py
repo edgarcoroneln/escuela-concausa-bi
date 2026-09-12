@@ -129,6 +129,45 @@ def test_un_tipo_de_bloque_desconocido_no_rompe_el_parseo(cliente) -> None:
     assert seccion.bloques[0].tipo == "grafico-3d"
 
 
+def test_bloque_svg_se_parsea(cliente) -> None:
+    payload = {
+        **SECCION_OK,
+        "bloques": [
+            {
+                "tipo": "svg",
+                "codigo": "<svg viewBox=\"0 0 10 10\"><rect width=\"10\" height=\"10\"/></svg>",
+                "alt": "Un cuadrado.",
+                "alto": 560,
+            }
+        ],
+    }
+    seccion = cliente.obtener_seccion("http://api", "arquitectura", get=_get_que_devuelve(payload))
+    bloque = seccion.bloques[0]
+    assert isinstance(bloque, cliente.BloqueSvg)
+    assert bloque.codigo.startswith("<svg")
+    assert bloque.alt == "Un cuadrado."
+    assert bloque.alto == 560
+
+
+def test_bloque_svg_sin_alto_deja_que_el_cliente_decida(cliente) -> None:
+    """`alto` es opcional: sin él la página usa su valor por defecto, no un 0 que colapsaría
+    el iframe."""
+    payload = {
+        **SECCION_OK,
+        "bloques": [{"tipo": "svg", "codigo": "<svg/>", "alt": "x"}],
+    }
+    seccion = cliente.obtener_seccion("http://api", "arquitectura", get=_get_que_devuelve(payload))
+    assert seccion.bloques[0].alto is None
+
+
+def test_bloque_svg_sin_alt_esta_fuera_de_contrato(cliente) -> None:
+    """El texto alternativo no es opcional: sin él el diagrama es invisible para un lector de
+    pantalla, y el `aria-label` de dentro del iframe no llega al documento padre."""
+    payload = {**SECCION_OK, "bloques": [{"tipo": "svg", "codigo": "<svg/>"}]}
+    with pytest.raises(ValueError):
+        cliente.obtener_seccion("http://api", "arquitectura", get=_get_que_devuelve(payload))
+
+
 def test_bloque_mapa_se_parsea(cliente) -> None:
     payload = {
         **SECCION_OK,

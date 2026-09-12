@@ -108,6 +108,20 @@ class BloqueDiagramaFlujo:
 
 
 @dataclass(frozen=True)
+class BloqueSvg:
+    """Diagrama ya dibujado del lado de la API (ver `BloqueSvg` en `src/api/v1/about.py`).
+
+    `alt` viaja aparte del marcado porque el `aria-label` de un `<svg>` dentro de
+    `components.html` no llega al lector de pantalla del documento padre: la página lo repite
+    fuera del iframe.
+    """
+
+    codigo: str
+    alt: str
+    alto: int | None = None
+
+
+@dataclass(frozen=True)
 class BloqueDesconocido:
     """Un `tipo` de bloque que este cliente todavía no sabe pintar.
 
@@ -126,6 +140,7 @@ Bloque = (
     | BloqueMapa
     | BloqueBarras
     | BloqueDiagramaFlujo
+    | BloqueSvg
     | BloqueDesconocido
 )
 
@@ -202,6 +217,13 @@ def _parsear_bloque(payload: dict) -> Bloque:
                     EnlaceFlujo(origen=str(e["origen"]), destino=str(e["destino"]))
                     for e in payload["enlaces"]
                 ],
+            )
+        if tipo == "svg":
+            alto = payload.get("alto")
+            return BloqueSvg(
+                codigo=str(payload["codigo"]),
+                alt=str(payload["alt"]),
+                alto=int(alto) if alto is not None else None,
             )
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError(f"Bloque de tipo '{tipo}' fuera de contrato.") from exc

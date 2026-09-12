@@ -35,6 +35,7 @@ from about_client import (
     BloqueMarkdown,
     BloqueMermaid,
     BloqueMetricas,
+    BloqueSvg,
     BloqueTabla,
     listar_secciones,
     obtener_seccion,
@@ -429,6 +430,20 @@ def _flujo_html(bloque: BloqueDiagramaFlujo) -> str:
     """
 
 
+def _svg_html(bloque: BloqueSvg) -> str:
+    """Diagrama ya dibujado por la API. El iframe solo lo enmarca.
+
+    `overflow-x: auto` + el `min-width` que trae el propio SVG: el diagrama tiene ~1100px de
+    ancho mínimo legible (por debajo de eso el texto de 10px queda ilegible al escalar), así
+    que en una ventana angosta se desplaza en lugar de encogerse. Mismo criterio que el resto
+    de los bloques anchos de esta página.
+    """
+    return f"""
+    {_ESTILO_CLARO}
+    <div style="width:100%; overflow-x:auto">{bloque.codigo}</div>
+    """
+
+
 def _render_bloque(bloque) -> None:
     if isinstance(bloque, BloqueMarkdown):
         st.markdown(bloque.texto)
@@ -466,6 +481,15 @@ def _render_bloque(bloque) -> None:
         filas_max = max((len([n for n in bloque.nodos if n.columna == c]) for c in range(3)), default=1)
         alto = max(_ALTO_D3, filas_max * 26) + 20
         components.html(_flujo_html(bloque), height=alto, scrolling=True)
+    elif isinstance(bloque, BloqueSvg):
+        # scrolling=True: el diagrama es más ancho que la columna en ventanas chicas y se
+        # desplaza en horizontal; el alto lo fija la API porque `components.html` no
+        # auto-ajusta (mismo motivo que `BloqueMermaid.alto`).
+        components.html(_svg_html(bloque), height=bloque.alto or _ALTO_D3, scrolling=True)
+        # El `aria-label` de un `<svg>` dentro de un iframe no llega al lector de pantalla del
+        # documento padre, así que la descripción se repite aquí fuera, plegada.
+        with st.expander("Descripción del diagrama"):
+            st.write(bloque.alt)
     elif isinstance(bloque, BloqueDesconocido):
         # Contrato hacia adelante (US-601): un tipo de bloque nuevo no tumba la página, solo
         # se avisa que esta sección tiene contenido que este cliente todavía no sabe pintar.
