@@ -134,12 +134,18 @@ class EscuelaOut(BaseModel):
     indice_riesgo: StrictFloat | None = Field(None, ge=0, le=1)
     driver_dominante: StrictStr | None = None  # "D1".."D6"
     tiene_prediccion: bool  # True si hay fila en gold.predicciones (modelo ML-01) para este cct
+    # Coordenadas subidas del detalle al listado el 2026-09-11 (US-621, mapa de riesgo en D3 del
+    # frontend de React): pintar 7 marcadores costaba 7 llamadas a `/escuelas/{cct}`, y el mapa de
+    # una entidad completa, una por escuela. `dim_escuela` ya las tiene y el listado ya hace ese
+    # JOIN, asi que no agrega ninguna consulta. `None` es SIN_DATO real: hay escuelas del CCT sin
+    # georreferencia, y el front las omite del mapa en vez de dibujarlas en el (0, 0).
+    latitud: float | None = None
+    longitud: float | None = None
 
 
 class EscuelaDetalleOut(EscuelaOut):
+    # `latitud`/`longitud` se heredan de EscuelaOut desde el 2026-09-11 (antes vivian solo aqui).
     sostenimiento: StrictStr
-    latitud: float | None = None
-    longitud: float | None = None
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
     # None => SIN_DATO explícito (regla de cobertura parcial del CLAUDE.md §4)
     d1: float | None = None
@@ -157,6 +163,12 @@ class EscuelaDetalleOut(EscuelaOut):
 class MunicipioOut(BaseModel):
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     nombre_municipio: StrictStr
+    # Agregados 2026-09-11 (US-621, pedido de Diana Alvarez para el frontend de React): la consulta
+    # ya los traia -- `select(dim_municipio)` devuelve la fila completa -- pero el contrato no los
+    # declaraba, asi que el cliente tenia que mantener su propio mapa de 4 claves de entidad a
+    # nombre, o pintar "09" en una etiqueta. Es aditivo: ningun cliente existente se rompe.
+    cve_ent: StrictStr = Field(min_length=2, max_length=2)
+    nombre_entidad: StrictStr
     # SIN_DATO explícito (P-03/US-103): con `gold.dim_municipio` = universo INEGI (317 municipios
     # de las 4 entidades), la población entra por LEFT JOIN a CONAPO; donde no hay fila queda NULL,
     # nunca 0 ni municipio borrado. Se expone como null, igual que rezago/pobreza, en vez de romper.
@@ -192,6 +204,20 @@ class PrediccionOut(BaseModel):
     # se inventa un entero. BUG-010. Al aterrizar ML-03, vuelve a StrictInt obligatorio con
     # aviso a C2/C3 (regla de oro del contrato, API_Specification.md).
     cluster: StrictInt | None = None  # ML-03
+    # `gold.recomendaciones.prioridad` -- "alta" | "media" | "baja" (`publicar_gold.Prioridad`).
+    # Expuesta 2026-09-11 a pedido de Marina Garcia (E3) para ordenar los casos del storytelling.
+    #
+    # **No es la linea de alerta de los tableros.** La deriva `prioridad_de_riesgo()` del **ancla de
+    # la sigmoide** (0.60 `DEC-006`, alta) y de la matricula estable (0.30, media), no del 0.50 con
+    # el que `/kpis` *cuenta* escuelas en riesgo (`DEC-019`). Son dos numeros distintos a proposito:
+    # si `prioridad` siguiera la linea, habria que reescribir las 45,276 filas ya publicadas, y
+    # `DEC-019` dice que no cambia un solo valor publicado. Si el PO y el TL de C3 resuelven la
+    # pregunta abierta (`BUG-063`), cambia el productor, no este contrato.
+    #
+    # `StrictStr | None`, no un `Literal`: el valor lo escribe C3 en Gold y un valor inesperado debe
+    # poder leerse y verse, no reventar la lectura con un 500. Tampoco se inventa cuando falta: sin
+    # fila de recomendacion viaja `None`, mismo criterio SIN_DATO que `cluster`.
+    prioridad: StrictStr | None = None
     mlflow_run_id: StrictStr
 
 

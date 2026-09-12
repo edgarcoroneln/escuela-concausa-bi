@@ -174,14 +174,29 @@ ciclos materializados a la vez (**20.6M en vez de ~7M reales** para las 4 entida
 > evitan en otras capas. **No es un bug si una entidad rezagada sale vacía sin `ciclo` explícito**
 > — es el filtro correcto y hay que pasar `ciclo` explícito para leer su último dato disponible.
 
+**`latitud` y `longitud` en `EscuelaOut` (2026-09-11, US-621 — mapa de riesgo del frontend):** las
+coordenadas **suben del detalle al listado**. Antes, pintar los 7 casos del storytelling costaba 7
+llamadas a `/escuelas/{cct}`, y el mapa de una entidad completa, una por escuela. `dim_escuela` ya las
+tiene y el listado ya hace ese JOIN, así que **no agrega ninguna consulta**. Siguen en el detalle: se
+heredan de `EscuelaOut`, no se movieron. `None` es `SIN_DATO` real —hay CCT sin georreferencia— y el
+cliente debe **omitir** esas escuelas del mapa, nunca dibujarlas en el `(0, 0)`. Fijado por
+`tests/test_api_contract.py::test_escuelas_listado_trae_coordenadas`.
+
+**`cve_ent` y `nombre_entidad` en `MunicipioOut` (2026-09-11, US-621 — pedido de Diana Alvarez):**
+la consulta ya los traía (`select(dim_municipio)` devuelve la fila completa), pero el contrato no los
+declaraba, así que el cliente tenía que mantener su propio mapa de 4 claves a nombre de entidad, o
+pintar `"09"` en una etiqueta. Viajan **en la lista y en el detalle**: solo en el detalle costarían
+una petición por fila. Es **aditivo** — ningún cliente existente cambia — y también se puede ordenar
+por ellos. Fijado por `tests/test_api_contract.py::test_municipio_trae_la_entidad_y_su_clave`.
+
 **Ordenamiento (Decisión 3 de US-411, Karla Monter, 2026-08-20 — avisado a C2/C3):**
 - `order_by` es opcional; si se omite, el orden es el natural de la consulta (no garantizado
   entre llamadas). `order` es `asc` (por defecto) o `desc`. Un `order_by` fuera de la whitelist
   responde `422` (Pydantic `Literal`, no se acepta texto libre → nunca hay SQL inyectado por este
   parámetro).
 - `/escuelas` acepta `order_by ∈ {cct, nombre, matricula_total, indice_riesgo}`.
-- `/municipios` acepta `order_by ∈ {cve_mun, nombre_municipio, poblacion, indice_rezago_social,
-  pobreza_pct}`.
+- `/municipios` acepta `order_by ∈ {cve_mun, nombre_municipio, cve_ent, nombre_entidad, poblacion,
+  indice_rezago_social, pobreza_pct}`.
 - Los valores `SIN_DATO` (`indice_riesgo`/`indice_rezago_social`/`pobreza_pct` en `None`) siempre
   quedan **al final**, sin importar `asc`/`desc` — nunca se ordenan como si fueran cero.
 
@@ -207,6 +222,18 @@ C2/C3), no se retoma como pendiente de US-411.
 
 - `PrediccionOut` combina **ML-01** (`indice_riesgo`), **ML-02** (`driver_dominante` + recomendación)
   y **ML-03** (`cluster`, `None` mientras ML-03 no exista -- US-321, BUG-010).
+- **`prioridad` (2026-09-11, pedido de Marina García / E3):** `"alta" | "media" | "baja"` de
+  `gold.recomendaciones`, la urgencia con la que el storytelling ordena los casos.
+  > **No es la línea de alerta.** La deriva `publicar_gold.prioridad_de_riesgo()` del **ancla de la
+  > sigmoide** (0.60, `DEC-006`) y de la matrícula estable (0.30), **no** del 0.50 con el que `/kpis`
+  > *cuenta* escuelas en riesgo (`DEC-019`). Son dos números distintos a propósito: mover `alta` a
+  > 0.50 reescribiría las 45,276 filas ya publicadas, y `DEC-019` dice que no cambia un solo valor
+  > publicado. Si el PO y el TL de C3 resuelven la pregunta abierta (`BUG-063`), cambia el productor
+  > en Gold, no este contrato.
+  >
+  > Es `StrictStr | None`, no un `Literal`: el valor lo escribe C3 en Gold, y uno inesperado debe
+  > poder leerse y verse, no reventar la lectura con un 500. Sin fila de recomendación viaja `None`,
+  > mismo criterio `SIN_DATO` que `cluster`.
 - **`/predicciones/{cct}/explicacion` sirve contribuciones SHAP reales** desde el 2026-09-05
   (`BUG-053` cerrado). Lee `gold.recomendaciones.shap_d1..shap_d6`, que persiste `publicar_gold.py`
   a partir de `entrenar_ml02.explicar_driver` (C3). **Reutiliza la misma fila** que
@@ -381,11 +408,12 @@ class EscuelaOut(BaseModel):
     indice_riesgo: StrictFloat | None = Field(None, ge=0, le=1)
     driver_dominante: StrictStr | None       # "D1".."D6"
     tiene_prediccion: bool                    # True si hay fila en gold.predicciones (ML-01)
-
-class EscuelaDetalleOut(EscuelaOut):
-    sostenimiento: StrictStr
+    # Subidas del detalle al listado el 2026-09-11 (US-621, mapa del frontend). None => SIN_DATO.
     latitud: float | None
     longitud: float | None
+
+class EscuelaDetalleOut(EscuelaOut):
+    sostenimiento: StrictStr                  # latitud/longitud se heredan de EscuelaOut
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
     d1: float | None; d2: float | None; d3: float | None
     d4: float | None; d5: float | None; d6: float | None   # None => SIN_DATO
@@ -394,6 +422,9 @@ class EscuelaDetalleOut(EscuelaOut):
 class MunicipioOut(BaseModel):
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     nombre_municipio: StrictStr
+    # Agregados 2026-09-11 (US-621): la consulta ya los traía; el contrato no los declaraba.
+    cve_ent: StrictStr = Field(min_length=2, max_length=2)
+    nombre_entidad: StrictStr
     poblacion: StrictInt = Field(ge=0)
     indice_rezago_social: float | None
     pobreza_pct: float | None
@@ -412,6 +443,8 @@ class PrediccionOut(BaseModel):
     driver_dominante: StrictStr                       # ML-02
     recomendacion: StrictStr
     cluster: StrictInt | None = None                  # ML-03, None sin productor (BUG-010)
+    # "alta" | "media" | "baja" (2026-09-11). Sale del ANCLA 0.60, no de la línea de alerta 0.50.
+    prioridad: StrictStr | None = None
     mlflow_run_id: StrictStr
 class PrediccionBatchIn(BaseModel):
     ccts: list[StrictStr] = Field(min_length=1, max_length=1000)
