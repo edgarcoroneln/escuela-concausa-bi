@@ -69,9 +69,34 @@ class HealthOut(BaseModel):
     status: str = "ok"
 
 
+class CortesAtencionOut(BaseModel):
+    """Cortes del **nivel de atencion** (`DEC-023`), para que el frontend no los teclee.
+
+    Son **definiciones**, no datos: por eso viajan en un endpoint publico y sin filtros. Existen
+    porque las dos constantes viven en capas distintas del repo --la linea de alerta en la API
+    (`DEC-019`) y la matricula estable en `src/modelos/riesgo.py`, alcance de C3-- y el front
+    necesita las dos. Escribirlas a mano en el front repetiria `BUG-058`, que fue exactamente eso:
+    un corte hardcodeado que quedo desincronizado de la capa que lo calcula.
+    """
+
+    alta: StrictFloat = Field(description="`indice_riesgo >= alta` => nivel de atencion alta.")
+    media: StrictFloat = Field(description="`>= media` y `< alta` => media; por debajo, baja.")
+    # No es un corte de etiqueta: se expone para que el glosario de la UI pueda explicar por que
+    # DB-09 dice `media` donde el front dice *alta*, sin teclear el 0.60 (`BUG-063`, `DEC-026`).
+    ancla_calibracion: StrictFloat = Field(
+        description=(
+            "Ancla de la sigmoide (`DEC-006`): `indice_riesgo` en este valor significa que la "
+            "escuela proyecta perder 5 % de su matricula. **No es un corte de presentacion.**"
+        )
+    )
+
+
 class VersionOut(BaseModel):
     api: str = "v1"
     commit: StrictStr
+    # Agregado 2026-09-11 (US-621): ver `CortesAtencionOut`. Opcional en el modelo para no romper a
+    # ningun cliente que ya valide esta respuesta con su propio esquema cerrado.
+    cortes_atencion: CortesAtencionOut | None = None
 
 
 class TokenPair(BaseModel):
@@ -205,14 +230,19 @@ class PrediccionOut(BaseModel):
     # aviso a C2/C3 (regla de oro del contrato, API_Specification.md).
     cluster: StrictInt | None = None  # ML-03
     # `gold.recomendaciones.prioridad` -- "alta" | "media" | "baja" (`publicar_gold.Prioridad`).
-    # Expuesta 2026-09-11 a pedido de Marina Garcia (E3) para ordenar los casos del storytelling.
+    # Es **procedencia auditable de Gold**, y la paridad con la columna que muestra DB-09.
     #
-    # **No es la linea de alerta de los tableros.** La deriva `prioridad_de_riesgo()` del **ancla de
-    # la sigmoide** (0.60 `DEC-006`, alta) y de la matricula estable (0.30, media), no del 0.50 con
-    # el que `/kpis` *cuenta* escuelas en riesgo (`DEC-019`). Son dos numeros distintos a proposito:
-    # si `prioridad` siguiera la linea, habria que reescribir las 45,276 filas ya publicadas, y
-    # `DEC-019` dice que no cambia un solo valor publicado. Si el PO y el TL de C3 resuelven la
-    # pregunta abierta (`BUG-063`), cambia el productor, no este contrato.
+    # **El frontend NO etiqueta con este campo.** El paquete de UX aprobado (`DEC-023`) define el
+    # **nivel de atencion**, que el front calcula desde `indice_riesgo` con los cortes de
+    # `GET /version` (`cortes_atencion`: alta >= 0.50, media >= 0.30), y dice literalmente que a esa
+    # etiqueta "no se le dice prioridad ... esa palabra nombra una columna de Gold que usa otro corte
+    # y que el front no consume" (`00_Storytelling_Scope.md` §5.3.bis).
+    #
+    # **Por que difieren hoy:** `prioridad_de_riesgo()` llama `alta` solo desde el **ancla de la
+    # sigmoide** (0.60, calibracion de `DEC-006`), y el maximo que ML-01 predice sobre el Gold real
+    # es **0.5717** -- asi que ninguna de las 45,276 filas es `alta` y la tarjeta de DB-09 lee 0
+    # (`BUG-063`). `DEC-026` alinea la columna a la linea de alerta (0.50) y republica Gold; hasta
+    # que eso corra, este campo dira `media` donde el front dice *atencion alta*.
     #
     # `StrictStr | None`, no un `Literal`: el valor lo escribe C3 en Gold y un valor inesperado debe
     # poder leerse y verse, no reventar la lectura con un 500. Tampoco se inventa cuando falta: sin

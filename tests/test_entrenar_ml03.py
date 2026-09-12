@@ -8,11 +8,13 @@ import pytest
 from src.modelos import entrenar_ml03
 from src.modelos.contrato import DRIVERS
 from src.modelos.entrenar_ml03 import (
+    COLUMNA_COMPLETITUD,
     COLUMNAS_PROHIBIDAS,
     DRIVERS_OPERATIVOS_ML03,
     FEATURES_ML03,
     NOMBRE_MODELO,
     entrenar_y_evaluar,
+    evaluar_estabilidad_semillas,
     evaluar_k_temporal,
     preparar_casos_completos,
     registrar_en_mlflow,
@@ -48,7 +50,8 @@ def perfiles_sinteticos() -> pd.DataFrame:
 
 def test_features_no_contienen_llaves_ni_target() -> None:
     assert set(FEATURES_ML03).isdisjoint(COLUMNAS_PROHIBIDAS)
-    assert set(DRIVERS_OPERATIVOS_ML03) < set(FEATURES_ML03)
+    assert FEATURES_ML03 == DRIVERS_OPERATIVOS_ML03
+    assert COLUMNA_COMPLETITUD not in FEATURES_ML03
     assert {"d5_agua", "d6_aire"}.isdisjoint(FEATURES_ML03)
 
 
@@ -115,12 +118,22 @@ def test_entrena_selecciona_k_y_perfila_negocio(
     assert resultado.silhouette_promedio > 0
     assert len(resultado.asignaciones) == len(perfiles_sinteticos)
     assert resultado.filas_excluidas == 0
+    assert COLUMNA_COMPLETITUD in resultado.asignaciones
     assert resultado.perfiles["perfil_negocio"].str.contains(
         "Presión principal"
     ).all()
+    assert resultado.perfiles["perfil"].str.startswith("Presión por").all()
     assert set(resultado.perfiles["cluster"]) == set(
         resultado.asignaciones["cluster"]
     )
+    assert len(resultado.evidencia) == len(perfiles_sinteticos)
+    assert resultado.evidencia["pistas_disponibles"].eq(4).all()
+    assert resultado.evidencia["pistas_totales"].eq(6).all()
+    assert resultado.evidencia["estado_evidencia"].eq("PARCIAL").all()
+    assert resultado.evidencia["descripcion"].str.contains("4 de las 6 pistas").all()
+    assert resultado.evidencia["pistas_pendientes"].apply(
+        lambda pistas: pistas == ("Estrés hídrico", "Calidad del aire")
+    ).all()
 
 
 def test_target_no_cambia_el_modelo(perfiles_sinteticos: pd.DataFrame) -> None:
@@ -134,6 +147,107 @@ def test_target_no_cambia_el_modelo(perfiles_sinteticos: pd.DataFrame) -> None:
 
     assert base.asignaciones["cluster"].equals(otro.asignaciones["cluster"])
     assert base.silhouette_promedio == otro.silhouette_promedio
+
+
+def test_orden_de_entrada_no_cambia_el_resultado(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    base = entrenar_y_evaluar(
+        perfiles_sinteticos, valores_k=(3,), n_ventanas=1
+    )
+    desordenado = entrenar_y_evaluar(
+        perfiles_sinteticos.sample(frac=1, random_state=7),
+        valores_k=(3,),
+        n_ventanas=1,
+    )
+
+    assert base.silhouette_promedio == desordenado.silhouette_promedio
+    assert base.asignaciones[["cct", "id_ciclo", "cluster"]].equals(
+        desordenado.asignaciones[["cct", "id_ciclo", "cluster"]]
+    )
+
+
+def test_completitud_se_audita_sin_cambiar_el_modelo(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    alterado = perfiles_sinteticos.copy()
+    alterado[COLUMNA_COMPLETITUD] = 0.5
+
+    base = entrenar_y_evaluar(
+        perfiles_sinteticos, valores_k=(3,), n_ventanas=1
+    )
+    otro = entrenar_y_evaluar(alterado, valores_k=(3,), n_ventanas=1)
+
+    assert base.asignaciones["cluster"].equals(otro.asignaciones["cluster"])
+    assert base.silhouette_promedio == otro.silhouette_promedio
+    assert otro.perfiles["completitud_promedio"].eq(0.5).all()
+
+
+def test_evidencia_insuficiente_no_inventa_cluster(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    incompleto = perfiles_sinteticos.copy()
+    incompleto.loc[incompleto.index[0], "d4_conectividad"] = None
+    incompleto.loc[incompleto.index[0], "d4_cobertura"] = "SIN_DATO"
+
+    resultado = entrenar_y_evaluar(incompleto, valores_k=(3,), n_ventanas=1)
+    evidencia = resultado.evidencia.iloc[0]
+
+    assert pd.isna(evidencia["cluster"])
+    assert evidencia["estado_evidencia"] == "INSUFICIENTE"
+    assert evidencia["pistas_disponibles"] == 3
+    assert evidencia["pistas_pendientes"] == (
+        "Conectividad",
+        "Estrés hídrico",
+        "Calidad del aire",
+    )
+    assert "3 de las 6 pistas" in evidencia["descripcion"]
+    assert incompleto.loc[incompleto.index[0], "d5_agua"] == perfiles_sinteticos.loc[
+        perfiles_sinteticos.index[0], "d5_agua"
+    ]
+    assert incompleto.loc[incompleto.index[0], "d6_aire"] == perfiles_sinteticos.loc[
+        perfiles_sinteticos.index[0], "d6_aire"
+    ]
+
+
+def test_estabilidad_semillas_ari_perfecto_en_clusters_separados(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    """Réplica reproducible del hallazgo publicado en
+    `ML03_Comparacion_RISK011_20260910.json` / `Propuesta_Cierre_ML03_D1_D4.md`
+    (ARI mínimo y promedio 1.0 en cinco semillas): con grupos bien separados, KMeans
+    debe converger a la misma partición sin importar la semilla."""
+    resultado = evaluar_estabilidad_semillas(
+        perfiles_sinteticos, k=3, semillas=(7, 21, 42, 84, 2026)
+    )
+
+    assert resultado["semillas"] == [7, 21, 42, 84, 2026]
+    assert resultado["k"] == 3
+    assert len(resultado["ari_por_par"]) == 10  # C(5, 2)
+    assert resultado["ari_minimo"] == pytest.approx(1.0)
+    assert resultado["ari_promedio"] == pytest.approx(1.0)
+    assert all(valor == pytest.approx(1.0) for valor in resultado["ari_por_par"].values())
+
+
+def test_estabilidad_semillas_requiere_al_menos_dos(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    with pytest.raises(ValueError, match="al menos 2 semillas"):
+        evaluar_estabilidad_semillas(perfiles_sinteticos, k=3, semillas=(42,))
+
+
+def test_estabilidad_semillas_usa_casos_completos(
+    perfiles_sinteticos: pd.DataFrame,
+) -> None:
+    """Debe excluir filas incompletas igual que `entrenar_y_evaluar`, no tronar con
+    NaN en el vector operativo."""
+    incompleto = perfiles_sinteticos.copy()
+    incompleto.loc[incompleto.index[0], "d1_pobreza"] = None
+    incompleto.loc[incompleto.index[0], "d1_cobertura"] = "SIN_DATO"
+
+    resultado = evaluar_estabilidad_semillas(incompleto, k=3, semillas=(7, 21, 42))
+
+    assert resultado["ari_minimo"] == pytest.approx(1.0)
 
 
 def test_registra_version_canonica_en_mlflow(
@@ -151,7 +265,13 @@ def test_registra_version_canonica_en_mlflow(
 
     monkeypatch.setattr(entrenar_ml03, "registrar_sklearn", registrar)
 
-    run_id = registrar_en_mlflow(resultado, "http://mlflow:5000")
+    run_id = registrar_en_mlflow(
+        resultado,
+        "http://mlflow:5000",
+        ari_minimo=1.0,
+        ari_promedio=1.0,
+        semillas_estabilidad=(7, 21, 42, 84, 2026),
+    )
 
     config = recibido["config"]
     assert run_id == "run-ml03"
@@ -159,4 +279,11 @@ def test_registra_version_canonica_en_mlflow(
     assert config.nombre_modelo == NOMBRE_MODELO == "ML03_ClusteringEscuelas"
     assert config.registrar_modelo is True
     assert config.parametros["features"] == ",".join(FEATURES_ML03)
+    assert config.parametros["semilla"] == 42
+    assert config.parametros["n_init"] == 20
+    assert config.parametros["semillas_estabilidad"] == "7,21,42,84,2026"
+    assert config.parametros["version_scikit_learn"]
     assert config.metricas["silhouette_temporal_promedio"] > 0
+    assert config.metricas["ari_minimo"] == 1.0
+    assert config.metricas["ari_promedio"] == 1.0
+    assert config.metricas["observaciones_cluster_0"] > 0

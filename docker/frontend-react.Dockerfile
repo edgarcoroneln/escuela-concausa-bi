@@ -16,13 +16,22 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ .
-# Corregido 11-sep (revisión de Edgar, PR #302): este comentario decía que el
-# build usaba frontend/.env.production apuntando a faro-api de prod -- ya no es
-# así desde ADR-012 (proxy nginx mismo-origen). Ese archivo es local y NO se
-# versiona (frontend/.gitignore); un checkout limpio (CI/build de imagen) no lo
-# trae, y no hace falta: VITE_API_BASE_URL cae al default "" de api.js (rutas
-# relativas, mismo origen vía proxy_pass de este mismo nginx). Nada que inyectar
-# en este build-arg/ENV.
+# VITE_API_BASE_URL se queda vacío a propósito (corregido 11-sep, PR #302): las
+# llamadas de DATOS van por rutas relativas al proxy_pass de este mismo nginx
+# (mismo-origen, ADR-012). Su .env.production es local, no versionado
+# (frontend/.gitignore), y un checkout limpio no lo necesita: cae al default ""
+# de api.js. Eso NO se inyecta aquí.
+#
+# VITE_API_ORIGIN es DISTINTO y SÍ hay que hornearlo para prod (BUG-076): api.js
+# lo usa SOLO para el botón de login (US-405), que debe navegar DIRECTO al origen
+# de la API -- NO por el proxy del front -- o la cookie anti-CSRF `faro_oauth_state`
+# se fija en el origen equivocado y el /callback responde 401 (ver api.js:20-29 y
+# el hallazgo de Christian en el PR #304). Vite congela import.meta.env.VITE_* en
+# build-time, así que el valor tiene que llegar como build-arg. Default "" =
+# comportamiento de dev (el proxy de Vite cubre el login y las cookies locales no
+# distinguen puerto); build-and-push-frontend.sh pasa el origen real de faro-api.
+ARG VITE_API_ORIGIN=""
+ENV VITE_API_ORIGIN=$VITE_API_ORIGIN
 RUN npm run build
 
 # --- Etapa 2: runtime (nginx sirviendo estáticos, non-root) ---

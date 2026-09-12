@@ -150,6 +150,23 @@ def test_municipio_ok_y_404(client: TestClient) -> None:
     assert client.get(f"{API_PREFIX}/municipios/00000").status_code == 404
 
 
+def test_version_publica_los_cortes_del_nivel_de_atencion(client: TestClient) -> None:
+    """US-621: el front lee los cortes del contrato en vez de teclearlos (evita repetir BUG-058)."""
+    from src.api.repositorio_gold import ANCLA_SIGMOIDE, CORTE_ATENCION_MEDIA, LINEA_DE_ALERTA
+
+    cortes = client.get(f"{API_PREFIX}/version").json()["cortes_atencion"]
+
+    assert cortes == {
+        "alta": LINEA_DE_ALERTA,
+        "media": CORTE_ATENCION_MEDIA,
+        "ancla_calibracion": ANCLA_SIGMOIDE,
+    }
+    # El ancla NO es un corte de etiqueta: si alguien la usara para "alta", ninguna escuela
+    # calificaría (máximo real de ML-01: 0.5717 -- BUG-063).
+    assert cortes["alta"] < cortes["ancla_calibracion"]
+    assert cortes["media"] < cortes["alta"]
+
+
 def test_escuelas_listado_trae_coordenadas(client: TestClient) -> None:
     """US-621: el mapa del front pinta N escuelas con UNA llamada, no N llamadas al detalle.
 
