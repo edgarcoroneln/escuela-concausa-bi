@@ -77,7 +77,17 @@ siendo relevante para cualquier otro consumidor de `rezago_municipio` que si dep
 
 ## Registro y trazabilidad
 
-`Bug_Register.md`: fila de BUG-077, estado de `open` a `in progress`; nota agregada bajo
-"Dueño propuesto" marcando el frente (1) de Diana Alvarez como hecho (pendiente de PR/merge) y
-enlazando este DevLog. Trabajo hecho en la rama `fix/bug-077-nombre-entidad-municipios`
-(sobre `main`), sin `git push` todavía.
+`Bug_Register.md`: fila de BUG-077, estado de `open` a `fixed (frente de dato)`; nota agregada
+bajo "Dueño propuesto" marcando el frente (1) de Diana Alvarez como hecho y verificado
+(pendiente de PR/merge) y enlazando este DevLog.
+
+**Decisión de proceso (12-sep):** este repo exige una rama fija por persona
+(`check_ownership.py`, `dev/{identidad}` y ninguna otra) -- no se abren ramas por tema. El
+trabajo de arriba se hizo en `fix/bug-077-nombre-entidad-municipios` (sobre `main`) por error
+mío (Claude), sin considerar esa regla; ya está commiteado y pusheado ahí (2 commits: `8c01f46`,
+`01252dc`), pero **no se abre PR desde esa rama** porque reprobaría el gate de CI (rama
+incorrecta). `dev/diana-alvarez` -- la única rama válida -- tiene abierto el PR #325 esperando
+la revisión de Luis Téllez. Diana decidió **esperar a que #325 se mergee** antes de traer estos
+2 commits a `dev/diana-alvarez` y abrir el PR de BUG-077 ahí, con el formato de título/plantilla
+correcto, en vez de mezclarlo con una revisión ya en curso. `fix/bug-077-nombre-entidad-municipios`
+queda como respaldo mientras tanto, sin usarse para abrir PR.
