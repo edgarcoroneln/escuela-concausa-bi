@@ -187,7 +187,7 @@ contradice a la matriz que tiene debajo.
 
 | Alternativa | Por qué no |
 |---|---|
-| Mapa de puntos o coroplético | Ningún endpoint expone geometría y `latitud`/`longitud` sin base cartográfica no se leen. Además, *dónde* no responde *qué situación*: las siete están en dos municipios. La línea base lo confirma: el coroplético de DB-02 sale vacío (§7.3) |
+| Mapa de puntos o coroplético | **La primera mitad de esta razón cambió el 2026-09-11 — ver la nota de corrección de la §8.1.** La API sigue sin exponer geometría, pero la base cartográfica ya existe en el front y es **estatal, no municipal**. **La razón de fondo sigue en pie:** *dónde* no responde *qué situación*, las siete están en dos municipios, y siete puntos sobre el contorno de dos estados no distinguen nada. La línea base lo confirma: el coroplético de DB-02 sale vacío (§7.3) |
 | Barras del índice de riesgo por escuela | Muestra sólo la mitad "todas en riesgo", y un eje recortado exageraría diferencias mínimas (de 0.515 a 0.572) |
 | Un radar por escuela | N radares no se comparan entre sí, el área exagera y un `SIN_DATO` rompe el polígono: con D3, D5 y D6 vacíos, la mitad de cada radar estaría rota |
 | Barras apiladas con las contribuciones SHAP | `contribuciones` está en `SIN_DATO` en producción (§4.4), y SHAP explica al modelo, no la situación de la escuela |
@@ -611,7 +611,9 @@ Ninguno de estos recortes detiene la construcción (`DEC-024`): cada uno tiene s
 dibujable hoy.
 
 > **Nota de corrección — 2026-09-11, Marina García del Buey (gate de UX/UI), con aviso a la autora.**
-> Dos filas de esta tabla quedaron desactualizadas por `ec1b43b` (Christian Imanol Ruiz, PR #332),
+> Dos filas de esta tabla —y, por coherencia, la fila del mapa entre las alternativas descartadas de
+> la **§3.3**, que repetía la misma razón— quedaron desactualizadas por `ec1b43b` (Christian Imanol
+> Ruiz, PR #332),
 > que entró a `main` **después** de que este documento pasara a `approved`. Se corrigen aquí y no en
 > un documento aparte, porque el Equipo 5 lee esta tabla como la lista de lo que no se dibuja.
 >
