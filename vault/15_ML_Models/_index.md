@@ -59,5 +59,6 @@ reciban recomendaciones distintas.
 | [[vault/15_ML_Models/Propuesta_Cierre_ML03_D1_D4]] | Propuesta candidata D1-D4 para revisión de RISK-011, sin reabrir D5/D6 en la ruta crítica; incluye límites, riesgos y criterios de aceptación (US-631) |
 | [ML03_Comparacion_RISK011_20260910.json](ML03_Comparacion_RISK011_20260910.json) | Evidencia candidata de comparación D1-D4 frente a D1-D4 + completitud, ARI de inicialización y cruce agregado con D6; MLflow pendiente |
 | [[vault/15_ML_Models/ML03_RISK011_Gate]] | Compuerta canónica para revisar una variante ML-03 sin mezclar evidencia candidata, MLflow, RISK-011 ni promoción a producción |
+| [[vault/15_ML_Models/ML03_Preflight_US631]] | Preflight agregado para la variante D1-D4: exclusiones, cobertura y plan de integración de US-631; no sustituye la compuerta canónica |
 | [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]] | Propuesta post-PR #197 y prompt maestro para llevar US-321/322/325 de fixtures a evidencia reproducible sobre Gold real |
 | [[vault/15_ML_Models/Diagnostico_Chat_Agente_2026-09-09]] | Diagnóstico pre-demo del chat del agente (por qué se sintió "roto") y plan priorizado P0-P3 para que responda preguntas libres en lenguaje natural (US-304/US-305) |
