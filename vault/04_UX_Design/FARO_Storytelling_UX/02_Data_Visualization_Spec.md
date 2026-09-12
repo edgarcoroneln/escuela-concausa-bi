@@ -187,7 +187,7 @@ contradice a la matriz que tiene debajo.
 
 | Alternativa | Por qué no |
 |---|---|
-| Mapa de puntos o coroplético | **La primera mitad de esta razón cambió el 2026-09-11 — ver la nota de corrección de la §8.1.** La API sigue sin exponer geometría, pero la base cartográfica ya existe en el front y es **estatal, no municipal**. **La razón de fondo sigue en pie:** *dónde* no responde *qué situación*, las siete están en dos municipios, y siete puntos sobre el contorno de dos estados no distinguen nada. La línea base lo confirma: el coroplético de DB-02 sale vacío (§7.3) |
+| Mapa de puntos o coroplético **como visualización principal** | **Resuelto el 2026-09-12 — ver la nota de corrección bajo la §8.1.** Sigue descartado **para este rol**: *dónde* no responde *qué situación*, las siete están en dos municipios, la base disponible es estatal y no municipal, y la línea base lo confirma —el coroplético de DB-02 sale vacío (§7.3)—. **Lo que cambió es que el mapa existe en otro rol:** el Equipo 5 lo conserva como **contexto de ubicación**, con leyenda que declara que no reemplaza la comparación por índice. La visualización principal de esta pantalla no se mueve |
 | Barras del índice de riesgo por escuela | Muestra sólo la mitad "todas en riesgo", y un eje recortado exageraría diferencias mínimas (de 0.515 a 0.572) |
 | Un radar por escuela | N radares no se comparan entre sí, el área exagera y un `SIN_DATO` rompe el polígono: con D3, D5 y D6 vacíos, la mitad de cada radar estaría rota |
 | Barras apiladas con las contribuciones SHAP | `contribuciones` está en `SIN_DATO` en producción (§4.4), y SHAP explica al modelo, no la situación de la escuela |
@@ -596,7 +596,7 @@ escuelas habla ahora— quede dicha en lugar de suponerse.
 | **Bandas "oficiales" alto/medio/bajo** (era P-02) | Resuelto por `ADR-011` §5: son el nivel de atención | — | Una sola etiqueta; no existe una segunda |
 | **Distribución de niveles de atención en la P5** | Tautológica: el conjunto en riesgo se define con el mismo corte que "alta" | — | Una línea de texto (§5.2) |
 | **Distribución de niveles en la P6 para todo un filtro** | Contarla exige paginar todas las escuelas del filtro (`size ≤ 100`), y `/kpis` sólo cuenta las de riesgo alto | Un conteo por nivel de atención en `/kpis` (cambio de contrato, Equipo 5) | El nivel va por fila en la página visible, y `escuelas_en_riesgo` del filtro desde `/kpis` |
-| **Mapa de ubicación** | **Premisa parcialmente caída el 2026-09-11 — ver la nota bajo la tabla.** La API sigue sin exponer geometría, pero la base cartográfica **ya existe en el front** (`frontend/src/data/geo/mexico-states.json` + `d3-geo`) y es **estatal, no municipal**. Lo que sigue en pie es la razón de fondo: *dónde* no responde *qué situación*, y las siete escuelas caen en dos municipios | Decisión pendiente **en el handoff con el Equipo 5**, no aquí: o el mapa se queda con una lectura que aporte —y entonces esta fila se reescribe— o se recorta y sale la ruta `/mapa`. Si se queda, `ADR-011` §4 exige que el riesgo se pueda leer sin él | Municipio y entidad como texto |
+| ~~**Mapa de ubicación**~~ · **deja de ser un recorte el 2026-09-12** | Ya no aplica: la base cartográfica existe en el front (`frontend/src/data/geo/mexico-states.json` + `d3-geo`) y `latitud`/`longitud` subieron al listado | **Resuelto, no aprobado a medias.** Diana Álvarez (E5) lo conserva **como contexto de ubicación y no como ranking**, porque la base es **estatal, no municipal** y las siete escuelas caen en dos municipios. Leyenda obligatoria: *"Ubicación aproximada de las escuelas en riesgo — no reemplaza la comparación por índice, ver lista."* Tres condiciones verificables por QA: el mapa **no** puede ser la única forma de leer el riesgo (`ADR-011` §4), las escuelas sin georreferencia **se omiten** en vez de dibujarse en el `(0, 0)`, y la palabra *aproximada* se queda | El mapa, con esa lectura. Municipio y entidad como texto siguen en el expediente |
 | **Rezago del municipio contra el promedio estatal** | El promedio estatal no está en la API y el índice de CONEVAL es negativo en estos municipios | Derivación declarada en §1.1 desde `GET /api/v1/municipios?cve_ent=…`, dibujada como franja de municipios con el promedio marcado (§7.4) | Línea de contexto con `pobreza_pct` (§4.2) |
 | **Evolución histórica de matrícula por escuela** | `/escuelas/{cct}` no acepta `ciclo`, y el plan la excluye del expediente | Cambio de plan más petición de endpoint | No se dibuja |
 | **Caída de matrícula de una escuela concreta** | `variacion_matricula` sólo existe agregada (`KpisOut`) | Un campo por escuela en el contrato | Sólo la variación agregada, en la P2 |
@@ -633,6 +633,22 @@ dibujable hoy.
 >
 > **Lo que no se tocó:** ninguna forma, ningún criterio, ninguna otra fila. La autoría del documento
 > sigue siendo de Monserrat Xcaret Miranda Olivas.
+>
+> **Cierre del 2026-09-12.** Las dos preguntas que esta nota dejó abiertas ya tienen respuesta y
+> ambas quedaron **fuera** de este documento, no dentro:
+>
+> - **`prioridad`:** el PO registró **`DEC-026`** — el corte `alta` de Gold baja a `0.50` y las
+>   45 276 filas se republican. **La regla de no consumirla no se levanta con el merge:** es una
+>   columna almacenada, y hasta que Gold se republique la API devuelve los valores viejos con el
+>   código nuevo. La condición de caducidad es verificable y está escrita en la §10.quinquies del
+>   plan. **Tu razonamiento de la §1.2 no cambia**, sólo deja de ser permanente.
+> - **Mapa:** Diana Álvarez resolvió que se queda **como contexto de ubicación y no como ranking**.
+>   Las dos filas de arriba ya reflejan esa decisión, con su leyenda y sus tres condiciones. El
+>   registro completo está en la **§10.septies** del plan.
+>
+> **Los cortes ya no se teclean:** `GET /api/v1/version` sirve `cortes_atencion` (`alta`, `media`,
+> `ancla_calibracion`) en un endpoint público. El `0.60` del glosario de tu §1.2 sale de
+> `ancla_calibracion`, no de un literal.
 
 ### 8.2 Avisos para el Equipo 5 que no son gráficas
 

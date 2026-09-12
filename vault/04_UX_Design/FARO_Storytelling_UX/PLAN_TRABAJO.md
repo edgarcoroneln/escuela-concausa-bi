@@ -3,10 +3,10 @@ id: DOC-FARO-UX-PLAN
 title: "Plan de trabajo — UX/UI y storytelling FARO (Equipo 3, S7)"
 owner: "Marina García del Buey"
 status: approved
-version: "1.3"
+version: "1.4"
 traces_up: ["US-621", "REQ-002", "ADR-011", "DEC-023", "DEC-024", "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09", "vault/13_Reports/Revision_Profesor_2026-09-09"]
 traces_down: ["vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope", "vault/04_UX_Design/FARO_Storytelling_UX/01_UX_Architecture", "vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
-last_reviewed: "2026-09-11"
+last_reviewed: "2026-09-12"
 tags: [ux, storytelling, s7, us-621, celula-3, aprobado]
 ---
 
@@ -115,19 +115,29 @@ Un cambio total de framework sólo se acepta si conserva despliegue, autenticaci
 
 `ADR-011` §5 y `DEC-024` fijan una sola etiqueta, derivada en el front desde `indice_riesgo`:
 
-| Nivel de atención | Corte | Constante que lo respalda |
+| Nivel de atención | Corte | De dónde lo toma el front |
 |---|---|---|
-| alta | `indice_riesgo >= 0.50` | `LINEA_DE_ALERTA` (`DEC-019`), `src/api/repositorio_gold.py:55` |
-| media | `>= 0.30` y `< 0.50` | `RIESGO_ESTABLE`, `src/modelos/riesgo.py:76` |
-| baja | `< 0.30` | — |
+| alta | `indice_riesgo >= alta` | **`GET /api/v1/version` → `cortes_atencion.alta`** (hoy `0.50`, `LINEA_DE_ALERTA`, `DEC-019`) |
+| media | `>= media` y `< alta` | **`cortes_atencion.media`** (hoy `0.30`, `CORTE_ATENCION_MEDIA`) |
+| baja | `< media` | — |
 
-**El front no consume `gold.recomendaciones.prioridad`** mientras esa columna siga calculada con el
-ancla histórica `0.60`.
+> **Los cortes ya no se teclean: se leen del contrato (2026-09-11, `DEC-026`).** `GET /api/v1/version`
+> es **público y sin token**, así que el front los tiene *antes* de iniciar sesión y puede etiquetar
+> lo que ya tenga en pantalla. Existe porque las dos constantes viven en capas distintas del
+> repositorio —la línea de alerta en la API, la matrícula estable en `src/modelos/riesgo.py`— y el
+> front necesita las dos. **Escribir `0.50` o `0.30` en el frontend es `BUG-058` otra vez**, que fue
+> exactamente eso. La misma respuesta trae `ancla_calibracion` (`0.60`, `DEC-006`), que **no es un
+> corte de presentación**: está ahí para que el glosario explique la diferencia con DB-09 sin teclear
+> el número. Cierra la coordinación de §11 *"importar, no reteclear los cortes"*.
+
+**El front no consume `gold.recomendaciones.prioridad`.** Ver §10.quinquies: la regla sobrevive a
+`DEC-026` y tiene fecha de caducidad verificable, no automática.
 
 > **Corrección del 2026-09-11.** Hasta hoy esta regla era, además, imposible de desobedecer: el campo
 > no existía en el contrato. **Ya existe** — `PrediccionOut.prioridad`, `"alta" | "media" | "baja"`,
 > expuesto por Christian Imanol Ruiz (`ec1b43b`) y documentado en `API_Specification` §3.4. La regla
 > sigue igual y ahora sí hay que sostenerla a mano. Ver §10.quinquies.
+
 > **Advertencia que hay que decir en voz alta, no descubrir el domingo.** La columna Gold `prioridad`
 > asigna `ALTA` con `>= 0.60` y `MEDIA` con `>= 0.30` (`src/modelos/publicar_gold.py:197`). O sea que
 > **coincide con el nivel de atención en el corte de media y baja, y difiere sólo entre 0.50 y 0.60**
@@ -137,6 +147,12 @@ ancla histórica `0.60`.
 > evidencia (`DEC-023`) y DB-09 expone esa columna, **el glosario debe explicar que el nivel de
 > atención es un corte de presentación, distinto de la prioridad publicada en Gold.** Es la lectura
 > honesta de `ADR-011` §5, no una excepción a él.
+>
+> **Actualización del 2026-09-12.** `DEC-026` alinea el corte `alta` de Gold a `0.50` y republica las
+> 45 276 filas, así que esta divergencia **está en vías de desaparecer**. Dos consecuencias para este
+> documento: (1) el glosario toma el `0.60` de `cortes_atencion.ancla_calibracion`, nunca tecleado,
+> de modo que el texto deja de ser falso solo con que el dato cambie; (2) la divergencia **no
+> desaparece cuando el PR se mergea, sino cuando Gold se republica** — ver §10.quinquies.
 
 ### 3.bis El número de escuelas en riesgo
 
@@ -616,6 +632,7 @@ guardarraíl de §3: lo que no está aquí, no se dibuja.
 | Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante`. **El endpoint responde, pero las contribuciones vienen vacías** — ver §10.quater |
 | Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
 | Filtros de la exploración | `/escuelas`: `ciclo`, `cve_ent`, `cve_mun`, `nivel` · **`/kpis`: sólo `ciclo`, `cve_ent`, `cve_mun`** | **`/kpis` no acepta `nivel`.** El filtro de nivel actúa sobre la lista de escuelas, nunca sobre los indicadores. Verificado por Monserrat Miranda |
+| **Los cortes del nivel de atención** | **`GET /api/v1/version`** · público, sin token | `cortes_atencion.alta`, `.media` y `.ancla_calibracion`. **Se leen; no se teclean** (§3.quater, `DEC-026`) |
 | Chat | `POST /api/v1/agente/consulta` | frente del Equipo 2. **Nombre técnico**, no de producto: lo que ve el usuario es *Asistente FARO* |
 | Sección *Cómo funciona* (§5.bis) | `GET /api/v1/about/secciones` · `GET /api/v1/about/secciones/{id_seccion}` | manifest `[{id, titulo, orden}]` y sobre `{id, titulo, fuente, advertencias, bloques}`. **Pendientes de merge**: viven en `dev/manuel-serrania` |
 
@@ -665,11 +682,29 @@ nuestros tres niveles. Quien lea el contrato sin leer esto los va a conectar, y 
 como un dato, no como un error. Por eso queda escrito aquí, en la sección que el Equipo 5 usa como
 mapa, y no sólo en el glosario.
 
-**Qué sí cambia con esto:** nada del diseño. `BUG-063` puede alinearse después —es decisión del PO y
-del TL de C3, y realinear el corte reescribe las 45 276 filas publicadas, que es justo lo que
-`DEC-019` prohíbe— **sin bloquear ni retocar una sola pantalla**. El día que `prioridad` siga la línea
-de alerta, coincidirá con el nivel de atención y el front podrá consumirla y retirar su derivación.
-Mientras tanto, se deriva.
+**Qué sí cambia con esto:** nada del diseño. `BUG-063` se alinea sin bloquear ni retocar una sola
+pantalla. El día que `prioridad` siga la línea de alerta, coincidirá con el nivel de atención y el
+front *podría* consumirla y retirar su derivación. Mientras tanto, se deriva.
+
+> **Actualización del 2026-09-12 — `DEC-026`, y la trampa que trae.** El PO registró `DEC-026`: el
+> corte `alta` de `publicar_gold.prioridad_de_riesgo()` baja de `0.60` a `0.50` y Gold se republica.
+> `ANCLA_SIGMOIDE` **no se mueve**: sigue en `0.60` como calibración de la sigmoide (`DEC-006`); lo
+> que cambia es la categoría, no el modelo.
+>
+> **La regla de no consumir `prioridad` NO caduca cuando el PR se mergea.** `prioridad` es una
+> **columna almacenada**, no un cálculo en lectura: cambiar el código no reescribe una sola de las
+> 45 276 filas ya publicadas. Hasta que `publicar_gold.py` vuelva a correr, la API seguirá
+> devolviendo los valores viejos **con el código nuevo ya mergeado**, que es la peor combinación
+> posible: todo parece arreglado y el dato dice lo contrario.
+>
+> **Condición de caducidad, y es verificable, no una fecha.** Esta regla se levanta cuando alguien
+> comprueba, **contra producción y no contra el código**, que existe al menos una fila `alta` en
+> `gold.recomendaciones` y que su conteo coincide con `escuelas_en_riesgo` de `/kpis`. Mientras esa
+> comprobación no exista, el front deriva. **Quien la ejecute, que lo escriba**; es material de
+> `US-651` y entra al smoke de QA.
+>
+> Cuando se cumpla, el efecto secundario bueno es que la tarjeta de DB-09 y el KPI-04 dejan de contar
+> cosas distintas, y la advertencia del glosario de §3.quater se puede retirar.
 
 > **Corrección pedida a `API_Specification` §3.4.** Ese texto describe `prioridad` como *«la urgencia
 > con la que el storytelling ordena los casos»*. **No es así:** el storytelling ordena por
@@ -687,21 +722,41 @@ Del mismo cambio, dos campos que **sí** nos sirven:
   tecleado en el front es exactamente el patrón de `BUG-058` que persigue la §3.bis. Ahora sale del
   contrato.
 
-> **Consecuencia que hay que resolver con el Equipo 5, no aquí.**
-> `02_Data_Visualization_Spec` descarta el mapa **dos veces** —§3.3, entre las alternativas
-> rechazadas de la Pantalla 2, y §8.1, entre los recortes explícitos— con la misma razón:
-> *«ningún endpoint expone geometría y `latitud`/`longitud` sin base cartográfica no se leen»*.
-> **Esa mitad de la razón ya no se sostiene:** el frontend de React trae `d3-geo` y una base
-> versionada en `frontend/src/data/geo/mexico-states.json`, y `Arquitectura_Frontend_React.md` §5 ya
-> compromete `MapaRiesgo.jsx` y una ruta `/mapa`. La base cartográfica existe; vive en el front, no en
-> la API. **Se está construyendo un mapa que nuestra especificación aprobada declara recortado.**
->
-> **La otra mitad sigue en pie y es la que hay que discutir, no la técnica:** *dónde* no responde *qué
-> situación*, las siete escuelas caen en dos municipios, y la base disponible es **estatal**, no
-> municipal — pintar siete puntos sobre el contorno de dos estados no distingue nada. Si el mapa se
-> queda, necesita una lectura que aporte y no puede ser la única forma de leer el riesgo (`ADR-011`
-> §4). Entra al *handoff* con Diana Álvarez junto con la reconciliación de rutas; no se resuelve por
-> decisión de este documento ni por edición de uno ajeno.
+### 10.septies El mapa se queda, como ubicación y no como ranking
+
+**Decisión del 2026-09-12, de Diana Aracely Álvarez Varela (Equipo 5) a petición de este frente.**
+Cierra la pregunta que la §10.sexies dejó abierta.
+
+`02_Data_Visualization_Spec` descartaba el mapa **dos veces** —§3.3, entre las alternativas rechazadas
+de la Pantalla 2, y §8.1, entre los recortes explícitos— con la misma razón: *«ningún endpoint expone
+geometría y `latitud`/`longitud` sin base cartográfica no se leen»*. Esa mitad dejó de sostenerse: el
+frontend de React trae `d3-geo` y una base versionada en `frontend/src/data/geo/mexico-states.json`, y
+`Arquitectura_Frontend_React.md` §5 ya comprometía `MapaRiesgo.jsx` y una ruta `/mapa`. La base
+cartográfica existe; vive en el front, no en la API.
+
+**Lo resuelto:** el mapa **se queda**, y se queda **degradado a propósito** — como contexto de
+ubicación general, **no** como ranking de riesgo. Es la lectura que la otra mitad del argumento
+original exigía y que sigue en pie: la base disponible es **estatal, no municipal**, las siete
+escuelas caen en **dos municipios**, y siete puntos sobre el contorno de dos estados no distinguen
+nada entre sí. La comparación por índice la resuelve la lista de tarjetas, que es donde ya vive.
+
+**Leyenda obligatoria, texto acordado** (criterio 28, §7.bis):
+
+> *"Ubicación aproximada de las escuelas en riesgo — no reemplaza la comparación por índice, ver
+> lista."*
+
+**Tres condiciones que no son negociables y que QA debe verificar:**
+
+1. **El mapa no puede ser la única forma de leer el riesgo** (`ADR-011` §4). La lista de tarjetas es
+   la superficie primaria; el mapa acompaña.
+2. **Las escuelas sin georreferencia se omiten**, no se dibujan. `latitud`/`longitud` en `None` es
+   `SIN_DATO` real (§10.sexies): un marcador en el `(0, 0)` inventa una ubicación.
+3. **La palabra "aproximada" de la leyenda es literal y se queda.** La base es estatal; el punto
+   ubica, no georreferencia una dirección.
+
+**Lo que esto reabre:** las dos filas de `02_Data_Visualization_Spec` dejan de ser un recorte y pasan
+a ser una pieza con lectura declarada. Se actualizan ahí con nota fechada, por la misma vía que la
+corrección anterior.
 
 ---
 
@@ -756,7 +811,7 @@ de esto detiene la construcción de nadie:
 
 | Tema | Con quién | Qué necesitamos |
 |---|---|---|
-| Importar, no reteclear, los cortes | Equipo 5 · Equipo 4 | `LINEA_DE_ALERTA` vive en `src/api/repositorio_gold.py` y `RIESGO_ESTABLE` en `src/modelos/riesgo.py`, que es crítico de Estefany Hernández. El front necesita los dos. Si el `0.30` se teclea en el frontend, es `BUG-058` otra vez: un umbral hardcodeado en varios archivos sin dueño único |
+| ~~Importar, no reteclear, los cortes~~ | Equipo 5 · Equipo 4 | **Cerrado el 2026-09-11 por contrato.** `GET /api/v1/version` sirve `cortes_atencion` —`alta`, `media` y `ancla_calibracion`— en un endpoint **público y sin token**, así que el front los tiene antes de iniciar sesión. Ya no hay nada que importar entre capas ni que teclear (§3.quater) |
 | Estados del Asistente | Equipo 2 | Confirmar cuándo aterriza el streaming y los tres errores distinguibles, para diseñarlos y no improvisarlos (§4.bis) |
 | Componentes y memoria técnica | Equipo 1 | Que `GET /api/v1/about/secciones` y `GET /api/v1/about/secciones/{id_seccion}` lleguen a `main`. Hoy viven en `dev/manuel-serrania` y sostienen toda la §5.bis |
 | Aceptación | Equipo 6 | Ampliar los criterios de §9 con lo que QA necesite ejecutar sobre la candidata |
@@ -882,5 +937,26 @@ puntos 1 y 2 del criterio de cierre siguen cumplidos.
 encima del techo del fenómeno— y su efecto visible está en **DB-09 de Superset**, que `DEC-023`
 conserva como evidencia analítica. Escalado al PO el 2026-09-11.
 
-**Lo que entra al handoff con el Equipo 5:** la premisa con la que `02_Data_Visualization_Spec` §7.3
+**Lo que entra al handoff con el Equipo 5:** la premisa con la que `02_Data_Visualization_Spec`
 descartó el mapa dejó de sostenerse (§10.sexies). No se resuelve desde aquí.
+
+### Adenda del 2026-09-12 · `DEC-026` y el mapa, los dos cerrados
+
+**`DEC-026`.** El PO resolvió `BUG-063`: el corte `alta` de Gold baja a `0.50` y las 45 276 filas se
+republican; `ANCLA_SIGMOIDE` se queda en `0.60` porque es calibración, no negocio. Del mismo trabajo
+salió **`GET /api/v1/version` → `cortes_atencion`**, que cierra por contrato la última coordinación
+abierta de la §11: los cortes **se leen, no se teclean**, y el endpoint es público para que el front
+los tenga antes del login. La §3.quater se reescribe contra el contrato en vez de contra dos rutas de
+código en capas distintas.
+
+**La regla de no consumir `prioridad` sigue viva y ahora tiene condición de caducidad verificable**
+(§10.quinquies): `prioridad` es una columna **almacenada**, así que el PR mergeado no reescribe una
+sola fila. Se levanta cuando alguien compruebe **contra producción** que existe al menos una fila
+`alta` y que su conteo coincide con `escuelas_en_riesgo`. Es material de `US-651`.
+
+**El mapa.** Diana Álvarez resolvió la pregunta abierta: **se queda como contexto de ubicación, no
+como ranking**, con leyenda acordada y tres condiciones verificables (§10.septies). Con esto el
+**punto 3 del criterio de cierre queda sin pendientes de contenido** por parte de este frente: lo
+único que falta es que E5 declare el handoff aceptado.
+
+**Queda el punto 4, y es el único.** `US-651` sigue `planned`.
