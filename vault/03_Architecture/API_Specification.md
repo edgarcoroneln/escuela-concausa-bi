@@ -249,9 +249,31 @@ C2/C3), no se retoma como pendiente de US-411.
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
 | POST | `/agente/consulta` | ciudadano | `AgenteConsultaIn` | `AgenteRespuestaOut` | 200, 401, 422 |
+| POST | `/agente/consulta/stream` | ciudadano | `AgenteConsultaIn` | SSE (`meta`/`fragmento`/`fin`) | 200, 401, 422 |
 
 - El agente responde en lenguaje natural sobre Gold y devuelve la consulta generada para auditoría.
   **Nunca** ejecuta escritura/borrado; rechaza preguntas fuera de alcance (`fuera_de_alcance: true`).
+
+#### `/agente/consulta/stream` — Server-Sent Events (US-414, 2026-09-12)
+
+Mismo contrato de entrada que `/agente/consulta` (`AgenteConsultaIn`: `pregunta`, `contexto`,
+`historial`) y **los mismos guardarraíles** — internamente llama a la misma función de resolución,
+así que el filtro de intención (P-13), `preparar_sql_seguro` y la degradación segura ante fallas son
+idénticos. La autenticación (`Authorization: Bearer`) se hereda igual, vía `require_lectura` a nivel
+de router (§2).
+
+`Content-Type: text/event-stream`. Tres tipos de evento, en este orden:
+
+| Evento | Cardinalidad | `data` |
+|---|---|---|
+| `meta` | 1, primero | `{"sql_generado": str \| null, "fuera_de_alcance": bool}` — igual que en `AgenteRespuestaOut`, para que el cliente decida el trato de la respuesta sin esperar el último fragmento |
+| `fragmento` | 0 o más | `{"texto": str}` — un trozo de la respuesta final, en orden |
+| `fin` | 1, último | `{}` — cierre del stream |
+
+`procesar_consulta` no es un generador (no hay *streaming* token a token desde el LLM): el
+"streaming" trocea la respuesta ya completa en fragmentos de tamaño fijo (`TAM_FRAGMENTO_SSE`,
+`src/api/v1/agente.py`) para que el widget de chat la pinte de forma incremental. El frontend
+conserva el *fallback* a `/agente/consulta` si recibe 404.
 
 #### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
 

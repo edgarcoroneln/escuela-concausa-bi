@@ -13,10 +13,18 @@ Andrés (y C5 en despliegue) las sobreescriben con `app.dependency_overrides` / 
 
 Cualquier fallo interno del servicio se traduce a un mensaje genérico (sin filtrar detalle) — la
 respuesta pública nunca expone trazas, prompts ni SQL crudo de error.
+
+**`/consulta/stream` (US-414, PR #313 del frontend):** misma lógica servida como *Server-Sent
+Events* para que el widget de chat pinte la respuesta de forma incremental. Comparte
+`_resolver_consulta` (mismos guardarraíles) con `/consulta` — ver su docstring.
 """
 from __future__ import annotations
 
+import json
+from collections.abc import Iterator
+
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 
 from src.agente.recuperacion import recuperar_contexto as _recuperar_contexto_rag
 from src.agente.servicio import (
@@ -24,11 +32,18 @@ from src.agente.servicio import (
     GenerarSQL,
     RecuperarContexto,
     RedactarRespuesta,
+    ResultadoConsulta,
     procesar_consulta,
 )
 from src.api.schemas import AgenteConsultaIn, AgenteRespuestaOut
 
 router = APIRouter(prefix="/agente", tags=["Agente"])
+
+#: Tamaño de cada fragmento del evento `fragmento` (en caracteres). El agente no genera la
+#: respuesta token a token (`procesar_consulta` no es un generador; ver su docstring), así que
+#: "streaming" aquí es trocear la respuesta ya completa -- suficiente para que el widget de chat
+#: la pinte de forma incremental en vez de esperar el cuerpo entero.
+TAM_FRAGMENTO_SSE = 80
 
 # Mensaje seguro cuando el motor RAG/LLM no está configurado o falla en este entorno.
 _MSG_NO_DISPONIBLE = (
@@ -96,6 +111,34 @@ def get_redactar_respuesta() -> RedactarRespuesta:
     return _no_configurado
 
 
+def _resolver_consulta(
+    body: AgenteConsultaIn,
+    recuperar_contexto: RecuperarContexto,
+    generar_sql: GenerarSQL,
+    ejecutar_sql: EjecutarSQL,
+    redactar_respuesta: RedactarRespuesta,
+) -> ResultadoConsulta:
+    """Corre `procesar_consulta` con degradación segura (BUG-025): nunca filtra detalle interno.
+
+    Único punto de guardarraíles del agente -- lo comparten `/consulta` (JSON) y
+    `/consulta/stream` (SSE) para que el streaming **nunca** sea una segunda puerta con reglas
+    distintas a las del endpoint síncrono.
+    """
+    try:
+        return procesar_consulta(
+            body.pregunta,
+            recuperar_contexto=recuperar_contexto,
+            generar_sql=generar_sql,
+            ejecutar_sql=ejecutar_sql,
+            redactar_respuesta=redactar_respuesta,
+            contexto_conversacional=_construir_contexto_conversacional(body),
+        )
+    except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
+        return ResultadoConsulta(
+            respuesta=_MSG_NO_DISPONIBLE, sql_generado=None, fuera_de_alcance=False
+        )
+
+
 @router.post("/consulta", response_model=AgenteRespuestaOut)
 def consulta(
     body: AgenteConsultaIn,
@@ -123,21 +166,85 @@ def consulta(
     opcional, retrocompatible y se valida como entrada hostil (`HistorialTurnoIn`): acotado en
     cantidad de turnos y en tamaño por turno, sin caracteres de control.
     """
-    try:
-        resultado = procesar_consulta(
-            body.pregunta,
-            recuperar_contexto=recuperar_contexto,
-            generar_sql=generar_sql,
-            ejecutar_sql=ejecutar_sql,
-            redactar_respuesta=redactar_respuesta,
-            contexto_conversacional=_construir_contexto_conversacional(body),
-        )
-    except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
-        return AgenteRespuestaOut(
-            respuesta=_MSG_NO_DISPONIBLE, sql_generado=None, fuera_de_alcance=False
-        )
+    resultado = _resolver_consulta(
+        body, recuperar_contexto, generar_sql, ejecutar_sql, redactar_respuesta
+    )
     return AgenteRespuestaOut(
         respuesta=resultado.respuesta,
         sql_generado=resultado.sql_generado,
         fuera_de_alcance=resultado.fuera_de_alcance,
+    )
+
+
+def _evento_sse(evento: str, data: dict) -> str:
+    """Formatea un evento SSE (`event: <tipo>\\ndata: <json>\\n\\n`)."""
+    return f"event: {evento}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+def _fragmentar(texto: str, tam: int = TAM_FRAGMENTO_SSE) -> Iterator[str]:
+    """Trocea `texto` en fragmentos de a lo más `tam` caracteres, en orden."""
+    for inicio in range(0, len(texto), tam):
+        yield texto[inicio : inicio + tam]
+
+
+def _generar_eventos_sse(resultado: ResultadoConsulta) -> Iterator[str]:
+    """Arma la secuencia `meta` → `fragmento`* → `fin` a partir de un `ResultadoConsulta` ya resuelto.
+
+    `meta` va primero y trae `sql_generado`/`fuera_de_alcance` completos (US-414): el cliente los
+    necesita para decidir el trato de la respuesta (p. ej. mostrar el SQL auditable) sin esperar al
+    último fragmento. Una respuesta vacía (`fuera_de_alcance` con mensaje fijo corto, etc.) igual
+    emite al menos un `fragmento` cuando hay texto que mostrar.
+    """
+    yield _evento_sse(
+        "meta",
+        {"sql_generado": resultado.sql_generado, "fuera_de_alcance": resultado.fuera_de_alcance},
+    )
+    for fragmento in _fragmentar(resultado.respuesta):
+        yield _evento_sse("fragmento", {"texto": fragmento})
+    yield _evento_sse("fin", {})
+
+
+@router.post(
+    "/consulta/stream",
+    summary="Consulta en lenguaje natural, servida como Server-Sent Events",
+    responses={
+        200: {
+            "description": (
+                "Stream SSE con eventos `meta` (una vez, con sql_generado/fuera_de_alcance), "
+                "`fragmento` (0 o más, con un trozo de la respuesta) y `fin` (una vez, cierre)."
+            ),
+            "content": {"text/event-stream": {"schema": {"type": "string"}}},
+        }
+    },
+)
+def consulta_stream(
+    body: AgenteConsultaIn,
+    recuperar_contexto: RecuperarContexto = Depends(get_recuperar_contexto),
+    generar_sql: GenerarSQL = Depends(get_generar_sql),
+    ejecutar_sql: EjecutarSQL = Depends(get_ejecutar_sql),
+    redactar_respuesta: RedactarRespuesta = Depends(get_redactar_respuesta),
+) -> StreamingResponse:
+    """Igual que `POST /agente/consulta`, pero como *Server-Sent Events* (US-414).
+
+    Mismo contrato de entrada (`AgenteConsultaIn`: `pregunta`, `contexto`, `historial`) y **los
+    mismos guardarraíles** -- este endpoint no es una segunda puerta: llama a `_resolver_consulta`,
+    la misma función que usa `/consulta`, así que el filtro de intención (P-13), la validación de
+    SQL de solo lectura (`preparar_sql_seguro`) y la degradación segura ante fallas son idénticos.
+    La autenticación (`Authorization: Bearer`) y el interruptor híbrido de lectura pública también
+    se heredan igual: se aplican por router en `src/api/v1/__init__.py` (`require_lectura`), y este
+    endpoint vive en el mismo `router` que `/consulta`.
+
+    `procesar_consulta` no es un generador -- no hay *streaming* real token a token desde el LLM
+    (ver su docstring en `src/agente/servicio.py`) --, así que lo que se transmite por fragmentos es
+    la respuesta ya completa, trozada en `TAM_FRAGMENTO_SSE` caracteres. Esto es intencional y
+    suficiente para el contrato que pide el frontend: el cliente pinta la respuesta de forma
+    incremental en vez de esperar el cuerpo entero.
+    """
+    resultado = _resolver_consulta(
+        body, recuperar_contexto, generar_sql, ejecutar_sql, redactar_respuesta
+    )
+    return StreamingResponse(
+        _generar_eventos_sse(resultado),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )

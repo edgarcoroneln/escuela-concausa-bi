@@ -5,9 +5,13 @@ destructivo y expone el seam de inyección para que la Célula 3 enchufe su LLM/
 
 Offline: no requieren ChromaDB ni LLM. El recuperador de contexto se sustituye por dependency
 override; los casos fuera de alcance y de degradación no lo necesitan siquiera.
+
+También cubre `/agente/consulta/stream` (US-414): mismo servicio, guardarraíles y overrides,
+servido como Server-Sent Events para el widget de chat (PR #313 del frontend).
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Iterator
 
 import pytest
@@ -32,6 +36,29 @@ def _post(client: TestClient, pregunta: str) -> dict:
     r = client.post(f"{API_PREFIX}/agente/consulta", json={"pregunta": pregunta})
     assert r.status_code == 200, r.text
     return r.json()
+
+
+def _parsear_eventos_sse(cuerpo: str) -> list[tuple[str, dict]]:
+    """Parsea un cuerpo `text/event-stream` en `[(evento, data_json), ...]`, en orden."""
+    import json
+
+    eventos = []
+    for bloque in cuerpo.split("\n\n"):
+        bloque = bloque.strip()
+        if not bloque:
+            continue
+        m_evento = re.search(r"^event: (.+)$", bloque, re.MULTILINE)
+        m_data = re.search(r"^data: (.+)$", bloque, re.MULTILINE)
+        assert m_evento and m_data, f"bloque SSE mal formado: {bloque!r}"
+        eventos.append((m_evento.group(1), json.loads(m_data.group(1))))
+    return eventos
+
+
+def _post_stream(client: TestClient, pregunta: str) -> list[tuple[str, dict]]:
+    r = client.post(f"{API_PREFIX}/agente/consulta/stream", json={"pregunta": pregunta})
+    assert r.status_code == 200, r.text
+    assert r.headers["content-type"].startswith("text/event-stream")
+    return _parsear_eventos_sse(r.text)
 
 
 def test_pregunta_fuera_de_alcance_se_rechaza(client: TestClient) -> None:
@@ -135,3 +162,117 @@ def test_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
     assert cuerpo["fuera_de_alcance"] is False
     assert "boom" not in cuerpo["respuesta"].lower()
     assert "secreto" not in cuerpo["respuesta"].lower()
+
+
+# --------------------------------------------------------------------------- #
+# `/agente/consulta/stream` (US-414, SSE) -- mismo servicio, guardarraíles y overrides que arriba,
+# solo cambia el transporte. No se repite la matriz completa de guardarraíles (ya cubierta arriba);
+# aquí solo se prueba que el streaming respeta el mismo contrato de guardarraíles y el formato SSE.
+# --------------------------------------------------------------------------- #
+
+
+def test_stream_happy_path_emite_meta_fragmentos_y_fin(client: TestClient) -> None:
+    """El streaming completo: `meta` primero (con sql_generado/fuera_de_alcance), luego los
+    fragmentos de la respuesta en orden, y `fin` al final."""
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
+        lambda sql: [{"cct": "09ABC0001X"}]
+    )
+    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
+        lambda pregunta, filas: f"{len(filas)} escuela encontrada."
+    )
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    assert [e for e, _ in eventos][0] == "meta"
+    assert [e for e, _ in eventos][-1] == "fin"
+    assert all(e in {"meta", "fragmento", "fin"} for e, _ in eventos)
+
+    _, meta = eventos[0]
+    assert meta["fuera_de_alcance"] is False
+    assert meta["sql_generado"].lower().startswith("select cct from gold.features_escuela")
+
+    fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
+    assert "".join(fragmentos) == "1 escuela encontrada."
+
+
+def test_stream_pregunta_fuera_de_alcance_se_rechaza_igual_que_el_sincrono(
+    client: TestClient,
+) -> None:
+    """Mismo guardarraíl que `/consulta`: una pregunta ajena se marca `fuera_de_alcance` en `meta`."""
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: (_ for _ in ()).throw(ContextoNoEncontrado("sin contexto relevante"))
+    )
+
+    eventos = _post_stream(client, "¿cuál es la capital de Francia?")
+
+    _, meta = eventos[0]
+    assert meta["fuera_de_alcance"] is True
+    assert meta["sql_generado"] is None
+
+
+def test_stream_sql_destructivo_generado_nunca_se_ejecuta(client: TestClient) -> None:
+    """Núcleo de BUG-025 también en el streaming: el ejecutor nunca se llama con un SQL destructivo."""
+    llamadas_ejecutor: list[str] = []
+
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.predicciones(cct, indice_riesgo)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "DELETE FROM gold.predicciones"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
+        lambda sql: llamadas_ejecutor.append(sql) or []
+    )
+    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
+        lambda pregunta, filas: "no debería llegar aquí"
+    )
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay en riesgo por inseguridad?")
+
+    _, meta = eventos[0]
+    assert meta["fuera_de_alcance"] is False
+    assert meta["sql_generado"] is None
+    assert llamadas_ejecutor == []
+
+
+def test_stream_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: (_ for _ in ()).throw(RuntimeError("boom interno con secreto"))
+    )
+
+    eventos = _post_stream(client, "escuelas en riesgo por municipio")
+
+    fragmentos = "".join(d["texto"] for e, d in eventos if e == "fragmento")
+    assert "boom" not in fragmentos.lower()
+    assert "secreto" not in fragmentos.lower()
+
+
+def test_stream_fragmenta_respuestas_largas(client: TestClient) -> None:
+    """Una respuesta más larga que `TAM_FRAGMENTO_SSE` se parte en más de un evento `fragmento`."""
+    respuesta_larga = "Escuela en riesgo. " * 20  # > 80 caracteres (TAM_FRAGMENTO_SSE)
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (lambda sql: [{"cct": "x"}])
+    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
+        lambda pregunta, filas: respuesta_larga
+    )
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
+    assert len(fragmentos) > 1
+    assert all(len(f) <= agente_mod.TAM_FRAGMENTO_SSE for f in fragmentos)
+    assert "".join(fragmentos) == respuesta_larga
