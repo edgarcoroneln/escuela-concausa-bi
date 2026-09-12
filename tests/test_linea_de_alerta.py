@@ -24,7 +24,7 @@ from pathlib import Path
 import pytest
 
 from src.api import mock_data
-from src.api.repositorio_gold import ANCLA_SIGMOIDE, LINEA_DE_ALERTA
+from src.api.repositorio_gold import ANCLA_SIGMOIDE, CORTE_ATENCION_MEDIA, LINEA_DE_ALERTA
 
 RAIZ = Path(__file__).resolve().parents[1]
 
@@ -141,3 +141,23 @@ def test_no_hay_cubos_nuevos_con_el_corte() -> None:
     assert encontrados == set(CUBOS_CON_CORTE), (
         f"archivos de dbt con el corte que la lista no cubre: {encontrados - set(CUBOS_CON_CORTE)}"
     )
+
+
+# --------------------------------------------------------------------------- #
+# 4. El corte inferior del nivel de atención (`DEC-023`) está duplicado entre capas
+# --------------------------------------------------------------------------- #
+
+
+def test_el_corte_medio_de_la_api_es_el_riesgo_estable_de_c3() -> None:
+    """`CORTE_ATENCION_MEDIA` (API) y `RIESGO_ESTABLE` (`src/modelos/riesgo.py`, C3) son el 0.30.
+
+    No se importa `src/modelos/riesgo.py` desde la API porque ese módulo trae `numpy` y `scipy`, que
+    la imagen de la API no instala. La duplicación es deliberada, así que **se ata leyendo el
+    archivo**: mismo patrón que §3 con los .sql de dbt. Sin esta prueba, mover uno de los dos dejaría
+    al frontend etiquetando con un corte distinto del que usa el modelo, en silencio.
+    """
+    fuente = (RAIZ / "src" / "modelos" / "riesgo.py").read_text(encoding="utf-8")
+    declarado = re.search(r"^RIESGO_ESTABLE\s*=\s*([0-9.]+)", fuente, re.MULTILINE)
+
+    assert declarado, "no se encontró `RIESGO_ESTABLE` en src/modelos/riesgo.py"
+    assert float(declarado.group(1)) == CORTE_ATENCION_MEDIA
