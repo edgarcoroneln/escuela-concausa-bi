@@ -4,12 +4,12 @@ date: "2026-09-11"
 author_human: "Christian Imanol Ruiz Hurtado"
 agent: "Claude Code"
 model: "claude-opus-5"
-session_duration: "1 sesión — DEC-026, el corte de prioridad y los cortes del nivel de atención en el contrato"
+session_duration: "1 sesión — los cortes del nivel de atención en el contrato y la validación de DEC-026"
 touches: ["DEC-026", "DEC-023", "DEC-019", "DEC-006", "BUG-063", "BUG-058", "US-621", "REQ-004"]
 tags: [devlog, api, contrato, gobernanza, riesgo, frontend]
 ---
 
-# DevLog — 2026-09-11 — `DEC-026`: el corte de `prioridad`, y los cortes que el front ya no teclea
+# DevLog — 2026-09-11 — Los cortes que el front ya no teclea, y la validación de `DEC-026`
 
 → [[vault/_DevLog/_index|Volver al índice]] · [[vault/10_Risk_Governance/Decision_Log|DEC-026]] ·
 [[vault/03_Architecture/API_Specification|API_Specification §3.1, §3.4]]
@@ -34,20 +34,35 @@ superficies que se contradicen sobre las mismas escuelas.
 
 ## Qué se hizo
 
-### `DEC-026` (redactada para ratificación del PO)
+### `DEC-026`: la redacté, pero la que queda es la del PO
 
-`gold.recomendaciones.prioridad` pasa a seguir la **línea de alerta** (0.50) y Gold se republica.
-`ANCLA_SIGMOIDE` **se queda en 0.60**: es la calibración del índice, no un criterio de negocio.
+Edgar me pidió ayuda para documentarlo, así que redacté la decisión y la subí. **Él subió la suya en
+paralelo, en su propio PR**, y es la que se conserva: `DEC-013` dice que el ID es de quien llega
+primero a `main`, y una decisión de producto la firma el PO. Mi fila se retira de este PR; el resto
+del cambio no depende de ella.
 
-Dos cosas que la decisión deja explícitas, porque son las que se olvidan:
+**Su redacción es mejor que la mía en dos puntos**, y vale registrarlo: justifica de forma explícita
+por qué esto **contradice a propósito** la cláusula de `DEC-019` de "no cambia un solo valor
+publicado" —ahí la razón era no invalidar una demo inminente; aquí el propio dato demostró estar mal,
+un corte inalcanzable por construcción— y deja escrito el efecto colateral verificado: con
+`alta >= 0.50` el conteo coincide con `escuelas_en_riesgo`, así que DB-09 y el KPI-04 dejan de contar
+cosas distintas con el mismo nombre.
 
-- **El cambio no surte efecto hasta republicar**: `prioridad` es una columna materializada, así que
-  tocar la función no mueve las 45,276 filas ya escritas.
-- **Modifica valores ya publicados a propósito**, que es justo lo que `DEC-019` prohibía. Por eso se
-  registra en vez de aplicarse en silencio, y por eso releva la salida provisional del 8-sep.
+El contenido es el mismo en lo que importa: `alta` baja de `ANCLA_SIGMOIDE` (0.60) a la línea de
+alerta (0.50), el ancla **no se toca** porque es calibración (`DEC-006`), y **Gold se republica** —
+`prioridad` es columna almacenada, así que tocar la función no mueve las 45,276 filas ya escritas. La
+ejecución es de C3 sobre `src/modelos/publicar_gold.py:197`, alcance de Estefany Hernández. **No lo
+toqué**: no es mi alcance y el contrato no cambia por ello.
 
-La ejecución es de C3 (Héctor Morales, TL Andrés González) sobre `src/modelos/publicar_gold.py:197`,
-alcance de Estefany Hernández. **No lo toqué**: no es mi alcance y el contrato no cambia por ello.
+**Validación que le di a su PR** (aprobado, con tres observaciones en comentario, sin bloquear):
+
+1. **La asignación a Marina reprobaría el gate de propiedad:** la decisión le encarga
+   `API_Specification.md` §3.4, y ese archivo no está en su verde ni en su amarillo. Es de mi verde.
+2. **Ese punto ya está hecho** en este mismo cambio — tercer choque de trabajo duplicado de la semana,
+   después de `/agente/consulta/stream` y de la Fase 4.
+3. **La prueba guarda no puede ir en un PR aparte:** antes del cambio de C3 el corte sí está por
+   encima del máximo observado, así que dejaría el **CI rojo para todos**. Tiene que viajar con el
+   cambio de `publicar_gold.py`.
 
 ### Los cortes viajan en el contrato (`GET /version`)
 
@@ -94,16 +109,15 @@ y el front no consume esta columna.
 
 - **Agente / modelo:** Claude Code / claude-opus-5.
 - **Creados:** este DevLog.
-- **Modificados:** `vault/10_Risk_Governance/Decision_Log.md` (`DEC-026`), `src/api/schemas.py`,
+- **Modificados:** `src/api/schemas.py`,
   `src/api/v1/health.py`, `src/api/repositorio_gold.py`, `tests/test_api_contract.py`,
   `tests/test_linea_de_alerta.py`, `api/openapi.v1.json`,
   `vault/03_Architecture/API_Specification.md`, `vault/_DevLog/_index.md`.
 
 ## Avisos a otros owners
 
-- **Edgar Coronel (PO):** `DEC-026` está redactada por mí a tu petición, **pendiente de tu
-  ratificación**. `Decision_Log.md` es archivo común, y `vault/10_Risk_Governance/**` es tu crítico,
-  así que el gate te lo notifica.
+- **Edgar Coronel (PO):** `DEC-026` queda como la escribiste tú; retiré mi fila para que no haya dos
+  con el mismo ID. Las tres observaciones a tu PR van en su comentario.
 - **Héctor Morales / Andrés González / Estefany Hernández (C3):** la ejecución es de ustedes —
   `publicar_gold.py:197` **y** republicar Gold. Sin republicar, DB-09 sigue en 0.
 - **Diana Alvarez (E5):** lee los cortes de `GET /version` (`cortes_atencion`) en vez de escribir 0.50
