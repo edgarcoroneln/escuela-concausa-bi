@@ -4,9 +4,9 @@ date: "2026-09-13"
 author_human: "Luis Téllez Domínguez"
 agent: "Claude Code"
 model: "claude-opus-4-8"
-session_duration: "Seguimiento corto — registro de BUG-078/079/080 en la matriz de trazabilidad. El cierre operativo y su DevLog ya se mergearon en PR #344; esta entrada solo completa la trazabilidad, que vive en un archivo aparte."
+session_duration: "Seguimiento — registro de BUG-078/079/080 en la matriz de trazabilidad (el cierre operativo y su DevLog ya se mergearon en PR #344). Incluye la resolución de un falso positivo de GitLeaks con un cambio mínimo de config del escáner en .github/ (regla 7, revisa el PO)."
 touches: ["BUG-079", "BUG-078", "BUG-080", "US-405", "US-641", "US-505", "ADR-012", "REQ-004", "REQ-005"]
-tags: [devlog, equipo-5, trazabilidad, documentacion, seguimiento]
+tags: [devlog, equipo-5, trazabilidad, documentacion, seguimiento, ci, seguridad]
 ---
 
 # DevLog — 2026-09-13 — Registro de BUG-078/079/080 en la matriz de trazabilidad
@@ -50,10 +50,40 @@ podía sumarse a ese PR** y va en este PR de seguimiento.
   su revisión ya la exige el propio PR.
 - Sin pipes literales dentro de las celdas (escapados o reformulados) para no romper el gate de 5
   columnas del tablero PM.
+- **GitLeaks (paso G5) verificado en local** con el binario `gitleaks 8.30.1`, reproduciendo el rango
+  del PR (`c82d29a..HEAD`): con la config por defecto reporta **1 fuga** (el falso positivo, ver abajo);
+  con `--config .github/gitleaks.toml` y con `GITLEAKS_CONFIG=.github/gitleaks.toml` reporta
+  **`no leaks found` (exit 0)**.
+
+## Resolución del gate de secretos (GitLeaks) — regla 7
+
+El intento previo de registrar la matriz reprobó el gate **«Calidad de codigo y vault»**: la regla
+`generic-api-key` marcó como secreto el **identificador de revisión de Cloud Run**
+`faro-api-00019-2xs`, que aparece dentro de un comando de rollback documentado en la matriz. **No es
+un secreto** — es el nombre público de una revisión de despliegue —, pero el patrón «palabra clave …
+signo igual … valor de alta entropía» lo dispara.
+
+- **Por qué no bastó reformular la línea:** GitLeaks escanea **todo el rango del PR** (los commits que
+  la rama tiene por encima de `main`), no solo el último commit. La línea marcada quedó en el commit
+  histórico `6f6b167`; reformularla en un commit posterior (`5b6e280`) no lo saca del rango, así que
+  el gate seguía en rojo.
+- **Por qué no se reescribe la historia:** en `dev/*` el force-push está **prohibido** por regla de
+  oro del repo (la rama es permanente y sostiene las revisiones de PRs anteriores). No es una opción.
+- **Fix mínimo y quirúrgico (dentro de mi alcance `.github/**`):** se añade
+  [`.github/gitleaks.toml`](../../.github/gitleaks.toml) que **extiende y conserva todas las reglas por
+  defecto** (`useDefault = true`) y solo **exime ese único commit histórico** (`commits = [...]`); y una
+  línea `GITLEAKS_CONFIG: .github/gitleaks.toml` en el paso G5 de
+  [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). El escáner queda **intacto en el resto
+  del repositorio y en commits futuros**; solo se documenta el falso positivo puntual.
+- **Regla 7:** es un cambio de config del escáner de seguridad y del CI. `.github/**` está en mi verde,
+  pero también anotado como crítico → la revisión del PO/Edgar la exige el propio PR. Cambio autorizado
+  por Luis Téllez para desbloquear el registro de la matriz.
 
 ## Trazabilidad y pendientes
 
-- **No** hay cambio de código en este PR: solo documentación de trazabilidad.
+- El único cambio de código/config de este PR es la config mínima de GitLeaks descrita arriba
+  (`.github/gitleaks.toml` + una línea en `.github/workflows/ci.yml`); el resto es documentación de
+  trazabilidad.
 - Recordatorio abierto, ajeno a mi frente: **`BUG-077`** (`GET /api/v1/municipios` → 500 por
   `nombre_entidad` nulo en ~97 % de `dim_municipio`). Dueños: Diana Álvarez (C1, confirmar cobertura
   en prod) y Christian Ruiz (C4, degradar el campo a `SIN_DATO`). Escalado por separado antes del
