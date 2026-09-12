@@ -63,3 +63,24 @@ siempre será así.
 - **Pendiente de Diana:** `npm run dev` real para verificar la interacción mapa↔tabla y el
   comportamiento con `VITE_USE_MOCK=true` (el mock de `data/mock.js` ya trae `latitud`/`longitud` de
   ejemplo, así que el modo demo también debería pintar el mapa).
+
+## Corrección del mismo día -- la decisión ya estaba ratificada en `main`
+
+Al hacer `git fetch` para revisar si el repo estaba al día se encontró que `main` traía 48 commits
+que esta rama no tenía, incluyendo `a7b86a9` (Marina García del Buey, 11:07 -0600 de hoy):
+**`DEC-026`, que registra formalmente "el estatus del mapa lo resolvió Diana Álvarez"** -- es decir,
+la decisión que este DevLog documentó arriba como tomada en esta sesión ya estaba coordinada por
+Diana con el frente de UX/UI **antes** de esta sesión, por otro canal, y Marina la dejó por escrito
+en `PLAN_TRABAJO.md` §10.septies con una **leyenda obligatoria de texto acordado**:
+
+> *"Ubicación aproximada de las escuelas en riesgo — no reemplaza la comparación por índice, ver
+> lista."*
+
+`MapaCasos.jsx` se corrigió para usar ese texto **literal** (no parafraseado) junto al mapa, con "ver
+lista" enlazando a `/casos` (Los 7 casos -- la superficie primaria de comparación por índice, según
+el propio documento). Las tres condiciones verificables por QA que ya cumplía la primera versión
+siguen cumplidas: el mapa no es la única forma de leer el riesgo, las escuelas sin georreferencia se
+omiten, y la palabra "aproximada" ahora es literal, no solo implícita.
+
+Pendiente para Diana, no de código: el mismo documento dice *"lo único que falta es que E5 declare el
+handoff aceptado"* -- confirmar explícitamente con Marina/el equipo de UX que este build lo cierra.

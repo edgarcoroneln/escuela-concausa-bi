@@ -66,16 +66,31 @@ export default function MapaCasos() {
       {escuelas.length > 0 && cortes && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
-            <MapaRiesgoCard
-              subtitle={
-                sinGeorreferencia.length > 0
-                  ? `${escuelas.length - sinGeorreferencia.length} de ${escuelas.length} escuelas con ubicación real -- ${sinGeorreferencia.length} sin georreferencia, omitidas del mapa (siguen en la tabla).`
-                  : `Ubicación real de las ${escuelas.length} escuelas en riesgo.`
-              }
-              data={escuelas}
-              selectedCct={selectedCct}
-              onSelect={setSelectedCct}
-            />
+            <div className="flex flex-col gap-2">
+              <MapaRiesgoCard
+                subtitle={
+                  sinGeorreferencia.length > 0
+                    ? `${escuelas.length - sinGeorreferencia.length} de ${escuelas.length} escuelas con coordenada real -- ${sinGeorreferencia.length} sin georreferencia, omitidas del mapa (siguen en la tabla).`
+                    : `Coordenada real de las ${escuelas.length} escuelas en riesgo.`
+                }
+                data={escuelas}
+                selectedCct={selectedCct}
+                onSelect={setSelectedCct}
+              />
+              {/* Leyenda obligatoria, texto acordado con E5 (DEC-026, PLAN_TRABAJO.md §10.septies,
+                  criterio 28 §7.bis) -- literal, no parafraseada: "aproximada" se queda porque la
+                  base es estatal, no georreferencia una dirección. "ver lista" enlaza a "Los 7
+                  casos" (LosSieteCasos.jsx), que es la superficie primaria de comparación por
+                  índice -- el mapa acompaña, nunca la reemplaza (ADR-011 §4). */}
+              <p className="text-xs px-1" style={{ color: "var(--color-ink-faint)" }}>
+                Ubicación aproximada de las escuelas en riesgo -- no reemplaza la comparación por
+                índice,{" "}
+                <Link to="/casos" style={{ color: "var(--color-primary)", fontWeight: 600 }}>
+                  ver lista
+                </Link>
+                .
+              </p>
+            </div>
 
             <Card title="Escuela seleccionada">
               {seleccionada ? (
