@@ -48,3 +48,15 @@ def test_fixture_no_contiene_secreto() -> None:
 
     assert "ANTHROPIC_API_KEY" not in contenido
     assert "sk-ant-" not in contenido
+
+
+def test_resultado_golden_no_incluye_sql_ni_respuesta() -> None:
+    from dataclasses import fields
+
+    from src.agente.evaluar_golden import ResultadoGolden
+
+    nombres = {campo.name for campo in fields(ResultadoGolden)}
+
+    assert "sql_generado" not in nombres
+    assert "respuesta" not in nombres
+    assert {"contexto_recuperado", "modo_llm"}.issubset(nombres)

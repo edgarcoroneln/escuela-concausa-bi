@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -163,7 +164,10 @@ def main() -> int:
     # se aplica porque el runner recibe un host distinto o se ejecuta en el servicio api.
     if os.getenv("CHROMA_HOST") == "chromadb":
         os.environ["CHROMA_HOST"] = "localhost"
-        os.environ.setdefault("CHROMA_PORT", "8001")
+        os.environ["CHROMA_PORT"] = "8001"
+    dsn = os.getenv("DATABASE_URL_READ_ONLY", "")
+    if "@db:" in dsn:
+        os.environ["DATABASE_URL_READ_ONLY"] = re.sub(r"@db:(\d+)", r"@localhost:\1", dsn)
     args = _argumentos()
     try:
         resultados = evaluar_fixture(args.fixture)
