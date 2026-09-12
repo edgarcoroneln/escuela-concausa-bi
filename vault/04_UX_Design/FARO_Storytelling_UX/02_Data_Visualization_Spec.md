@@ -2,7 +2,7 @@
 id: DOC-FARO-UX-DATAVIZ
 title: "Data Visualization Spec — qué dato demuestra la historia"
 owner: "Monserrat Xcaret Miranda Olivas"
-status: draft
+status: approved
 traces_up: ["US-621", "REQ-002", "ADR-011", "DEC-023", "DEC-024", "vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope"]
 traces_down: ["US-641", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
 last_reviewed: "2026-09-11"
@@ -17,8 +17,7 @@ tags: [ux, dataviz, storytelling, s7, us-621]
 > [[vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope]] ·
 > [[vault/03_Architecture/ADRs/ADR-011-rediseno-ux-graficas-nativas]]
 
-**Estado:** borrador formal. Se congela para el Equipo 5 el viernes 11 a las 15:00
-(`PLAN_TRABAJO` §8). Los ejemplos de la §7 van a Juan Macías hoy en la noche, después del gate.
+**Estado: aprobado** el 2026-09-11 por Marina García del Buey, gate final de UX/UI (plan §7), contra la versión mergeada a `main`. Los cambios posteriores pasan por ella.
 
 > **Evidencia de datos.** Los números y los ejemplos de este documento salen de una consulta a la API
 > v1 en **producción** (`https://faro-api-eanzfglvyq-uc.a.run.app`, commit desplegado `457715a`) el
