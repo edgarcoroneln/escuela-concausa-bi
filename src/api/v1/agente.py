@@ -14,7 +14,7 @@ Andrés (y C5 en despliegue) las sobreescriben con `app.dependency_overrides` / 
 Cualquier fallo interno del servicio se traduce a un mensaje genérico (sin filtrar detalle) — la
 respuesta pública nunca expone trazas, prompts ni SQL crudo de error.
 
-**`/consulta/stream` (US-414, PR #313 del frontend):** misma lógica servida como *Server-Sent
+**`/consulta/stream` (US-305, PR #313 del frontend):** misma lógica servida como *Server-Sent
 Events* para que el widget de chat pinte la respuesta de forma incremental. Comparte
 `_resolver_consulta` (mismos guardarraíles) con `/consulta` — ver su docstring.
 """
@@ -182,18 +182,26 @@ def _evento_sse(evento: str, data: dict) -> str:
 
 
 def _fragmentar(texto: str, tam: int = TAM_FRAGMENTO_SSE) -> Iterator[str]:
-    """Trocea `texto` en fragmentos de a lo más `tam` caracteres, en orden."""
+    """Trocea `texto` en fragmentos de a lo más `tam` caracteres, en orden.
+
+    Siempre produce **al menos un** fragmento, incluso con `texto == ""`: el cliente ya mergeado
+    (`consultar_agente_stream` en `src/frontend/agente_client.py`, PR #313) trata una lista de
+    fragmentos vacía como stream inválido (`if not fragmentos: raise ValueError(...)`) -- `range()`
+    solo no lo garantizaría para un texto vacío.
+    """
+    if not texto:
+        yield texto
+        return
     for inicio in range(0, len(texto), tam):
         yield texto[inicio : inicio + tam]
 
 
 def _generar_eventos_sse(resultado: ResultadoConsulta) -> Iterator[str]:
-    """Arma la secuencia `meta` → `fragmento`* → `fin` a partir de un `ResultadoConsulta` ya resuelto.
+    """Arma la secuencia `meta` → `fragmento`+ → `fin` a partir de un `ResultadoConsulta` ya resuelto.
 
-    `meta` va primero y trae `sql_generado`/`fuera_de_alcance` completos (US-414): el cliente los
+    `meta` va primero y trae `sql_generado`/`fuera_de_alcance` completos (US-305): el cliente los
     necesita para decidir el trato de la respuesta (p. ej. mostrar el SQL auditable) sin esperar al
-    último fragmento. Una respuesta vacía (`fuera_de_alcance` con mensaje fijo corto, etc.) igual
-    emite al menos un `fragmento` cuando hay texto que mostrar.
+    último fragmento.
     """
     yield _evento_sse(
         "meta",
@@ -224,7 +232,7 @@ def consulta_stream(
     ejecutar_sql: EjecutarSQL = Depends(get_ejecutar_sql),
     redactar_respuesta: RedactarRespuesta = Depends(get_redactar_respuesta),
 ) -> StreamingResponse:
-    """Igual que `POST /agente/consulta`, pero como *Server-Sent Events* (US-414).
+    """Igual que `POST /agente/consulta`, pero como *Server-Sent Events* (US-305).
 
     Mismo contrato de entrada (`AgenteConsultaIn`: `pregunta`, `contexto`, `historial`) y **los
     mismos guardarraíles** -- este endpoint no es una segunda puerta: llama a `_resolver_consulta`,

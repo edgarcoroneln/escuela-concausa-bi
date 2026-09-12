@@ -254,7 +254,7 @@ C2/C3), no se retoma como pendiente de US-411.
 - El agente responde en lenguaje natural sobre Gold y devuelve la consulta generada para auditoría.
   **Nunca** ejecuta escritura/borrado; rechaza preguntas fuera de alcance (`fuera_de_alcance: true`).
 
-#### `/agente/consulta/stream` — Server-Sent Events (US-414, 2026-09-12)
+#### `/agente/consulta/stream` — Server-Sent Events (US-305, 2026-09-12)
 
 Mismo contrato de entrada que `/agente/consulta` (`AgenteConsultaIn`: `pregunta`, `contexto`,
 `historial`) y **los mismos guardarraíles** — internamente llama a la misma función de resolución,

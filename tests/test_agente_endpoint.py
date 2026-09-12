@@ -6,7 +6,7 @@ destructivo y expone el seam de inyección para que la Célula 3 enchufe su LLM/
 Offline: no requieren ChromaDB ni LLM. El recuperador de contexto se sustituye por dependency
 override; los casos fuera de alcance y de degradación no lo necesitan siquiera.
 
-También cubre `/agente/consulta/stream` (US-414): mismo servicio, guardarraíles y overrides,
+También cubre `/agente/consulta/stream` (US-305): mismo servicio, guardarraíles y overrides,
 servido como Server-Sent Events para el widget de chat (PR #313 del frontend).
 """
 from __future__ import annotations
@@ -165,7 +165,7 @@ def test_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# `/agente/consulta/stream` (US-414, SSE) -- mismo servicio, guardarraíles y overrides que arriba,
+# `/agente/consulta/stream` (US-305, SSE) -- mismo servicio, guardarraíles y overrides que arriba,
 # solo cambia el transporte. No se repite la matriz completa de guardarraíles (ya cubierta arriba);
 # aquí solo se prueba que el streaming respeta el mismo contrato de guardarraíles y el formato SSE.
 # --------------------------------------------------------------------------- #
@@ -189,8 +189,8 @@ def test_stream_happy_path_emite_meta_fragmentos_y_fin(client: TestClient) -> No
 
     eventos = _post_stream(client, "¿cuántas escuelas hay?")
 
-    assert [e for e, _ in eventos][0] == "meta"
-    assert [e for e, _ in eventos][-1] == "fin"
+    assert eventos[0][0] == "meta"
+    assert eventos[-1][0] == "fin"
     assert all(e in {"meta", "fragmento", "fin"} for e, _ in eventos)
 
     _, meta = eventos[0]
@@ -276,3 +276,38 @@ def test_stream_fragmenta_respuestas_largas(client: TestClient) -> None:
     assert len(fragmentos) > 1
     assert all(len(f) <= agente_mod.TAM_FRAGMENTO_SSE for f in fragmentos)
     assert "".join(fragmentos) == respuesta_larga
+
+
+def test_stream_integra_con_el_cliente_real_del_frontend(client: TestClient) -> None:
+    """Regresión de contrato: `consultar_agente_stream` (PR #313, `src/frontend/agente_client.py`)
+    ya está en `main` y consume esta ruta -- si el formato SSE del servidor y el parser del
+    cliente se desincronizan, esta prueba lo detecta sin depender de una demo manual.
+    """
+    from src.frontend.agente_client import consultar_agente_stream
+
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
+        lambda sql: [{"cct": "09ABC0001X"}, {"cct": "09ABC0002X"}]
+    )
+    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
+        lambda pregunta, filas: f"{len(filas)} escuelas encontradas."
+    )
+
+    fragmentos_incrementales: list[str] = []
+    resultado = consultar_agente_stream(
+        api_base_url="",
+        pregunta="¿cuántas escuelas hay?",
+        stream=client.stream,
+        post=client.post,
+        on_fragment=fragmentos_incrementales.append,
+    )
+
+    assert resultado.respuesta == "2 escuelas encontradas."
+    assert resultado.fuera_de_alcance is False
+    assert resultado.sql_generado.lower().startswith("select cct from gold.features_escuela")
+    assert fragmentos_incrementales  # el cliente sí recibió al menos un fragmento incremental
