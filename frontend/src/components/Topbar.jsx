@@ -9,6 +9,7 @@ const items = [
   { to: "/mapa", label: "Mapa" },
   { to: "/drivers", label: "Drivers" },
   { to: "/hallazgos", label: "Acerca de" },
+  { to: "/como-funciona", label: "Cómo funciona" },
 ];
 
 // Iniciales para el avatar de sesión -- cae a las dos primeras letras del

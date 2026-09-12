@@ -12,6 +12,7 @@ import MatrizDrivers from "./pages/MatrizDrivers.jsx";
 import ExpedienteEscuela from "./pages/ExpedienteEscuela.jsx";
 import ComparacionTerritorial from "./pages/ComparacionTerritorial.jsx";
 import Hallazgos from "./pages/Hallazgos.jsx";
+import ComoFunciona from "./pages/ComoFunciona.jsx";
 
 // Rutas = las 9 pantallas del storytelling de "los 7 casos" (mockup de
 // UX/UI). Cada página es su propio archivo en src/pages/ para que el
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: "drivers", element: <MatrizDrivers /> },
       { path: "comparacion-territorial", element: <ComparacionTerritorial /> },
       { path: "hallazgos", element: <Hallazgos /> },
+      { path: "como-funciona", element: <ComoFunciona /> },
     ],
   },
 ]);
