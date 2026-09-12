@@ -1152,6 +1152,53 @@
         ]
       }
     },
+    "/api/v1/agente/consulta/stream": {
+      "post": {
+        "description": "Igual que `/consulta`, pero transmite la redacción final por Server-Sent Events (Fase 3).\n\nMismos guardarraíles, mismo RBAC (`require_lectura`, a nivel de router) y el mismo contrato de\nentrada (`contexto`, `historial`) que `/consulta`; lo único que cambia es cómo viaja la salida.\nTres tipos de evento, en este orden:\n\n- `meta` (una vez, al inicio): `{\"sql_generado\": ..., \"fuera_de_alcance\": ...}`, los mismos\n  campos de `AgenteRespuestaOut`, para que el cliente los tenga sin esperar el fin.\n- `fragmento` (una o más veces): `{\"texto\": \"...\"}`, cada pedazo de la respuesta según llega.\n- `fin` (una vez, al final): `{}`. Siempre llega, también cuando algo falló a medio camino.\n\n`X-Accel-Buffering: no` le pide a nginx que no acumule la respuesta: sin eso, el proxy del\nfrontend (ADR-012) entregaría todos los fragmentos juntos al final y el streaming no se notaría.",
+        "operationId": "consulta_stream_api_v1_agente_consulta_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgenteConsultaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Server-Sent Events. `meta` una vez al inicio: `{sql_generado, fuera_de_alcance}`; `fragmento` una o más veces: `{texto}`; `fin` una vez al final: `{}`."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Consulta Stream",
+        "tags": [
+          "Agente"
+        ]
+      }
+    },
     "/api/v1/auth/callback": {
       "get": {
         "description": "Callback de Google: valida el `state`, canjea el `code`, resuelve el rol y entrega la sesion.\n\nDos salidas, segun si `/auth/login` llevaba `redirect` (el `state` firmado lo recuerda):\n\n- **Con `redirect`** (FARO Web): **302** al front con `?code_faro=<codigo de un solo uso>`. Los\n  tokens NO viajan por la URL -- ver ADR-010 y `security/codigos_login.py`.\n- **Sin `redirect`**: el `TokenPair` como JSON, igual que antes (clientes no-navegador y pruebas).",
