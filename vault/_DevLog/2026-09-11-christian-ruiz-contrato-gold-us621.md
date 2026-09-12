@@ -91,7 +91,7 @@ que lo verifica.
       solo viera `alta` no notaría si el campo se quedara fijo
 - [x] 4 pruebas de Fase 4: mensajes distinguibles, texto parcial conservado, log estructurado sin
       la pregunta, y el redactor mudo
-- [x] 429 pruebas focalizadas verdes; `ruff` y `vault_lint` limpios
+- [x] 438 pruebas focalizadas verdes tras sincronizar con `main`; `ruff` y `vault_lint` limpios
 - [x] OpenAPI reexportado; `test_api_contract.py` verde
 - [x] Los tres cambios son aditivos y opcionales: no rompen a Streamlit ni a ningún consumidor
 
