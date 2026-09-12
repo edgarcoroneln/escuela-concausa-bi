@@ -44,6 +44,18 @@ POSTGRES_USER="${POSTGRES_USER:-faro_app}"
 GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID:-526490367142-gctkloa4dsnp7m56r0fu62n7ehuhpkcs.apps.googleusercontent.com}"
 GOOGLE_REDIRECT_URI="${GOOGLE_REDIRECT_URI:-https://faro-api-eanzfglvyq-uc.a.run.app/api/v1/auth/callback}"
 
+# FRONTEND_REDIRECT_URIS: allowlist de orígenes del front a los que /auth/login vuelve tras el login
+# con Google (US-405, ADR-012). La API compara el `redirect` recibido por COINCIDENCIA EXACTA, no por
+# prefijo (src/api/config.py -> frontend_redirect_list; src/api/v1/auth.py:100). El React manda
+# `window.location.origin` (SIN barra final ni ruta) -> el valor debe ser el ORIGEN EXACTO del front,
+# sin `/` al final. Público (viaja en la URL) -> env var, no secreto. El default es la URL canónica de
+# FARO Web (README / PROJECT_INDEX "entrada principal"); Cloud Run también responde en el alias con
+# número de proyecto (faro-frontend-526490367142.us-central1.run.app) y `window.location.origin`
+# refleja el que el usuario abra, así que si el recorrido usará ese alias u otro origen, AÑÁDELO. Para
+# VARIOS orígenes son valores separados por coma; como --set-env-vars ya separa pares por coma, fíjalo
+# aparte con delimitador alterno (--update-env-vars="^|^FRONTEND_REDIRECT_URIS=https://a,https://b").
+FRONTEND_REDIRECT_URIS="${FRONTEND_REDIRECT_URIS:-https://faro-frontend-eanzfglvyq-uc.a.run.app}"
+
 # ANALISTA_EMAILS: allowlist del rol `analista` (US-403). DUEÑO: PO/Edgar (correo definido).
 # Se LEE del entorno y se pasa en --set-env-vars de abajo. NO se versiona ningún correo aquí
 # (dato personal -> Secrets_Policy.md). Vacío por defecto => todos `ciudadano`. Para desplegar
@@ -67,6 +79,7 @@ echo "   Service Account: ${SERVICE_ACCOUNT}"
 echo "   VPC Connector: ${VPC_CONNECTOR} (egress: ${VPC_EGRESS})"
 echo "   Cloud SQL: ${POSTGRES_USER}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
 echo "   OAuth Google: redirect=${GOOGLE_REDIRECT_URI} (client_secret desde Secret Manager)"
+echo "   Front redirect allowlist: ${FRONTEND_REDIRECT_URIS}"
 echo ""
 
 gcloud run deploy ${SERVICE_NAME} \
@@ -83,7 +96,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --min-instances=0 \
   --max-instances=10 \
   --timeout=300s \
-  --set-env-vars="ENVIRONMENT=production,POSTGRES_HOST=${POSTGRES_HOST},POSTGRES_PORT=${POSTGRES_PORT},POSTGRES_DB=${POSTGRES_DB},POSTGRES_USER=${POSTGRES_USER},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI},ANALISTA_EMAILS=${ANALISTA_EMAILS}" \
+  --set-env-vars="ENVIRONMENT=production,POSTGRES_HOST=${POSTGRES_HOST},POSTGRES_PORT=${POSTGRES_PORT},POSTGRES_DB=${POSTGRES_DB},POSTGRES_USER=${POSTGRES_USER},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI},FRONTEND_REDIRECT_URIS=${FRONTEND_REDIRECT_URIS},ANALISTA_EMAILS=${ANALISTA_EMAILS}" \
   --set-secrets="${SECRETS}"
 
 echo ""
