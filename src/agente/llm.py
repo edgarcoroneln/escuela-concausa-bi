@@ -134,22 +134,12 @@ def generar_sql_con_llm(
         "Genera una sola consulta SQL para responder la pregunta. "
         "Devuelve exclusivamente el campo sql.\n\nPregunta: " + pregunta
     )
-    try:
-        objeto = _solicitar_objeto(
-            prompt_sistema=prompt_sistema,
-            mensaje_usuario=mensaje_usuario,
-            formato=_FORMATO_SQL,
-            cliente=cliente,
-        )
-    except ErrorLLM:
-        # Una respuesta estructurada incompleta puede ser transitoria; un único reintento evita
-        # convertir una consulta válida en un error visible sin abrir un ciclo de costo ilimitado.
-        objeto = _solicitar_objeto(
-            prompt_sistema=prompt_sistema,
-            mensaje_usuario=mensaje_usuario,
-            formato=_FORMATO_SQL,
-            cliente=cliente,
-        )
+    objeto = _solicitar_objeto(
+        prompt_sistema=prompt_sistema,
+        mensaje_usuario=mensaje_usuario,
+        formato=_FORMATO_SQL,
+        cliente=cliente,
+    )
     sql = objeto.get("sql")
     if not isinstance(sql, str) or not sql.strip():
         raise ErrorLLM("El LLM no devolvio SQL valido.")
