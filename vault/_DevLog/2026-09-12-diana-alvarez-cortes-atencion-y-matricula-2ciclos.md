@@ -49,6 +49,22 @@ en `KpisOut` sin pedir un endpoint nuevo: `anterior = matricula_total / (1 + var
 ciclos (`matriculaPorCiclo`, que ya no se usa) por datos reales cuando el API responde, con
 `DemoBadge` condicional (antes se mostraba siempre, sin importar el modo).
 
+## Ajuste de revisión (PR #325, Edgar, 12-sep)
+
+Segunda vuelta de revisión de Edgar sobre este mismo PR: `useCortesAtencion()` devuelve
+`{ status, cortes, error }`, pero `ExpedienteEscuela.jsx` y `LosSieteCasos.jsx` solo desestructuraban
+`cortes` y lo trataban igual que "cargando" cuando no llegaba. Si `/version` fallaba (o respondía sin
+`cortes_atencion`), `ExpedienteEscuela` se quedaba pegado en "Cargando expediente..." para siempre
+(la condición era `status === "loading" || !cortes`, y `!cortes` nunca se volvía falso) y
+`LosSieteCasos` simplemente no dibujaba la grilla (`escuelas.length > 0 && cortes`) sin decir por
+qué. Corregido en ambos archivos: ahora se leen también `status` (como `cortesStatus`) y `error`
+(como `cortesError`) del hook, y se distinguen los 3 estados que pedía Edgar -- loading (indicador de
+carga), error o cortes ausentes (mensaje visible explicando que no se pudieron cargar los cortes de
+`/version`, sin bloquear el resto de la pantalla ya cargado) y ok/demo (render normal). Limpieza
+menor pedida en el mismo comentario: se quitó la variable `color` sin usar en `LosSieteCasos.jsx`
+(y el import de `riskRampColor` que solo esa variable consumía) y la línea en blanco sobrante al
+final de `vault/_DevLog/_index.md`.
+
 ## Pendiente (sin tocar en esta sesión)
 
 - **KPI cards de `VistaGeneral.jsx`** (`kpis` de `mock.js`) siguen sin conectar al API real y muestran

@@ -3,7 +3,7 @@ import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
 import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
-import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
+import { DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelasEnRiesgo } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
@@ -21,7 +21,11 @@ export default function LosSieteCasos() {
   const { status, data, error } = useApiResource(getEscuelasEnRiesgo, { mock: escuelasMock });
   // Cortes del nivel de atención desde /version (DEC-026, hallazgo de Diana
   // 12-sep) -- nivelRiesgo() ya no trae 0.50/0.30 fijos, ver data/mock.js.
-  const { cortes } = useCortesAtencion();
+  // CORRECCIÓN 12-sep (revisión de Edgar, PR #325): antes solo se leía
+  // `cortes` -- si /version fallaba, la grilla simplemente no aparecía
+  // (`escuelas.length > 0 && cortes`) sin decir por qué. Ahora se distingue
+  // loading / error (o cortes ausentes) / ok-demo.
+  const { status: cortesStatus, cortes, error: cortesError } = useCortesAtencion();
   const esReal = status === "ok";
   const escuelas = status === "ok" ? data : status === "demo" ? data : [];
 
@@ -52,10 +56,19 @@ export default function LosSieteCasos() {
         </p>
       )}
 
+      {(status === "ok" || status === "demo") && cortesStatus !== "loading" && !cortes && (
+        // Cortes ausentes: /version falló o no trajo cortes_atencion -- sin
+        // ellos no se puede calcular el nivel de atención de cada escuela
+        // (nivelRiesgo() los necesita), así que se avisa en vez de dejar la
+        // grilla vacía sin explicación.
+        <p className="text-sm" style={{ color: "var(--color-risk-high)" }}>
+          No fue posible cargar los cortes de atención desde /version{cortesStatus === "error" && cortesError ? ` (${cortesError})` : ""}. Intenta de nuevo más tarde.
+        </p>
+      )}
+
       {escuelas.length > 0 && cortes && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {escuelas.map((e, i) => {
-            const color = riskRampColor(e.indice_riesgo);
             const riesgo = nivelRiesgo(e.indice_riesgo, cortes);
             return (
               <Card key={e.cct} hover className="flex flex-col justify-between">

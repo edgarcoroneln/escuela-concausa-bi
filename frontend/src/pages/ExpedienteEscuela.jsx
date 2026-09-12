@@ -36,7 +36,12 @@ export default function ExpedienteEscuela() {
   });
   // Cortes del nivel de atención desde /version (DEC-026, hallazgo de Diana
   // 12-sep) -- nivelRiesgo() ya no trae 0.50/0.30 fijos, ver data/mock.js.
-  const { cortes } = useCortesAtencion();
+  // CORRECCIÓN 12-sep (revisión de Edgar, PR #325): antes solo se leía
+  // `cortes` y se trataba igual que "cargando" si nunca llegaba -- si
+  // /version fallaba, la pantalla se quedaba pegada en "Cargando
+  // expediente..." para siempre en vez de avisar. Ahora se distingue
+  // loading / error (o cortes ausentes) / ok-demo, como pide el checklist.
+  const { status: cortesStatus, cortes, error: cortesError } = useCortesAtencion();
 
   const tienePrediccion = data?.tiene_prediccion ?? false;
   const escuelaMock = escuelasMock.find((e) => e.cct === cct) ?? null;
@@ -61,7 +66,7 @@ export default function ExpedienteEscuela() {
     { mock: prediccionMock, deps: [cct, tienePrediccion] }
   );
 
-  if (status === "loading" || !cortes) {
+  if (status === "loading" || cortesStatus === "loading") {
     return (
       <PageContainer>
         <p className="text-sm" style={{ color: "var(--color-ink-faint)" }}>Cargando expediente…</p>
@@ -75,6 +80,25 @@ export default function ExpedienteEscuela() {
         <Card title="No encontrado">
           <p className="text-sm mb-3">
             {status === "error" ? `No se pudo cargar el CCT ${cct} (${error}).` : `No hay datos para el CCT ${cct}.`}
+          </p>
+          <Link to="/casos" className="text-sm font-semibold" style={{ color: "var(--color-primary)" }}>
+            ← Volver a los 7 casos
+          </Link>
+        </Card>
+      </PageContainer>
+    );
+  }
+
+  // Cortes ausentes: /version respondió pero sin cortes_atencion, o falló
+  // directamente. Sin cortes no se puede calcular el nivel de atención
+  // (nivelRiesgo() los necesita) -- se avisa explícito en vez de renderizar
+  // con un valor inventado o quedarse en el estado de carga.
+  if (!cortes) {
+    return (
+      <PageContainer>
+        <Card title="No se pudo calcular el nivel de atención">
+          <p className="text-sm mb-3">
+            No fue posible cargar los cortes de atención desde /version{cortesStatus === "error" && cortesError ? ` (${cortesError})` : ""}. Intenta de nuevo más tarde.
           </p>
           <Link to="/casos" className="text-sm font-semibold" style={{ color: "var(--color-primary)" }}>
             ← Volver a los 7 casos
