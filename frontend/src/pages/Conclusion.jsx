@@ -4,13 +4,64 @@ import PageHeader from "../components/PageHeader.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
 import Card from "../components/Card.jsx";
 import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
-import { driverIcons, driverNombres, recomendacionGeneralPorDriver } from "../data/mock.js";
+import DifferentiatorChart from "../components/DifferentiatorChart.jsx";
+import { driverIcons, driverNombres, recomendacionGeneralPorDriver, parDiferenciador } from "../data/mock.js";
 import { riskRampColor } from "../lib/riskRamp.js";
-import { getConclusionEscuelas } from "../lib/api.js";
+import { getConclusionEscuelas, getEscuela, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { panoramaMock } from "../data/mock.js";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
+
+// "El diferenciador", rescatado de VistaGeneral.jsx antes de retirar esa
+// pantalla (12-sep, decisión de arquitectura de Marina García del Buey:
+// "Vista general se retira, pero hay que rescatar esto primero" -- ver
+// vault/_DevLog/2026-09-12-diana-alvarez-retiro-heredadas-diferenciador.md).
+// Conectado al API real desde el 11-sep (revisión de Edgar, PR #302). El
+// par lo eligió Marina el 6-sep sobre el Gold rematerializado tras
+// DEC-019 (Guion_Demo_US006, bloque "El diferenciador"): dos CCTs reales
+// con el mismo índice de riesgo pero distinto driver dominante y distinta
+// recomendación -- la tesis del bloque es aislar esa única variable, así
+// que el par queda fijo aquí en vez de elegirse dinámicamente. Es la
+// prueba concreta de la tesis del proyecto (CLAUDE.md: "dos escuelas con
+// el mismo riesgo reciben recomendaciones distintas según el driver
+// dominante"), y va aquí -- no en Panorama -- porque es la evidencia de
+// cierre de la conclusión, no el enunciado de apertura de la
+// investigación.
+//
+// "ubicacion" (municipio/entidad) NO está en el contrato del API
+// (EscuelaOut/EscuelaDetalleOut solo traen cve_mun, sin nombre -- mismo
+// gap documentado arriba), así que queda como texto fijo conocido de este
+// par específico, no como un dato que el API resuelva.
+const PAR_DIFERENCIADOR = [
+  { cct: "15DPR0920D", ubicacion: "Ecatepec de Morelos, Estado de México" },
+  { cct: "15DPR2254O", ubicacion: "Ecatepec de Morelos, Estado de México" },
+];
+
+async function fetchEscuelaDelPar({ cct, ubicacion }) {
+  const [escuelaRes, prediccionRes] = await Promise.all([getEscuela(cct), getPrediccion(cct)]);
+  if (escuelaRes.error) return { error: escuelaRes.error };
+  if (prediccionRes.error) return { error: prediccionRes.error };
+  const escuela = escuelaRes.data;
+  const prediccion = prediccionRes.data;
+  return {
+    data: {
+      nombre: escuela.nombre,
+      cct: escuela.cct,
+      ubicacion,
+      indiceRiesgo: prediccion.indice_riesgo,
+      driver: prediccion.driver_dominante,
+      driverNombre: driverNombres[prediccion.driver_dominante] ?? prediccion.driver_dominante,
+      recomendacion: prediccion.recomendacion,
+    },
+  };
+}
+
+async function getParDiferenciadorReal() {
+  const [a, b] = await Promise.all(PAR_DIFERENCIADOR.map(fetchEscuelaDelPar));
+  if (a.error || b.error) return { data: null, error: a.error ?? b.error };
+  return { data: { a: a.data, b: b.data }, error: null };
+}
 
 // Pantalla 5 -- Conclusión Top 3 (rediseño Fase 2, US-641), nueva por
 // completo. Contra 01_UX_Architecture.md §2 "Pantalla 5" y
@@ -30,6 +81,11 @@ const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 // props ni lee un estado de filtros de otra pantalla.
 export default function Conclusion() {
   const { status, data } = useApiResource(getConclusionEscuelas, { mock: panoramaMock });
+  const {
+    status: parStatus,
+    data: par,
+    error: parError,
+  } = useApiResource(() => getParDiferenciadorReal(), { mock: parDiferenciador, deps: [] });
   const escuelas = status === "ok" || status === "demo" ? data : [];
   const n = escuelas.length;
   const esReal = status === "ok";
@@ -56,13 +112,11 @@ export default function Conclusion() {
   );
 
   // Concentración por municipio (§2: "concentración por municipio"). Nombre
-  // real del municipio desde el 12-sep -- mismo campo que ya usan
-  // MapaCasos.jsx/ComparacionTerritorial.jsx (checklist "Municipio y
-  // entidad por nombre real", US-621/BUG-077): antes se pintaba cve_mun
-  // crudo porque, al escribirse esta pantalla, nadie había probado GET
-  // /municipios/{cve_mun} desde ninguna parte. En modo demo (sin cve_mun,
-  // ver data/mock.js) se agrupa por el nombre de municipio que ya trae el
-  // mock, mismo patrón esReal ya usado en ComparacionTerritorial.jsx.
+  // real del municipio desde el 12-sep (checklist "Municipio y entidad por
+  // nombre real", US-621/BUG-077): antes se pintaba cve_mun crudo porque,
+  // al escribirse esta pantalla, nadie había probado GET /municipios/{cve_mun}
+  // desde ninguna parte. En modo demo (sin cve_mun, ver data/mock.js) se
+  // agrupa por el nombre de municipio que ya trae el mock.
   const porMunicipio = {};
   for (const e of escuelas) {
     const clave = esReal ? e.cve_mun : e.municipio;
@@ -152,6 +206,27 @@ export default function Conclusion() {
                 ))}
               </div>
             </Card>
+          )}
+
+          {parStatus === "loading" ? (
+            <Card title="El diferenciador">
+              <p className="text-sm py-6" style={{ color: "var(--color-ink-faint)" }}>Cargando el par de demostración…</p>
+            </Card>
+          ) : parStatus === "error" ? (
+            <Card title="El diferenciador">
+              <p className="text-sm py-6" style={{ color: "var(--color-risk-high)" }}>
+                No se pudo cargar el par de demostración ({parError}).
+              </p>
+            </Card>
+          ) : (
+            <div>
+              {parStatus === "demo" && (
+                <div className="mb-2">
+                  <DemoBadge />
+                </div>
+              )}
+              <DifferentiatorChart data={par} />
+            </div>
           )}
 
           {/* Nota obligatoria literal (01_UX_Architecture.md §2, Pantalla 5). */}

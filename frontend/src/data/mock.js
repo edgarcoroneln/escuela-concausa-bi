@@ -12,10 +12,9 @@ export const kpis = [
 
 // Fix 12-sep (Christian): /series no existe y nunca existio -- se descarto
 // en US-411, y fact_escuela_ciclo solo materializa 2 ciclos (no hay
-// tendencia real de 3+ puntos que graficar). VistaGeneral.jsx ya no pide
-// esta lista: deriva los 2 puntos de KpisOut real (matricula_total +
-// variacion_matricula, ver matriculaComparacion2Ciclos alla). Este mock
-// queda con la forma cruda de KpisOut (no de {ciclo, matricula}) solo para
+// tendencia real de 3+ puntos que graficar). Panorama.jsx no pide esta
+// lista: deriva la variacion de KpisOut real (matricula_total +
+// variacion_matricula). Este mock queda con la forma cruda de KpisOut para
 // alimentar esa misma derivacion en modo demo -- valores consistentes con
 // los 2 ultimos puntos que este archivo ya traia (2023-2024 -> 2024-2025).
 export const kpisMockParaComparacion2Ciclos = {

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FASES, EXPLORACION, HEREDADAS } from "../lib/navFases.js";
+import { FASES, EXPLORACION } from "../lib/navFases.js";
 
 // Barra lateral persistente (Fase 2 del rediseño, US-641) -- reemplaza el
 // nav plano de Topbar.jsx por la navegacion de rail izquierdo que traen las
@@ -10,9 +10,12 @@ import { FASES, EXPLORACION, HEREDADAS } from "../lib/navFases.js";
 // un prototipo -- confirmado comparando el HTML de las 6 plantillas.
 //
 // Mapeo de fases a rutas (US-641, "pantalla por pantalla" con Diana) --
-// ver lib/navFases.js para la tabla completa y su justificacion.
-// Las 5 vistas heredadas que TODAVIA no caen dentro de una de las 6 fases se listan aparte, sin
-// esconderlas, para no dejar a nadie del equipo sin acceso mientras se migra pantalla por pantalla.
+// ver lib/navFases.js para la tabla completa y su justificacion. Las 6
+// vistas heredadas de Fase 1 que vivian aqui aparte (vista general, mapa,
+// drivers, comparacion territorial, comparativa, hallazgos) se retiraron
+// el 12-sep -- decision de arquitectura de Marina Garcia del Buey: la
+// version final del producto son estas 7 pantallas, sin una seccion
+// secundaria de vistas duplicadas.
 //
 // Colapso en movil (12-sep, pendiente documentado en el DevLog de la Fase 2 shell/Pantalla 1):
 // bajo el breakpoint Mobile de Design_Tokens_Stitch.md (< 768px, coincide con el `md` de Tailwind),
@@ -138,15 +141,6 @@ export default function Sidebar({ session }) {
         <nav className="flex flex-col gap-0.5 px-2 mb-2">
           {EXPLORACION.map((f) => (
             <NavItem key={f.n} {...f} />
-          ))}
-        </nav>
-
-        <div className="mx-4 my-2" style={{ borderTop: "1px solid var(--faro-hairline)" }} />
-
-        <SectionLabel>Vistas heredadas</SectionLabel>
-        <nav className="flex flex-col gap-0.5 px-2 mb-4">
-          {HEREDADAS.map((f) => (
-            <NavItem key={f.label} {...f} />
           ))}
         </nav>
       </div>

@@ -13,19 +13,16 @@ export const EXPLORACION = [
   { n: "06", label: "Explorador de escuelas", to: "/explorador" },
 ];
 
-export const HEREDADAS = [
-  { label: "Vista general", to: "/vista-general" },
-  { label: "Mapa", to: "/mapa" },
-  { label: "Matriz de drivers", to: "/drivers" },
-  { label: "Comparación territorial", to: "/comparacion-territorial" },
-  { label: "Comparativa", to: "/comparativa" },
-  { label: "Hallazgos", to: "/hallazgos" },
-];
-
+// Las 6 vistas "heredadas" de Fase 1 (vista-general, mapa, drivers,
+// comparacion-territorial, comparativa, hallazgos) se retiraron el 12-sep
+// (decisión de arquitectura de Marina García del Buey): la arquitectura
+// final del producto son estas 7 pantallas, sin una sección secundaria de
+// vistas duplicadas.
+//
 // Ruta -> etiqueta de pantalla, para el breadcrumb del Header. La entrada
 // dinamica "/escuela/:cct" se resuelve aparte (Header.jsx) porque lleva un
 // parametro.
-const TODAS = [...FASES, ...EXPLORACION, ...HEREDADAS];
+const TODAS = [...FASES, ...EXPLORACION];
 
 export function tituloDeRuta(pathname) {
   if (pathname.startsWith("/escuela/")) return "Expediente";

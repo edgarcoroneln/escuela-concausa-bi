@@ -8,19 +8,18 @@ import Panorama from "./pages/Panorama.jsx";
 import LosSieteCasos from "./pages/LosSieteCasos.jsx";
 import Conclusion from "./pages/Conclusion.jsx";
 import Explorador from "./pages/Explorador.jsx";
-import VistaGeneral from "./pages/VistaGeneral.jsx";
-import Comparativa from "./pages/Comparativa.jsx";
-import MapaCasos from "./pages/MapaCasos.jsx";
-import MatrizDrivers from "./pages/MatrizDrivers.jsx";
 import ExpedienteEscuela from "./pages/ExpedienteEscuela.jsx";
-import ComparacionTerritorial from "./pages/ComparacionTerritorial.jsx";
-import Hallazgos from "./pages/Hallazgos.jsx";
 import Login from "./pages/Login.jsx";
 
-// Rutas = las 9 pantallas del storytelling de "los 7 casos" (mockup de
-// UX/UI). Cada página es su propio archivo en src/pages/ para que el
-// contenido se pueda ir llenando una por una sin tocar el layout ni el
-// router. Ver vault/08_CICD_DevOps/Arquitectura_Frontend_React.md.
+// Rutas = las 7 pantallas del rediseño Fase 2 (US-641) contra las 7
+// plantillas de UX/UI de Equipo 3, más /explorador. Las 6 vistas
+// "heredadas" de Fase 1 (vista-general, mapa, drivers, comparacion-
+// territorial, comparativa, hallazgos) se retiraron el 12-sep (decisión
+// de arquitectura de Marina García del Buey, ver vault/_DevLog/2026-09-12-
+// diana-alvarez-retiro-heredadas-diferenciador.md): la arquitectura final
+// son 7 pantallas, no 7 + una sección secundaria de vistas duplicadas.
+// Cada página es su propio archivo en src/pages/. Ver
+// vault/08_CICD_DevOps/Arquitectura_Frontend_React.md.
 const router = createBrowserRouter([
   // Ruta de solo vista previa (12-sep, a pedido de Diana): Login.jsx ya se
   // muestra automáticamente sin sesión (ver App.jsx), pero eso queda oculto
@@ -39,12 +38,6 @@ const router = createBrowserRouter([
       { path: "escuela/:cct", element: <ExpedienteEscuela /> },
       { path: "conclusion", element: <Conclusion /> },
       { path: "explorador", element: <Explorador /> },
-      { path: "vista-general", element: <VistaGeneral /> },
-      { path: "comparativa", element: <Comparativa /> },
-      { path: "mapa", element: <MapaCasos /> },
-      { path: "drivers", element: <MatrizDrivers /> },
-      { path: "comparacion-territorial", element: <ComparacionTerritorial /> },
-      { path: "hallazgos", element: <Hallazgos /> },
     ],
   },
 ]);

@@ -89,8 +89,8 @@ export default function DriverMatrix({ data = [], onSelect, atenuarCct }) {
     headers.each(function (d) {
       // Icono del driver (checklist 12-sep, ítem accionable sin dependencia
       // de API) -- mismo emoji que ya se usa en la insignia de driver
-      // dominante (LosSieteCasos.jsx/MapaCasos.jsx) y en DriverBars.jsx, solo
-      // que aquí identifica la COLUMNA completa, no una escuela.
+      // dominante (LosSieteCasos.jsx) y en DriverBars.jsx, solo que aquí
+      // identifica la COLUMNA completa, no una escuela.
       d3.select(this)
         .append("text")
         .attr("text-anchor", "middle")
