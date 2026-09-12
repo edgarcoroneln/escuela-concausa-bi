@@ -60,8 +60,9 @@ def test_pregunta_fuera_de_alcance_no_invoca_dependencias() -> None:
         redactar_respuesta=no_debe_llamarse,
     )
 
-    assert resultado.fuera_de_alcance
+    assert not resultado.fuera_de_alcance
     assert resultado.sql_generado is None
+    assert "No encontré contexto" in resultado.respuesta
 
 
 def test_pregunta_sin_vocabulario_exacto_pasa_por_respaldo_semantico() -> None:
