@@ -6,7 +6,7 @@ import Card from "../components/Card.jsx";
 import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
 import { driverIcons, driverNombres, recomendacionGeneralPorDriver } from "../data/mock.js";
 import { riskRampColor } from "../lib/riskRamp.js";
-import { getPanoramaEscuelas } from "../lib/api.js";
+import { getConclusionEscuelas } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { panoramaMock } from "../data/mock.js";
 
@@ -29,9 +29,10 @@ const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 // pantalla -- por eso llama a getPanoramaEscuelas() de cero, no recibe
 // props ni lee un estado de filtros de otra pantalla.
 export default function Conclusion() {
-  const { status, data } = useApiResource(getPanoramaEscuelas, { mock: panoramaMock });
+  const { status, data } = useApiResource(getConclusionEscuelas, { mock: panoramaMock });
   const escuelas = status === "ok" || status === "demo" ? data : [];
   const n = escuelas.length;
+  const esReal = status === "ok";
 
   // Top 3 (o menos -- Marina, PR #308/§8.3: "no rellenar hasta tres" si de
   // verdad solo dominan uno o dos) de driver_dominante sobre el conjunto
@@ -54,17 +55,24 @@ export default function Conclusion() {
     (code) => escuelas.length > 0 && escuelas.every((e) => e[code.toLowerCase()] == null)
   );
 
-  // Concentración por municipio (§2: "concentración por municipio"). El
-  // contrato no trae el nombre del municipio, solo cve_mun (mismo gap que
-  // el resto del producto, Arquitectura_Frontend_React.md §9) -- se
-  // muestra el código, no se inventa un nombre.
+  // Concentración por municipio (§2: "concentración por municipio"). Nombre
+  // real del municipio desde el 12-sep -- mismo campo que ya usan
+  // MapaCasos.jsx/ComparacionTerritorial.jsx (checklist "Municipio y
+  // entidad por nombre real", US-621/BUG-077): antes se pintaba cve_mun
+  // crudo porque, al escribirse esta pantalla, nadie había probado GET
+  // /municipios/{cve_mun} desde ninguna parte. En modo demo (sin cve_mun,
+  // ver data/mock.js) se agrupa por el nombre de municipio que ya trae el
+  // mock, mismo patrón esReal ya usado en ComparacionTerritorial.jsx.
   const porMunicipio = {};
   for (const e of escuelas) {
-    if (!e.cve_mun) continue;
-    porMunicipio[e.cve_mun] = (porMunicipio[e.cve_mun] ?? 0) + 1;
+    const clave = esReal ? e.cve_mun : e.municipio;
+    const etiqueta = esReal ? e.nombre_municipio : e.municipio;
+    if (!clave || !etiqueta) continue;
+    if (!porMunicipio[clave]) porMunicipio[clave] = { etiqueta, count: 0 };
+    porMunicipio[clave].count += 1;
   }
   const municipios = Object.entries(porMunicipio)
-    .map(([cve, count]) => ({ cve, count }))
+    .map(([clave, { etiqueta, count }]) => ({ clave, etiqueta, count }))
     .sort((a, b) => b.count - a.count);
 
   return (
@@ -131,15 +139,15 @@ export default function Conclusion() {
           </Card>
 
           {municipios.length > 0 && (
-            <Card title="Concentración por municipio" subtitle="cve_mun -- el contrato aún no expone el nombre del municipio.">
+            <Card title="Concentración por municipio" subtitle="Municipio real de cada escuela en riesgo del conjunto completo.">
               <div className="flex flex-wrap gap-2">
                 {municipios.map((m) => (
                   <span
-                    key={m.cve}
+                    key={m.clave}
                     className="text-xs font-semibold px-3 py-1.5 rounded-full"
                     style={{ background: "var(--color-surface-alt, #f4f4f5)", color: "var(--color-ink)" }}
                   >
-                    Municipio {m.cve} · {m.count} {m.count === 1 ? "escuela" : "escuelas"}
+                    {m.etiqueta} · {m.count} {m.count === 1 ? "escuela" : "escuelas"}
                   </span>
                 ))}
               </div>

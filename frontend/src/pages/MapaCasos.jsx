@@ -50,7 +50,7 @@ export default function MapaCasos() {
     <PageContainer>
       <PageHeader
         title="¿Dónde están ocurriendo los casos?"
-        subtitle="Explora la ubicación de las 7 escuelas y su contexto territorial."
+        subtitle="Explora la ubicación de las escuelas en riesgo y su contexto territorial."
       />
       {status === "demo" && <div className="mt-2"><DemoBadge /></div>}
 
@@ -136,7 +136,7 @@ export default function MapaCasos() {
             </Card>
           </div>
 
-          <Card title="Las 7 escuelas y su nivel de riesgo, en texto">
+          <Card title="Las escuelas y su nivel de riesgo, en texto">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

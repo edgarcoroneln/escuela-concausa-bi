@@ -78,7 +78,7 @@ export default function ExpedienteEscuela() {
             {status === "error" ? `No se pudo cargar el CCT ${cct} (${error}).` : `No hay datos para el CCT ${cct}.`}
           </p>
           <Link to="/casos" className="text-sm font-semibold" style={{ color: "var(--color-primary)" }}>
-            ← Volver a los 7 casos
+            ← Volver a los casos
           </Link>
         </Card>
       </PageContainer>

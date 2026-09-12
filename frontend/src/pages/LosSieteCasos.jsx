@@ -31,9 +31,11 @@ export default function LosSieteCasos() {
     <PageContainer>
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>Nuestros 7 casos</h1>
+          <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>Los casos que requieren atención</h1>
           <p className="text-sm mt-1" style={{ color: "var(--color-ink-faint)" }}>
-            Siete escuelas presentan una señal de riesgo. Cada una cuenta una historia distinta.
+            {escuelas.length > 0
+              ? `${escuelas.length} escuelas presentan una señal de riesgo. Cada una cuenta una historia distinta.`
+              : "Estas escuelas presentan una señal de riesgo. Cada una cuenta una historia distinta."}
           </p>
           {status === "demo" && <div className="mt-2"><DemoBadge /></div>}
         </div>

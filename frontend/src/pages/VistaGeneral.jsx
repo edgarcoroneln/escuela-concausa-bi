@@ -95,7 +95,7 @@ export default function VistaGeneral() {
 
   return (
     <PageContainer>
-      <PageHeader title="Panorama general" subtitle="Una visión rápida de la situación de las 7 escuelas en riesgo." />
+      <PageHeader title="Panorama general" subtitle="Una visión rápida de la situación de las escuelas en riesgo." />
 
       <div>
         <div className="mb-2">
@@ -133,7 +133,7 @@ export default function VistaGeneral() {
         <div className="mb-2">
           <DemoBadge />
         </div>
-        <MapaRiesgoCard subtitle="Ubicación de las 7 escuelas" data={escuelasEnRiesgo} />
+        <MapaRiesgoCard subtitle="Ubicación de las escuelas en riesgo" data={escuelasEnRiesgo} />
       </div>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">

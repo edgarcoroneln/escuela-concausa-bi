@@ -171,6 +171,26 @@ export const getComparacionTerritorial = async () => {
   return { data: escuelas, error: null };
 };
 
+// Pantalla 5 (Conclusión, "Concentración por municipio"): al escribirse
+// esta tarjeta pintaba cve_mun crudo porque, en ese momento, el contrato no
+// declaraba el nombre -- MunicipioOut ya trae nombre_municipio desde el
+// 11-sep (US-621), el mismo campo que MapaCasos.jsx/ComparacionTerritorial.jsx
+// ya usan (checklist 12-sep, "Municipio y entidad por nombre real";
+// confirmado real por BUG-077, 317/317 municipios con nombre poblado).
+// Compone getPanoramaEscuelas() + getMunicipiosPorClaves(), mismo patrón que
+// getComparacionTerritorial() arriba -- una llamada por municipio ÚNICO.
+export const getConclusionEscuelas = async () => {
+  const base = await getPanoramaEscuelas();
+  if (base.error) return { data: null, error: base.error };
+  const municipios = await getMunicipiosPorClaves(base.data.map((e) => e.cve_mun));
+  if (municipios.error) return { data: null, error: municipios.error };
+  const escuelas = base.data.map((e) => ({
+    ...e,
+    nombre_municipio: municipios.data[e.cve_mun]?.nombre_municipio ?? null,
+  }));
+  return { data: escuelas, error: null };
+};
+
 // --- Predicciones / ML ---
 export const getPrediccion = (cct) => request(`/api/v1/predicciones/${cct}`);
 export const getPrediccionExplicacion = (cct) =>

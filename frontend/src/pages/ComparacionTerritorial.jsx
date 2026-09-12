@@ -53,7 +53,7 @@ export default function ComparacionTerritorial() {
           className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
           style={{ background: "var(--color-surface-alt, #f4f4f5)", color: "var(--color-ink)" }}
         >
-          ← Volver a los 7 casos
+          ← Volver a los casos
         </Link>
       </div>
 
@@ -81,8 +81,8 @@ export default function ComparacionTerritorial() {
             title="Municipios con más de un caso"
             subtitle={
               municipiosCompartidos.length > 0
-                ? "Estos municipios concentran más de una de las 7 escuelas en riesgo -- no es un patrón aislado."
-                : "Ninguno de los 7 casos comparte municipio con otro -- cada escuela está en un municipio distinto."
+                ? "Estos municipios concentran más de una de las escuelas en riesgo -- no es un patrón aislado."
+                : "Ninguno de los casos comparte municipio con otro -- cada escuela está en un municipio distinto."
             }
           >
             {municipiosCompartidos.length > 0 && (
@@ -103,7 +103,7 @@ export default function ComparacionTerritorial() {
             )}
           </Card>
 
-          <Card title="Las 7 escuelas por municipio y nivel">
+          <Card title="Las escuelas por municipio y nivel">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
