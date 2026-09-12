@@ -34,7 +34,10 @@ router = APIRouter(tags=["Gold"])
 # `Literal` para que un `order_by` fuera de la whitelist responda 422 por validación de Pydantic
 # -- nunca llega a construir SQL (Decisión 3 de US-411, avisada a C2/C3, ver API_Specification.md).
 OrdenEscuela = Literal["cct", "nombre", "matricula_total", "indice_riesgo"]
-OrdenMunicipio = Literal["cve_mun", "nombre_municipio", "poblacion", "indice_rezago_social", "pobreza_pct"]
+OrdenMunicipio = Literal[
+    "cve_mun", "nombre_municipio", "cve_ent", "nombre_entidad", "poblacion",
+    "indice_rezago_social", "pobreza_pct",
+]
 Direccion = Literal["asc", "desc"]
 
 

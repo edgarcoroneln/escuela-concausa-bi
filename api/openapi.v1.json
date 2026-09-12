@@ -332,6 +332,28 @@
             ],
             "title": "Indice Riesgo"
           },
+          "latitud": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitud"
+          },
+          "longitud": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitud"
+          },
           "matricula_total": {
             "minimum": 0.0,
             "title": "Matricula Total",
@@ -516,6 +538,12 @@
       },
       "MunicipioOut": {
         "properties": {
+          "cve_ent": {
+            "maxLength": 2,
+            "minLength": 2,
+            "title": "Cve Ent",
+            "type": "string"
+          },
           "cve_mun": {
             "maxLength": 5,
             "minLength": 5,
@@ -532,6 +560,10 @@
               }
             ],
             "title": "Indice Rezago Social"
+          },
+          "nombre_entidad": {
+            "title": "Nombre Entidad",
+            "type": "string"
           },
           "nombre_municipio": {
             "title": "Nombre Municipio",
@@ -563,7 +595,9 @@
         },
         "required": [
           "cve_mun",
-          "nombre_municipio"
+          "nombre_municipio",
+          "cve_ent",
+          "nombre_entidad"
         ],
         "title": "MunicipioOut",
         "type": "object"
@@ -767,6 +801,17 @@
           "mlflow_run_id": {
             "title": "Mlflow Run Id",
             "type": "string"
+          },
+          "prioridad": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prioridad"
           },
           "recomendacion": {
             "title": "Recomendacion",
@@ -1849,6 +1894,8 @@
                   "enum": [
                     "cve_mun",
                     "nombre_municipio",
+                    "cve_ent",
+                    "nombre_entidad",
                     "poblacion",
                     "indice_rezago_social",
                     "pobreza_pct"
