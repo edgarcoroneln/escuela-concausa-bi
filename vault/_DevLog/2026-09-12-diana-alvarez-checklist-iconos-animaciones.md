@@ -38,16 +38,17 @@ este commit, en el mismo orden en que se atacaron (más rápido/aislado primero)
    abajo, no todas de golpe. También respeta `prefers-reduced-motion` (la animación se desactiva
    por completo).
 
-## Qué queda pendiente del mismo bloque
+## Actualización -- botón "Comparar los 7 casos" resuelto
 
-El único ítem restante de "ya accionable por Equipo 5" es el botón "Comparar los 7 casos"
-(`LosSieteCasos.jsx`, sin `onClick`). No se tocó en este commit porque, a diferencia de los 4
-anteriores, no es solo una implementación: el propio checklist dice literal "revisar y, si de
-verdad no lleva a ningún lado, **quitar o conectar**" -- hoy no existe ninguna vista de
-"comparación de los 7" construida en ninguna parte del repo, y la propia cuadrícula de tarjetas
-de esa pantalla ya funciona como superficie comparativa (gauge + driver dominante por escuela,
-lado a lado). Es una decisión de producto (quitar vs. construir destino nuevo), pendiente de que
-Diana la resuelva antes de tocar código.
+Diana decidió (vía pregunta directa, mismo día): **quitar el botón**. No tenía `onClick` ni
+destino, no existe ninguna vista de "comparación de los 7" construida en ninguna parte del repo,
+y la propia cuadrícula de tarjetas de `LosSieteCasos.jsx` (gauge + driver dominante por escuela,
+lado a lado) ya cumple ese rol comparativo -- el botón era un cabo suelto del mockup original sin
+destino real. Se retira el `<button>` de `LosSieteCasos.jsx`, dejando solo el link "← Volver al
+panorama"; comentario en el propio JSX documentando la decisión y su fecha. Con esto se cierran
+los 4 ítems de "ya accionable por Equipo 5, sin depender de nadie más" del checklist -- lo que
+queda pendiente en ese documento son los 5 ítems que sí necesitan respuesta de otra persona del
+equipo (Christian, Edgar, Estefany/Héctor, Marina, Oscar).
 
 ## Verificación
 

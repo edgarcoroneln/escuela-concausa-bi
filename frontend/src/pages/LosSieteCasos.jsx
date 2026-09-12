@@ -37,6 +37,11 @@ export default function LosSieteCasos() {
           </p>
           {status === "demo" && <div className="mt-2"><DemoBadge /></div>}
         </div>
+        {/* Boton "Comparar los 7 casos" retirado (checklist 12-sep, decision de
+            Diana Alvarez): no tenia onClick ni destino -- ninguna vista de
+            comparacion dedicada existe en el repo, y esta misma cuadricula de
+            tarjetas (gauge + driver dominante por escuela, lado a lado) ya
+            cumple ese rol comparativo. */}
         <div className="flex items-center gap-2">
           <Link
             to="/panorama"
@@ -45,12 +50,6 @@ export default function LosSieteCasos() {
           >
             ← Volver al panorama
           </Link>
-          <button
-            className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
-            style={{ background: "var(--color-header)", color: "#fff" }}
-          >
-            Comparar los 7 casos
-          </button>
         </div>
       </div>
 
