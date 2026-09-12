@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 import Home from "./pages/Home.jsx";
+import Panorama from "./pages/Panorama.jsx";
 import LosSieteCasos from "./pages/LosSieteCasos.jsx";
 import VistaGeneral from "./pages/VistaGeneral.jsx";
 import Comparativa from "./pages/Comparativa.jsx";
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <Home /> },
+      { path: "panorama", element: <Panorama /> },
       { path: "casos", element: <LosSieteCasos /> },
       { path: "escuela/:cct", element: <ExpedienteEscuela /> },
       { path: "vista-general", element: <VistaGeneral /> },

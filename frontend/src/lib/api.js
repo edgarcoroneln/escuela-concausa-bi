@@ -111,6 +111,24 @@ export const getEscuelasEnRiesgo = async (size = 50) => {
   );
   return { data: enRiesgo.slice(0, kpisRes.data.escuelas_en_riesgo), error: null };
 };
+
+// Pantalla 2 (Panorama, US-641): la matriz de drivers necesita d1..d6 de
+// cada escuela en riesgo, y esos campos SOLO vienen en EscuelaDetalleOut
+// (GET /escuelas/{cct}, uno a la vez) -- el listado de arriba no los trae.
+// Esto es exactamente el costo que 01_UX_Architecture.md §8 documenta como
+// esperado para revelar el panorama ("2 del conjunto + 1 por escuela"), no
+// un problema a resolver -- mismo gap que dejó pages/MatrizDrivers.jsx sin
+// conectar (revisión de Edgar, PR #302), ahora aceptado explícitamente por
+// el spec de UX/UI.
+export const getPanoramaEscuelas = async () => {
+  const base = await getEscuelasEnRiesgo();
+  if (base.error) return { data: null, error: base.error };
+  const detalles = await Promise.all(base.data.map((e) => getEscuela(e.cct)));
+  const fallo = detalles.find((d) => d.error);
+  if (fallo) return { data: null, error: fallo.error };
+  return { data: base.data.map((e, i) => ({ ...e, ...detalles[i].data })), error: null };
+};
+
 export const getMunicipios = (params = {}) =>
   request(`/api/v1/municipios?${new URLSearchParams(params)}`);
 export const getMunicipio = (cveMun) => request(`/api/v1/municipios/${cveMun}`);

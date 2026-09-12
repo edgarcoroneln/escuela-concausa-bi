@@ -93,7 +93,7 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center gap-4 mt-8">
             <Link
-              to="/vista-general"
+              to="/panorama"
               className="inline-block text-sm font-semibold px-5 py-3 rounded-full"
               style={{ background: "var(--color-primary)", color: "#ffffff" }}
             >

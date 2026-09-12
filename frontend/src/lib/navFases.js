@@ -3,7 +3,7 @@
 // comentario largo en Sidebar.jsx para el porque de cada mapeo interino.
 export const FASES = [
   { n: "01", label: "Entrada", to: "/", end: true },
-  { n: "02", label: "Panorama de riesgo", to: "/vista-general" },
+  { n: "02", label: "Panorama de riesgo", to: "/panorama" },
   { n: "03", label: "Selección de caso", to: "/casos" },
   { n: "04", label: "Expediente", disabledHint: "Elige un caso en Selección de caso" },
   { n: "05", label: "Conclusión Top 3", disabledHint: "Pantalla nueva, todavía no construida" },
@@ -14,6 +14,7 @@ export const EXPLORACION = [
 ];
 
 export const HEREDADAS = [
+  { label: "Vista general", to: "/vista-general" },
   { label: "Mapa", to: "/mapa" },
   { label: "Matriz de drivers", to: "/drivers" },
   { label: "Comparación territorial", to: "/comparacion-territorial" },
