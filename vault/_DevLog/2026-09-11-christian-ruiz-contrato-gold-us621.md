@@ -5,7 +5,7 @@ author_human: "Christian Imanol Ruiz Hurtado"
 agent: "Claude Code"
 model: "claude-opus-5"
 session_duration: "1 sesión — tres huecos del contrato de lectura que bloqueaban al frontend de React"
-touches: ["US-621", "US-411", "US-412", "REQ-004", "DEC-019", "BUG-063"]
+touches: ["US-621", "US-411", "US-412", "US-305", "REQ-004", "DEC-019", "BUG-063"]
 tags: [devlog, api, contrato, gold, frontend, react]
 ---
 
@@ -57,12 +57,41 @@ Es `StrictStr | None` y no un `Literal`: el valor lo escribe C3, y uno inesperad
 y verse**, no reventar la lectura con un 500. Sin fila de recomendación viaja `None`, mismo criterio
 `SIN_DATO` que `cluster`.
 
+## Fase 4 del chat: la degradación deja de decir una sola cosa
+
+Karla Monter empezó esta parte en su rama y choca con la ruta ya mergeada, así que Andrés pidió
+conservar **solo** lo que no está en `main`. La mitad que vive en `src/api/v1/agente.py` es nuestra y
+entra aquí; la de `src/agente/servicio.py` sigue siendo de ella.
+
+Antes, todo fallo devolvía *"el agente no está disponible"*. Ahora hay **dos** mensajes:
+
+- **No configurado** (`AgenteNoConfigurado`): *"no está disponible en este entorno todavía"*. Es la
+  degradación esperada del CI y de local; no hay nada que reintentar.
+- **Configurado y falló en ejecución**: *"no se pudo completar… vuelve a intentarlo"*. Aquí
+  reintentar sí sirve, y decirle "no disponible" a alguien que puede reintentar es información falsa.
+
+Ninguno cambia según el error concreto, así que **distinguirlos no filtra detalle interno**, que es lo
+que la degradación protege.
+
+**El texto parcial se conserva.** Si el stream ya transmitió fragmentos y el LLM falla, se agrega solo
+la nota de corte en vez del mensaje completo: mandarlo entero borraría de la pantalla lo que la
+persona estaba leyendo. Y un redactor que termina sin ceder nada cae en el mensaje de fallo, no en el
+de "no disponible": estaba configurado.
+
+**Logging estructurado, sin la pregunta.** Los fallos se registran con `extra` (etapa, tipo de
+excepción, si estaba configurado) para poder filtrarlos en Cloud Logging, con traza **solo** cuando sí
+estaba configurado — un incidente merece traza, la degradación esperada no la necesita en cada
+petición. **La pregunta y el contexto nunca entran al log**: son texto de la persona, y hay una prueba
+que lo verifica.
+
 ## Seguridad / calidad
 
 - [x] 3 pruebas nuevas en `tests/test_api_contract.py`, una por campo
 - [x] El fixture de predicciones trae `alta` y `media`, no dos veces el mismo valor: una prueba que
       solo viera `alta` no notaría si el campo se quedara fijo
-- [x] 426 pruebas focalizadas verdes; `ruff` y `vault_lint` limpios
+- [x] 4 pruebas de Fase 4: mensajes distinguibles, texto parcial conservado, log estructurado sin
+      la pregunta, y el redactor mudo
+- [x] 429 pruebas focalizadas verdes; `ruff` y `vault_lint` limpios
 - [x] OpenAPI reexportado; `test_api_contract.py` verde
 - [x] Los tres cambios son aditivos y opcionales: no rompen a Streamlit ni a ningún consumidor
 
@@ -74,7 +103,7 @@ y verse**, no reventar la lectura con un 500. Sin fila de recomendación viaja `
 
 - **Agente / modelo:** Claude Code / claude-opus-5.
 - **Creados:** este DevLog.
-- **Modificados:** `src/api/schemas.py`, `src/api/repositorio_gold.py`,
+- **Modificados:** `src/api/v1/agente.py`, `tests/test_agente_endpoint.py`, `src/api/schemas.py`, `src/api/repositorio_gold.py`,
   `src/api/repositorio_modelos.py`, `src/api/v1/gold.py`, `tests/fixtures_gold.py`,
   `tests/fixtures_modelos.py`, `tests/test_api_contract.py`, `api/openapi.v1.json`,
   `vault/03_Architecture/API_Specification.md`, `vault/_DevLog/_index.md`.
@@ -85,5 +114,8 @@ y verse**, no reventar la lectura con un 500. Sin fila de recomendación viaja `
   `/municipios` trae `nombre_entidad` y `cve_ent`, ordenables.
 - **Marina García (E3):** `prioridad` ya viaja en `/predicciones/{cct}` y en `/predicciones/batch`.
   Ojo con el corte: es el ancla 0.60, no la línea de alerta 0.50.
-- **Karla Monter (C4) y Andrés González (C3):** el contrato cambió en `MunicipioOut`, `EscuelaOut` y
-  `PrediccionOut` — aditivo, nada que adaptar.
+- **Karla Monter (C4):** la parte de API de tu Fase 4 entra aquí (mensajes distinguibles, texto
+  parcial, logging). Lo de `src/agente/servicio.py` sigue siendo tuyo: retira de tu rama la ruta
+  duplicada y quédate con eso.
+- **Andrés González (C3):** el contrato cambió en `MunicipioOut`, `EscuelaOut` y `PrediccionOut` —
+  aditivo, nada que adaptar.

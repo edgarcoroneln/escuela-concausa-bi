@@ -302,6 +302,20 @@ y solo la **redacción final** se transmite según la produce el LLM.
   y lee el cuerpo como stream. `EventSource` no sirve aquí porque solo hace `GET`.
 - Fijado por `tests/test_agente_endpoint.py` (sección Fase 3).
 
+**Degradación distinguible y observabilidad (Fase 4, 2026-09-11 — Karla Monter, C4).** Aplica a
+`/consulta` **y** a `/consulta/stream`. Hay **dos** mensajes genéricos, no uno:
+
+| Situación | Mensaje | Por qué |
+|---|---|---|
+| Una colaboración **no está configurada** (sin `ANTHROPIC_API_KEY`, sin DSN read-only) | *"El agente no está disponible en este entorno todavía…"* | No hay nada que reintentar: es la configuración esperada de CI/local |
+| Está configurada y **falló en ejecución** (timeout, red, SQL rechazado) | *"No se pudo completar la consulta en este momento. Vuelve a intentarlo…"* | Reintentar sí sirve; decir "no disponible" sería información falsa |
+| Falló **con fragmentos ya transmitidos** (solo stream) | se **conserva el texto parcial** y se agrega *"[…] La respuesta quedó incompleta…"* | Mandar el mensaje completo borraría de la pantalla lo que la persona ya leía |
+
+Ninguno de los dos mensajes cambia según el error concreto, así que **la distinción no filtra
+detalle interno**. Los fallos se registran con `logging` estructurado (`extra`: etapa, tipo de
+excepción, si estaba configurado), con traza solo cuando sí lo estaba — un incidente, no la
+degradación esperada. **Nunca se registra la pregunta ni el contexto** (privacidad por diseño).
+
 #### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
 
 `AgenteConsultaIn` acepta un `contexto` **opcional y retrocompatible**: un cuerpo sin él se comporta
