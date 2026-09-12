@@ -1,7 +1,33 @@
+import { useEffect, useState } from "react";
 import { driverIcons, driverNombres } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
+
+// Barra individual con animación de relleno (checklist 12-sep, item
+// accionable sin dependencia de API): arranca en 0% y, ya montada, transita
+// en CSS hasta su ancho real -- mismo patrón "crece desde 0" que el arco de
+// RiskGauge.jsx, aquí con CSS puro (no hace falta D3 para una barra).
+function Barra({ valor, color }) {
+  const [ancho, setAncho] = useState(0);
+  const anchoFinal = Math.max(valor, 0.03) * 100;
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setAncho(anchoFinal));
+    return () => cancelAnimationFrame(id);
+  }, [anchoFinal]);
+
+  return (
+    <div
+      className="h-full rounded-full"
+      style={{
+        width: `${ancho}%`,
+        background: color,
+        transition: "width 650ms cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+    />
+  );
+}
 
 // Gráfica comparativa de los 6 drivers de UNA escuela (Pantalla 4, §4 y
 // §7.bis.2 "P4 · Comparativa de los 6 drivers"). CSS/SVG plano, sin D3 --
@@ -43,12 +69,7 @@ export default function DriverBars({ drivers, driverDominante }) {
               }}
               title={sinDato ? `${driverNombres[code]}: SIN_DATO` : `${driverNombres[code]}: ${valor.toFixed(2)}`}
             >
-              {!sinDato && (
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${Math.max(valor, 0.03) * 100}%`, background: riskRampColor(valor) }}
-                />
-              )}
+              {!sinDato && <Barra valor={valor} color={riskRampColor(valor)} />}
             </div>
             <span
               className="text-xs font-semibold tabular shrink-0"

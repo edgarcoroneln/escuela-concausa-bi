@@ -69,7 +69,12 @@ export default function LosSieteCasos() {
             const color = riskRampColor(e.indice_riesgo);
             const riesgo = nivelRiesgo(e.indice_riesgo, cortes);
             return (
-              <Card key={e.cct} hover className="flex flex-col justify-between">
+              <Card
+                key={e.cct}
+                hover
+                className="flex flex-col justify-between aparicion-escalonada"
+                style={{ "--delay": `${i * 60}ms` }}
+              >
                 <div>
                   <p className="text-sm font-bold mb-1" style={{ color: "var(--color-ink)" }}>
                     Escuela {String(i + 1).padStart(2, "0")}

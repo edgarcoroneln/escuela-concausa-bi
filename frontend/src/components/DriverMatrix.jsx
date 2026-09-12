@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import Card from "./Card.jsx";
-import { driverNombres } from "../data/mock.js";
+import { driverIcons, driverNombres } from "../data/mock.js";
 import { riskRampColor } from "../lib/riskRamp.js";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
@@ -87,6 +87,17 @@ export default function DriverMatrix({ data = [], onSelect, atenuarCct }) {
       .attr("transform", (d) => `translate(${x(d) + x.bandwidth() / 2},0)`);
 
     headers.each(function (d) {
+      // Icono del driver (checklist 12-sep, ítem accionable sin dependencia
+      // de API) -- mismo emoji que ya se usa en la insignia de driver
+      // dominante (LosSieteCasos.jsx/MapaCasos.jsx) y en DriverBars.jsx, solo
+      // que aquí identifica la COLUMNA completa, no una escuela.
+      d3.select(this)
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", 12)
+        .attr("font-size", 13)
+        .text(driverIcons[d]);
+
       const words = driverNombres[d].split(" ");
       const lines = words.length > 1 ? [words.slice(0, -1).join(" "), words[words.length - 1]] : [words[0]];
       const text = d3.select(this).append("text").attr("text-anchor", "middle").attr("font-size", 10).attr("font-weight", 600).attr("fill", "var(--color-ink-soft)");

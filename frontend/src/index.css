@@ -229,3 +229,27 @@ h1, h2, h3 {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* Aparición escalonada de tarjetas (checklist 12-sep, item accionable sin
+   dependencia de API) -- se combina con --delay inline por tarjeta (ver
+   LosSieteCasos.jsx) para que las 7 no entren de golpe. Respeta
+   prefers-reduced-motion. */
+@keyframes aparicionEscalonada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.aparicion-escalonada {
+  animation: aparicionEscalonada 420ms ease-out both;
+  animation-delay: var(--delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aparicion-escalonada {
+    animation: none;
+  }
+}
