@@ -362,7 +362,7 @@ def test_stream_no_invoca_al_redactor_hasta_que_se_itera() -> None:
 
 
 def test_stream_pregunta_fuera_de_alcance_no_llega_al_redactor() -> None:
-    """Igual guardarraíl que la ruta síncrona: rechazada, sin fragmentos que transmitir."""
+    """El RAG confirma que no hay contexto, sin llegar al redactor ni generar SQL."""
 
     def no_debe_llamarse(*args):
         raise AssertionError("no debe invocar al redactor en streaming")
@@ -376,7 +376,7 @@ def test_stream_pregunta_fuera_de_alcance_no_llega_al_redactor() -> None:
     )
 
     assert resultado.fragmentos is None
-    assert resultado.fuera_de_alcance
+    assert not resultado.fuera_de_alcance
     assert resultado.respuesta_fija
 
 

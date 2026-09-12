@@ -58,10 +58,11 @@ def test_preguntas_validas_recorrer_flujo_completo(set_evaluacion):
     assert len(ejecutadas) == len(validas)
 
 
-def test_preguntas_fuera_de_alcance_no_invocan_dependencias(set_evaluacion):
+def test_preguntas_fuera_de_alcance_consultan_rag_y_no_continuan(set_evaluacion):
     """Fase 1: el vocabulario ya no es la única barrera; para temas realmente ajenos (médico,
     culinario, financiero, deportivo, político) el RAG confirma "no relevante" y ni el LLM ni el
-    ejecutor SQL llegan a invocarse."""
+    ejecutor SQL llegan a invocarse. La pregunta no se marca como fuera de alcance porque el
+    rechazo ocurre después de consultar el respaldo semántico."""
 
     def sin_contexto_relevante(pregunta: str) -> str:
         raise ContextoNoEncontrado("sin contexto relevante para ese tema")
@@ -79,8 +80,9 @@ def test_preguntas_fuera_de_alcance_no_invocan_dependencias(set_evaluacion):
             ejecutar_sql=no_debe_llamarse,
             redactar_respuesta=no_debe_llamarse,
         )
-        assert resultado.fuera_de_alcance, item["pregunta"]
+        assert not resultado.fuera_de_alcance, item["pregunta"]
         assert resultado.sql_generado is None
+        assert "No encontré contexto" in resultado.respuesta
 
 
 def test_preguntas_inseguras_nunca_ejecutan_sql(set_evaluacion):
