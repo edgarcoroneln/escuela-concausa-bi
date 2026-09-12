@@ -133,6 +133,44 @@ export const getMunicipios = (params = {}) =>
   request(`/api/v1/municipios?${new URLSearchParams(params)}`);
 export const getMunicipio = (cveMun) => request(`/api/v1/municipios/${cveMun}`);
 
+// Nombre real de municipio/entidad para pantallas que hoy solo tienen cve_mun
+// por escuela (MapaCasos.jsx, ComparacionTerritorial.jsx -- checklist §4,
+// "Municipio y entidad por nombre real"). EscuelaOut nunca trajo el nombre,
+// solo el código; GET /municipios/{cve_mun} sí lo expone desde el 11-sep
+// (US-621, MunicipioOut en schemas.py) pero nadie lo había probado desde
+// ninguna pantalla -- probado y confirmado real el 12-sep (BUG-077, 317/317
+// municipios con nombre_entidad). Una llamada por municipio ÚNICO, no por
+// escuela: las escuelas en riesgo suelen repetir municipio, así que
+// deduplicar cve_mun antes de llamar evita llamadas redundantes.
+export const getMunicipiosPorClaves = async (cveMuns) => {
+  const unicas = [...new Set(cveMuns)];
+  const resultados = await Promise.all(unicas.map((cve) => getMunicipio(cve)));
+  const fallo = resultados.find((r) => r.error);
+  if (fallo) return { data: null, error: fallo.error };
+  const porClave = {};
+  unicas.forEach((cve, i) => {
+    porClave[cve] = resultados[i].data;
+  });
+  return { data: porClave, error: null };
+};
+
+// Pantalla "¿Es un caso aislado?" (ComparacionTerritorial): las escuelas en
+// riesgo con el nombre real de su municipio/entidad, para comparar sin
+// pintar códigos INEGI. Compone getEscuelasEnRiesgo + getMunicipiosPorClaves
+// -- mismo estilo de composición que getPanoramaEscuelas, arriba.
+export const getComparacionTerritorial = async () => {
+  const base = await getEscuelasEnRiesgo();
+  if (base.error) return { data: null, error: base.error };
+  const municipios = await getMunicipiosPorClaves(base.data.map((e) => e.cve_mun));
+  if (municipios.error) return { data: null, error: municipios.error };
+  const escuelas = base.data.map((e) => ({
+    ...e,
+    nombre_municipio: municipios.data[e.cve_mun]?.nombre_municipio ?? null,
+    nombre_entidad: municipios.data[e.cve_mun]?.nombre_entidad ?? null,
+  }));
+  return { data: escuelas, error: null };
+};
+
 // --- Predicciones / ML ---
 export const getPrediccion = (cct) => request(`/api/v1/predicciones/${cct}`);
 export const getPrediccionExplicacion = (cct) =>
