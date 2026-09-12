@@ -3,11 +3,11 @@ id: DOC-APISPEC
 title: "API Specification — FARO"
 owner: "Karla Alejandra Monter Benitez"
 status: in_review
-version: "1.2"
+version: "1.3"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/03_Architecture/Data_Model"]
-traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416"]
-last_reviewed: "2026-09-03"
+traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416", "US-305"]
+last_reviewed: "2026-09-11"
 tags: [architecture, api, contract, fastapi, oauth2]
 ---
 
@@ -249,9 +249,31 @@ C2/C3), no se retoma como pendiente de US-411.
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
 | POST | `/agente/consulta` | ciudadano | `AgenteConsultaIn` | `AgenteRespuestaOut` | 200, 401, 422 |
+| POST | `/agente/consulta/stream` | ciudadano | `AgenteConsultaIn` | `text/event-stream` (SSE) | 200, 401, 422 |
 
 - El agente responde en lenguaje natural sobre Gold y devuelve la consulta generada para auditoría.
   **Nunca** ejecuta escritura/borrado; rechaza preguntas fuera de alcance (`fuera_de_alcance: true`).
+
+#### `/agente/consulta/stream` — la respuesta por Server-Sent Events (US-305, Fase 3, 2026-09-11)
+
+Mismos guardarraíles, mismo RBAC y **mismo cuerpo** (`contexto`, `historial`) que `/consulta`. Lo
+único que cambia es cómo viaja la salida: el SQL se genera y valida completo antes de emitir nada,
+y solo la **redacción final** se transmite según la produce el LLM.
+
+| Evento | Cuántas veces | `data` |
+|---|---|---|
+| `meta` | una, al inicio | `{"sql_generado": str \| null, "fuera_de_alcance": bool}` — los campos de `AgenteRespuestaOut` |
+| `fragmento` | una o más | `{"texto": str}` — concatenados en orden forman la respuesta |
+| `fin` | una, al final | `{}` |
+
+- **Siempre llegan los tres**, también si algo falla a medio camino: el fallo se convierte en un
+  `fragmento` con el mensaje genérico y el `fin` llega igual. El cliente nunca queda esperando.
+- Ningún evento lleva trazas, prompts ni SQL crudo de error.
+- Un `\n` dentro del texto viaja escapado en el JSON del `data`, así que no puede falsificar un evento.
+- Cabeceras: `Cache-Control: no-cache` y `X-Accel-Buffering: no` (nginx no acumula la respuesta).
+- **Con sesión por cookie** (`ADR-012`), el cliente usa `fetch()` con `credentials: "same-origin"`
+  y lee el cuerpo como stream. `EventSource` no sirve aquí porque solo hace `GET`.
+- Fijado por `tests/test_agente_endpoint.py` (sección Fase 3).
 
 #### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
 
