@@ -18,15 +18,28 @@ const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 // no confundir "falta el dato" con "el driver vale 0").
 //
 // data: [{ cct, nombre, drivers: { D1: number|null, ..., D6: number|null } }]
-export default function DriverMatrix({ data = [], onSelect }) {
+//
+// atenuarCct (opcional, 12-sep, DevLog comparativa §2): función (cct) =>
+// boolean. Cuando se pasa, cada fila/celda cuyo cct evalúe a true baja de
+// opacidad -- pensado para sincronizar con el mapa de entidades de
+// Panorama.jsx (hover sobre una entidad atenúa las escuelas de las otras).
+// Se aplica en un efecto aparte (ver abajo) que solo toca `opacity` sobre
+// los nodos ya construidos, para no repetir el fade-in de montaje en cada
+// hover del mapa.
+export default function DriverMatrix({ data = [], onSelect, atenuarCct }) {
   const svgRef = useRef(null);
   const wrapRef = useRef(null);
   const [width, setWidth] = useState(640);
+  const atenuarCctRef = useRef(atenuarCct);
 
   const rowLabelWidth = 170;
   const rowHeight = 44;
   const headerHeight = 46;
   const height = headerHeight + data.length * rowHeight + 8;
+
+  useEffect(() => {
+    atenuarCctRef.current = atenuarCct;
+  }, [atenuarCct]);
 
   useEffect(() => {
     if (!wrapRef.current) return;
@@ -38,6 +51,10 @@ export default function DriverMatrix({ data = [], onSelect }) {
     return () => ro.disconnect();
   }, []);
 
+  // Efecto de construcción: dibuja la cuadrícula completa (una sola vez por
+  // cambio de datos/ancho). Filas y celdas quedan marcadas con data-cct para
+  // que el efecto de atenuado (más abajo) solo cambie opacidad sin
+  // reconstruir el SVG en cada hover del mapa de entidades.
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -84,7 +101,8 @@ export default function DriverMatrix({ data = [], onSelect }) {
       .selectAll("g")
       .data(data)
       .join("g")
-      .attr("transform", (d) => `translate(0,${y(d.cct)})`);
+      .attr("transform", (d) => `translate(0,${y(d.cct)})`)
+      .attr("data-cct", (d) => d.cct);
 
     rows
       .append("text")
@@ -103,7 +121,8 @@ export default function DriverMatrix({ data = [], onSelect }) {
       .selectAll("g")
       .data(data.flatMap((d) => DRIVERS.map((driver) => ({ cct: d.cct, driver, valor: d.drivers[driver] }))))
       .join("g")
-      .attr("transform", (d) => `translate(${x(d.driver)},${y(d.cct)})`);
+      .attr("transform", (d) => `translate(${x(d.driver)},${y(d.cct)})`)
+      .attr("data-cct", (d) => d.cct);
 
     cellGroups
       .append("rect")
@@ -127,7 +146,30 @@ export default function DriverMatrix({ data = [], onSelect }) {
       .text((d) => d.valor.toFixed(2));
 
     svg.selectAll("g > rect, g > text").attr("opacity", 0).transition().duration(400).attr("opacity", 1);
+
+    // Aplica de inmediato el atenuado vigente (por si ya había una entidad
+    // resaltada en el mapa cuando llegaron datos nuevos), sin transición
+    // para no pelear con el fade-in de arriba.
+    const activo = atenuarCctRef.current;
+    if (typeof activo === "function") {
+      svg.selectAll("g[data-cct]").attr("opacity", function () {
+        return activo(this.getAttribute("data-cct")) ? 0.3 : 1;
+      });
+    }
   }, [data, width, height, onSelect]);
+
+  // Efecto de atenuado: solo cambia opacidad de las filas/celdas ya
+  // construidas cuando cambia atenuarCct (hover del mapa de entidades en
+  // Panorama.jsx) -- nunca reconstruye la cuadrícula.
+  useEffect(() => {
+    d3.select(svgRef.current)
+      .selectAll("g[data-cct]")
+      .transition()
+      .duration(180)
+      .attr("opacity", function () {
+        return typeof atenuarCct === "function" && atenuarCct(this.getAttribute("data-cct")) ? 0.3 : 1;
+      });
+  }, [atenuarCct]);
 
   return (
     <div ref={wrapRef}>

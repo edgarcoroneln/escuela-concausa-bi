@@ -3,6 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import GlosarioOverlay from "../components/GlosarioOverlay.jsx";
 import WalkthroughOverlay from "../components/WalkthroughOverlay.jsx";
+import MapaEntidades from "../components/MapaEntidades.jsx";
 
 // Pantalla 1 -- Entrada (rediseño Fase 2, US-641). Reescrita contra la ficha
 // de 01_UX_Architecture.md §2 "Pantalla 1", no contra la copy de las
@@ -15,6 +16,14 @@ import WalkthroughOverlay from "../components/WalkthroughOverlay.jsx";
 // P2 (Panorama)** -- por eso esta versión ya no llama a getKpis() ni
 // muestra ningún número agregado. Pantalla estática, sin estado de carga
 // ni de error (§2).
+//
+// CORRECCIÓN 12-sep (DevLog comparativa, checklist §2/§4): el mockup llena
+// la mitad derecha del hero con el gráfico decorativo de "radar/vigilancia"
+// (coordenadas y conteos inventados, ver DevLog §0) -- ese hueco se llena
+// aquí con el mismo mapa real de las 4 entidades que ya se construyó para
+// el Login (extraído a components/MapaEntidades.jsx), en miniatura y sin
+// clic: solo hover, para que el lenguaje de "esto es interactivo" sea el
+// mismo en toda la app, sin inventar ningún dato nuevo.
 const FEATURES = [
   { icon: "🛡️", label: "Datos verificados" },
   { icon: "📍", label: "4 entidades: CDMX, Edomex, NL, Jalisco" },
@@ -63,62 +72,74 @@ export default function Home() {
     <>
       <div style={{ background: "linear-gradient(135deg, #0b1524 0%, #16283f 100%)" }}>
         <div className="max-w-6xl mx-auto px-8 pt-16 pb-12">
-          <span className="font-mono-dato text-[11px] uppercase font-semibold tracking-wider" style={{ color: "var(--faro-signal-soft)" }}>
-            Pantalla 01 · Entrada
-          </span>
-          <h1 className="text-4xl leading-tight mt-3" style={{ color: "#ffffff", fontWeight: 700, maxWidth: "22ch" }}>
-            ¿Qué es FARO?
-          </h1>
-          <p className="text-base mt-5 leading-relaxed" style={{ color: "#b7c0d1", maxWidth: "56ch" }}>
-            FARO es la herramienta de FARO Team para investigar el riesgo de abandono escolar en las
-            escuelas de 4 entidades del país. Analiza 6 líneas de evidencia por escuela para señalar
-            dónde intervenir antes de que la matrícula se pierda.
-          </p>
-          <p className="text-base mt-4 leading-relaxed font-semibold" style={{ color: "#ffffff", maxWidth: "48ch" }}>
-            {visitaRecurrente
-              ? "Tu investigación sigue donde la dejaste: cada caso se revisa por separado."
-              : "La matrícula nos dio la primera pista. Ahora descubramos qué está pasando."}
-          </p>
+          <div className="flex flex-col md:flex-row md:items-center gap-10">
+            <div className="flex-1">
+              <span className="font-mono-dato text-[11px] uppercase font-semibold tracking-wider" style={{ color: "var(--faro-signal-soft)" }}>
+                Pantalla 01 · Entrada
+              </span>
+              <h1 className="text-4xl leading-tight mt-3" style={{ color: "#ffffff", fontWeight: 700, maxWidth: "22ch" }}>
+                ¿Qué es FARO?
+              </h1>
+              <p className="text-base mt-5 leading-relaxed" style={{ color: "#b7c0d1", maxWidth: "56ch" }}>
+                FARO es la herramienta de FARO Team para investigar el riesgo de abandono escolar en las
+                escuelas de 4 entidades del país. Analiza 6 líneas de evidencia por escuela para señalar
+                dónde intervenir antes de que la matrícula se pierda.
+              </p>
+              <p className="text-base mt-4 leading-relaxed font-semibold" style={{ color: "#ffffff", maxWidth: "48ch" }}>
+                {visitaRecurrente
+                  ? "Tu investigación sigue donde la dejaste: cada caso se revisa por separado."
+                  : "La matrícula nos dio la primera pista. Ahora descubramos qué está pasando."}
+              </p>
 
-          <div className="bg-white/5 rounded-xl p-5 mt-6 max-w-2xl">
-            <span className="font-mono-dato text-[10px] uppercase font-semibold tracking-wider" style={{ color: "var(--faro-signal-soft)" }}>
-              Tu rol en esta sesión
-            </span>
-            <p className="text-sm mt-2 leading-relaxed" style={{ color: "#b7c0d1" }}>
-              Revisar la evidencia detrás de cada escuela en riesgo -- qué driver destaca y qué
-              recomendación le corresponde -- y decidir en cuáles vale la pena profundizar. El
-              conteo de casos y el panorama completo se revelan en la siguiente pantalla.
-            </p>
-          </div>
+              <div className="bg-white/5 rounded-xl p-5 mt-6 max-w-2xl">
+                <span className="font-mono-dato text-[10px] uppercase font-semibold tracking-wider" style={{ color: "var(--faro-signal-soft)" }}>
+                  Tu rol en esta sesión
+                </span>
+                <p className="text-sm mt-2 leading-relaxed" style={{ color: "#b7c0d1" }}>
+                  Revisar la evidencia detrás de cada escuela en riesgo -- qué driver destaca y qué
+                  recomendación le corresponde -- y decidir en cuáles vale la pena profundizar. El
+                  conteo de casos y el panorama completo se revelan en la siguiente pantalla.
+                </p>
+              </div>
 
-          <div className="flex flex-wrap items-center gap-4 mt-8">
-            <Link
-              to="/panorama"
-              className="inline-block text-sm font-semibold px-5 py-3 rounded-full"
-              style={{ background: "var(--color-primary)", color: "#ffffff" }}
-            >
-              Ver el panorama de riesgo →
-            </Link>
-            <button
-              type="button"
-              onClick={() => setGlosarioAbierto(true)}
-              className="text-sm font-semibold px-4 py-3 rounded-full"
-              style={{ background: "rgba(255,255,255,0.08)", color: "#ffffff" }}
-            >
-              📖 Glosario metodológico
-            </button>
-            {visitaRecurrente && (
-              <button
-                type="button"
-                onClick={() => setWalkthroughAbierto(true)}
-                className="text-sm px-2 py-2 rounded-full"
-                style={{ color: "#b7c0d1" }}
-                title="Volver a ver la guía rápida"
-                aria-label="Volver a ver la guía rápida"
-              >
-                ¿ Guía rápida
-              </button>
-            )}
+              <div className="flex flex-wrap items-center gap-4 mt-8">
+                <Link
+                  to="/panorama"
+                  className="inline-block text-sm font-semibold px-5 py-3 rounded-full"
+                  style={{ background: "var(--color-primary)", color: "#ffffff" }}
+                >
+                  Ver el panorama de riesgo →
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setGlosarioAbierto(true)}
+                  className="text-sm font-semibold px-4 py-3 rounded-full"
+                  style={{ background: "rgba(255,255,255,0.08)", color: "#ffffff" }}
+                >
+                  📖 Glosario metodológico
+                </button>
+                {visitaRecurrente && (
+                  <button
+                    type="button"
+                    onClick={() => setWalkthroughAbierto(true)}
+                    className="text-sm px-2 py-2 rounded-full"
+                    style={{ color: "#b7c0d1" }}
+                    title="Volver a ver la guía rápida"
+                    aria-label="Volver a ver la guía rápida"
+                  >
+                    ¿ Guía rápida
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="hidden md:flex flex-none items-center justify-center" style={{ width: "14rem" }}>
+              <MapaEntidades
+                size={280}
+                maxWidth="13rem"
+                ariaLabel="Mapa de México con las 4 entidades que cubre FARO: Ciudad de México, Estado de México, Nuevo León y Jalisco"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-14 pt-8" style={{ borderTop: "1px solid #2a3850" }}>

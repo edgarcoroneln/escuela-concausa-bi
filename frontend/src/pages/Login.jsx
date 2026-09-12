@@ -1,7 +1,6 @@
-import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { getAuthLoginUrl } from "../lib/api.js";
-import mexicoStates from "../data/geo/mexico-states.json";
+import MapaEntidades, { ENTIDADES_LABEL } from "../components/MapaEntidades.jsx";
 
 // Pantalla 0 -- Login (mockup 00_Login.html, 01_UX_Architecture.md "Mockup 0
 // -- Login"). Nueva 12-sep (auditoría mockups vs código, a pedido de Diana):
@@ -26,10 +25,12 @@ import mexicoStates from "../data/geo/mexico-states.json";
 // grande + interacción real -- hover ilumina el estado bajo el cursor,
 // clic lo selecciona (con outline blanco), y las 4 chips de abajo son
 // botones que hacen exactamente lo mismo, sincronizados con el mapa vía un
-// solo estado (`entidadSeleccionada`) en este componente padre. Los colores
-// por entidad (--faro-entity-cdmx/edomex/nl/jalisco) ya existían en
-// index.css desde la fase de tokens pero no se usaban en ningún componente
-// todavía -- se reutilizan aquí en vez de inventar una paleta nueva.
+// solo estado (`entidadSeleccionada`) en este componente padre.
+//
+// CORRECCIÓN 12-sep (cuarta vuelta): el mapa se extrajo a
+// components/MapaEntidades.jsx para reutilizarlo en P1 (Home) y P2
+// (Panorama) -- ver DevLog comparativa 12-sep, checklist §4. Este archivo ya
+// no define el SVG ni los colores por entidad, solo los consume.
 //
 // Contenido contra el spec: "un único botón de acceso con Google, sin
 // campos de usuario o contraseña... el diseño debe aprovechar ese espacio
@@ -41,97 +42,6 @@ import mexicoStates from "../data/geo/mexico-states.json";
 // vuelve por esta pantalla, el backend lo resuelve en el callback.
 // `lib/session.jsx` ya trata un canje fallido igual que "nunca se
 // intentó" -- no se inventa un estado de error que el backend no expone.
-const ENTIDADES_ALCANCE = ["MX-CMX", "MX-MEX", "MX-NLE", "MX-JAL"];
-const ENTIDADES_LABEL = [
-  { id: "MX-CMX", nombre: "CDMX", color: "var(--faro-entity-cdmx)" },
-  { id: "MX-MEX", nombre: "Edomex", color: "var(--faro-entity-edomex)" },
-  { id: "MX-NLE", nombre: "Nuevo León", color: "var(--faro-entity-nl)" },
-  { id: "MX-JAL", nombre: "Jalisco", color: "var(--faro-entity-jalisco)" },
-];
-const ENTIDAD_COLOR = Object.fromEntries(ENTIDADES_LABEL.map((e) => [e.id, e.color]));
-
-// Mapa con geografía real (mismo geojson/d3-geo que components/MapaRiesgo.jsx)
-// -- a diferencia de ese componente, aquí no hay escuelas que ubicar, solo
-// las 4 entidades del alcance de FARO, interactivas: hover y clic las
-// resaltan con su propio color de identidad (nunca un dato inventado, es
-// solo identidad visual). La selección vive en el componente padre para
-// poder sincronizarla con las chips de abajo.
-function MapaEntidadesLogin({ seleccionada, onSeleccionar }) {
-  const svgRef = useRef(null);
-  const [hovered, setHovered] = useState(null);
-  const onSeleccionarRef = useRef(onSeleccionar);
-  const size = 520;
-
-  useEffect(() => {
-    onSeleccionarRef.current = onSeleccionar;
-  }, [onSeleccionar]);
-
-  // Efecto de montaje: construye el mapa una sola vez (proyección, paths,
-  // manejadores). No depende de `seleccionada`/`hovered` para que los nodos
-  // del SVG no se destruyan y recreen en cada hover -- así la transición de
-  // CSS de abajo se ve, en vez de "saltar" sin animación.
-  useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-    svg.attr("viewBox", `0 0 ${size} ${size}`);
-
-    const projection = d3.geoMercator().fitSize([size, size], mexicoStates);
-    const path = d3.geoPath(projection);
-
-    svg
-      .append("g")
-      .selectAll("path")
-      .data(mexicoStates.features)
-      .join("path")
-      .attr("d", path)
-      .attr("data-id", (d) => d.properties.id)
-      .attr("stroke", "rgba(255,255,255,0.18)")
-      .attr("stroke-width", 0.6)
-      .style("cursor", (d) => (ENTIDADES_ALCANCE.includes(d.properties.id) ? "pointer" : "default"))
-      .style("transition", "fill-opacity 180ms ease, stroke-width 180ms ease, stroke 180ms ease")
-      .on("mouseenter", (event, d) => {
-        if (ENTIDADES_ALCANCE.includes(d.properties.id)) setHovered(d.properties.id);
-      })
-      .on("mouseleave", (event, d) => {
-        if (ENTIDADES_ALCANCE.includes(d.properties.id)) setHovered(null);
-      })
-      .on("click", (event, d) => {
-        if (ENTIDADES_ALCANCE.includes(d.properties.id)) onSeleccionarRef.current(d.properties.id);
-      })
-      .append("title")
-      .text((d) => (ENTIDADES_ALCANCE.includes(d.properties.id) ? d.properties.name : ""));
-  }, []);
-
-  // Efecto de estado: solo actualiza atributos visuales sobre los paths ya
-  // creados (opacidad de relleno, grosor/color de borde) cada vez que
-  // cambia el hover o la selección.
-  useEffect(() => {
-    d3.select(svgRef.current)
-      .selectAll("path")
-      .attr("fill", (d) =>
-        ENTIDADES_ALCANCE.includes(d.properties.id) ? ENTIDAD_COLOR[d.properties.id] : "rgba(255,255,255,0.05)"
-      )
-      .attr("fill-opacity", (d) => {
-        const id = d.properties.id;
-        if (!ENTIDADES_ALCANCE.includes(id)) return 1;
-        if (id === seleccionada) return 1;
-        if (id === hovered) return 0.75;
-        return 0.4;
-      })
-      .attr("stroke", (d) => (d.properties.id === seleccionada ? "#ffffff" : "rgba(255,255,255,0.18)"))
-      .attr("stroke-width", (d) => (d.properties.id === seleccionada ? 1.6 : 0.6));
-  }, [seleccionada, hovered]);
-
-  return (
-    <svg
-      ref={svgRef}
-      role="img"
-      aria-label="Mapa de México con Ciudad de México, Estado de México, Nuevo León y Jalisco resaltados; puedes pasar el cursor o seleccionar cada entidad"
-      style={{ width: "100%", height: "auto", maxWidth: "28rem" }}
-    />
-  );
-}
-
 export default function Login() {
   const [redirigiendo, setRedirigiendo] = useState(false);
   const [entidadSeleccionada, setEntidadSeleccionada] = useState(null);
@@ -211,7 +121,12 @@ export default function Login() {
         style={{ borderLeft: "1px solid rgba(255,255,255,0.08)" }}
       >
         <div className="flex flex-col items-center gap-6 w-full">
-          <MapaEntidadesLogin seleccionada={entidadSeleccionada} onSeleccionar={alternarEntidad} />
+          <MapaEntidades
+            seleccionada={entidadSeleccionada}
+            onSeleccionar={alternarEntidad}
+            size={520}
+            maxWidth="28rem"
+          />
           <div className="flex flex-wrap items-center justify-center gap-2">
             {ENTIDADES_LABEL.map((e) => {
               const activa = entidadSeleccionada === e.id;
