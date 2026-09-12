@@ -15,12 +15,20 @@ import MatrizDrivers from "./pages/MatrizDrivers.jsx";
 import ExpedienteEscuela from "./pages/ExpedienteEscuela.jsx";
 import ComparacionTerritorial from "./pages/ComparacionTerritorial.jsx";
 import Hallazgos from "./pages/Hallazgos.jsx";
+import Login from "./pages/Login.jsx";
 
 // Rutas = las 9 pantallas del storytelling de "los 7 casos" (mockup de
 // UX/UI). Cada página es su propio archivo en src/pages/ para que el
 // contenido se pueda ir llenando una por una sin tocar el layout ni el
 // router. Ver vault/08_CICD_DevOps/Arquitectura_Frontend_React.md.
 const router = createBrowserRouter([
+  // Ruta de solo vista previa (12-sep, a pedido de Diana): Login.jsx ya se
+  // muestra automáticamente sin sesión (ver App.jsx), pero eso queda oculto
+  // en modo demo (VITE_USE_MOCK=true) a propósito, para no romper
+  // "previsualizar sin logearme". Esta ruta la muestra directo, sin tocar
+  // el .env ni pasar por SessionProvider/App -- es la MISMA pantalla, solo
+  // un atajo para verla sin apagar el modo demo.
+  { path: "/login", element: <Login /> },
   {
     path: "/",
     element: <App />,
