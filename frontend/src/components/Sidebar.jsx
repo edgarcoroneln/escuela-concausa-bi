@@ -13,15 +13,23 @@ import { FASES, EXPLORACION, HEREDADAS } from "../lib/navFases.js";
 // ver lib/navFases.js para la tabla completa y su justificacion.
 // Las 5 vistas heredadas que TODAVIA no caen dentro de una de las 6 fases se listan aparte, sin
 // esconderlas, para no dejar a nadie del equipo sin acceso mientras se migra pantalla por pantalla.
+//
+// Colapso en movil (12-sep, pendiente documentado en el DevLog de la Fase 2 shell/Pantalla 1):
+// bajo el breakpoint Mobile de Design_Tokens_Stitch.md (< 768px, coincide con el `md` de Tailwind),
+// el rail se angosta a --faro-sidebar-collapsed (via --faro-sidebar-width en index.css, que
+// Header.jsx y App.jsx tambien leen para quedar sincronizados) y las etiquetas de texto se ocultan
+// -- se queda solo el numero/icono de cada item, como un rail de iconos convencional. Ningun
+// mockup describe una navegacion movil distinta (los 7 HTML de Stitch son solo desktop), asi que
+// esta es la interpretacion mas conservadora del token ya existente, no una pantalla nueva.
 function itemClasses(isActive) {
-  return `flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive ? "font-semibold" : "font-medium"}`;
+  return `flex items-center justify-center md:justify-start gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive ? "font-semibold" : "font-medium"}`;
 }
 
 function NavItem({ n, label, to, end, disabledHint }) {
   if (disabledHint) {
     return (
       <div
-        className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium cursor-not-allowed"
+        className="flex items-center justify-center md:justify-start gap-2.5 px-3 py-2 rounded-lg text-sm font-medium cursor-not-allowed"
         style={{ color: "var(--faro-context-gray)" }}
         title={disabledHint}
       >
@@ -30,7 +38,7 @@ function NavItem({ n, label, to, end, disabledHint }) {
             {n}
           </span>
         )}
-        <span className="flex-1">{label}</span>
+        <span className="flex-1 hidden md:inline">{label}</span>
       </div>
     );
   }
@@ -53,14 +61,14 @@ function NavItem({ n, label, to, end, disabledHint }) {
           {n}
         </span>
       )}
-      <span className="flex-1">{label}</span>
+      <span className="flex-1 hidden md:inline">{label}</span>
     </NavLink>
   );
 }
 
 function SectionLabel({ children }) {
   return (
-    <div className="px-3 pt-4 pb-1">
+    <div className="px-3 pt-4 pb-1 hidden md:block">
       <span
         className="font-mono-dato text-[10px] uppercase font-semibold tracking-wider"
         style={{ color: "var(--faro-context-gray)" }}
@@ -91,25 +99,28 @@ export default function Sidebar({ session }) {
     <aside
       className="fixed left-0 top-0 h-screen z-40 flex flex-col justify-between overflow-y-auto"
       style={{
-        width: "var(--faro-sidebar-expanded)",
+        width: "var(--faro-sidebar-width)",
         background: "var(--faro-canvas)",
         borderRight: "1px solid var(--faro-hairline)",
       }}
     >
       <div className="flex flex-col">
         <div className="px-4 py-4" style={{ borderBottom: "1px solid var(--faro-hairline)" }}>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center md:justify-start gap-2">
             <span
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 rounded-full shrink-0"
               style={{ background: "var(--faro-signal)" }}
               aria-hidden="true"
             />
-            <span className="text-lg tracking-tight" style={{ fontFamily: "var(--font-display)", color: "var(--color-ink)" }}>
+            <span
+              className="text-lg tracking-tight hidden md:inline"
+              style={{ fontFamily: "var(--font-display)", color: "var(--color-ink)" }}
+            >
               FARO
             </span>
           </div>
           <p
-            className="font-mono-dato text-[10px] uppercase font-semibold tracking-wider mt-1"
+            className="font-mono-dato text-[10px] uppercase font-semibold tracking-wider mt-1 hidden md:block"
             style={{ color: "var(--faro-signal)" }}
           >
             Alerta temprana de abandono escolar
@@ -145,7 +156,7 @@ export default function Sidebar({ session }) {
           <div className="h-10" aria-hidden="true" />
         )}
         {status === "autenticado" && user && (
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center md:justify-start gap-2.5">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
               style={{ background: "var(--color-primary)", color: "#fff" }}
@@ -153,7 +164,7 @@ export default function Sidebar({ session }) {
             >
               {inicialesDe(user?.name, user?.email)}
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 hidden md:block">
               <p className="text-xs font-semibold truncate" style={{ color: "var(--color-ink)" }}>
                 {user?.name || user?.email}
               </p>
@@ -164,8 +175,13 @@ export default function Sidebar({ session }) {
           </div>
         )}
         {status === "anonimo" && (
-          <p className="text-xs" style={{ color: "var(--faro-context-gray)" }}>
-            Sin sesión iniciada
+          <p
+            className="text-xs text-center md:text-left"
+            style={{ color: "var(--faro-context-gray)" }}
+            title="Sin sesión iniciada"
+          >
+            <span className="md:hidden" aria-hidden="true">–</span>
+            <span className="hidden md:inline">Sin sesión iniciada</span>
           </p>
         )}
       </div>

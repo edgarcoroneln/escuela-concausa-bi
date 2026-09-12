@@ -26,7 +26,7 @@ function Layout() {
     <div style={{ minHeight: "100svh", background: "var(--color-bg)" }}>
       <Sidebar session={session} />
       <Header session={session} />
-      <main style={{ paddingLeft: "var(--faro-sidebar-expanded)", paddingTop: "4rem" }}>
+      <main style={{ paddingLeft: "var(--faro-sidebar-width)", paddingTop: "4rem" }}>
         <Outlet context={{ onPreguntar: setPreguntaInicial }} />
       </main>
       <AsistenteFaro

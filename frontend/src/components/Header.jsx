@@ -23,7 +23,7 @@ export default function Header({ session }) {
     <header
       className="fixed top-0 right-0 h-16 z-30 flex items-center justify-between px-6"
       style={{
-        left: "var(--faro-sidebar-expanded)",
+        left: "var(--faro-sidebar-width)",
         background: "var(--faro-canvas)",
         borderBottom: "1px solid var(--faro-hairline)",
       }}
