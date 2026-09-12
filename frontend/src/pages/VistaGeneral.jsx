@@ -7,8 +7,8 @@ import DifferentiatorChart from "../components/DifferentiatorChart.jsx";
 import BarChartCard from "../components/BarChartCard.jsx";
 import DonutChartCard from "../components/DonutChartCard.jsx";
 import { MapaRiesgoCard } from "../components/MapaRiesgo.jsx";
-import { escuelasPorNivel, escuelasEnRiesgo, kpis, matriculaPorCiclo, parDiferenciador, driverNombres } from "../data/mock.js";
-import { getEscuela, getPrediccion } from "../lib/api.js";
+import { escuelasPorNivel, escuelasEnRiesgo, kpis, kpisMockParaComparacion2Ciclos, parDiferenciador, driverNombres } from "../data/mock.js";
+import { getEscuela, getPrediccion, getKpis } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 
 // "El diferenciador" conectado al API real 11-sep (revisión de Edgar, PR
@@ -60,12 +60,38 @@ async function getParDiferenciadorReal() {
   return { data: { a: a.data, b: b.data }, error: null };
 }
 
+// Comparación de 2 ciclos (Christian, 12-sep, respuesta a la pregunta de
+// Diana sobre la serie histórica): /series no existe y nunca existió --
+// US-411 lo descartó fuera de alcance, y fact_escuela_ciclo solo
+// materializa 2 ciclos, así que no hay una tendencia real de 3+ puntos que
+// graficar. Se deriva del contrato ya publicado en KpisOut, sin pedir un
+// endpoint nuevo ni inventar el valor del ciclo anterior:
+// variacion_matricula = (actual - anterior) / anterior, así que
+// anterior = actual / (1 + variacion_matricula) -- ambos números ya son la
+// fuente de verdad del backend (KpisOut), solo se despejan.
+function matriculaComparacion2Ciclos(k) {
+  const actual = k.matricula_total;
+  const anterior = Math.round(actual / (1 + k.variacion_matricula));
+  if (!Number.isFinite(anterior)) return null;
+  return [
+    { ciclo: "Ciclo anterior", matricula: anterior },
+    { ciclo: "Ciclo actual", matricula: actual },
+  ];
+}
+
 export default function VistaGeneral() {
   const {
     status: parStatus,
     data: par,
     error: parError,
   } = useApiResource(() => getParDiferenciadorReal(), { mock: parDiferenciador, deps: [] });
+
+  const {
+    status: kpisStatus,
+    data: kpisData,
+    error: kpisError,
+  } = useApiResource(() => getKpis(), { mock: kpisMockParaComparacion2Ciclos, deps: [] });
+  const matriculaComparacion = kpisData ? matriculaComparacion2Ciclos(kpisData) : null;
 
   return (
     <PageContainer>
@@ -112,16 +138,26 @@ export default function VistaGeneral() {
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <div className="mb-2">
-            <DemoBadge />
-          </div>
-          <BarChartCard
-            title="Matrícula por ciclo"
-            subtitle="Alumnado inscrito, últimos 3 ciclos"
-            data={matriculaPorCiclo}
-            xKey="ciclo"
-            yKey="matricula"
-          />
+          {kpisStatus === "demo" && (
+            <div className="mb-2">
+              <DemoBadge />
+            </div>
+          )}
+          {kpisStatus === "loading" ? (
+            <p className="text-sm py-6" style={{ color: "var(--color-ink-faint)" }}>Cargando matrícula…</p>
+          ) : kpisStatus === "error" || !matriculaComparacion ? (
+            <p className="text-sm py-6" style={{ color: "var(--color-risk-high)" }}>
+              No se pudo cargar la comparación de matrícula ({kpisError ?? "dato no disponible"}).
+            </p>
+          ) : (
+            <BarChartCard
+              title="Matrícula, 2 ciclos"
+              subtitle="Ciclo anterior vs. ciclo actual -- no hay serie histórica en el contrato (US-411)"
+              data={matriculaComparacion}
+              xKey="ciclo"
+              yKey="matricula"
+            />
+          )}
         </div>
         <div>
           <div className="mb-2">

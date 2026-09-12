@@ -10,11 +10,18 @@ export const kpis = [
   { label: "Escuelas en riesgo alto", value: "7", hint: "Índice ≥ 0.50 (línea de alerta, DEC-019)" },
 ];
 
-export const matriculaPorCiclo = [
-  { ciclo: "2022-2023", matricula: 6512340 },
-  { ciclo: "2023-2024", matricula: 6598110 },
-  { ciclo: "2024-2025", matricula: 6704229 },
-];
+// Fix 12-sep (Christian): /series no existe y nunca existio -- se descarto
+// en US-411, y fact_escuela_ciclo solo materializa 2 ciclos (no hay
+// tendencia real de 3+ puntos que graficar). VistaGeneral.jsx ya no pide
+// esta lista: deriva los 2 puntos de KpisOut real (matricula_total +
+// variacion_matricula, ver matriculaComparacion2Ciclos alla). Este mock
+// queda con la forma cruda de KpisOut (no de {ciclo, matricula}) solo para
+// alimentar esa misma derivacion en modo demo -- valores consistentes con
+// los 2 ultimos puntos que este archivo ya traia (2023-2024 -> 2024-2025).
+export const kpisMockParaComparacion2Ciclos = {
+  matricula_total: 6704229,
+  variacion_matricula: 0.0161, // (6704229 - 6598110) / 6598110, mismos 2 ciclos que antes
+};
 
 export const escuelasPorNivel = [
   { nombre: "Primaria", valor: 62 },
