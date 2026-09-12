@@ -1,11 +1,12 @@
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
+import DemoBadge from "../components/DemoBadge.jsx";
 import { driverIcons, driverNombres } from "../data/mock.js";
 import { riskRampColor } from "../lib/riskRamp.js";
 
 const HALLAZGOS = [
   "Todas están en riesgo, pero no todas enfrentan el mismo problema.",
-  "La conectividad es el driver dominante más frecuente (2 de 7 casos).",
+  "La conectividad es el driver dominante más frecuente entre los casos.",
   "Los casos se distribuyen en 6 municipios y 5 entidades.",
   "En 2 escuelas la cobertura de calidad del aire es insuficiente (SIN_DATO).",
   "Los contextos territoriales son clave para entender cada caso.",
@@ -24,8 +25,9 @@ export default function Hallazgos() {
   const max = Math.max(...DISTRIBUCION.map((d) => d.n));
   return (
     <PageContainer>
-      <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>Siete escuelas, siete historias</h1>
+      <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>Cada escuela, su historia</h1>
       <p className="text-sm -mt-4" style={{ color: "var(--color-ink-faint)" }}>Principales hallazgos de la investigación.</p>
+      <div className="-mt-2"><DemoBadge /></div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card title="Distribución de driver dominante">

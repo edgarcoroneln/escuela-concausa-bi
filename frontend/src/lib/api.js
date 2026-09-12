@@ -111,9 +111,85 @@ export const getEscuelasEnRiesgo = async (size = 50) => {
   );
   return { data: enRiesgo.slice(0, kpisRes.data.escuelas_en_riesgo), error: null };
 };
+
+// Pantalla 2 (Panorama, US-641): la matriz de drivers necesita d1..d6 de
+// cada escuela en riesgo, y esos campos SOLO vienen en EscuelaDetalleOut
+// (GET /escuelas/{cct}, uno a la vez) -- el listado de arriba no los trae.
+// Esto es exactamente el costo que 01_UX_Architecture.md §8 documenta como
+// esperado para revelar el panorama ("2 del conjunto + 1 por escuela"), no
+// un problema a resolver -- mismo gap que dejó pages/MatrizDrivers.jsx sin
+// conectar (revisión de Edgar, PR #302), ahora aceptado explícitamente por
+// el spec de UX/UI.
+export const getPanoramaEscuelas = async () => {
+  const base = await getEscuelasEnRiesgo();
+  if (base.error) return { data: null, error: base.error };
+  const detalles = await Promise.all(base.data.map((e) => getEscuela(e.cct)));
+  const fallo = detalles.find((d) => d.error);
+  if (fallo) return { data: null, error: fallo.error };
+  return { data: base.data.map((e, i) => ({ ...e, ...detalles[i].data })), error: null };
+};
+
 export const getMunicipios = (params = {}) =>
   request(`/api/v1/municipios?${new URLSearchParams(params)}`);
 export const getMunicipio = (cveMun) => request(`/api/v1/municipios/${cveMun}`);
+
+// Nombre real de municipio/entidad para pantallas que hoy solo tienen cve_mun
+// por escuela (MapaCasos.jsx, ComparacionTerritorial.jsx -- checklist §4,
+// "Municipio y entidad por nombre real"). EscuelaOut nunca trajo el nombre,
+// solo el código; GET /municipios/{cve_mun} sí lo expone desde el 11-sep
+// (US-621, MunicipioOut en schemas.py) pero nadie lo había probado desde
+// ninguna pantalla -- probado y confirmado real el 12-sep (BUG-077, 317/317
+// municipios con nombre_entidad). Una llamada por municipio ÚNICO, no por
+// escuela: las escuelas en riesgo suelen repetir municipio, así que
+// deduplicar cve_mun antes de llamar evita llamadas redundantes.
+export const getMunicipiosPorClaves = async (cveMuns) => {
+  const unicas = [...new Set(cveMuns)];
+  const resultados = await Promise.all(unicas.map((cve) => getMunicipio(cve)));
+  const fallo = resultados.find((r) => r.error);
+  if (fallo) return { data: null, error: fallo.error };
+  const porClave = {};
+  unicas.forEach((cve, i) => {
+    porClave[cve] = resultados[i].data;
+  });
+  return { data: porClave, error: null };
+};
+
+// Pantalla "¿Es un caso aislado?" (ComparacionTerritorial): las escuelas en
+// riesgo con el nombre real de su municipio/entidad, para comparar sin
+// pintar códigos INEGI. Compone getEscuelasEnRiesgo + getMunicipiosPorClaves
+// -- mismo estilo de composición que getPanoramaEscuelas, arriba.
+export const getComparacionTerritorial = async () => {
+  const base = await getEscuelasEnRiesgo();
+  if (base.error) return { data: null, error: base.error };
+  const municipios = await getMunicipiosPorClaves(base.data.map((e) => e.cve_mun));
+  if (municipios.error) return { data: null, error: municipios.error };
+  const escuelas = base.data.map((e) => ({
+    ...e,
+    nombre_municipio: municipios.data[e.cve_mun]?.nombre_municipio ?? null,
+    nombre_entidad: municipios.data[e.cve_mun]?.nombre_entidad ?? null,
+  }));
+  return { data: escuelas, error: null };
+};
+
+// Pantalla 5 (Conclusión, "Concentración por municipio"): al escribirse
+// esta tarjeta pintaba cve_mun crudo porque, en ese momento, el contrato no
+// declaraba el nombre -- MunicipioOut ya trae nombre_municipio desde el
+// 11-sep (US-621), el mismo campo que MapaCasos.jsx/ComparacionTerritorial.jsx
+// ya usan (checklist 12-sep, "Municipio y entidad por nombre real";
+// confirmado real por BUG-077, 317/317 municipios con nombre poblado).
+// Compone getPanoramaEscuelas() + getMunicipiosPorClaves(), mismo patrón que
+// getComparacionTerritorial() arriba -- una llamada por municipio ÚNICO.
+export const getConclusionEscuelas = async () => {
+  const base = await getPanoramaEscuelas();
+  if (base.error) return { data: null, error: base.error };
+  const municipios = await getMunicipiosPorClaves(base.data.map((e) => e.cve_mun));
+  if (municipios.error) return { data: null, error: municipios.error };
+  const escuelas = base.data.map((e) => ({
+    ...e,
+    nombre_municipio: municipios.data[e.cve_mun]?.nombre_municipio ?? null,
+  }));
+  return { data: escuelas, error: null };
+};
 
 // --- Predicciones / ML ---
 export const getPrediccion = (cct) => request(`/api/v1/predicciones/${cct}`);
@@ -141,6 +217,92 @@ export const postAgenteConsulta = (pregunta, historial = []) =>
     method: "POST",
     body: JSON.stringify({ pregunta, historial }),
   });
+
+// --- Agente (chat), streaming SSE (US-305 Fase 3) ---
+// Contrato: API_Specification.md §3.5 v1.3 (Christian, 11-sep). Ya mergeado
+// a main (12-sep) -- src/api/v1/agente.py registra "/consulta/stream".
+//
+// EventSource no sirve aqui -- el endpoint es POST y EventSource solo hace
+// GET (nota de Christian). Se lee el cuerpo con fetch() + ReadableStream,
+// mismo patron de sesion por cookie que request() (credentials: "same-origin").
+//
+// Mismo cuerpo que postAgenteConsulta (pregunta, historial, + contexto
+// opcional, ver bloque de arriba). Siempre llegan los 3 eventos, tambien si
+// algo falla a medio camino -- el backend convierte el fallo en un
+// `fragmento` con mensaje generico y manda `fin` igual, asi que el cliente
+// nunca se queda esperando:
+//   - "meta"      (una vez, al inicio): { sql_generado, fuera_de_alcance }
+//   - "fragmento" (una o mas veces):    { texto } -- concatenados en orden forman la respuesta
+//   - "fin"       (una vez, al final):  {}
+//
+// onEvento(tipo, data) se llama por cada evento segun llega, para que quien
+// consuma esto pueda ir pintando la burbuja del chat en vivo y cerrarla al
+// recibir "fin". El `texto` de cada fragmento se debe pintar como texto
+// plano, nunca como HTML (nota de Christian) -- esa decision es de quien
+// consuma esto, este cliente no sanea ni interpreta el texto.
+export async function postAgenteConsultaStream(pregunta, { historial = [], contexto = null, onEvento, signal } = {}) {
+  let res;
+  try {
+    res = await fetch(`${BASE_URL}/api/v1/agente/consulta/stream`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ pregunta, historial, ...(contexto ? { contexto } : {}) }),
+      signal,
+    });
+  } catch (err) {
+    return { error: err.message ?? "network_error" };
+  }
+
+  if (!res.ok || !res.body) {
+    return { error: `${res.status} ${res.statusText}` };
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  // Parser minimo de SSE: bloques separados por linea en blanco, cada uno con
+  // "event: <tipo>" + "data: <json>". No hace falta una libreria -- el
+  // contrato (API_Specification.md §3.5) es simple y fijo.
+  const procesarBuffer = () => {
+    const bloques = buffer.split("\n\n");
+    buffer = bloques.pop() ?? ""; // el ultimo bloque puede venir incompleto todavia
+    for (const bloque of bloques) {
+      if (!bloque.trim()) continue;
+      let tipo = "message";
+      let dataRaw = "";
+      for (const linea of bloque.split("\n")) {
+        if (linea.startsWith("event:")) tipo = linea.slice(6).trim();
+        else if (linea.startsWith("data:")) dataRaw += linea.slice(5).trim();
+      }
+      let data = {};
+      try {
+        data = dataRaw ? JSON.parse(dataRaw) : {};
+      } catch {
+        continue; // evento puntual malformado -- no debe tronar la UI
+      }
+      onEvento?.(tipo, data);
+    }
+  };
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      procesarBuffer();
+    }
+  } catch (err) {
+    // Conexion cortada a medias: el contrato promete que "fin" siempre llega,
+    // pero si la conexion se cae antes de que llegue, este cliente avisa
+    // "fin" igual para que la UI no se quede esperando para siempre.
+    onEvento?.("fin", {});
+    return { error: err.message ?? "stream_error" };
+  }
+
+  return { error: null };
+}
 
 // --- Auth (US-402, US-405, C4, ADR-012) ---
 export const getAuthMe = () => request("/api/v1/auth/me");

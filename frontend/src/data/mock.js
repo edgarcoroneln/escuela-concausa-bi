@@ -21,6 +21,11 @@ export const kpis = [
 export const kpisMockParaComparacion2Ciclos = {
   matricula_total: 6704229,
   variacion_matricula: 0.0161, // (6704229 - 6598110) / 6598110, mismos 2 ciclos que antes
+  // Agregado 12-sep (auditoría mockups vs código): mismo 62% que ya trae el
+  // arreglo `kpis` de arriba ("3 de 6 observados en promedio") -- Panorama.jsx
+  // ahora también consume este campo (02_Data_Visualization_Spec.md, fila "P2 --
+  // Panorama", que lista indice_completitud_drivers como dato que P2 necesita).
+  indice_completitud_drivers: 0.62,
 };
 
 export const escuelasPorNivel = [
@@ -78,6 +83,30 @@ export const driverIcons = {
   D6: "🌫️",
 };
 
+// Recomendación GENERAL por driver para la Pantalla 5 (Conclusión Top 3,
+// 01_UX_Architecture.md §2). CORRECCIÓN 12-sep (auditoría mockups vs
+// código, Equipo 3): la versión anterior de este objeto era texto autoral
+// de este frente porque la búsqueda inicial en el vault no encontró el
+// catálogo oficial -- sí existe: es el "catálogo prescriptivo" canónico de
+// vault/15_ML_Models/Publicacion_Gold.md §4, implementado en
+// src/modelos/recomendaciones.py (RECOMENDACION_POR_DRIVER) y espejado en
+// src/api/mock_data.py -- el mismo texto que expone PrediccionOut.recomendacion
+// por escuela (ver getPrediccion en lib/api.js, usado en ExpedienteEscuela.jsx).
+// Aquí se usa como texto GENERAL por driver (no por escuela concreta) porque
+// P5 resume el driver más frecuente del Top 3, no una predicción individual --
+// mismo catálogo, alcance distinto. Si el backend cambia estas líneas, este
+// objeto se desincroniza (no hay endpoint de catálogo, solo por escuela vía
+// /predicciones/{cct}); test_catalogo_coincide_con_el_de_la_api sólo cubre el
+// backend, así que un cambio ahí no se detecta aquí automáticamente.
+export const recomendacionGeneralPorDriver = {
+  D1: "Priorizar programas de becas y apoyo alimentario en la zona.",
+  D2: "Coordinar con seguridad pública rutas escolares seguras y entornos protegidos.",
+  D3: "Gestionar rehabilitación de infraestructura escolar prioritaria.",
+  D4: "Ampliar conectividad y dotación de equipo de cómputo.",
+  D5: "Asegurar suministro de agua y planes de contingencia hídrica.",
+  D6: "Activar protocolos por contingencia de calidad del aire.",
+};
+
 // Nivel de atención por umbral -- ADR-011 (Edgar) / DEC-024, no el semáforo
 // original del mockup de UX/UI. Deriva su propio nivel directo de
 // indice_riesgo y NO consume/reinterpreta gold.recomendaciones.prioridad
@@ -111,13 +140,13 @@ export function nivelRiesgo(indice, cortes) {
 // para poder probar el diseño completo de las 7 tarjetas mientras llega la
 // lista real desde el API.
 export const escuelasEnRiesgo = [
-  { cct: "15DPR0920D", nombre: "Francisco I. Madero", nivel: "Primaria", municipio: "Ecatepec", entidad: "Edomex", latitud: 19.6018, longitud: -99.0561, indice_riesgo: 0.4774, variacion: -21, driver_dominante: "D4" },
-  { cct: "15DPR2254O", nombre: "Ricardo Flores Magón", nivel: "Secundaria", municipio: "Ecatepec", entidad: "Edomex", latitud: 19.605, longitud: -99.048, indice_riesgo: 0.4774, variacion: -22, driver_dominante: "D2" },
-  { cct: "PLACEHOLDER-3", nombre: "Caso 3 (placeholder)", nivel: "Primaria", municipio: "Oaxaca de Juárez", entidad: "Oaxaca", latitud: 20.6597, longitud: -103.3496, indice_riesgo: 0.65, variacion: -18, driver_dominante: "D1" },
-  { cct: "PLACEHOLDER-4", nombre: "Caso 4 (placeholder)", nivel: "Preescolar", municipio: "León", entidad: "Guanajuato", latitud: 25.6866, longitud: -100.3161, indice_riesgo: 0.62, variacion: -25, driver_dominante: "D3" },
-  { cct: "PLACEHOLDER-5", nombre: "Caso 5 (placeholder)", nivel: "Primaria", municipio: "Tuxtla Gtz.", entidad: "Chiapas", latitud: 19.4326, longitud: -99.1332, indice_riesgo: 0.61, variacion: -20, driver_dominante: "D5" },
-  { cct: "PLACEHOLDER-6", nombre: "Caso 6 (placeholder)", nivel: "Secundaria", municipio: "Hermosillo", entidad: "Sonora", latitud: 21.1619, longitud: -86.8515, indice_riesgo: 0.59, variacion: -17, driver_dominante: "D6" },
-  { cct: "PLACEHOLDER-7", nombre: "Caso 7 (placeholder)", nivel: "Primaria", municipio: "Guadalajara", entidad: "Jalisco", latitud: 17.0732, longitud: -96.7266, indice_riesgo: 0.58, variacion: -19, driver_dominante: "D4" },
+  { cct: "15DPR0920D", nombre: "Francisco I. Madero", nivel: "Primaria", municipio: "Ecatepec", entidad: "Edomex", latitud: 19.6018, longitud: -99.0561, indice_riesgo: 0.4774, variacion: -21, driver_dominante: "D4", matricula_total: 312 },
+  { cct: "15DPR2254O", nombre: "Ricardo Flores Magón", nivel: "Secundaria", municipio: "Ecatepec", entidad: "Edomex", latitud: 19.605, longitud: -99.048, indice_riesgo: 0.4774, variacion: -22, driver_dominante: "D2", matricula_total: 458 },
+  { cct: "PLACEHOLDER-3", nombre: "Caso 3 (placeholder)", nivel: "Primaria", municipio: "Oaxaca de Juárez", entidad: "Oaxaca", latitud: 20.6597, longitud: -103.3496, indice_riesgo: 0.65, variacion: -18, driver_dominante: "D1", matricula_total: 201 },
+  { cct: "PLACEHOLDER-4", nombre: "Caso 4 (placeholder)", nivel: "Preescolar", municipio: "León", entidad: "Guanajuato", latitud: 25.6866, longitud: -100.3161, indice_riesgo: 0.62, variacion: -25, driver_dominante: "D3", matricula_total: 145 },
+  { cct: "PLACEHOLDER-5", nombre: "Caso 5 (placeholder)", nivel: "Primaria", municipio: "Tuxtla Gtz.", entidad: "Chiapas", latitud: 19.4326, longitud: -99.1332, indice_riesgo: 0.61, variacion: -20, driver_dominante: "D5", matricula_total: 267 },
+  { cct: "PLACEHOLDER-6", nombre: "Caso 6 (placeholder)", nivel: "Secundaria", municipio: "Hermosillo", entidad: "Sonora", latitud: 21.1619, longitud: -86.8515, indice_riesgo: 0.59, variacion: -17, driver_dominante: "D6", matricula_total: 389 },
+  { cct: "PLACEHOLDER-7", nombre: "Caso 7 (placeholder)", nivel: "Primaria", municipio: "Guadalajara", entidad: "Jalisco", latitud: 17.0732, longitud: -96.7266, indice_riesgo: 0.58, variacion: -19, driver_dominante: "D4", matricula_total: 224 },
 ];
 
 // Matriz de drivers por escuela (D1..D6). `null` = SIN_DATO (driver no
@@ -135,3 +164,21 @@ export const matrizDrivers = [
   { cct: "PLACEHOLDER-6", nombre: "Caso 6 (placeholder)", drivers: { D1: 0.34, D2: null, D3: null, D4: 0.30, D5: 0.62, D6: 0.20 } },
   { cct: "PLACEHOLDER-7", nombre: "Caso 7 (placeholder)", drivers: { D1: 0.58, D2: 0.27, D3: 0.32, D4: 0.25, D5: null, D6: null } },
 ];
+
+// Pantalla 2 (Panorama): fusión de escuelasEnRiesgo + matrizDrivers en la
+// forma PLANA real de EscuelaDetalleOut (d1..d6, no drivers:{D1..D6}) --
+// así Panorama.jsx usa un solo camino de transformación (flat -> {D1..D6}
+// para DriverMatrix) tanto en modo demo como en modo real, en vez de dos
+// formas de mock distintas para la misma pantalla.
+export const panoramaMock = escuelasEnRiesgo.map((e) => {
+  const drivers = matrizDrivers.find((m) => m.cct === e.cct)?.drivers ?? {};
+  return {
+    ...e,
+    d1: drivers.D1 ?? null,
+    d2: drivers.D2 ?? null,
+    d3: drivers.D3 ?? null,
+    d4: drivers.D4 ?? null,
+    d5: drivers.D5 ?? null,
+    d6: drivers.D6 ?? null,
+  };
+});

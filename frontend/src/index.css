@@ -96,6 +96,11 @@
   --faro-sidebar-collapsed: 4.5rem;
   --faro-sidebar-expanded: 17.5rem;
   --faro-inspector-width: 26rem;
+  /* Ancho vigente del rail -- por defecto el expandido; el breakpoint de
+     abajo lo redefine a --faro-sidebar-collapsed en movil. Sidebar.jsx,
+     Header.jsx y App.jsx leen SIEMPRE esta variable, nunca -expanded/
+     -collapsed directo, para que los tres queden sincronizados sin JS. */
+  --faro-sidebar-width: var(--faro-sidebar-expanded);
 
   /* --- Elevacion (03_Visual_Identity.md S5 / Stitch "Surface Stack System") --- */
   --faro-shadow-none: none;                                                        /* nivel 1, tarjetas en reposo */
@@ -156,6 +161,20 @@
   --radius-card: var(--faro-radius-md);     /* spec: tarjetas de datos, 6px */
 }
 
+/* Breakpoint Mobile de Design_Tokens_Stitch.md ("Mobile (< 768px): ...
+   collapsed analytical controls") -- coincide con el `md` de Tailwind, asi
+   que las clases `md:hidden`/`hidden md:*` de Sidebar.jsx caen exactamente
+   en el mismo punto que este ancho. El rail nunca desaparece del todo (no
+   hay mockup de nav movil distinto, ver DevLog de esta fecha): se angosta
+   a --faro-sidebar-collapsed y Sidebar.jsx oculta las etiquetas de texto,
+   dejando solo los numeros/iconos -- mismo patron que un rail de iconos
+   convencional. */
+@media (max-width: 767px) {
+  :root {
+    --faro-sidebar-width: var(--faro-sidebar-collapsed);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -209,4 +228,28 @@ h1, h2, h3 {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Aparición escalonada de tarjetas (checklist 12-sep, item accionable sin
+   dependencia de API) -- se combina con --delay inline por tarjeta (ver
+   LosSieteCasos.jsx) para que las 7 no entren de golpe. Respeta
+   prefers-reduced-motion. */
+@keyframes aparicionEscalonada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.aparicion-escalonada {
+  animation: aparicionEscalonada 420ms ease-out both;
+  animation-delay: var(--delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aparicion-escalonada {
+    animation: none;
+  }
 }

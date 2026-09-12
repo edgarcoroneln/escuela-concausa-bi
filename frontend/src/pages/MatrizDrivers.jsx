@@ -13,8 +13,8 @@ import EnConstruccion from "../components/EnConstruccion.jsx";
 export default function MatrizDrivers() {
   return (
     <PageContainer>
-      <PageHeader title="Las 7 pistas sobre la mesa" subtitle="Comparativa de los 7 casos en las seis dimensiones del entorno." />
-      <EnConstruccion nota="La matriz necesita los 6 drivers de las 7 escuelas a la vez; hoy eso requiere una llamada por escuela (no hay endpoint de lote para el detalle). Se conecta cuando se resuelva ese patrón." />
+      <PageHeader title="Las seis pistas, caso por caso" subtitle="Comparativa de los casos en las seis dimensiones del entorno." />
+      <EnConstruccion nota="La matriz necesita los 6 drivers de las escuelas en riesgo a la vez; hoy eso requiere una llamada por escuela (no hay endpoint de lote para el detalle). Se conecta cuando se resuelva ese patrón." />
     </PageContainer>
   );
 }
