@@ -22,6 +22,15 @@ import mexicoStates from "../data/geo/mexico-states.json";
 // estar en el spec aprobado). El mapa es de verdad (geojson real de los 32
 // estados), no un gráfico decorativo inventado.
 //
+// CORRECCIÓN 12-sep (tercera vuelta, a pedido explícito de Diana): mapa más
+// grande + interacción real -- hover ilumina el estado bajo el cursor,
+// clic lo selecciona (con outline blanco), y las 4 chips de abajo son
+// botones que hacen exactamente lo mismo, sincronizados con el mapa vía un
+// solo estado (`entidadSeleccionada`) en este componente padre. Los colores
+// por entidad (--faro-entity-cdmx/edomex/nl/jalisco) ya existían en
+// index.css desde la fase de tokens pero no se usaban en ningún componente
+// todavía -- se reutilizan aquí en vez de inventar una paleta nueva.
+//
 // Contenido contra el spec: "un único botón de acceso con Google, sin
 // campos de usuario o contraseña... el diseño debe aprovechar ese espacio
 // para identidad y narrativa, no para un formulario que no existe."
@@ -34,21 +43,33 @@ import mexicoStates from "../data/geo/mexico-states.json";
 // intentó" -- no se inventa un estado de error que el backend no expone.
 const ENTIDADES_ALCANCE = ["MX-CMX", "MX-MEX", "MX-NLE", "MX-JAL"];
 const ENTIDADES_LABEL = [
-  { id: "MX-CMX", nombre: "CDMX" },
-  { id: "MX-MEX", nombre: "Edomex" },
-  { id: "MX-NLE", nombre: "Nuevo León" },
-  { id: "MX-JAL", nombre: "Jalisco" },
+  { id: "MX-CMX", nombre: "CDMX", color: "var(--faro-entity-cdmx)" },
+  { id: "MX-MEX", nombre: "Edomex", color: "var(--faro-entity-edomex)" },
+  { id: "MX-NLE", nombre: "Nuevo León", color: "var(--faro-entity-nl)" },
+  { id: "MX-JAL", nombre: "Jalisco", color: "var(--faro-entity-jalisco)" },
 ];
+const ENTIDAD_COLOR = Object.fromEntries(ENTIDADES_LABEL.map((e) => [e.id, e.color]));
 
-// Mapa decorativo con geografía real (mismo geojson/d3-geo que
-// components/MapaRiesgo.jsx) -- a diferencia de ese componente, aquí no hay
-// escuelas que ubicar ni interacción: solo resalta las 4 entidades del
-// alcance de FARO sobre el resto del país, para dar identidad visual sin
-// inventar un dato que no existe.
-function MapaEntidadesLogin() {
+// Mapa con geografía real (mismo geojson/d3-geo que components/MapaRiesgo.jsx)
+// -- a diferencia de ese componente, aquí no hay escuelas que ubicar, solo
+// las 4 entidades del alcance de FARO, interactivas: hover y clic las
+// resaltan con su propio color de identidad (nunca un dato inventado, es
+// solo identidad visual). La selección vive en el componente padre para
+// poder sincronizarla con las chips de abajo.
+function MapaEntidadesLogin({ seleccionada, onSeleccionar }) {
   const svgRef = useRef(null);
-  const size = 420;
+  const [hovered, setHovered] = useState(null);
+  const onSeleccionarRef = useRef(onSeleccionar);
+  const size = 520;
 
+  useEffect(() => {
+    onSeleccionarRef.current = onSeleccionar;
+  }, [onSeleccionar]);
+
+  // Efecto de montaje: construye el mapa una sola vez (proyección, paths,
+  // manejadores). No depende de `seleccionada`/`hovered` para que los nodos
+  // del SVG no se destruyan y recreen en cada hover -- así la transición de
+  // CSS de abajo se ve, en vez de "saltar" sin animación.
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
@@ -63,25 +84,57 @@ function MapaEntidadesLogin() {
       .data(mexicoStates.features)
       .join("path")
       .attr("d", path)
-      .attr("fill", (d) =>
-        ENTIDADES_ALCANCE.includes(d.properties.id) ? "var(--faro-signal-soft)" : "rgba(255,255,255,0.05)"
-      )
+      .attr("data-id", (d) => d.properties.id)
       .attr("stroke", "rgba(255,255,255,0.18)")
-      .attr("stroke-width", 0.6);
+      .attr("stroke-width", 0.6)
+      .style("cursor", (d) => (ENTIDADES_ALCANCE.includes(d.properties.id) ? "pointer" : "default"))
+      .style("transition", "fill-opacity 180ms ease, stroke-width 180ms ease, stroke 180ms ease")
+      .on("mouseenter", (event, d) => {
+        if (ENTIDADES_ALCANCE.includes(d.properties.id)) setHovered(d.properties.id);
+      })
+      .on("mouseleave", (event, d) => {
+        if (ENTIDADES_ALCANCE.includes(d.properties.id)) setHovered(null);
+      })
+      .on("click", (event, d) => {
+        if (ENTIDADES_ALCANCE.includes(d.properties.id)) onSeleccionarRef.current(d.properties.id);
+      })
+      .append("title")
+      .text((d) => (ENTIDADES_ALCANCE.includes(d.properties.id) ? d.properties.name : ""));
   }, []);
+
+  // Efecto de estado: solo actualiza atributos visuales sobre los paths ya
+  // creados (opacidad de relleno, grosor/color de borde) cada vez que
+  // cambia el hover o la selección.
+  useEffect(() => {
+    d3.select(svgRef.current)
+      .selectAll("path")
+      .attr("fill", (d) =>
+        ENTIDADES_ALCANCE.includes(d.properties.id) ? ENTIDAD_COLOR[d.properties.id] : "rgba(255,255,255,0.05)"
+      )
+      .attr("fill-opacity", (d) => {
+        const id = d.properties.id;
+        if (!ENTIDADES_ALCANCE.includes(id)) return 1;
+        if (id === seleccionada) return 1;
+        if (id === hovered) return 0.75;
+        return 0.4;
+      })
+      .attr("stroke", (d) => (d.properties.id === seleccionada ? "#ffffff" : "rgba(255,255,255,0.18)"))
+      .attr("stroke-width", (d) => (d.properties.id === seleccionada ? 1.6 : 0.6));
+  }, [seleccionada, hovered]);
 
   return (
     <svg
       ref={svgRef}
       role="img"
-      aria-label="Mapa de México con Ciudad de México, Estado de México, Nuevo León y Jalisco resaltados"
-      style={{ width: "100%", height: "auto", maxWidth: "22rem" }}
+      aria-label="Mapa de México con Ciudad de México, Estado de México, Nuevo León y Jalisco resaltados; puedes pasar el cursor o seleccionar cada entidad"
+      style={{ width: "100%", height: "auto", maxWidth: "28rem" }}
     />
   );
 }
 
 export default function Login() {
   const [redirigiendo, setRedirigiendo] = useState(false);
+  const [entidadSeleccionada, setEntidadSeleccionada] = useState(null);
 
   function iniciarSesion(e) {
     e.preventDefault();
@@ -89,12 +142,16 @@ export default function Login() {
     window.location.assign(getAuthLoginUrl());
   }
 
+  function alternarEntidad(id) {
+    setEntidadSeleccionada((actual) => (actual === id ? null : id));
+  }
+
   return (
     <div
       className="min-h-screen flex flex-col md:flex-row"
       style={{ background: "linear-gradient(135deg, #0b1524 0%, #16283f 100%)" }}
     >
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12">
+      <div className="flex-1 md:flex-[0.9] flex items-center justify-center p-6 md:p-10">
         <div className="w-full flex flex-col gap-6 text-center md:text-left items-center md:items-start" style={{ maxWidth: "26rem" }}>
           <div>
             <span
@@ -150,24 +207,36 @@ export default function Login() {
       </div>
 
       <div
-        className="hidden md:flex flex-1 items-center justify-center p-12"
+        className="hidden md:flex md:flex-[1.1] items-center justify-center p-8"
         style={{ borderLeft: "1px solid rgba(255,255,255,0.08)" }}
       >
-        <div className="flex flex-col items-center gap-6">
-          <MapaEntidadesLogin />
+        <div className="flex flex-col items-center gap-6 w-full">
+          <MapaEntidadesLogin seleccionada={entidadSeleccionada} onSeleccionar={alternarEntidad} />
           <div className="flex flex-wrap items-center justify-center gap-2">
-            {ENTIDADES_LABEL.map((e) => (
-              <span
-                key={e.id}
-                className="text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{ background: "rgba(255,255,255,0.08)", color: "#ffffff" }}
-              >
-                {e.nombre}
-              </span>
-            ))}
+            {ENTIDADES_LABEL.map((e) => {
+              const activa = entidadSeleccionada === e.id;
+              return (
+                <button
+                  key={e.id}
+                  type="button"
+                  onClick={() => alternarEntidad(e.id)}
+                  aria-pressed={activa}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-full"
+                  style={{
+                    background: activa ? e.color : "rgba(255,255,255,0.08)",
+                    color: "#ffffff",
+                    border: activa ? "1px solid rgba(255,255,255,0.6)" : "1px solid transparent",
+                    transition: "background 180ms ease, border-color 180ms ease",
+                  }}
+                >
+                  {e.nombre}
+                </button>
+              );
+            })}
           </div>
           <p className="text-xs text-center" style={{ color: "#6b7a94", maxWidth: "18rem" }}>
-            FARO cubre escuelas de estas 4 entidades del país.
+            FARO cubre escuelas de estas 4 entidades del país. Pasa el cursor o selecciona una para
+            resaltarla.
           </p>
         </div>
       </div>
