@@ -326,6 +326,16 @@ def _seccion_modelo_datos(_repo: RepositorioAbout) -> SeccionOut:
                     "reingestar nada."
                 )
             ),
+            BloqueMarkdown(
+                texto=(
+                    "**Cómo leer el mapa de abajo** — cada color es una de las 4 entidades de "
+                    "`SCOPE_ENTIDADES`; el municipio es la unidad mínima que se colorea. No es una "
+                    "escala de valor (no hay un número detrás del color, es categórico) y el gris "
+                    "de fondo **no es `SIN_DATO`** — es el resto de México como contexto geográfico, "
+                    "fuera del alcance del proyecto. Corte: municipios vigentes del asset versionado "
+                    "(INEGI/CONABIO), no una consulta en vivo."
+                )
+            ),
             BloqueMapa(
                 geojson=_geojson_municipios_scope(),
                 fondo=_geojson_silueta_nacional(),
@@ -515,6 +525,17 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
             ),
             BloqueTabla(columnas=["Fuente", "Descripción", "Frecuencia"], filas=_FUENTES_BRONZE),
             BloqueMetricas(items=[total_item]),
+            BloqueMarkdown(
+                texto=(
+                    "**Cómo leer las barras de abajo** — una fila por capa, largo proporcional a "
+                    "su conteo de filas (0 hasta la capa más grande, sin transformar). El recuadro "
+                    "punteado \"SIN_DATO\" (no una barra de longitud cero) significa que esa tabla "
+                    "todavía no está materializada en este ambiente — cero significaría que existe "
+                    "pero está vacía, un caso distinto. Bronze/Silver son nacionales (32 entidades); "
+                    "Gold ya está acotado a `SCOPE_ENTIDADES`. El corte es el ciclo vigente en "
+                    "Postgres al momento de la consulta, en vivo."
+                )
+            ),
             _barras_capas(conteos),
             BloqueMarkdown(
                 texto=(

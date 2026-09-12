@@ -308,3 +308,50 @@ Suite completa verificada de nuevo tras estos cambios: 1103 passed / 4 skipped (
 `test_validacion_*` son preexistentes, por una versión de `great_expectations` desalineada en este
 ambiente local, ajenas a este trabajo). `ruff` limpio, `api/openapi.v1.json` regenerado con
 `scripts/export_openapi.py`.
+
+## Ronda 7 — sync urgente + leyendas de mapa/barras (Marina García, US-621) (2026-09-11)
+
+Marina (líder Equipo 3 · UX/UI) pidió, con urgencia porque tres entregables de su equipo ya dependen
+de que `/api/v1/about/*` llegue a `main`: (1) sincronizar `dev/manuel-serrania` con `origin/main`,
+avisando de conflictos esperados en `src/frontend/`; (2) agregar leyenda de "cómo leer" a los
+bloques `mapa` y `barras` (criterio 28 de su plan: toda gráfica explica qué se ve — `diagrama_flujo`
+ya la tenía); (3) confirmar que ninguna cifra de datos (escuelas, municipios) esté escrita a mano en
+vez de salir del conteo vivo.
+
+**Sync.** `dev/manuel-serrania` estaba 229 commits detrás de `origin/main`. Antes de mergear a
+ciegas se simuló con `git merge-tree --write-tree` (no toca el working tree): el único conflicto
+real resultó ser `api/openapi.v1.json` (archivo generado — se resolvió regenerándolo con
+`scripts/export_openapi.py`, no a mano). `src/frontend/app.py` parecía divergir en el diff pero
+`origin/main` nunca lo tocó desde que esta rama se bifurcó, así que el merge real lo resolvió solo,
+conservando las 4 columnas y la tarjeta "🛠️ Cómo funciona". Merge hecho (`git merge origin/main`,
+commit de merge normal, sin rebase) y verificado explícitamente después: el router `about` sigue
+registrado en `src/api/v1/__init__.py`, `4_Como_Funciona.py`/`about_client.py` intactos, suite
+completa 1197 passed (las mismas 20 fallas preexistentes de `test_validacion_*`, ninguna nueva).
+El merge trajo consigo el ADR-011/ADR-012 (retiro de Streamlit por un frontend React nativo,
+Equipo 5) — cambio grande del proyecto, pero sin tocar ningún archivo de esta sección.
+
+**Leyendas.** Sin tocar el contrato (confirmado con Marina: no hacen falta campos nuevos en
+`BloqueMapa`/`BloqueBarras`). Dos `BloqueMarkdown` nuevos en `src/api/v1/about.py`, mismo patrón que
+ya existía para `diagrama_flujo`, con las 4 preguntas de negocio que pide su criterio 28: qué se ve,
+en qué unidad/rango, cómo se ve un `SIN_DATO` (y que no es cero), de qué recorte habla. El del mapa
+aclara explícitamente que el gris de fondo **no es** `SIN_DATO` (es geografía fuera de alcance, no
+falta de dato) para no generar la confusión contraria a la que se quiere evitar.
+
+**Cifras a mano — auditado, ninguna encontrada.** Se revisó con grep todo número de 3+ dígitos en
+`about.py`/`about_client.py`/`4_Como_Funciona.py`: todo lo encontrado es IDs de historia/fuente,
+hechos de arquitectura fijos (4 estados, 6 drivers, 8 fuentes, 9 cubos, 10 dashboards — no dependen
+del ciclo de datos), alturas de layout en px, o métricas de Model Cards ya cerradas. El único dato
+que varía con el ciclo (filas por capa) ya sale del conteo vivo de `repositorio_about.py`. Sin
+cambios de código para este punto.
+
+**Hallazgo que Marina no mencionó pero bloquea igual: `ownership.yml` sigue sin corregirse.**
+Verificado contra `check_ownership.py` real: Héctor, Manuel y Carlos (Equipo 1) siguen sin
+`src/api/**`/`src/frontend/**` en su verde/amarillo — mismo hallazgo de la Ronda 5, sin resolver.
+El gate reprueba el PR sin importar el contenido. Escalado a Héctor por separado (no lo puede
+resolver Manuel solo, es alcance de Edgar).
+
+Verificado de nuevo tras las leyendas: 54/54 pruebas de `about`, `ruff` limpio,
+`api/openapi.v1.json` regenerado (sin cambios: el esquema no varía con el contenido de los bloques),
+`vault_lint.py` sin bloqueantes nuevos (los 3 que reporta son preexistentes de `componentes-back`).
+Confirmado visualmente con Playwright contra la página real: las 2 leyendas aparecen en el orden
+correcto, 0 íconos de error.
