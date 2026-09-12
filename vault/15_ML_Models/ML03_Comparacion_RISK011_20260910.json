@@ -8,7 +8,22 @@
     "solo_lectura": true,
     "filas_totales": 136046,
     "filas_entrenadas": 114200,
-    "filas_excluidas": 21846
+    "filas_excluidas": 21846,
+    "elegibilidad_ciclo_entidad": [
+      {"id_ciclo": "2022-2023", "cve_ent": "09", "filas": 7082, "elegibles": 6328, "excluidas": 754},
+      {"id_ciclo": "2022-2023", "cve_ent": "14", "filas": 12452, "elegibles": 9904, "excluidas": 2548},
+      {"id_ciclo": "2022-2023", "cve_ent": "15", "filas": 19208, "elegibles": 16771, "excluidas": 2437},
+      {"id_ciclo": "2022-2023", "cve_ent": "19", "filas": 6575, "elegibles": 5404, "excluidas": 1171},
+      {"id_ciclo": "2023-2024", "cve_ent": "09", "filas": 7031, "elegibles": 6238, "excluidas": 793},
+      {"id_ciclo": "2023-2024", "cve_ent": "14", "filas": 12620, "elegibles": 9867, "excluidas": 2753},
+      {"id_ciclo": "2023-2024", "cve_ent": "15", "filas": 19269, "elegibles": 16687, "excluidas": 2582},
+      {"id_ciclo": "2023-2024", "cve_ent": "19", "filas": 6533, "elegibles": 5311, "excluidas": 1222},
+      {"id_ciclo": "2024-2025", "cve_ent": "09", "filas": 6886, "elegibles": 6096, "excluidas": 790},
+      {"id_ciclo": "2024-2025", "cve_ent": "14", "filas": 12603, "elegibles": 9776, "excluidas": 2827},
+      {"id_ciclo": "2024-2025", "cve_ent": "15", "filas": 19249, "elegibles": 16565, "excluidas": 2684},
+      {"id_ciclo": "2024-2025", "cve_ent": "19", "filas": 6538, "elegibles": 5253, "excluidas": 1285}
+    ],
+    "elegibilidad_proveniencia": "ML03_Evidencia_20260908.json; mismo dump_sha256 y mismo corte Gold"
   },
   "protocolo": {
     "semilla": 42,
@@ -53,6 +68,18 @@
       ],
       "estabilidad": {
         "semillas": [7, 21, 42, 84, 2026],
+        "ari_por_par": {
+          "7-21": 1.0,
+          "7-42": 1.0,
+          "7-84": 1.0,
+          "7-2026": 1.0,
+          "21-42": 1.0,
+          "21-84": 1.0,
+          "21-2026": 1.0,
+          "42-84": 1.0,
+          "42-2026": 1.0,
+          "84-2026": 1.0
+        },
         "ari_minimo": 1.0,
         "ari_promedio": 1.0
       }
