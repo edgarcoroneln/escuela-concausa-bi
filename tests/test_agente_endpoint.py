@@ -50,8 +50,9 @@ def test_pregunta_fuera_de_alcance_se_rechaza(client: TestClient) -> None:
     )
 
     cuerpo = _post(client, "¿cuál es la capital de Francia?")
-    assert cuerpo["fuera_de_alcance"] is True
+    assert cuerpo["fuera_de_alcance"] is False
     assert cuerpo["sql_generado"] is None
+    assert "No encontré contexto" in cuerpo["respuesta"]
 
 
 def test_no_devuelve_la_respuesta_hardcodeada_del_stub(client: TestClient) -> None:
@@ -219,7 +220,7 @@ def test_stream_pregunta_fuera_de_alcance_se_rechaza_en_un_fragmento(client: Tes
 
     eventos = _post_stream(client, "¿cuál es la capital de Francia?")
 
-    assert eventos[0] == ("meta", {"sql_generado": None, "fuera_de_alcance": True})
+    assert eventos[0] == ("meta", {"sql_generado": None, "fuera_de_alcance": False})
     assert len([d for n, d in eventos if n == "fragmento"]) == 1
 
 
