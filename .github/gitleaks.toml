@@ -1,0 +1,21 @@
+# Configuración de GitLeaks para el CI (paso «G5 Secret scan con GitLeaks» de
+# .github/workflows/ci.yml). Extiende y CONSERVA todas las reglas por defecto de
+# GitLeaks (useDefault = true); solo documenta un falso positivo puntual e histórico.
+#
+# Contexto — BUG-079 (2026-09-13): el commit de documentación `6f6b167` registró
+# BUG-078/079/080 en la matriz de trazabilidad e incluyó, dentro de un comando de
+# rollback de Cloud Run, el identificador de revisión `faro-api-00019-2xs`. La regla
+# `generic-api-key` lo confunde con un secreto por el patrón «keyword … = valor de
+# alta entropía». NO es un secreto: es el nombre público de una revisión de despliegue.
+# Como en `dev/*` está prohibido el force-push (regla de oro del repo), ese commit no
+# se puede reescribir para quitar la línea; se exime ÚNICAMENTE ese commit histórico.
+# Todas las reglas por defecto siguen activas en el resto del repositorio y en los
+# commits futuros. Ver vault/_DevLog/2026-09-13-luis-tellez-registro-matriz-trazabilidad-login.md
+title = "FARO GitLeaks (extiende defaults; exime un falso positivo histórico puntual)"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Falso positivo BUG-079: ID de revisión de Cloud Run 'faro-api-00019-2xs' en un comando de rollback dentro de la matriz de trazabilidad (no es un secreto)."
+commits = ["6f6b167185f1f4015ced49a63c1ff468728e0813"]
