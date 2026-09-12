@@ -5,9 +5,9 @@ import DemoBadge from "../components/DemoBadge.jsx";
 import DriverMatrix from "../components/DriverMatrix.jsx";
 import Card from "../components/Card.jsx";
 import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
-import { getPanoramaEscuelas } from "../lib/api.js";
+import { getPanoramaEscuelas, getKpis } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
-import { panoramaMock } from "../data/mock.js";
+import { panoramaMock, kpisMockParaComparacion2Ciclos } from "../data/mock.js";
 
 // Pantalla 2 -- Panorama de riesgo (rediseño Fase 2, US-641). Contra
 // 01_UX_Architecture.md §2 "Pantalla 2": esta es la ÚNICA pantalla que
@@ -33,6 +33,19 @@ export default function Panorama() {
   const escuelas = status === "ok" || status === "demo" ? data : [];
   const n = escuelas.length;
   const matriculaTotal = escuelas.reduce((acc, e) => acc + (e.matricula_total ?? 0), 0);
+
+  // Agregados del alcance completo (4 entidades), no solo de las escuelas en
+  // riesgo -- 02_Data_Visualization_Spec.md fila "P2 -- Panorama" pide
+  // variacion_matricula e indice_completitud_drivers de KpisOut, y la fila de
+  // reconciliación de variación de matrícula ("Caída de matrícula de una
+  // escuela concreta") resuelve explícito: "Sólo la variación agregada, en la
+  // P2". Llamada independiente de getPanoramaEscuelas() -- si falla, la
+  // pantalla sigue mostrando el resto (no bloquea el panorama por un
+  // agregado adicional).
+  const { status: kpisStatus, data: kpisData } = useApiResource(getKpis, {
+    mock: kpisMockParaComparacion2Ciclos,
+  });
+  const kpis = kpisStatus === "ok" || kpisStatus === "demo" ? kpisData : null;
 
   const matrizData = escuelas.map((e) => ({
     cct: e.cct,
@@ -74,6 +87,12 @@ export default function Panorama() {
             <p className="text-sm mt-3" style={{ color: "rgba(255,255,255,0.7)" }}>
               Entre las {n === 1 ? "1 escuela" : `${n} escuelas`} suman {matriculaTotal.toLocaleString("es-MX")} alumnos matriculados.
             </p>
+            {kpis && typeof kpis.variacion_matricula === "number" && typeof kpis.indice_completitud_drivers === "number" && (
+              <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>
+                Matrícula del alcance completo (4 entidades) vs. el ciclo anterior: {(kpis.variacion_matricula * 100).toFixed(1)}%.
+                Completitud promedio de los 6 drivers: {(kpis.indice_completitud_drivers * 100).toFixed(0)}%.
+              </p>
+            )}
           </div>
 
           <Card

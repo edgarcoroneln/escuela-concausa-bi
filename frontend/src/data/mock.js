@@ -21,6 +21,11 @@ export const kpis = [
 export const kpisMockParaComparacion2Ciclos = {
   matricula_total: 6704229,
   variacion_matricula: 0.0161, // (6704229 - 6598110) / 6598110, mismos 2 ciclos que antes
+  // Agregado 12-sep (auditoría mockups vs código): mismo 62% que ya trae el
+  // arreglo `kpis` de arriba ("3 de 6 observados en promedio") -- Panorama.jsx
+  // ahora también consume este campo (02_Data_Visualization_Spec.md, fila "P2 --
+  // Panorama", que lista indice_completitud_drivers como dato que P2 necesita).
+  indice_completitud_drivers: 0.62,
 };
 
 export const escuelasPorNivel = [
@@ -79,22 +84,27 @@ export const driverIcons = {
 };
 
 // Recomendación GENERAL por driver para la Pantalla 5 (Conclusión Top 3,
-// 01_UX_Architecture.md §2). Texto autoral de este frente (US-641,
-// 12-sep) -- se buscó en todo el vault una "recomendación general por
-// driver" ya redactada por Monserrat/Marina y no existe ninguna: solo hay
-// ejemplos de recomendación POR ESCUELA (ver parDiferenciador arriba, D4 y
-// D2). Estas seis líneas se redactaron a mano, en el mismo tono operativo
-// de esos ejemplos, para cubrir el hueco -- no salen del modelo ni de
-// PrediccionOut.recomendacion (esa es siempre por escuela). Si Monserrat
-// publica un texto oficial más adelante, este objeto es el que se
-// reemplaza.
+// 01_UX_Architecture.md §2). CORRECCIÓN 12-sep (auditoría mockups vs
+// código, Equipo 3): la versión anterior de este objeto era texto autoral
+// de este frente porque la búsqueda inicial en el vault no encontró el
+// catálogo oficial -- sí existe: es el "catálogo prescriptivo" canónico de
+// vault/15_ML_Models/Publicacion_Gold.md §4, implementado en
+// src/modelos/recomendaciones.py (RECOMENDACION_POR_DRIVER) y espejado en
+// src/api/mock_data.py -- el mismo texto que expone PrediccionOut.recomendacion
+// por escuela (ver getPrediccion en lib/api.js, usado en ExpedienteEscuela.jsx).
+// Aquí se usa como texto GENERAL por driver (no por escuela concreta) porque
+// P5 resume el driver más frecuente del Top 3, no una predicción individual --
+// mismo catálogo, alcance distinto. Si el backend cambia estas líneas, este
+// objeto se desincroniza (no hay endpoint de catálogo, solo por escuela vía
+// /predicciones/{cct}); test_catalogo_coincide_con_el_de_la_api sólo cubre el
+// backend, así que un cambio ahí no se detecta aquí automáticamente.
 export const recomendacionGeneralPorDriver = {
-  D1: "Fortalecer becas y apoyos socioeconómicos focalizados en las familias de estas comunidades.",
+  D1: "Priorizar programas de becas y apoyo alimentario en la zona.",
   D2: "Coordinar con seguridad pública rutas escolares seguras y entornos protegidos.",
-  D3: "Priorizar mantenimiento y rehabilitación de la infraestructura escolar.",
+  D3: "Gestionar rehabilitación de infraestructura escolar prioritaria.",
   D4: "Ampliar conectividad y dotación de equipo de cómputo.",
-  D5: "Gestionar el abasto de agua potable y sistemas de captación en la escuela.",
-  D6: "Evaluar medidas de ventilación y mitigación de la contaminación en el entorno escolar.",
+  D5: "Asegurar suministro de agua y planes de contingencia hídrica.",
+  D6: "Activar protocolos por contingencia de calidad del aire.",
 };
 
 // Nivel de atención por umbral -- ADR-011 (Edgar) / DEC-024, no el semáforo
