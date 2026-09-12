@@ -3,10 +3,10 @@ id: DOC-FARO-UX-PLAN
 title: "Plan de trabajo — UX/UI y storytelling FARO (Equipo 3, S7)"
 owner: "Marina García del Buey"
 status: approved
-version: "1.2"
+version: "1.3"
 traces_up: ["US-621", "REQ-002", "ADR-011", "DEC-023", "DEC-024", "vault/12_Roadmap_Sprints/Plan_Recuperacion_2026-09-09", "vault/13_Reports/Revision_Profesor_2026-09-09"]
 traces_down: ["vault/04_UX_Design/FARO_Storytelling_UX/00_Storytelling_Scope", "vault/04_UX_Design/FARO_Storytelling_UX/01_UX_Architecture", "vault/04_UX_Design/FARO_Storytelling_UX/02_Data_Visualization_Spec", "vault/04_UX_Design/FARO_Storytelling_UX/03_Visual_Identity"]
-last_reviewed: "2026-09-10"
+last_reviewed: "2026-09-11"
 tags: [ux, storytelling, s7, us-621, celula-3, aprobado]
 ---
 
@@ -39,7 +39,7 @@ Se registran en vez de aplicarse en silencio, para que el PO vea qué cambió y 
 | 2 | Sin ID | `US-621` · `REQ-002` | `Definition_of_Filed` exige ID, y el regex del título de PR no acepta un PR sin él |
 | 3 | Checkpoint jueves 19:00 · entrega viernes 15:00 | Gate jueves 10 **18:00** · entrega a Equipo 5 viernes 11 15:00 · *code freeze* domingo 13 20:00 · entrega lunes 14 | El calendario canónico de S7 es `Plan_Recuperacion_2026-09-09`; la hora del gate y el corte final no los fija este frente |
 | 4 | "Equipo ejecutor: Oscar, Juan Macías y Monse" | Equipo 3 completo con Marina como líder | Así lo registran `DEC-022` y el padrón de `ownership.yml` |
-| 5 | `prioridad` obligatoria en Pantallas 4 y 5 | **Resuelto por `ADR-011` §5 y `DEC-024`:** se sustituye por el **nivel de atención** derivado de `indice_riesgo`. El front **no consume** `gold.recomendaciones.prioridad` | El contrato v1 no expone `prioridad`, y `BUG-063` deja su corte `ALTA` por encima del techo del fenómeno. El PO resolvió derivarlo en presentación en vez de esperar a rematerializar Gold |
+| 5 | `prioridad` obligatoria en Pantallas 4 y 5 | **Resuelto por `ADR-011` §5 y `DEC-024`:** se sustituye por el **nivel de atención** derivado de `indice_riesgo`. El front **no consume** `gold.recomendaciones.prioridad` | `BUG-063` deja su corte `ALTA` por encima del techo del fenómeno. El PO resolvió derivarlo en presentación en vez de esperar a rematerializar Gold. **El contrato expone `prioridad` desde el 2026-09-11 y la resolución no cambia: se expone, no se consume** (§10.quinquies) |
 | 6 | Etiqueta Alto / Medio / Bajo "conforme a la definición oficial disponible" | **Resuelto por `ADR-011` §5:** alta `>= 0.50`, media `>= 0.30 y < 0.50`, baja `< 0.30`. Es la misma etiqueta del punto 5, no una segunda | No existía esa definición. Los cortes reutilizan `LINEA_DE_ALERTA` (`DEC-019`) y `RIESGO_ESTABLE`, ya ratificados |
 | 7 | "Watson" como nombre del chat | **Resuelto por `ADR-011` §6:** el nombre de producto es **Asistente FARO**. No se usa "Watson" | El nombre no existía en ningún documento y la decisión de producto es del PO con el Equipo 2 |
 | 8 | "Las gráficas deben construirse directamente en Front" | **Resuelto por `ADR-011` y `DEC-023`:** concedido. Superset deja de ser la navegación principal y **permanece como evidencia analítica y respaldo** | `ADR-011` supersede a `ADR-002` sólo en la obligación de embeber Superset como experiencia principal. Lo ejecuta el Equipo 5 |
@@ -124,6 +124,10 @@ Un cambio total de framework sólo se acepta si conserva despliegue, autenticaci
 **El front no consume `gold.recomendaciones.prioridad`** mientras esa columna siga calculada con el
 ancla histórica `0.60`.
 
+> **Corrección del 2026-09-11.** Hasta hoy esta regla era, además, imposible de desobedecer: el campo
+> no existía en el contrato. **Ya existe** — `PrediccionOut.prioridad`, `"alta" | "media" | "baja"`,
+> expuesto por Christian Imanol Ruiz (`ec1b43b`) y documentado en `API_Specification` §3.4. La regla
+> sigue igual y ahora sí hay que sostenerla a mano. Ver §10.quinquies.
 > **Advertencia que hay que decir en voz alta, no descubrir el domingo.** La columna Gold `prioridad`
 > asigna `ALTA` con `>= 0.60` y `MEDIA` con `>= 0.30` (`src/modelos/publicar_gold.py:197`). O sea que
 > **coincide con el nivel de atención en el corte de media y baja, y difiere sólo entre 0.50 y 0.60**
@@ -606,9 +610,9 @@ guardarraíl de §3: lo que no está aquí, no se dibuja.
 
 | Necesidad | Endpoint | Campos |
 |---|---|---|
-| Las escuelas en riesgo, ordenadas | `GET /api/v1/escuelas` con `order_by=indice_riesgo` y `order=desc` | `cct`, `nombre`, `nivel`, `matricula_total`, `indice_riesgo`, `driver_dominante`, `tiene_prediccion` |
+| Las escuelas en riesgo, ordenadas | `GET /api/v1/escuelas` con `order_by=indice_riesgo` y `order=desc` | `cct`, `nombre`, `nivel`, `matricula_total`, `indice_riesgo`, `driver_dominante`, `tiene_prediccion`, **`latitud`, `longitud`** (subidas del detalle al listado el 2026-09-11; `None` es `SIN_DATO` real y esa escuela se omite del mapa, nunca se dibuja en el `(0, 0)`) |
 | Los 6 drivers de una escuela | `GET /api/v1/escuelas/{cct}` | `d1`…`d6`, `indice_completitud_drivers`, `es_estimado_por_grupo`, `sostenimiento`, `latitud`, `longitud` |
-| Recomendación y driver dominante | `GET /api/v1/predicciones/{cct}` | `indice_riesgo`, `driver_dominante`, `recomendacion`, `cluster` |
+| Recomendación y driver dominante | `GET /api/v1/predicciones/{cct}` | `indice_riesgo`, `driver_dominante`, `recomendacion`, `cluster`. **`prioridad` viaja y no se consume** — ver §10.quinquies |
 | Evidencia del driver dominante | `GET /api/v1/predicciones/{cct}/explicacion` | `contribuciones` (SHAP), `driver_dominante`. **El endpoint responde, pero las contribuciones vienen vacías** — ver §10.quater |
 | Panorama y matrícula | `GET /api/v1/kpis` | `matricula_total`, `variacion_matricula`, `escuelas_en_riesgo`, `indice_completitud_drivers` |
 | Filtros de la exploración | `/escuelas`: `ciclo`, `cve_ent`, `cve_mun`, `nivel` · **`/kpis`: sólo `ciclo`, `cve_ent`, `cve_mun`** | **`/kpis` no acepta `nivel`.** El filtro de nivel actúa sobre la lista de escuelas, nunca sobre los indicadores. Verificado por Monserrat Miranda |
@@ -633,6 +637,71 @@ de contrato.
 
 Queda dicho aquí y no sólo en el documento de visualizaciones, porque era esta §10 la que lo
 prometía.
+
+---
+
+### 10.quinquies `prioridad` ya viaja en el contrato, y sigue sin consumirse
+
+**Cambio del 2026-09-11, de Christian Imanol Ruiz (`ec1b43b`, PR #332, ya en `main`).**
+`PrediccionOut` expone **`prioridad`**: `"alta" | "media" | "baja"`, leída de
+`gold.recomendaciones`, `None` cuando no hay fila. Viaja en `GET /predicciones/{cct}` y en
+`POST /predicciones/batch`. Está documentada en `API_Specification` §3.4.
+
+Hasta ayer, la regla de §3.quater —*el front no consume `prioridad`*— se sostenía sola: el campo no
+existía y no había nada que desobedecer. Hoy existe. **Esta sección es la que la sostiene.**
+
+**El front no la consume. Ninguna pantalla, ningún filtro, ningún orden, ningún texto.** El nivel de
+atención se deriva de `indice_riesgo` con `LINEA_DE_ALERTA` (§3.quater) y de ninguna otra cosa.
+
+**Por qué, en un número.** `publicar_gold.prioridad_de_riesgo()` asigna `ALTA` sólo con
+`riesgo >= ANCLA_SIGMOIDE` (0.60) y el máximo que ML-01 predice sobre el Gold publicado es
+**0.5717**. Es decir: **ninguna de las 45 276 filas es `alta`** (`BUG-063`, `open`). Si el expediente
+pintara el chip con `prioridad`, **las siete escuelas de las que trata toda la historia dirían
+«media» en la pantalla que acaba de decir que están en riesgo.** No es una diferencia de matiz entre
+dos cortes: es la contradicción visible, en la pantalla del diferenciador.
+
+**El riesgo real no es discrepar, es confundirse.** Los tres valores del campo se llaman **igual** que
+nuestros tres niveles. Quien lea el contrato sin leer esto los va a conectar, y el bug se va a ver
+como un dato, no como un error. Por eso queda escrito aquí, en la sección que el Equipo 5 usa como
+mapa, y no sólo en el glosario.
+
+**Qué sí cambia con esto:** nada del diseño. `BUG-063` puede alinearse después —es decisión del PO y
+del TL de C3, y realinear el corte reescribe las 45 276 filas publicadas, que es justo lo que
+`DEC-019` prohíbe— **sin bloquear ni retocar una sola pantalla**. El día que `prioridad` siga la línea
+de alerta, coincidirá con el nivel de atención y el front podrá consumirla y retirar su derivación.
+Mientras tanto, se deriva.
+
+> **Corrección pedida a `API_Specification` §3.4.** Ese texto describe `prioridad` como *«la urgencia
+> con la que el storytelling ordena los casos»*. **No es así:** el storytelling ordena por
+> `indice_riesgo` descendente. Pedida la corrección a su autor el 2026-09-11.
+
+### 10.sexies Coordenadas en el listado, y entidad en los municipios
+
+Del mismo cambio, dos campos que **sí** nos sirven:
+
+- **`latitud`/`longitud` en `EscuelaOut`.** Antes vivían sólo en el detalle: pintar siete marcadores
+  costaba siete llamadas. `None` es `SIN_DATO` real —hay escuelas sin georreferencia— y esa escuela
+  se **omite** del mapa; dibujarla en el `(0, 0)` sería inventar una ubicación.
+- **`cve_ent` y `nombre_entidad` en `MunicipioOut`.** Sin ellos, el cliente tenía que mantener su
+  propio mapa de cuatro claves a nombre, o pintar `"09"` en una etiqueta. Un diccionario de nombres
+  tecleado en el front es exactamente el patrón de `BUG-058` que persigue la §3.bis. Ahora sale del
+  contrato.
+
+> **Consecuencia que hay que resolver con el Equipo 5, no aquí.**
+> `02_Data_Visualization_Spec` descarta el mapa **dos veces** —§3.3, entre las alternativas
+> rechazadas de la Pantalla 2, y §8.1, entre los recortes explícitos— con la misma razón:
+> *«ningún endpoint expone geometría y `latitud`/`longitud` sin base cartográfica no se leen»*.
+> **Esa mitad de la razón ya no se sostiene:** el frontend de React trae `d3-geo` y una base
+> versionada en `frontend/src/data/geo/mexico-states.json`, y `Arquitectura_Frontend_React.md` §5 ya
+> compromete `MapaRiesgo.jsx` y una ruta `/mapa`. La base cartográfica existe; vive en el front, no en
+> la API. **Se está construyendo un mapa que nuestra especificación aprobada declara recortado.**
+>
+> **La otra mitad sigue en pie y es la que hay que discutir, no la técnica:** *dónde* no responde *qué
+> situación*, las siete escuelas caen en dos municipios, y la base disponible es **estatal**, no
+> municipal — pintar siete puntos sobre el contorno de dos estados no distingue nada. Si el mapa se
+> queda, necesita una lectura que aporte y no puede ser la única forma de leer el riesgo (`ADR-011`
+> §4). Entra al *handoff* con Diana Álvarez junto con la reconciliación de rutas; no se resuelve por
+> decisión de este documento ni por edición de uno ajeno.
 
 ---
 
@@ -661,10 +730,9 @@ Los nombres técnicos **no se tocan**: sólo cambia la cadena que ve el usuario.
 
 | Nivel de atención | se **deriva** en Front de `indice_riesgo` | ver §3.quater |
 
-**Lo que sigue sin existir en el contrato:** `prioridad` no aparece en `EscuelaOut`,
-`EscuelaDetalleOut`, `PrediccionOut` ni `ExplicacionSHAPOut`, y **no se pidió exponerla**:
-`ADR-011` §5 resolvió derivar el nivel de atención en presentación. La columna Gold `prioridad`
-queda fuera del alcance de este frente.
+**`prioridad` ya existe en el contrato y este frente sigue sin consumirla.** `ADR-011` §5 resolvió
+derivar el nivel de atención en presentación, y esa resolución no cambia porque el campo ahora viaje.
+Ver §10.quinquies.
 
 ---
 
@@ -676,7 +744,7 @@ conservan con su número porque el `ADR` y la matriz las citan así.
 
 | # | Qué se pidió | Resolución |
 |---|---|---|
-| **P-01** | Exponer `prioridad` y decidir el corte de `BUG-063` | **No se expone y no se consume.** El front deriva el **nivel de atención** desde `indice_riesgo` (§3.quater). `BUG-063` puede alinearse después sin bloquear UX |
+| **P-01** | Exponer `prioridad` y decidir el corte de `BUG-063` | **Se expone desde el 2026-09-11 y no se consume.** El front deriva el **nivel de atención** desde `indice_riesgo` (§3.quater). El corte de `BUG-063` sigue `open` y puede alinearse después sin bloquear UX (§10.quinquies) |
 | **P-02** | Definición oficial de las bandas | alta `>= 0.50` · media `>= 0.30 y < 0.50` · baja `< 0.30`. Reutiliza `LINEA_DE_ALERTA` y `RIESGO_ESTABLE` |
 | **P-03** | Nombre del chat | **Asistente FARO.** No se usa "Watson" |
 | **P-04** | ADR para retirar Superset de la experiencia | Concedido. Superset deja de ser la navegación principal y **permanece como evidencia analítica y respaldo** |
@@ -793,3 +861,26 @@ pertenecen a este frente.
 > **Sigue abierto y no se cierra midiendo colores:** tamaño mínimo de texto y foco visible (Juan), y
 > orden de tabulación (Oscar Quiroz — es interacción, no identidad). Los tres estaban marcados como
 > *"no definidos"* en la §6.
+
+### Adenda del 2026-09-11 · el contrato se movió después de aprobar
+
+`ec1b43b` (Christian Imanol Ruiz, PR #332) entró a `main` **después** del gate de arriba y dejó tres
+afirmaciones de este plan **factualmente falsas**, no discutibles: la §0 fila 5, la §10.ter y la
+`P-01` decían que el contrato *no expone* `prioridad`. Hoy la expone.
+
+No es una corrección cosmética. La §3 fija el guardarraíl *«lo que no está en la §10 no se dibuja»*, y
+el Equipo 5 lee la §10 como el mapa de lo construible. Un mapa que afirma que un campo no existe,
+frente a un contrato que lo entrega, se resuelve solo y a favor del que se leyó después. Se corrige en
+las cuatro ubicaciones y se añade la **§10.quinquies**, que es donde ahora vive la regla de no
+consumir `prioridad` y el número que la justifica.
+
+**Lo que NO cambia:** ninguna pantalla, ningún criterio de la §9, ninguna decisión de diseño. El nivel
+de atención se sigue derivando de `indice_riesgo`. Los cuatro entregables siguen aprobados y los
+puntos 1 y 2 del criterio de cierre siguen cumplidos.
+
+**Lo que queda escalado y no es de este frente:** `BUG-063` sigue `open` —el corte de `prioridad` por
+encima del techo del fenómeno— y su efecto visible está en **DB-09 de Superset**, que `DEC-023`
+conserva como evidencia analítica. Escalado al PO el 2026-09-11.
+
+**Lo que entra al handoff con el Equipo 5:** la premisa con la que `02_Data_Visualization_Spec` §7.3
+descartó el mapa dejó de sostenerse (§10.sexies). No se resuelve desde aquí.
