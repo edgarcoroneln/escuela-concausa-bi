@@ -1,6 +1,6 @@
 {
   "riesgo": "RISK-011",
-  "estado": "evidencia_para_revision",
+  "estado": "evidencia_candidata_pendiente_revision",
   "fuente": {
     "tabla": "gold.features_escuela",
     "dump_sha256": "07ECF29DEEE250732C38B252CA48794CCE413B5F295197E68804C337AC89D0BE",
@@ -110,22 +110,23 @@
       }
     }
   ],
-  "conclusion_tecnica": "D1-D4 conserva una separacion temporal comparable y estable sin crear un cluster equivalente a la disponibilidad de D6.",
-  "recomendacion": "Retirar indice_completitud_drivers del vector y conservarlo solo como atributo de auditoria de los perfiles.",
+  "conclusion_tecnica": "La evidencia candidata reporta que D1-D4 conserva una separacion temporal comparable sin crear un cluster equivalente a la disponibilidad de D6; requiere revision tecnica antes de cualquier decision.",
+  "recomendacion": "Evaluar el retiro de indice_completitud_drivers del vector y conservarlo solo como atributo de auditoria de los perfiles; no promocionar ni declarar canónica esta variante sin completar la compuerta.",
   "decision_formal": "pendiente_revision_estefany_y_decision_edgar",
   "mlflow": {
     "experimento": "ML-03-clustering-escuelas",
     "modelo": "ML03_ClusteringEscuelas",
     "version_modelo": "1",
-    "run_id": "d971ab7271df45629c9a50c27514890f",
-    "estado_run": "FINISHED",
-    "estado_version": "READY",
-    "artefacto_descargado_y_cargado": true,
+    "run_id": null,
+    "verificacion": "pendiente: el servicio MLflow no fue recuperable independientemente durante la revision",
+    "estado_run": null,
+    "estado_version": null,
+    "artefacto_descargado_y_cargado": null,
     "version_numpy": "2.4.6",
     "version_pandas": "2.3.3",
     "version_scikit_learn": "1.9.0"
   },
-  "mlflow_run_id": "d971ab7271df45629c9a50c27514890f",
+  "mlflow_run_id": null,
   "publicacion_gold": false,
   "commit_base": "914af0198faf587a4becc6b4aebb765bd0523c6b"
 }

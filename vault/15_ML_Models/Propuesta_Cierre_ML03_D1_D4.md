@@ -18,7 +18,7 @@ tags: [ml, ml-03, propuesta, storytelling, cobertura, risk-011]
 
 ## 1. Decisión propuesta
 
-Cerrar la brecha funcional de ML-03 con el vector operativo **D1-D4**, seleccionar `k` mediante la
+Proponer una variante candidata de ML-03 con el vector **D1-D4**, seleccionar `k` mediante la
 validación temporal existente y conservar `indice_completitud_drivers` exclusivamente como atributo
 de auditoría. D5 y D6 permanecen fuera del clustering hasta que exista una segunda versión del
 contrato de datos con cobertura y temporalidad defendibles.
@@ -31,19 +31,20 @@ La variante candidata es:
 | Algoritmo | `StandardScaler` + KMeans |
 | Selección | `k=2`, elegido entre `k=2..6` |
 | Silhouette temporal | `0.4620526551` |
-| Estabilidad | ARI mínimo y promedio `1.0` en semillas 7, 21, 42, 84 y 2026 |
+| Estabilidad | ARI mínimo y promedio `1.0` entre semillas; mide sólo inicialización |
 | Ausencias | Casos completos sobre D1-D4; sin imputar `SIN_DATO` |
 | Completitud | Visible para auditoría, fuera del vector |
 | D5/D6 | Fuera del vector y sin reemplazo por cero |
-| MLflow | `ML03_ClusteringEscuelas` v1, corrida `d971ab7271df45629c9a50c27514890f` |
+| MLflow | `mlflow_run_id: null`; registro pendiente de recuperación independiente |
 
 La evidencia agregada reproducible está en
 [ML03_Comparacion_RISK011_20260910.json](ML03_Comparacion_RISK011_20260910.json).
 
-La corrida candidata quedó registrada para revisión en el MLflow local con estado `FINISHED`; la
-versión 1 está `READY` y su artefacto `StandardScaler + KMeans` fue descargado y cargado nuevamente
-con `mlflow.pyfunc`. Este registro aporta trazabilidad, pero no constituye promoción a producción ni
-aprobación de `RISK-011`.
+El registro MLflow no se puede recuperar independientemente en el entorno de revisión: Docker no
+está disponible y el servicio local no responde. Por ello no se afirma estado, versión ni artefacto
+de una corrida. La única redacción válida hasta verificar experimento, parámetros, métricas,
+artefacto descargable y carga exitosa es **"registro MLflow pendiente"**. Incluso un registro
+verificado sería evidencia técnica no aprobada, sin promoción a Gold, API o Panel.
 
 ## 2. Por qué se propone D1-D4
 
@@ -60,9 +61,10 @@ Al retirar completitud:
 | Cluster equivalente a D6 disponible | Sí, 1,648 observaciones | No |
 | Estabilidad medida en cinco semillas | No documentada | ARI 1.0 |
 
-La reducción de Silhouette es `0.0024`, mientras se elimina una separación engañosa. El resultado
-supera el umbral provisional del proyecto (`>= 0.30`), pero se presenta como segmentación moderada,
-no como estructura fuerte ni como evidencia causal.
+La evidencia candidata reporta una reducción de Silhouette de `0.0024` mientras elimina una
+separación potencialmente engañosa. El resultado supera el umbral provisional del proyecto
+(`>= 0.30`), pero se presenta como segmentación moderada, no como estructura fuerte ni como
+evidencia causal.
 
 Los perfiles candidatos son:
 
@@ -215,8 +217,8 @@ Estas limitaciones se mitigan mostrando cobertura por pista, evitando lenguaje c
 
 ## 7. Alcance para cerrar ML-03
 
-La corrida y el registro técnico ya se completaron. Después de la aprobación formal, la ruta mínima
-restante incluye:
+El código y la evidencia candidata están disponibles para revisión; MLflow sigue pendiente de
+recuperación independiente. Después de la aprobación formal, la ruta mínima restante incluye:
 
 1. Ratificar D1-D4 como vector de ML-03 y actualizar su model card.
 2. Persistir `cct × id_ciclo × cluster` en un contrato Gold aprobado e idempotente.
@@ -241,12 +243,20 @@ La propuesta puede promoverse sólo si se cumplen todos estos puntos:
 - Decisión explícita del PO sobre la mitigación de `RISK-011`.
 - D1-D4 son las únicas features del estimador; completitud queda como auditoría.
 - `k=2..6` se evalúa con la misma partición temporal y el resultado final queda registrado.
-- MLflow conserva parámetros, métrica, artefacto, perfiles y versión de código.
+- MLflow conserva parámetros, métrica, artefacto, perfiles y versión de código **sólo después de
+  una recuperación verificable**; hasta entonces `mlflow_run_id` permanece nulo.
 - Gold publica asignaciones sin duplicados y con `run_id` trazable.
 - API devuelve entero para asignación válida y `null` para ausencia.
 - Frontend no interpreta cluster como nivel de riesgo.
 - QA demuestra Gold → API → panel sin mocks como evidencia E2E.
 - El storytelling declara que D5/D6 no participan por cobertura insuficiente.
+
+### Revisión de QA del artefacto
+
+`vault/06_Quality_Testing/Automated/Evaluacion_Modelos.md` requiere revisión de QA separada por
+su dueño. Esa revisión confirma consistencia del reporte de fixtures, trazabilidad con su generador,
+ausencia de promoción productiva y conservación de la evidencia histórica; no aprueba la lógica de
+la variante ni cierra `RISK-011`.
 
 ## 9. Tratamiento posterior de D5/D6
 
@@ -275,6 +285,6 @@ ciclo, manteniendo `SIN_DATO` para escuelas fuera de cobertura espacial confiabl
 | Equipo 5 | Aceptar contrato de integración API/frontend | Pendiente después del gate |
 | Equipo 6 | Definir y ejecutar aceptación E2E | Pendiente después del gate |
 
-La corrida candidata está registrada en MLflow únicamente como evidencia técnica para revisión.
-Hasta completar esas decisiones, no se promueve el modelo, no se publica Gold y no se afirma que
-ML-03 esté aprobado o integrado en el producto.
+El registro MLflow de la candidata está pendiente de recuperación verificable. Hasta completar esas
+decisiones, no se promueve el modelo, no se publica Gold y no se afirma que ML-03 esté aprobado o
+integrado en el producto.
