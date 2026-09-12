@@ -12,7 +12,17 @@ forma **segura** ("no configurado") para que la app arranque y el CI corra sin L
 Andrés (y C5 en despliegue) las sobreescriben con `app.dependency_overrides` / implementaciones reales.
 
 Cualquier fallo interno del servicio se traduce a un mensaje genérico (sin filtrar detalle) — la
-respuesta pública nunca expone trazas, prompts ni SQL crudo de error.
+respuesta pública nunca expone trazas, prompts ni SQL crudo de error. **Dos mensajes genéricos, no
+uno** (Fase 4, Karla Monter): *"no está disponible"* cuando una colaboración no está configurada en
+este entorno, y *"no se pudo completar"* cuando sí lo está y falló en ejecución. Para la persona son
+situaciones distintas —esperar vs. reintentar— y para nosotros también: el segundo caso es un
+incidente y el primero es la configuración esperada del CI. Ningún mensaje cambia según el error
+concreto, así que la distinción no filtra nada.
+
+**Observabilidad (Fase 4).** Los rechazos y los fallos se registran con `logging` estructurado
+(`extra`), no con texto interpolado, para poder filtrarlos en Cloud Logging. **Nunca se registra la
+pregunta ni el contexto**: son texto de la persona y el proyecto es privacidad por diseño; se
+registran la etapa, el tipo de excepción y las banderas del resultado.
 
 **`POST /agente/consulta/stream` (US-305, Fase 3).** Misma orquestación, mismos guardarraíles y mismo
 contrato de entrada que `/consulta`; lo único distinto es que la redacción final viaja por
@@ -24,6 +34,7 @@ nada útil a medias, así que solo se transmite la última etapa.
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import Iterator, Mapping
 
 from fastapi import APIRouter, Depends
@@ -43,15 +54,54 @@ from src.api.schemas import AgenteConsultaIn, AgenteRespuestaOut
 
 router = APIRouter(prefix="/agente", tags=["Agente"])
 
-# Mensaje seguro cuando el motor RAG/LLM no está configurado o falla en este entorno.
+logger = logging.getLogger(__name__)
+
+# Mensaje seguro cuando una colaboración del agente **no está configurada** en este entorno
+# (sin `ANTHROPIC_API_KEY`, sin DSN read-only): no hay nada que reintentar.
 _MSG_NO_DISPONIBLE = (
     "El agente no está disponible en este entorno todavía. Intenta más tarde o consulta los "
     "tableros."
 )
 
+# Mensaje seguro cuando el motor **sí está configurado** y falló en ejecución (timeout del LLM,
+# corte de red, SQL rechazado por el guardarraíl). Aquí reintentar sí tiene sentido, y por eso el
+# texto es distinto: decirle "no está disponible" a alguien que puede reintentar es información
+# falsa. Es genérico igual que el otro -- no cambia según el error, así que no filtra detalle.
+_MSG_FALLO_TEMPORAL = (
+    "No se pudo completar la consulta en este momento. Vuelve a intentarlo en unos segundos."
+)
+
+# Cierre cuando el fallo ocurrió **con fragmentos ya transmitidos**: el texto parcial se conserva
+# (ya viajó) y esta nota explica por qué se corta, en vez de dejar una frase a medias sin aviso.
+_MSG_CORTE_PARCIAL = " […] La respuesta quedó incompleta por un problema al redactarla."
+
 
 class AgenteNoConfigurado(RuntimeError):
     """Una colaboración del agente (LLM/ejecutor) no está configurada en este entorno."""
+
+
+def _registrar_fallo(etapa: str, exc: BaseException, *, configurado: bool) -> None:
+    """Registra un fallo del agente sin escribir la pregunta ni el contexto (privacidad).
+
+    `extra` en vez de interpolar: en Cloud Logging cada campo queda filtrable, y el mensaje humano
+    no se vuelve una cadena distinta por cada error. `exc_info` solo cuando **sí** estaba
+    configurado: ahí la traza es un incidente que alguien debe ver; la degradación esperada del CI
+    no necesita una traza por petición.
+    """
+    logger.warning(
+        "fallo del agente",
+        extra={
+            "agente_etapa": etapa,
+            "agente_error": type(exc).__name__,
+            "agente_configurado": configurado,
+        },
+        exc_info=configurado,
+    )
+
+
+def _mensaje_de_fallo(exc: BaseException) -> str:
+    """Traduce la excepción a uno de los dos mensajes genéricos, sin filtrar su detalle."""
+    return _MSG_NO_DISPONIBLE if isinstance(exc, AgenteNoConfigurado) else _MSG_FALLO_TEMPORAL
 
 
 def _construir_contexto_conversacional(body: AgenteConsultaIn) -> dict | None:
@@ -134,9 +184,9 @@ def _evento_sse(nombre: str, datos: Mapping[str, object]) -> str:
     return f"event: {nombre}\ndata: {cuerpo}\n\n"
 
 
-def _cierre_degradado() -> Iterator[str]:
-    """Un solo fragmento con el mensaje genérico y el `fin`: el cliente nunca queda colgado."""
-    yield _evento_sse("fragmento", {"texto": _MSG_NO_DISPONIBLE})
+def _cierre_degradado(texto: str) -> Iterator[str]:
+    """Un último fragmento con el mensaje genérico y el `fin`: el cliente nunca queda colgado."""
+    yield _evento_sse("fragmento", {"texto": texto})
     yield _evento_sse("fin", {})
 
 
@@ -150,9 +200,13 @@ def _generar_eventos_stream(
     """Arma los eventos SSE de una consulta: `meta` primero, luego `fragmento`+ y `fin` al final.
 
     Invariantes que fijan las pruebas: **siempre** hay un `meta` al inicio, **al menos un**
-    `fragmento` y un `fin` al final, pase lo que pase. Cualquier fallo —guardarraíles, RAG, SQL, o
-    el LLM ya a mitad de transmitir— se degrada al mismo mensaje genérico de `/consulta`: nunca se
-    expone una traza ni SQL crudo de error dentro del stream.
+    `fragmento` y un `fin` al final, pase lo que pase. Ningún fallo —guardarraíles, RAG, SQL, o el
+    LLM ya a mitad de transmitir— expone una traza ni SQL crudo de error dentro del stream.
+
+    **Fase 4 (Karla Monter):** el mensaje distingue *no configurado* de *falló en ejecución*, y si
+    ya se habían transmitido fragmentos, **el texto parcial se conserva** y solo se agrega la nota
+    de corte. Volver a mandar el mensaje completo de error borraría de la pantalla lo que la persona
+    ya estaba leyendo.
     """
     try:
         resultado = procesar_consulta_stream(
@@ -163,9 +217,12 @@ def _generar_eventos_stream(
             redactar_respuesta_stream=redactar_respuesta_stream,
             contexto_conversacional=_construir_contexto_conversacional(body),
         )
-    except Exception:  # noqa: BLE001 - degradación segura, igual que /consulta
+    except Exception as exc:  # noqa: BLE001 - degradación segura, igual que /consulta
+        _registrar_fallo(
+            "stream:preparacion", exc, configurado=not isinstance(exc, AgenteNoConfigurado)
+        )
         yield _evento_sse("meta", {"sql_generado": None, "fuera_de_alcance": False})
-        yield from _cierre_degradado()
+        yield from _cierre_degradado(_mensaje_de_fallo(exc))
         return
 
     yield _evento_sse(
@@ -174,6 +231,10 @@ def _generar_eventos_stream(
     )
     if resultado.fragmentos is None:
         # Rechazada o degradada antes de llegar a redactar: un solo fragmento con el texto fijo.
+        # Un rechazo del guardarraíl trae su propia explicación y NO es un fallo: no se registra
+        # como tal, pero sí se cuenta, que es lo que permite ver si el filtro se pasa de estricto.
+        if resultado.fuera_de_alcance:
+            logger.info("consulta fuera de alcance", extra={"agente_etapa": "stream:guardarrail"})
         yield _evento_sse("fragmento", {"texto": resultado.respuesta_fija or _MSG_NO_DISPONIBLE})
         yield _evento_sse("fin", {})
         return
@@ -184,12 +245,19 @@ def _generar_eventos_stream(
             if fragmento:
                 emitidos += 1
                 yield _evento_sse("fragmento", {"texto": fragmento})
-    except Exception:  # noqa: BLE001 - el LLM puede fallar a mitad de transmitir
-        yield from _cierre_degradado()
+    except Exception as exc:  # noqa: BLE001 - el LLM puede fallar a mitad de transmitir
+        _registrar_fallo(
+            "stream:redaccion", exc, configurado=not isinstance(exc, AgenteNoConfigurado)
+        )
+        # Con texto ya en pantalla se agrega la nota de corte; sin nada emitido, el mensaje entero.
+        yield from _cierre_degradado(
+            _MSG_CORTE_PARCIAL if emitidos else _mensaje_de_fallo(exc)
+        )
         return
     if not emitidos:
         # Un redactor que termina sin ceder nada dejaría una burbuja vacía en el chat.
-        yield from _cierre_degradado()
+        logger.warning("el redactor no transmitió nada", extra={"agente_etapa": "stream:redaccion"})
+        yield from _cierre_degradado(_MSG_FALLO_TEMPORAL)
         return
     yield _evento_sse("fin", {})
 
@@ -230,9 +298,10 @@ def consulta(
             redactar_respuesta=redactar_respuesta,
             contexto_conversacional=_construir_contexto_conversacional(body),
         )
-    except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
+    except Exception as exc:  # noqa: BLE001 - degradación segura: nunca filtrar detalle al cliente
+        _registrar_fallo("consulta", exc, configurado=not isinstance(exc, AgenteNoConfigurado))
         return AgenteRespuestaOut(
-            respuesta=_MSG_NO_DISPONIBLE, sql_generado=None, fuera_de_alcance=False
+            respuesta=_mensaje_de_fallo(exc), sql_generado=None, fuera_de_alcance=False
         )
     return AgenteRespuestaOut(
         respuesta=resultado.respuesta,

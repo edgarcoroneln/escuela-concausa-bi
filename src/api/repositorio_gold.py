@@ -58,7 +58,10 @@ LINEA_DE_ALERTA = 0.50
 # Fuente de verdad para el Literal de FastAPI en `src/api/v1/gold.py` -- un valor fuera de aquí
 # nunca llega a construir SQL (ni siquiera necesita whitelist propia en la Postgres real).
 ESCUELAS_ORDENABLES = ("cct", "nombre", "matricula_total", "indice_riesgo")
-MUNICIPIOS_ORDENABLES = ("cve_mun", "nombre_municipio", "poblacion", "indice_rezago_social", "pobreza_pct")
+MUNICIPIOS_ORDENABLES = (
+    "cve_mun", "nombre_municipio", "cve_ent", "nombre_entidad", "poblacion",
+    "indice_rezago_social", "pobreza_pct",
+)
 
 
 class RepositorioGold(Protocol):
@@ -153,12 +156,15 @@ class RepositorioGoldPostgres:
             predicciones.c.indice_riesgo,
             recomendaciones.c.driver_dominante,
             (predicciones.c.cct.is_not(None)).label("tiene_prediccion"),
+            # En el listado desde el 2026-09-11 (US-621): el mapa del front necesita las
+            # coordenadas de muchas escuelas a la vez. No cuesta un JOIN nuevo -- `dim_escuela`
+            # ya esta unida aqui.
+            dim_escuela.c.latitud,
+            dim_escuela.c.longitud,
         ]
         if detalle:
             columnas += [
                 dim_escuela.c.sostenimiento,
-                dim_escuela.c.latitud,
-                dim_escuela.c.longitud,
                 fact.c.indice_completitud_drivers,
                 fact.c.d1,
                 fact.c.d2,
@@ -198,6 +204,8 @@ class RepositorioGoldPostgres:
         return {
             "cve_mun": dim_municipio.c.cve_mun,
             "nombre_municipio": dim_municipio.c.nombre_municipio,
+            "cve_ent": dim_municipio.c.cve_ent,
+            "nombre_entidad": dim_municipio.c.nombre_entidad,
             "poblacion": dim_municipio.c.poblacion,
             "indice_rezago_social": dim_municipio.c.indice_rezago_social,
             "pobreza_pct": dim_municipio.c.pobreza_pct,

@@ -147,6 +147,38 @@ def test_municipio_ok_y_404(client: TestClient) -> None:
     assert client.get(f"{API_PREFIX}/municipios/00000").status_code == 404
 
 
+def test_escuelas_listado_trae_coordenadas(client: TestClient) -> None:
+    """US-621: el mapa del front pinta N escuelas con UNA llamada, no N llamadas al detalle.
+
+    `None` es SIN_DATO real (hay CCT sin georreferencia), así que se comprueba que la clave exista
+    siempre -- el hueco se declara, no se omite -- y que al menos una escuela traiga coordenada.
+    """
+    items = client.get(f"{API_PREFIX}/escuelas").json()["items"]
+    assert items
+    assert all("latitud" in e and "longitud" in e for e in items)
+    assert any(e["latitud"] is not None for e in items)
+
+    # El detalle sigue trayéndolas (las hereda de EscuelaOut): no se movieron, se subieron.
+    detalle = client.get(f"{API_PREFIX}/escuelas/09DPR0001A").json()
+    assert "latitud" in detalle and "longitud" in detalle
+
+
+def test_municipio_trae_la_entidad_y_su_clave(client: TestClient) -> None:
+    """US-621: el front pinta "Álvaro Obregón, Ciudad de México" sin mantener su propio mapa.
+
+    Las dos claves viajan **en la lista y en el detalle**: si solo estuvieran en el detalle, pintar
+    la entidad de una tabla costaría una petición por fila.
+    """
+    detalle = client.get(f"{API_PREFIX}/municipios/09010").json()
+    assert detalle["cve_ent"] == "09"
+    assert detalle["nombre_entidad"] == "Ciudad de México"
+
+    lista = client.get(f"{API_PREFIX}/municipios", params={"cve_ent": "19"}).json()["items"]
+    assert lista, "el fixture tiene un municipio de Nuevo León"
+    assert {m["nombre_entidad"] for m in lista} == {"Nuevo León"}
+    assert {m["cve_ent"] for m in lista} == {"19"}
+
+
 def test_kpis_ok(client: TestClient) -> None:
     r = client.get(f"{API_PREFIX}/kpis")
     assert r.status_code == 200
@@ -213,6 +245,10 @@ def test_prediccion_combina_ml(client: TestClient) -> None:
     assert cuerpo["recomendacion"]  # ML-02 prescriptivo, no vacío
     # ML-03 sin productor todavía (BUG-010, US-321): None, nunca un entero inventado.
     assert cuerpo["cluster"] is None
+    # `prioridad` de gold.recomendaciones (E3, 2026-09-11): la urgencia con la que el storytelling
+    # ordena los casos. Sale del ANCLA (0.60), no de la línea de alerta de /kpis (0.50) -- ver el
+    # docstring de PrediccionOut y `publicar_gold.prioridad_de_riesgo`.
+    assert cuerpo["prioridad"] == "alta"  # indice_riesgo 0.72 en el fixture
 
 
 def test_prediccion_cct_sin_fila_404(client: TestClient) -> None:
