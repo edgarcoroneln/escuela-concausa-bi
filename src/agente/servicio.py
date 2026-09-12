@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
@@ -18,6 +19,20 @@ from src.agente.recuperacion import (
     ErrorRecuperacion,
     recuperar_contexto,
 )
+
+# Logging estructurado (Fase 4, plan 2026-09-09): registra rechazos de guardarraíl y errores del
+# LLM para diagnosticar problemas antes de que los vea el profesor. Nunca incluye la pregunta
+# cruda del usuario ni SQL generado en texto plano -- solo motivos ya curados (los mismos que ya
+# se consideran seguros para el cliente) y longitudes/conteos. El *sink* real (Cloud Logging) es
+# de Alejandro; aquí solo se emite el registro con `logging` estándar.
+_logger = logging.getLogger("faro.agente.servicio")
+
+#: Mensaje seguro cuando la etapa final de redacción falla (LLM caído o timeout tras generar/
+#: ejecutar el SQL con éxito). Distinto del mensaje de "no configurado" (`AgenteNoConfigurado`,
+#: `src/api/v1/agente.py`): aquí sí había una colaboración configurada y sí llegó a intentarse,
+#: solo falló en tiempo de ejecución -- por eso invita a reintentar en vez de sugerir que el
+#: entorno no está listo.
+MSG_ERROR_REDACCION = "No pude redactar la respuesta final; intenta de nuevo en unos segundos."
 
 RecuperarContexto = Callable[[str], str]
 GenerarSQL = Callable[[str, str], str]
@@ -107,6 +122,7 @@ def _preparar_para_redaccion(
     alcance = pregunta_en_alcance(pregunta)
     if not alcance.permitido and alcance.razon == RAZON_SOLO_LECTURA:
         # Intención de escritura: se corta aquí, sin tocar RAG ni LLM (P-13, defensa en profundidad).
+        _logger.warning("guardrail.rechazo_escritura")
         return ResultadoConsulta(
             respuesta=alcance.razon,
             sql_generado=None,
@@ -131,12 +147,14 @@ def _preparar_para_redaccion(
         try:
             contexto = recuperar_contexto(pregunta)
         except ContextoNoEncontrado:
+            _logger.info("guardrail.rechazo_fuera_de_alcance_semantico")
             return ResultadoConsulta(
                 respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
                 sql_generado=None,
                 fuera_de_alcance=True,
             )
         except ErrorRecuperacion:
+            _logger.exception("agente.rag_no_disponible")
             return ResultadoConsulta(
                 respuesta="El contexto de FARO no está disponible temporalmente.",
                 sql_generado=None,
@@ -152,6 +170,7 @@ def _preparar_para_redaccion(
                 fuera_de_alcance=False,
             )
         except ErrorRecuperacion:
+            _logger.exception("agente.rag_no_disponible")
             return ResultadoConsulta(
                 respuesta="El contexto de FARO no está disponible temporalmente.",
                 sql_generado=None,
@@ -162,6 +181,7 @@ def _preparar_para_redaccion(
     try:
         sql_crudo = generar_sql(prompt, pregunta)
     except ValueError as exc:
+        _logger.warning("llm.sql_rechazado", extra={"motivo": str(exc)})
         return ResultadoConsulta(
             respuesta=f"La consulta generada fue rechazada: {exc}",
             sql_generado=None,
@@ -174,6 +194,7 @@ def _preparar_para_redaccion(
     try:
         sql_actual = preparar_sql_seguro(sql_crudo)
     except ValueError as exc:
+        _logger.warning("llm.sql_rechazado", extra={"motivo": str(exc)})
         return ResultadoConsulta(
             respuesta=f"La consulta generada fue rechazada: {exc}",
             sql_generado=None,
@@ -187,11 +208,13 @@ def _preparar_para_redaccion(
             break
         except AssertionError:
             raise  # nunca ocultar fallas de las propias pruebas/scaffolding
-        except Exception as exc:  # noqa: BLE001 - ejecutar_sql es un callable inyectado (real:
+        except Exception as exc:
             # SQLAlchemyError envuelto por ejecutor_gold.py; en pruebas, cualquier Exception de
             # prueba); cualquier fallo de ejecución dispara el mismo reintento de auto-corrección.
             intentos += 1
+            _logger.warning("agente.sql_no_ejecutable", extra={"intento": intentos}, exc_info=True)
             if intentos > MAX_REINTENTOS_SQL:
+                _logger.error("agente.sql_reintentos_agotados", extra={"intentos": intentos})
                 return ResultadoConsulta(
                     respuesta=(
                         "No pude construir una consulta que se ejecutara correctamente para esa "
@@ -211,8 +234,9 @@ def _preparar_para_redaccion(
                 sql_crudo_reintento = generar_sql(prompt_reintento, pregunta)
             except AssertionError:
                 raise
-            except Exception:  # noqa: BLE001 - generar_sql es un callable inyectado (real:
+            except Exception:
                 # ErrorLLM u otra falla del LLM); si tampoco puede regenerar, se degrada igual.
+                _logger.exception("llm.reintento_fallido")
                 return ResultadoConsulta(
                     respuesta=(
                         "No pude construir una consulta que se ejecutara correctamente para esa "
@@ -226,6 +250,7 @@ def _preparar_para_redaccion(
             try:
                 sql_actual = preparar_sql_seguro(sql_crudo_reintento)
             except ValueError as exc2:
+                _logger.warning("llm.sql_rechazado", extra={"motivo": str(exc2)})
                 return ResultadoConsulta(
                     respuesta=f"La consulta generada fue rechazada: {exc2}",
                     sql_generado=None,
@@ -249,8 +274,17 @@ def procesar_consulta(
     )
     if isinstance(preparacion, ResultadoConsulta):
         return preparacion
+    try:
+        respuesta = redactar_respuesta(preparacion.pregunta, preparacion.filas)
+    except AssertionError:
+        raise  # nunca ocultar fallas de las propias pruebas/scaffolding
+    except Exception:
+        # u otra falla del LLM en la etapa final; distinta de "no configurado" -- aquí sí hubo un
+        # intento real, así que el mensaje invita a reintentar en vez de señalar el entorno.
+        _logger.exception("llm.redaccion_fallida")
+        return ResultadoConsulta(respuesta=MSG_ERROR_REDACCION, sql_generado=None, fuera_de_alcance=False)
     return ResultadoConsulta(
-        respuesta=redactar_respuesta(preparacion.pregunta, preparacion.filas),
+        respuesta=respuesta,
         sql_generado=preparacion.sql_generado,
         fuera_de_alcance=False,
     )
@@ -283,8 +317,27 @@ def procesar_consulta_stream(
             fuera_de_alcance=preparacion.fuera_de_alcance,
         )
 
-    def iterar_redaccion():
-        yield from redactar_respuesta_stream(preparacion.pregunta, preparacion.filas)
+    def iterar_redaccion() -> Iterator[str]:
+        """Cede fragmentos reales; si el LLM falla, degrada sin dejar el stream vacío.
+
+        Con contenido ya emitido, un fallo a media generación simplemente detiene el stream (el
+        cliente se queda con la respuesta parcial real, igual que cualquier chat que se corta a
+        medio párrafo) -- agregar un mensaje de error DESPUÉS de texto real produciría una
+        oración partida y confusa. Sin nada emitido todavía, sí hace falta un fragmento de
+        respaldo: un stream vacío viola el contrato que ya exige el cliente (PR #313,
+        `consultar_agente_stream`: `if not fragmentos: raise ValueError(...)`).
+        """
+        emitio_contenido = False
+        try:
+            for fragmento in redactar_respuesta_stream(preparacion.pregunta, preparacion.filas):
+                emitio_contenido = True
+                yield fragmento
+        except AssertionError:
+            raise
+        except Exception:
+            _logger.exception("llm.redaccion_stream_fallida")
+            if not emitio_contenido:
+                yield MSG_ERROR_REDACCION
 
     return ResultadoConsultaStream(
         fragmentos=iterar_redaccion(),

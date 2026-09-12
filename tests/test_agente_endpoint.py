@@ -173,7 +173,8 @@ def test_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
 
 def test_stream_happy_path_emite_meta_fragmentos_y_fin(client: TestClient) -> None:
     """El streaming completo: `meta` primero (con sql_generado/fuera_de_alcance), luego los
-    fragmentos de la respuesta en orden, y `fin` al final."""
+    fragmentos **reales** del redactor en streaming, en el mismo orden en que los cede, y `fin`
+    al final. No se re-trocean: cada `yield` del redactor es su propio evento `fragmento`."""
     app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
         lambda pregunta: "gold.features_escuela(cct)"
     )
@@ -183,9 +184,12 @@ def test_stream_happy_path_emite_meta_fragmentos_y_fin(client: TestClient) -> No
     app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
         lambda sql: [{"cct": "09ABC0001X"}]
     )
-    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
-        lambda pregunta, filas: f"{len(filas)} escuela encontrada."
-    )
+
+    def redactar_stream(pregunta: str, filas):
+        yield "1 escuela "
+        yield "encontrada."
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = lambda: redactar_stream
 
     eventos = _post_stream(client, "¿cuántas escuelas hay?")
 
@@ -198,7 +202,7 @@ def test_stream_happy_path_emite_meta_fragmentos_y_fin(client: TestClient) -> No
     assert meta["sql_generado"].lower().startswith("select cct from gold.features_escuela")
 
     fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
-    assert "".join(fragmentos) == "1 escuela encontrada."
+    assert fragmentos == ["1 escuela ", "encontrada."]
 
 
 def test_stream_pregunta_fuera_de_alcance_se_rechaza_igual_que_el_sincrono(
@@ -229,9 +233,6 @@ def test_stream_sql_destructivo_generado_nunca_se_ejecuta(client: TestClient) ->
     app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
         lambda sql: llamadas_ejecutor.append(sql) or []
     )
-    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
-        lambda pregunta, filas: "no debería llegar aquí"
-    )
 
     eventos = _post_stream(client, "¿cuántas escuelas hay en riesgo por inseguridad?")
 
@@ -242,6 +243,7 @@ def test_stream_sql_destructivo_generado_nunca_se_ejecuta(client: TestClient) ->
 
 
 def test_stream_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) -> None:
+    """Fallo antes de llegar al redactor (en `generar_sql`): cae al catch-all de `_resolver_consulta_stream`."""
     app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
         lambda pregunta: "gold.features_escuela(cct)"
     )
@@ -256,9 +258,11 @@ def test_stream_falla_interna_degrada_sin_filtrar_detalle(client: TestClient) ->
     assert "secreto" not in fragmentos.lower()
 
 
-def test_stream_fragmenta_respuestas_largas(client: TestClient) -> None:
-    """Una respuesta más larga que `TAM_FRAGMENTO_SSE` se parte en más de un evento `fragmento`."""
-    respuesta_larga = "Escuela en riesgo. " * 20  # > 80 caracteres (TAM_FRAGMENTO_SSE)
+def test_stream_redactor_falla_cede_mensaje_de_respaldo_sin_dejar_el_stream_vacio(
+    client: TestClient,
+) -> None:
+    """Fallo *dentro* del redactor en streaming (ya pasados los guardarraíles): degrada con
+    `MSG_ERROR_REDACCION` como único fragmento -- nunca un stream vacío, nunca el detalle crudo."""
     app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
         lambda pregunta: "gold.features_escuela(cct)"
     )
@@ -266,16 +270,81 @@ def test_stream_fragmenta_respuestas_largas(client: TestClient) -> None:
         lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
     )
     app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (lambda sql: [{"cct": "x"}])
-    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
-        lambda pregunta, filas: respuesta_larga
+
+    def redactor_que_revienta(pregunta: str, filas):
+        raise TimeoutError("boom interno con secreto del proveedor LLM")
+        yield  # pragma: no cover - nunca se alcanza; hace de esto un generador
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = (
+        lambda: redactor_que_revienta
     )
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
+    assert fragmentos  # nunca vacío
+    assert "boom" not in "".join(fragmentos).lower()
+    assert "secreto" not in "".join(fragmentos).lower()
+
+
+def test_stream_sin_redactor_configurado_degrada_seguro(client: TestClient) -> None:
+    """Sin override de `get_redactar_respuesta_stream` (default `AgenteNoConfigurado`): el
+    streaming degrada igual que el síncrono, nunca con un 500 ni un stream vacío."""
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (lambda sql: [{"cct": "x"}])
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
+    assert fragmentos
+
+
+def test_stream_fragmentos_reales_no_se_re_trocean(client: TestClient) -> None:
+    """Los fragmentos que cede el redactor real viajan tal cual -- ni se recombinan ni se vuelven
+    a partir por `TAM_FRAGMENTO_SSE` (eso solo aplica a mensajes fijos, no al streaming real)."""
+    fragmento_largo = "x" * (agente_mod.TAM_FRAGMENTO_SSE + 50)  # más largo que TAM_FRAGMENTO_SSE
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: (
+        lambda prompt, pregunta: "SELECT cct FROM gold.features_escuela"
+    )
+    app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (lambda sql: [{"cct": "x"}])
+
+    def redactar_stream(pregunta: str, filas):
+        yield fragmento_largo
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = lambda: redactar_stream
+
+    eventos = _post_stream(client, "¿cuántas escuelas hay?")
+
+    fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
+    assert fragmentos == [fragmento_largo]  # un solo evento, sin re-trocear
+
+
+def test_stream_mensaje_fijo_largo_si_se_trocea(client: TestClient) -> None:
+    """Distinto de arriba: un mensaje fijo (guardarraíl, no del redactor) sí usa `_fragmentar`."""
+    respuesta_larga = "Escuela en riesgo. " * 20  # > TAM_FRAGMENTO_SSE
+
+    def generar_mensaje_fijo_largo(prompt: str, pregunta: str) -> str:
+        raise ValueError(respuesta_larga)
+
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    app.dependency_overrides[agente_mod.get_generar_sql] = lambda: generar_mensaje_fijo_largo
 
     eventos = _post_stream(client, "¿cuántas escuelas hay?")
 
     fragmentos = [d["texto"] for e, d in eventos if e == "fragmento"]
     assert len(fragmentos) > 1
     assert all(len(f) <= agente_mod.TAM_FRAGMENTO_SSE for f in fragmentos)
-    assert "".join(fragmentos) == respuesta_larga
+    assert respuesta_larga in "".join(fragmentos)
 
 
 def test_stream_integra_con_el_cliente_real_del_frontend(client: TestClient) -> None:
@@ -294,9 +363,12 @@ def test_stream_integra_con_el_cliente_real_del_frontend(client: TestClient) -> 
     app.dependency_overrides[agente_mod.get_ejecutar_sql] = lambda: (
         lambda sql: [{"cct": "09ABC0001X"}, {"cct": "09ABC0002X"}]
     )
-    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
-        lambda pregunta, filas: f"{len(filas)} escuelas encontradas."
-    )
+
+    def redactar_stream(pregunta: str, filas):
+        yield f"{len(filas)} escuelas "
+        yield "encontradas."
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = lambda: redactar_stream
 
     fragmentos_incrementales: list[str] = []
     resultado = consultar_agente_stream(

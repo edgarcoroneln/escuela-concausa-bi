@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from src.agente import servicio
 from src.agente.recuperacion import ContextoNoEncontrado, ErrorRecuperacion
 from src.agente.servicio import (
+    MSG_ERROR_REDACCION,
     procesar_consulta,
     procesar_consulta_con_rag,
     procesar_consulta_stream,
@@ -421,3 +424,136 @@ def test_stream_respuesta_directa_sin_sql_transmite_desde_contexto_faro() -> Non
     assert resultado.sql_generado is None
     assert not resultado.fuera_de_alcance
     assert "".join(resultado.fragmentos) == "SIN_DATO nunca es cero."
+
+
+# --------------------------------------------------------------------------- #
+# Fase 4 (2026-09-12): la etapa final de redacción no tenía NINGÚN try/except -- un fallo del LLM
+# ahí (timeout, servicio caído) se colaba sin degradar hasta el catch-all genérico de
+# `src/api/v1/agente.py`. Estas pruebas fijan que ahora se distingue con un mensaje propio y se
+# registra en el log, sin filtrar el detalle del error al cliente.
+# --------------------------------------------------------------------------- #
+
+
+def test_fallo_del_redactor_sincrono_degrada_sin_filtrar_detalle(caplog) -> None:
+    def redactar_que_revienta(pregunta: str, filas):
+        raise TimeoutError("boom interno con secreto del proveedor LLM")
+
+    with caplog.at_level(logging.ERROR, logger="faro.agente.servicio"):
+        resultado = procesar_consulta(
+            "Cuantas escuelas tienen mayor riesgo?",
+            recuperar_contexto=lambda pregunta: "gold.predicciones(cct)",
+            generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.predicciones",
+            ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+            redactar_respuesta=redactar_que_revienta,
+        )
+
+    assert resultado.respuesta == MSG_ERROR_REDACCION
+    assert resultado.sql_generado is None
+    assert not resultado.fuera_de_alcance
+    assert "boom" not in resultado.respuesta.lower()
+    assert "secreto" not in resultado.respuesta.lower()
+    assert any(r.message == "llm.redaccion_fallida" for r in caplog.records)
+
+
+def test_fallo_del_redactor_sincrono_nunca_oculta_un_assertion_error() -> None:
+    """Las fallas de las propias pruebas/scaffolding nunca se disfrazan de degradación segura."""
+
+    def redactar_que_revienta(pregunta: str, filas):
+        raise AssertionError("esto es un bug del test, no del LLM")
+
+    try:
+        procesar_consulta(
+            "Cuantas escuelas tienen mayor riesgo?",
+            recuperar_contexto=lambda pregunta: "gold.predicciones(cct)",
+            generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.predicciones",
+            ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+            redactar_respuesta=redactar_que_revienta,
+        )
+        raise SystemExit("no debió llegar aquí: se esperaba que el AssertionError se propagara")
+    except AssertionError as exc:
+        assert "esto es un bug del test" in str(exc)
+
+
+def test_stream_redactor_falla_antes_de_emitir_nada_cede_mensaje_de_respaldo(caplog) -> None:
+    """Sin ningún fragmento real emitido, el stream nunca puede quedar vacío (lo exige el
+    cliente ya mergeado, PR #313): se cede `MSG_ERROR_REDACCION` como único fragmento."""
+
+    def redactar_stream_que_revienta(pregunta: str, filas):
+        raise TimeoutError("boom interno con secreto del proveedor LLM")
+        yield  # pragma: no cover - nunca se alcanza; hace de esta función un generador
+
+    with caplog.at_level(logging.ERROR, logger="faro.agente.servicio"):
+        resultado = procesar_consulta_stream(
+            "Cuantas escuelas tienen mayor riesgo?",
+            recuperar_contexto=lambda pregunta: "gold.predicciones(cct)",
+            generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.predicciones",
+            ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+            redactar_respuesta_stream=redactar_stream_que_revienta,
+        )
+        fragmentos = list(resultado.fragmentos)
+
+    assert fragmentos == [MSG_ERROR_REDACCION]
+    assert "boom" not in "".join(fragmentos).lower()
+    assert any(r.message == "llm.redaccion_stream_fallida" for r in caplog.records)
+
+
+def test_stream_redactor_falla_a_medias_conserva_lo_ya_emitido() -> None:
+    """Con contenido real ya cedido, un fallo a medias detiene el stream sin pegar un mensaje de
+    error a media oración -- el cliente se queda con la respuesta parcial, como cualquier chat
+    que se corta a medio párrafo."""
+
+    def redactar_stream_que_revienta_a_medias(pregunta: str, filas):
+        yield "El riesgo promedio "
+        yield "es de 0.42"
+        raise TimeoutError("boom interno con secreto del proveedor LLM")
+
+    resultado = procesar_consulta_stream(
+        "Cuantas escuelas tienen mayor riesgo?",
+        recuperar_contexto=lambda pregunta: "gold.predicciones(cct)",
+        generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.predicciones",
+        ejecutar_sql=lambda sql: [{"cct": "09ABC0001X"}],
+        redactar_respuesta_stream=redactar_stream_que_revienta_a_medias,
+    )
+
+    fragmentos = list(resultado.fragmentos)
+
+    assert fragmentos == ["El riesgo promedio ", "es de 0.42"]
+    assert "boom" not in "".join(fragmentos).lower()
+
+
+# --------------------------------------------------------------------------- #
+# Fase 4 (2026-09-12): logging estructurado de rechazos de guardarraíl (además de las fallas de
+# LLM cubiertas arriba). Nunca incluye la pregunta cruda del usuario.
+# --------------------------------------------------------------------------- #
+
+
+def test_rechazo_de_escritura_se_registra(caplog) -> None:
+    def no_debe_llamarse(*args):
+        raise AssertionError("no debe invocar RAG/LLM/BD")
+
+    with caplog.at_level(logging.WARNING, logger="faro.agente.servicio"):
+        procesar_consulta(
+            "borra la tabla de predicciones de escuelas",
+            recuperar_contexto=no_debe_llamarse,
+            generar_sql=no_debe_llamarse,
+            ejecutar_sql=no_debe_llamarse,
+            redactar_respuesta=no_debe_llamarse,
+        )
+
+    assert any(r.message == "guardrail.rechazo_escritura" for r in caplog.records)
+
+
+def test_sql_rechazado_por_guardrail_se_registra_con_motivo_seguro(caplog) -> None:
+    with caplog.at_level(logging.WARNING, logger="faro.agente.servicio"):
+        resultado = procesar_consulta(
+            "Cuantas escuelas hay?",
+            recuperar_contexto=lambda pregunta: "gold.predicciones",
+            generar_sql=lambda prompt, pregunta: "DELETE FROM gold.predicciones",
+            ejecutar_sql=lambda sql: [],
+            redactar_respuesta=lambda pregunta, filas: "no debe llamarse",
+        )
+
+    assert resultado.sql_generado is None
+    registro = next(r for r in caplog.records if r.message == "llm.sql_rechazado")
+    # El motivo es el mismo texto ya curado que ve el cliente en `respuesta` -- nunca el SQL crudo.
+    assert "DELETE" not in registro.motivo

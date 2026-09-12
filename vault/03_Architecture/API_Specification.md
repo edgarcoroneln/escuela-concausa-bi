@@ -270,10 +270,19 @@ de router (§2).
 | `fragmento` | 0 o más | `{"texto": str}` — un trozo de la respuesta final, en orden |
 | `fin` | 1, último | `{}` — cierre del stream |
 
-`procesar_consulta` no es un generador (no hay *streaming* token a token desde el LLM): el
-"streaming" trocea la respuesta ya completa en fragmentos de tamaño fijo (`TAM_FRAGMENTO_SSE`,
-`src/api/v1/agente.py`) para que el widget de chat la pinte de forma incremental. El frontend
-conserva el *fallback* a `/agente/consulta` si recibe 404.
+La redacción final sí transmite en *streaming* real, token a token, según los cede el LLM
+(`procesar_consulta_stream` + `redactar_respuesta_stream_con_llm`, `src/agente/servicio.py` y
+`src/agente/llm.py` — Fase 3, 2026-09-12). La generación y ejecución de SQL no se transmiten (un SQL
+a medias no sirve de nada): solo la redacción. Cuando la pregunta se resuelve **antes** de llegar a
+esa etapa (rechazo de guardarraíl, SQL rechazado, degradación), el mensaje fijo se trocea en
+fragmentos de tamaño fijo (`TAM_FRAGMENTO_SSE`, `src/api/v1/agente.py`) solo para mantener la misma
+cadencia incremental — ahí sí es un trozado artificial, no streaming del LLM.
+
+Si el redactor falla **antes** de ceder cualquier fragmento (LLM caído/timeout), se degrada con un
+único fragmento de respaldo (nunca un stream vacío, nunca el detalle interno). Si falla **a medias**
+(ya había cedido texto real), el stream simplemente se detiene ahí: el cliente conserva la respuesta
+parcial ya recibida, sin agregar un mensaje de error a media oración. El frontend conserva el
+*fallback* a `/agente/consulta` si recibe 404.
 
 #### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
 
