@@ -147,6 +147,53 @@ def test_municipio_ok_y_404(client: TestClient) -> None:
     assert client.get(f"{API_PREFIX}/municipios/00000").status_code == 404
 
 
+def test_un_municipio_sin_entidad_degrada_a_sin_dato(client: TestClient) -> None:
+    """Un hueco en `dim_municipio` devuelve `null`, **no un 500 que tumba la pagina completa**.
+
+    Es la regla de cobertura parcial del proyecto: donde no hay dato se declara `SIN_DATO`. Con
+    `cve_ent`/`nombre_entidad` obligatorios, una sola fila con la entidad en NULL reventaba la
+    validacion de salida y `/municipios` respondia 500 para **todo** el listado.
+
+    El repositorio con el hueco se inyecta solo en esta prueba, en vez de agregar la fila al fixture
+    compartido: una `poblacion` en `None` en `MUNICIPIOS_FAKE` cambiaria el orden que verifican las
+    pruebas de `order_by`, que es justo lo que no debe hacer un fixture nuevo.
+    """
+
+    class RepositorioConHueco(RepositorioGoldFake):
+        def __init__(self) -> None:
+            super().__init__()
+            self._municipios = [
+                {
+                    "cve_mun": "09999",
+                    "nombre_municipio": "Municipio sin catalogar",
+                    "cve_ent": None,
+                    "nombre_entidad": None,
+                    "poblacion": None,
+                    "indice_rezago_social": None,
+                    "pobreza_pct": None,
+                }
+            ]
+
+    # El fixture `client` es de modulo, asi que el override se restaura aqui mismo: dejarlo puesto
+    # le cambiaria el repositorio a todas las pruebas siguientes del archivo.
+    app.dependency_overrides[get_repositorio_gold] = RepositorioConHueco
+    try:
+        lista = client.get(f"{API_PREFIX}/municipios")
+        assert lista.status_code == 200, lista.text
+        fila = lista.json()["items"][0]
+        # Las claves estan presentes con `null`: el hueco se **declara**, no se omite.
+        assert fila["nombre_entidad"] is None
+        assert fila["cve_ent"] is None
+        assert fila["poblacion"] is None
+        assert fila["nombre_municipio"] == "Municipio sin catalogar"
+
+        detalle = client.get(f"{API_PREFIX}/municipios/09999")
+        assert detalle.status_code == 200, detalle.text
+        assert detalle.json()["nombre_entidad"] is None
+    finally:
+        app.dependency_overrides[get_repositorio_gold] = RepositorioGoldFake
+
+
 def test_version_publica_los_cortes_del_nivel_de_atencion(client: TestClient) -> None:
     """US-621: el front lee los cortes del contrato en vez de teclearlos (evita repetir BUG-058)."""
     from src.api.repositorio_gold import ANCLA_SIGMOIDE, CORTE_ATENCION_MEDIA, LINEA_DE_ALERTA

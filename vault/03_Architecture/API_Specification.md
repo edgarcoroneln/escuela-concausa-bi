@@ -191,6 +191,14 @@ heredan de `EscuelaOut`, no se movieron. `None` es `SIN_DATO` real —hay CCT si
 cliente debe **omitir** esas escuelas del mapa, nunca dibujarlas en el `(0, 0)`. Fijado por
 `tests/test_api_contract.py::test_escuelas_listado_trae_coordenadas`.
 
+**`cve_ent`/`nombre_entidad` son `null` cuando no hay dato, no un 500 (2026-09-12).** Al declararlos
+obligatorios, una sola fila de `gold.dim_municipio` con la entidad en NULL reventaba la validación de
+salida y `/municipios` respondía **500 para la página completa**: un hueco en una fila tumbaba el
+listado entero. Es la regla de cobertura parcial del proyecto — donde no hay dato se declara `null`,
+igual que `poblacion`, `indice_rezago_social` y `pobreza_pct`, y el cliente pinta el municipio sin la
+etiqueta de entidad en vez de quedarse sin tabla. Las claves **siempre están presentes**: el hueco se
+declara, no se omite. Fijado por `tests/test_api_contract.py::test_un_municipio_sin_entidad_degrada_a_sin_dato`.
+
 **`cve_ent` y `nombre_entidad` en `MunicipioOut` (2026-09-11, US-621 — pedido de Diana Alvarez):**
 la consulta ya los traía (`select(dim_municipio)` devuelve la fila completa), pero el contrato no los
 declaraba, así que el cliente tenía que mantener su propio mapa de 4 claves a nombre de entidad, o
@@ -460,8 +468,9 @@ class MunicipioOut(BaseModel):
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     nombre_municipio: StrictStr
     # Agregados 2026-09-11 (US-621): la consulta ya los traía; el contrato no los declaraba.
-    cve_ent: StrictStr = Field(min_length=2, max_length=2)
-    nombre_entidad: StrictStr
+    # Opcionales desde 2026-09-12: `None` es SIN_DATO, no un 500 que tumba la página completa.
+    cve_ent: StrictStr | None = Field(default=None, min_length=2, max_length=2)
+    nombre_entidad: StrictStr | None = None
     poblacion: StrictInt = Field(ge=0)
     indice_rezago_social: float | None
     pobreza_pct: float | None

@@ -192,8 +192,15 @@ class MunicipioOut(BaseModel):
     # ya los traia -- `select(dim_municipio)` devuelve la fila completa -- pero el contrato no los
     # declaraba, asi que el cliente tenia que mantener su propio mapa de 4 claves de entidad a
     # nombre, o pintar "09" en una etiqueta. Es aditivo: ningun cliente existente se rompe.
-    cve_ent: StrictStr = Field(min_length=2, max_length=2)
-    nombre_entidad: StrictStr
+    #
+    # **Opcionales desde 2026-09-12: `None` es SIN_DATO, no un 500.** Al declararlos obligatorios,
+    # una fila de `gold.dim_municipio` con la entidad en NULL reventaba la validacion de salida y
+    # `/municipios` respondia **500 para la pagina completa** -- un hueco en una fila tumbaba el
+    # listado entero. Es la regla de cobertura parcial del proyecto: donde no hay dato se declara
+    # `null`, igual que `poblacion`, `indice_rezago_social` y `pobreza_pct`, y el cliente pinta el
+    # municipio sin la etiqueta de entidad en vez de quedarse sin tabla.
+    cve_ent: StrictStr | None = Field(default=None, min_length=2, max_length=2)
+    nombre_entidad: StrictStr | None = None
     # SIN_DATO explícito (P-03/US-103): con `gold.dim_municipio` = universo INEGI (317 municipios
     # de las 4 entidades), la población entra por LEFT JOIN a CONAPO; donde no hay fila queda NULL,
     # nunca 0 ni municipio borrado. Se expone como null, igual que rezago/pobreza, en vez de romper.

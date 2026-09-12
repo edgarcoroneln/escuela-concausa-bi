@@ -566,10 +566,17 @@
       "MunicipioOut": {
         "properties": {
           "cve_ent": {
-            "maxLength": 2,
-            "minLength": 2,
-            "title": "Cve Ent",
-            "type": "string"
+            "anyOf": [
+              {
+                "maxLength": 2,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cve Ent"
           },
           "cve_mun": {
             "maxLength": 5,
@@ -589,8 +596,15 @@
             "title": "Indice Rezago Social"
           },
           "nombre_entidad": {
-            "title": "Nombre Entidad",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Entidad"
           },
           "nombre_municipio": {
             "title": "Nombre Municipio",
@@ -622,9 +636,7 @@
         },
         "required": [
           "cve_mun",
-          "nombre_municipio",
-          "cve_ent",
-          "nombre_entidad"
+          "nombre_municipio"
         ],
         "title": "MunicipioOut",
         "type": "object"
