@@ -4,10 +4,10 @@ title: "Threat Model & Security Policy — FARO"
 owner: "Luis Téllez Domínguez"
 co_owners: ["Christian Ruiz"]
 status: approved
-version: "1.0.1"
+version: "1.3"
 traces_up: ["US-502"]
 traces_down: ["SEC-HARDENING-S3", "SEC-HARDENING-S4"]
-last_reviewed: "2026-08-29"
+last_reviewed: "2026-09-11"
 tags: [security, threat-model, cis-controls, vulnerabilities, audit]
 ---
 
@@ -150,6 +150,128 @@ tags: [security, threat-model, cis-controls, vulnerabilities, audit]
 
 ---
 
+## 🔐 Sesión del frontend de React — residual aceptado (ADR-012, 2026-09-10)
+
+> Registrado por Christian Ruiz (C4) a petición de Luis Téllez, como parte de la decisión de
+> arquitectura del frontend nuevo. **Esto es un residual aceptado, no un riesgo resuelto.**
+
+### El riesgo que se evitó
+
+El frontend nuevo es **estático** (Vite compilado, servido por nginx) y no tiene servidor donde
+guardar el token, a diferencia del shell de Streamlit que sí lo mantenía del lado servidor
+(`ADR-010`). La opción evaluada primero fue **Bearer administrado por el navegador**, y se
+**descartó**: el `refresh_token` vive **7 días**, así que en `localStorage` un XSS equivale a una
+semana de acceso a la cuenta — con `analista`, eso alcanza `/admin/export`. En CIS v8 bajaba el
+Control 16 de ~9 a ~7 (evaluación de C5).
+
+### Lo que se implementó
+
+Sesión por **cookie `httpOnly`** emitida por la API a través del `proxy_pass` de nginx: mismo
+origen, así que la cookie queda **host-only** del frontend y **el token nunca toca JavaScript**.
+Sin construir un servicio nuevo. Detalle en `src/api/security/cookies.py`.
+
+> No contradice `BUG-059`: allí el hallazgo fue que `.run.app` está en la **Public Suffix List** y
+> la API no puede poner una cookie compartida entre subdominios. Aquí es host-only del propio
+> origen, puesta por el proxy.
+
+| Control | Estado |
+|---|---|
+| Token inaccesible a JavaScript (`HttpOnly`) | ✅ |
+| `Secure` fuera de local | ✅ (`Settings.cookies_seguras`) |
+| Refresh token acotado a `/api/v1/auth/refresh` | ✅ El navegador no lo manda en ninguna otra petición |
+| Logout borra **ambas** cookies | ✅ |
+| `X-Content-Type-Options`, `Referrer-Policy`, HSTS | ✅ Middleware de la API |
+| `Content-Security-Policy`, `X-Frame-Options` | ✅ **nginx (C5)**, `docker/nginx-frontend.conf.template` (PR #302) — es donde contienen el XSS del chat |
+
+### Qué modo usa cada cliente
+
+| Cliente | Modo | Qué hace |
+|---|---|---|
+| **Frontend de React** (`ADR-012`) | **cookie** | `POST /api/v1/auth/exchange?sesion=cookie` con el `code_faro`; después solo `credentials: "same-origin"`; `POST /api/v1/auth/refresh` **sin cuerpo** antes de `expira_en` (el access token vive 15 min) o ante un 401; `POST /api/v1/auth/logout` para cerrar |
+| Shell de Streamlit, pruebas, clientes no-navegador | legacy | Sin cambios: `TokenPair` en el cuerpo y `Authorization: Bearer` |
+
+Para UX (`E3`): **el flujo visible no cambia** —mismo Google OAuth, mismas pantallas—; cambia dónde
+vive la credencial. Los estados de sesión del front se diseñan contra este contrato: *sin sesión*
+(`/auth/me` → 401 → "Inicia sesión"), *sesión activa*, *sesión por vencer* (refresco silencioso
+guiado por `expira_en`) y *sesión cerrada* (logout o refresco fallido → vuelve a "Inicia sesión").
+
+### Corrección tras la revisión del PO (PR #304)
+
+La primera implementación tenía un hueco que el PO detectó al revisar: `/auth/refresh` aceptaba la
+cookie **y devolvía el `TokenPair` en el JSON**. Como la cookie de refresco está acotada a esa ruta,
+el navegador la adjunta ahí — así que **un XSS podía hacer `fetch()` contra ese endpoint y leer los
+dos tokens de la respuesta**, dejando `HttpOnly` sin ningún efecto.
+
+Corregido separando los dos modos, que ya **no se mezclan**:
+
+| Endpoint | Modo | Cómo se elige | Cookies | Cuerpo |
+|---|---|---|---|---|
+| `/auth/exchange` | legacy *(default)* | sin `?sesion` | no las toca | `TokenPair` |
+| `/auth/exchange` | cookie | `?sesion=cookie` | siembra | `SesionOut` — **sin JWT** |
+| `/auth/refresh` | legacy | token en el **cuerpo** | no las toca | `TokenPair` |
+| `/auth/refresh` | cookie | token en la **cookie** | renueva | `SesionOut` — **sin JWT** |
+
+El modo cookie solo informa `expira_en`, que es una duración y no un secreto: permite al frontend
+refrescar **antes** del vencimiento en vez de descubrirlo con un 401. Seis pruebas lo fijan,
+incluida una que busca la forma `eyJ` en el texto crudo de la respuesta por si alguien anidara el
+token bajo otro nombre.
+
+### Residual: CSRF
+
+Con sesión por cookie, un sitio de terceros puede provocar peticiones que el navegador acompaña con
+la credencial. **Se contiene con `SameSite=Lax`**, que no envía la cookie en un POST cross-site; los
+POST del sistema son `/agente/consulta`, `/auth/*` y `/admin/*`.
+
+**No hay token anti-CSRF.** Se acepta para la ventana del proyecto, con el mismo criterio de
+`SEC-003/004/005`. Cierre posterior: token de doble envío o `SameSite=Strict` en la cookie de
+sesión, evaluando el costo en el flujo de vuelta de Google.
+
+### Residual: XSS sigue siendo el vector principal
+
+`HttpOnly` impide **leer** el token, no impide que un XSS **use** la sesión desde el propio
+navegador. El vector concreto de esta app es **la respuesta del agente renderizada en el chat**, que
+es texto libre de un LLM. Mitigación acordada con C5 y C1: **nada del chat se renderiza como HTML**
+(sin `dangerouslySetInnerHTML`, `react-markdown` con HTML crudo desactivado) y **CSP en nginx**.
+
+### Cómo llega el `code_faro` al canje: el login (hallazgo del PO, PR #304)
+
+La tabla de modos cubre `exchange`, `refresh` y `logout`. **El login es el paso anterior, y es el
+único que no puede ir por el proxy.**
+
+`GET /auth/login` escribe el `state` anti-CSRF en la cookie `faro_oauth_state` (host-only, `path=/`)
+**en el origen que responde**. Google vuelve al callback registrado en `GOOGLE_REDIRECT_URI`, que es
+el **origen de la API**, y el callback compara el `state` de la URL con el de esa cookie. Si el botón
+"Iniciar sesión" apuntara al proxy del front, la cookie quedaría en el origen del front, el callback
+llegaría a la API sin ella y respondería **401** *"No se pudo verificar el origen de la petición"*.
+
+**Configuración elegida (E5, 11-sep): login y callback directos a la API; solo el canje por el
+proxy.** `GOOGLE_REDIRECT_URI` admite **un solo valor**, y así se conserva el callback que ya está
+registrado en Google. También sigue funcionando el login del shell de Streamlit, que ya llama a la
+API absoluta. La alternativa de pasar todo por el proxy obligaba a mover ese valor, y habría roto el
+login de Streamlit justo mientras sirve de respaldo.
+
+| Paso | Quién | A dónde | Estado |
+|---|---|---|---|
+| 1. Botón "Iniciar sesión" | navegador | `https://<api>/api/v1/auth/login?redirect=<origen exacto del front>`, **absoluto, sin proxy** | ✅ `frontend/src/lib/api.js` (`getAuthLoginUrl`, `VITE_API_ORIGIN`) |
+| 2. `redirect` en la allowlist | API | `FRONTEND_REDIRECT_URIS`, **comparación exacta**, no por prefijo | ✅ código · ⏳ valor de prod |
+| 3. Callback de Google | API | `GOOGLE_REDIRECT_URI` → 302 al front con `?code_faro=` | ✅ |
+| 4. Canje | navegador | `POST /api/v1/auth/exchange?sesion=cookie`, **relativo, por el proxy** | ✅ `frontend/src/lib/api.js` |
+| 5. Limpiar la URL | navegador | `history.replaceState`: el código no se queda en el historial | ✅ `frontend/src/lib/session.jsx` |
+
+**Pendientes explícitos: sin ellos el login no funciona en producción.**
+
+- **`FRONTEND_REDIRECT_URIS` no llega al Cloud Run real.** El `--set-env-vars` de
+  `vault/08_CICD_DevOps/scripts/deploy-cloud-run.sh` no la incluye (hallazgo de Diana Alvarez, 11-sep).
+  Si no llega, el paso 2 responde 400 aunque el valor esté bien definido. El dueño es CI/CD. Luis está
+  ausente, y por `DEC-025` su ausencia no bloquea el cambio. En local, `docker-compose.yml` ya la pasa
+  (PR #322).
+- **El valor de prod** tiene que ser el origen del front **byte a byte** igual a
+  `window.location.origin`: con `https://`, sin `/` final y sin ruta. Se valida con la URL real del
+  front en cuanto exista.
+- **Credenciales de Google** (`GOOGLE_CLIENT_ID/SECRET`) en Secret Manager (C5).
+
+---
+
 ## ✅ Mitigaciones Implementadas (Nivel 1)
 
 ### M1: Documentación de riesgos
@@ -266,6 +388,8 @@ Si encuentras una vulnerabilidad de seguridad:
 | 2026-08-16 | 1.0 | Creación inicial, threat model, 13 vulnerabilidades documentadas | Luis Téllez |
 | 2026-08-29 | 1.0.1 | Reconciliación de US IDs del roadmap con el catálogo real (US-501..505; elimina el fantasma US-601); corrige tech stale (nginx/self-signed → Cloud LB/Armor + certs administrados); corrige cita CIS 5.3→5.2 en M4 | Luis Téllez |
 | TBD | 1.1 | Actualización post-Sprint 3 (auth implementado) | Christian Ruiz |
+| 2026-09-10 | 1.2 | Sesión del frontend de React por cookie `httpOnly` (ADR-012): controles, modos por cliente, residuales CSRF y XSS | Christian Ruiz |
+| 2026-09-11 | 1.3 | Login del React: por qué va directo a la API y no por el proxy (`faro_oauth_state`), los 5 pasos y los pendientes de prod (hallazgo del PO en PR #304) | Christian Ruiz |
 | TBD | 2.0 | Actualización post-Sprint 4 (GCP production) | Luis Téllez |
 
 ---

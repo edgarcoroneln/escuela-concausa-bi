@@ -85,6 +85,22 @@ class RefreshIn(EntradaEstricta):
     refresh_token: StrictStr
 
 
+class SesionOut(BaseModel):
+    """Respuesta del **modo cookie** (ADR-012). Deliberadamente **sin JWT**.
+
+    El modo cookie existe para que el token no sea alcanzable desde JavaScript. Si la respuesta
+    trajera el `TokenPair`, un XSS podría llamar al endpoint —el navegador adjunta la cookie solo—
+    y leer los dos tokens del JSON, **anulando por completo el beneficio de `HttpOnly`**. Por eso
+    aquí solo viaja lo que no es una credencial.
+
+    `expira_en` permite al frontend programar el refresco **antes** de que el token venza, en vez
+    de descubrirlo con un 401 a media pantalla. No es sensible: es una duración, no un secreto.
+    """
+
+    expira_en: StrictInt = Field(description="Segundos de vida del access token recién emitido.")
+    modo: str = "cookie"
+
+
 class ExchangeIn(EntradaEstricta):
     """Canje del codigo de un solo uso por la sesion (US-405). Ver ADR-010."""
 
@@ -220,6 +236,13 @@ MAX_FILTROS_CONTEXTO = 10
 MAX_LARGO_FILTRO = 100
 MAX_LARGO_RESUMEN = 300
 
+#: Cotas del historial de turnos (rediseño del chat, 2026-09-10). Igual criterio que el
+#: contexto estructurado de arriba: cada turno entra literal al prompt, así que se acota en
+#: cantidad y en tamaño por turno para no desplazar las instrucciones de seguridad ni disparar
+#: costo/latencia sin límite.
+MAX_TURNOS_HISTORIAL = 10
+MAX_LARGO_TURNO = 500
+
 
 class ContextoConversacionalIn(EntradaEstricta):
     """Contexto estructurado del turno anterior del chat (US-305).
@@ -285,10 +308,40 @@ class ContextoConversacionalIn(EntradaEstricta):
         return v
 
 
+class HistorialTurnoIn(EntradaEstricta):
+    """Un turno previo del chat (pregunta del usuario + respuesta del agente).
+
+    Existe para que el agente sostenga una conversación real en vez de tratar cada pregunta
+    como independiente (rediseño del chat, 2026-09-10). A diferencia de `ContextoConversacionalIn`
+    (un resumen estructurado del turno anterior para resolver referencias como "esas escuelas"),
+    `historial` es la transcripción literal de los turnos previos, tal como el widget de chat la
+    guarda en `st.session_state`.
+
+    **Mismo criterio de entrada hostil que `ContextoConversacionalIn`**: quien llama al endpoint
+    público puede escribir aquí lo que quiera, así que se acota en tamaño y se rechazan
+    caracteres de control (evita que un turno inyecte saltos de línea para falsificar la
+    estructura del bloque de historial dentro del prompt).
+    """
+
+    pregunta: StrictStr = Field(min_length=1, max_length=MAX_LARGO_TURNO)
+    respuesta: StrictStr = Field(min_length=1, max_length=MAX_LARGO_TURNO)
+
+    @field_validator("pregunta", "respuesta")
+    @classmethod
+    def _sin_caracteres_de_control(cls, v: str) -> str:
+        """Un salto de línea aquí permitiría falsificar la estructura del bloque de historial."""
+        if not v.isprintable():
+            raise ValueError("el turno no puede contener saltos de línea ni caracteres de control")
+        return v
+
+
 class AgenteConsultaIn(EntradaEstricta):
     pregunta: StrictStr = Field(min_length=3, max_length=500)
     #: Opcional y **retrocompatible**: un cuerpo sin `contexto` se comporta igual que antes.
     contexto: ContextoConversacionalIn | None = None
+    #: Opcional y **retrocompatible**: un cuerpo sin `historial` se comporta igual que antes.
+    #: Turnos previos del chat, en orden cronológico (el más antiguo primero).
+    historial: list[HistorialTurnoIn] = Field(default_factory=list, max_length=MAX_TURNOS_HISTORIAL)
 
 
 class AgenteRespuestaOut(BaseModel):

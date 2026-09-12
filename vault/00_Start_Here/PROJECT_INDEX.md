@@ -96,7 +96,7 @@ tags: [index, moc]
 ## 🎯 Salud del proyecto — recuperación S7
 | Objetivo | Métrica | Meta | Actual |
 |---|---|---|---|
-| Historias cerradas | `done` / total | 99 / 99 al entregar | **91 / 99**; 2 en progreso y 6 frentes colectivos planeados |
+| Historias cerradas | `done` / total | 99 / 99 al entregar | **91 / 99**; 3 en progreso y 5 frentes colectivos planeados |
 | Superficies públicas | Healthcheck y prueba funcional en candidata | 3 / 3 | Baseline 8-sep: 3/3; candidata S7 pendiente |
 | Cumplimiento del PRD interno | Criterios de éxito revalidados | 11 / 11 | **Reabierto**; siete REQ en progreso |
 | Evaluación del profesor | Brechas observadas corregidas | 7 / 7 frentes | **0 / 7 aceptados aún**; valida QA el domingo |

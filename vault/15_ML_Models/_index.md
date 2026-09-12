@@ -18,7 +18,7 @@ tags: [index, moc, ml]
 |---|---|---|---|---|---|
 | ML-01 | Regresión de matrícula | Supervisado · regresión | Variación de matrícula por escuela | MAE / RMSE | entrenado · cumple umbrales en fixture |
 | ML-02 | Clasificación de driver | Supervisado · multiclase | Cuál de los 6 drivers explica el riesgo | F1 macro | en progreso |
-| ML-03 | Clustering de escuelas | No supervisado | Grupos de perfil similar | Silhouette | entrenado · umbral no alcanzado en fixture |
+| ML-03 | Clustering de escuelas | No supervisado | Grupos de perfil similar | Silhouette | evidencia real: `k=3`, 0.4645; sin promoción por RISK-011 |
 
 **ML-02 es el corazón prescriptivo del proyecto**: permite que dos escuelas con el mismo riesgo
 reciban recomendaciones distintas.
@@ -51,9 +51,11 @@ reciban recomendaciones distintas.
 | [[vault/15_ML_Models/ML01_Model_Card]] | Ficha de Modelo de ML-01: propósito, features de entrada, métricas obtenidas (MAE/RMSE), limitaciones y contexto de NO uso (US-324) |
 | [[vault/15_ML_Models/ML02_Model_Card]] | Ficha de Modelo de ML-02: clasificación multiclase, driver dominante, F1/SHAP, coberturas y contexto de NO uso (US-324) |
 | [[vault/15_ML_Models/ML03_Model_Card]] | Ficha de Modelo de ML-03: agrupamiento no supervisado (clustering), características usadas, silhouette score y fronteras (US-324) |
+| [[vault/15_ML_Models/ML03_Explicacion_US631]] | Explicación verificable para la recuperación S7: valor, métrica, límites, RISK-011 e integración pendiente de ML-03 (US-631) |
 | [[vault/15_ML_Models/EDA_Features_US322]] | Diagnóstico reproducible, correlaciones y selección de variables sin fuga para ML-03 (US-322) |
 | [[vault/15_ML_Models/Cobertura_Parcial_US325]] | Auditoría de `SIN_DATO`, completitud y concentración territorial por entidad y municipio (US-325) |
 | [[vault/15_ML_Models/ML03_Entrenamiento_US321]] | Corrida real del 8-sep: k=3, Silhouette 0.4645, exclusiones y perfiles; RISK-011 por cobertura indirecta. Sin MLflow ni publicación Gold (US-321) |
 | [ML03_Evidencia_20260908.json](ML03_Evidencia_20260908.json) | Agregados y proveniencia de la corrida; comparación k=2..6 y cruce cluster/completitud/D6. Sin filas individuales |
+| [[vault/15_ML_Models/ML03_RISK011_Gate]] | Compuerta canónica para revisar una variante ML-03 sin mezclar evidencia candidata, MLflow, RISK-011 ni promoción a producción |
 | [[vault/15_ML_Models/Plan_Cierre_Estefany_US321_US322_US325]] | Propuesta post-PR #197 y prompt maestro para llevar US-321/322/325 de fixtures a evidencia reproducible sobre Gold real |
 | [[vault/15_ML_Models/Diagnostico_Chat_Agente_2026-09-09]] | Diagnóstico pre-demo del chat del agente (por qué se sintió "roto") y plan priorizado P0-P3 para que responda preguntas libres en lenguaje natural (US-304/US-305) |

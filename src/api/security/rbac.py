@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials
 
 from src.api.config import Settings, get_settings
@@ -50,6 +50,7 @@ def require_role(*roles: Rol) -> Callable[..., UserOut]:
 
 
 def require_lectura(
+    request: Request,
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     settings: Settings = Depends(get_settings),
 ) -> UserOut | None:
@@ -61,4 +62,6 @@ def require_lectura(
     if settings.auth_lectura_publica:
         return None
     # Reutiliza exactamente la validación de US-402 (401 uniforme si el token falta o es inválido).
-    return get_current_user(credentials)
+    # El `request` viaja porque desde ADR-012 el token puede venir en la cookie `faro_sesion` y no
+    # solo en el encabezado: si no se pasara, el frontend de React nunca autenticaría aquí.
+    return get_current_user(request, credentials)

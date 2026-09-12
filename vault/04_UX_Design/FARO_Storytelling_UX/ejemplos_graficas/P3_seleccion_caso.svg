@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1008pt" height="792pt" viewBox="0 0 1008 792" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 792 
+L 1008 792 
+L 1008 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 880.047 209.7315 
+L 965.916 209.7315 
+Q 973.0224 209.7315 973.0224 217.8495 
+L 973.0224 234.0855 
+Q 973.0224 242.2035 965.916 242.2035 
+L 880.047 242.2035 
+Q 872.9406 242.2035 872.9406 234.0855 
+L 872.9406 217.8495 
+Q 872.9406 209.7315 880.047 209.7315 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 880.047 270.6165 
+L 965.916 270.6165 
+Q 973.0224 270.6165 973.0224 278.7345 
+L 973.0224 294.9705 
+Q 973.0224 303.0885 965.916 303.0885 
+L 880.047 303.0885 
+Q 872.9406 303.0885 872.9406 294.9705 
+L 872.9406 278.7345 
+Q 872.9406 270.6165 880.047 270.6165 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 880.047 331.5015 
+L 965.916 331.5015 
+Q 973.0224 331.5015 973.0224 339.6195 
+L 973.0224 355.8555 
+Q 973.0224 363.9735 965.916 363.9735 
+L 880.047 363.9735 
+Q 872.9406 363.9735 872.9406 355.8555 
+L 872.9406 339.6195 
+Q 872.9406 331.5015 880.047 331.5015 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 880.047 392.3865 
+L 965.916 392.3865 
+Q 973.0224 392.3865 973.0224 400.5045 
+L 973.0224 416.7405 
+Q 973.0224 424.8585 965.916 424.8585 
+L 880.047 424.8585 
+Q 872.9406 424.8585 872.9406 416.7405 
+L 872.9406 400.5045 
+Q 872.9406 392.3865 880.047 392.3865 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 880.047 453.2715 
+L 965.916 453.2715 
+Q 973.0224 453.2715 973.0224 461.3895 
+L 973.0224 477.6255 
+Q 973.0224 485.7435 965.916 485.7435 
+L 880.047 485.7435 
+Q 872.9406 485.7435 872.9406 477.6255 
+L 872.9406 461.3895 
+Q 872.9406 453.2715 880.047 453.2715 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 880.047 514.1565 
+L 965.916 514.1565 
+Q 973.0224 514.1565 973.0224 522.2745 
+L 973.0224 538.5105 
+Q 973.0224 546.6285 965.916 546.6285 
+L 880.047 546.6285 
+Q 872.9406 546.6285 872.9406 538.5105 
+L 872.9406 522.2745 
+Q 872.9406 514.1565 880.047 514.1565 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 880.047 575.0415 
+L 965.916 575.0415 
+Q 973.0224 575.0415 973.0224 583.1595 
+L 973.0224 599.3955 
+Q 973.0224 607.5135 965.916 607.5135 
+L 880.047 607.5135 
+Q 872.9406 607.5135 872.9406 599.3955 
+L 872.9406 583.1595 
+Q 872.9406 575.0415 880.047 575.0415 
+z
+" clip-path="url(#p6abb9474ba)" style="fill: #ffffff; stroke: #1a1a1a; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 30.24 195.525 
+L 977.76 195.525 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 385.56 225.9675 
+L 717.192 225.9675 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 485.0496 215.1435 
+L 485.0496 236.7915 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_4">
+    <path d="M 551.376 215.1435 
+L 551.376 236.7915 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_5">
+    <path d="M 575.154722 225.9675 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="m86bb90bd1f" d="M 0 -4.5 
+L -4.5 4.5 
+L 4.5 4.5 
+z
+" style="stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </defs>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="575.154722" y="225.9675" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_6">
+    <path d="M 30.24 256.41 
+L 977.76 256.41 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_7">
+    <path d="M 385.56 286.8525 
+L 717.192 286.8525 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_8">
+    <path d="M 485.0496 276.0285 
+L 485.0496 297.6765 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_9">
+    <path d="M 551.376 276.0285 
+L 551.376 297.6765 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_10">
+    <path d="M 575.154722 286.8525 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="575.154722" y="286.8525" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_11">
+    <path d="M 30.24 317.295 
+L 977.76 317.295 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_12">
+    <path d="M 385.56 347.7375 
+L 717.192 347.7375 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_13">
+    <path d="M 485.0496 336.9135 
+L 485.0496 358.5615 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_14">
+    <path d="M 551.376 336.9135 
+L 551.376 358.5615 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_15">
+    <path d="M 561.627853 347.7375 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="561.627853" y="347.7375" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_16">
+    <path d="M 30.24 378.18 
+L 977.76 378.18 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_17">
+    <path d="M 385.56 408.6225 
+L 717.192 408.6225 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_18">
+    <path d="M 485.0496 397.7985 
+L 485.0496 419.4465 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_19">
+    <path d="M 551.376 397.7985 
+L 551.376 419.4465 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_20">
+    <path d="M 558.952741 408.6225 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="558.952741" y="408.6225" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_21">
+    <path d="M 30.24 439.065 
+L 977.76 439.065 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_22">
+    <path d="M 385.56 469.5075 
+L 717.192 469.5075 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_23">
+    <path d="M 485.0496 458.6835 
+L 485.0496 480.3315 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_24">
+    <path d="M 551.376 458.6835 
+L 551.376 480.3315 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_25">
+    <path d="M 556.464562 469.5075 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="556.464562" y="469.5075" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_26">
+    <path d="M 30.24 499.95 
+L 977.76 499.95 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_27">
+    <path d="M 385.56 530.3925 
+L 717.192 530.3925 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_28">
+    <path d="M 485.0496 519.5685 
+L 485.0496 541.2165 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_29">
+    <path d="M 551.376 519.5685 
+L 551.376 541.2165 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_30">
+    <path d="M 556.464562 530.3925 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="556.464562" y="530.3925" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="line2d_31">
+    <path d="M 30.24 560.835 
+L 977.76 560.835 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 0.5; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_32">
+    <path d="M 385.56 591.2775 
+L 717.192 591.2775 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #c9c8c1; stroke-width: 3; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_33">
+    <path d="M 485.0496 580.4535 
+L 485.0496 602.1015 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_34">
+    <path d="M 551.376 580.4535 
+L 551.376 602.1015 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #4d4c48; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_35">
+    <path d="M 556.464562 591.2775 
+" clip-path="url(#p6abb9474ba)" style="fill: none; stroke: #1a1a1a; stroke-width: 1.5; stroke-linecap: square"/>
+    <g clip-path="url(#p6abb9474ba)">
+     <use xlink:href="#m86bb90bd1f" x="556.464562" y="591.2775" style="fill: #1a1a1a; stroke: #ffffff; stroke-width: 1.5; stroke-linejoin: miter"/>
+    </g>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="183.095273" transform="rotate(-0 33.201 183.095273)">Escuela</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="183.095273" transform="rotate(-0 338.184 183.095273)">Índice</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="385.56" y="183.359531" transform="rotate(-0 385.56 183.359531)">0</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="485.0496" y="183.359531" transform="rotate(-0 485.0496 183.359531)">0.30</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="551.376" y="183.359531" transform="rotate(-0 551.376 183.359531)">0.50 línea de alerta</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 8.4px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="717.192" y="183.359531" transform="rotate(-0 717.192 183.359531)">1</text>
+   </g>
+   <g id="text_7">
+    <text style="font-style: italic; font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="435.3048" y="159.826172" transform="rotate(-0 435.3048 159.826172)">atención baja</text>
+   </g>
+   <g id="text_8">
+    <text style="font-style: italic; font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="518.2128" y="159.826172" transform="rotate(-0 518.2128 159.826172)">atención media</text>
+   </g>
+   <g id="text_9">
+    <text style="font-style: italic; font-size: 7.8px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #4d4c48" x="634.284" y="159.826172" transform="rotate(-0 634.284 159.826172)">atención alta</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="183.095273" transform="rotate(-0 758.646 183.095273)">Nivel de atención</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="219.224039" transform="rotate(-0 33.201 219.224039)">COLEGIO MONTREAL</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="241.90382" transform="rotate(-0 33.201 241.90382)">Naucalpan de Juárez · Secundaria · 15PES0343S</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="229.084687" transform="rotate(-0 338.184 229.084687)">0.572</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="228.905449" transform="rotate(-0 758.646 228.905449)">▲ Atención alta</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="228.20182" transform="rotate(-0 922.9815 228.20182)">Abrir expediente →</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="280.109039" transform="rotate(-0 33.201 280.109039)">VALLARTA A. C.</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="302.78882" transform="rotate(-0 33.201 302.78882)">Naucalpan de Juárez · Preescolar · 15PJN1627V</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="289.969687" transform="rotate(-0 338.184 289.969687)">0.572</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="289.790449" transform="rotate(-0 758.646 289.790449)">▲ Atención alta</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="289.08682" transform="rotate(-0 922.9815 289.08682)">Abrir expediente →</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="340.994039" transform="rotate(-0 33.201 340.994039)">LIC. AGUSTIN GONZALEZ</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="363.50182" transform="rotate(-0 33.201 363.50182)">Toluca · Preescolar · 15EJN4151O</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="350.854688" transform="rotate(-0 338.184 350.854688)">0.531</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="350.675449" transform="rotate(-0 758.646 350.675449)">▲ Atención alta</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="349.97182" transform="rotate(-0 922.9815 349.97182)">Abrir expediente →</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="401.879039" transform="rotate(-0 33.201 401.879039)">OFIC NO 0971 SOR JUANA INES DE LA CRUZ</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="424.38682" transform="rotate(-0 33.201 424.38682)">Toluca · Secundaria · 15EES1468A</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="411.739688" transform="rotate(-0 338.184 411.739688)">0.523</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="411.560449" transform="rotate(-0 758.646 411.560449)">▲ Atención alta</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="410.85682" transform="rotate(-0 922.9815 410.85682)">Abrir expediente →</text>
+   </g>
+   <g id="text_31">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="462.764039" transform="rotate(-0 33.201 462.764039)">LIC. AGUSTIN GONZALEZ</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="485.27182" transform="rotate(-0 33.201 485.27182)">Toluca · Preescolar · 15EJN0104C</text>
+   </g>
+   <g id="text_33">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="472.624688" transform="rotate(-0 338.184 472.624688)">0.515</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="472.445449" transform="rotate(-0 758.646 472.445449)">▲ Atención alta</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="471.74182" transform="rotate(-0 922.9815 471.74182)">Abrir expediente →</text>
+   </g>
+   <g id="text_36">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="523.649039" transform="rotate(-0 33.201 523.649039)">MIXCOAC</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="546.15682" transform="rotate(-0 33.201 546.15682)">Toluca · Preescolar · 15DJN1794N</text>
+   </g>
+   <g id="text_38">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="533.509688" transform="rotate(-0 338.184 533.509688)">0.515</text>
+   </g>
+   <g id="text_39">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="533.330449" transform="rotate(-0 758.646 533.330449)">▲ Atención alta</text>
+   </g>
+   <g id="text_40">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="532.62682" transform="rotate(-0 922.9815 532.62682)">Abrir expediente →</text>
+   </g>
+   <g id="text_41">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="33.201" y="584.534039" transform="rotate(-0 33.201 584.534039)">SOR JUANA INES DE LA CRUZ</text>
+   </g>
+   <g id="text_42">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="33.201" y="607.04182" transform="rotate(-0 33.201 607.04182)">Toluca · Primaria · 15EPR0628Y</text>
+   </g>
+   <g id="text_43">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="338.184" y="594.394688" transform="rotate(-0 338.184 594.394688)">0.515</text>
+   </g>
+   <g id="text_44">
+    <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="758.646" y="594.215449" transform="rotate(-0 758.646 594.215449)">▲ Atención alta</text>
+   </g>
+   <g id="text_45">
+    <text style="font-size: 8.6px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1a1a1a" x="922.9815" y="593.51182" transform="rotate(-0 922.9815 593.51182)">Abrir expediente →</text>
+   </g>
+  </g>
+  <g id="text_46">
+   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="30.24" y="35.64" transform="rotate(-0 30.24 35.64)">Pantalla 3 · Selección de caso (ejemplo con datos reales)</text>
+  </g>
+  <g id="text_47">
+   <text style="font-weight: 700; font-size: 19px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="30.24" y="75.24" transform="rotate(-0 30.24 75.24)">Elige una escuela para abrir su expediente.</text>
+  </g>
+  <g id="text_48">
+   <text style="font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1a1a1a" x="30.24" y="104.544" transform="rotate(-0 30.24 104.544)">No necesitas revisarlas todas: puedes investigar una y seguir.</text>
+  </g>
+  <g id="text_49">
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 673.810062)">QUÉ ESTÁS VIENDO</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 684.149625)">QUÉ SE VE — Una fila por escuela. El número es su índice de riesgo y la pista muestra dónde cae ese índice, con dos marcas fijas: riesgo estable y línea de alerta.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 694.789625)">UNIDAD — Índice de 0 a 1 que traduce la variación de matrícula que el modelo proyecta. No es probabilidad ni porcentaje.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 704.945125)">SIN DATO — Una escuela sin predicción lo dice en su fila y no recibe marca en la pista; no se coloca en 0.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 715.585125)">CICLO Y RECORTE — Ciclo 2024-2025. Las N escuelas en riesgo, de mayor a menor índice.</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 723.976)"/>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 736.607437)">Fuente: los mismos datos que la P2 (GET /api/v1/escuelas?order_by=indice_riesgo&amp;order=desc&amp;size=100 y GET /api/v1/municipios/{cve_mun}); ninguna llamada nueva · campos: cct, nombre, nivel,</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 747.399437)">cve_mun, indice_riesgo, nombre_municipio; nivel de atención derivado en Front (PLAN_TRABAJO §3.quater).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 758.039437)">Consulta del 10-sep-2026 18:24 (UTC−06:00) a la API v1 en producción (commit 457715a). Cortes leídos del código: LINEA_DE_ALERTA (src/api/repositorio_gold.py:55) y RIESGO_ESTABLE</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 768.633125)">(src/modelos/riesgo.py:76).</text>
+   <text style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #4d4c48" transform="translate(30.24 779.319438)">Ejemplo de FORMA Y LECTURA DEL DATO, no mockup ni identidad visual: paleta neutra y provisional; la identidad la define 03_Visual_Identity.md (Juan Carlos Macías).</text>
+  </g>
+  <g id="text_50">
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #4d4c48" x="30.24" y="649.616" transform="rotate(-0 30.24 649.616)">Las escuelas con el mismo índice van juntas y en orden alfabético: la lista no inventa un orden entre valores iguales.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p6abb9474ba">
+   <rect x="30.24" y="134.64" width="947.52" height="487.08"/>
+  </clipPath>
+ </defs>
+</svg>

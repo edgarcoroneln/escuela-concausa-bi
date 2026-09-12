@@ -38,20 +38,24 @@ migrarse a la rama personal de su autor mediante un PR trazable.
 > **Confirmación del PO, 10-sep:** Edward dirige QA. Eloisa queda incorporada al Equipo 6 por
 > continuidad con sus pruebas de API/chat/Auth; Edgar Coronel participa como comodín y conserva el go/no-go.
 
+> **Modo acelerado (`DEC-024`):** los equipos no esperan entregas terminadas de otros frentes.
+> Publican primero contratos, fixtures y componentes verticales; Front integra sustitutos rotulados
+> y QA prueba cada incremento. La pieza real sustituye al fixture cuando llega, sin detener el resto.
+
 ## Historias de control por equipo
 
 > Estas historias representan **frentes colectivos**, no tareas personales. El nombre del líder
 > aparece como responsable para cumplir la regla de un dueño por US; el desglose interno se agregará
 > sólo cuando cada equipo lo acuerde y lo presente en una sesión de las 18:00.
 
-| US | Equipo | Responsable de coordinación | Resultado común esperado | Dependencia / entrega a |
+| US | Equipo | Responsable de coordinación | Resultado común esperado | Interfaz paralela de integración |
 |---|---|---|---|---|
-| `US-601` | E1 · Componentes | Héctor Rafael Morales Marbán | Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica | entrega a E3/E5/E6 |
-| `US-611` | E2 · Chat IA | Andrés González Habib | Chat natural, contextual, seguro y demostrable | entrega a E5/E6 |
-| `US-621` | E3 · UX/UI y storytelling | Marina García del Buey | Propuesta visual, gráficas, pantallas y storytelling | recibe E1; entrega a E5/E6 |
-| `US-631` | E4 · ML-03 | Estefany Lucero Hernández Loredo | ML-03 funcional y explicación mejorada de los tres modelos | entrega a E3/E5/E6 |
-| `US-641` | E5 · Frontend y deploy | Diana Aracely Alvarez Varela | Frontend integrado y candidata desplegada en producción | recibe E1–E4; entrega a E6 |
-| `US-651` | E6 · QA | Edward Ulysses Ruiz Bustillos | Metodología, criterios, ejecución y dictamen integral | recibe de E1–E5; entrega al PO |
+| `US-601` | E1 · Componentes | Héctor Rafael Morales Marbán | Documentación de componentes, datos, capas, filtros, cubos, ER y memoria técnica | publica texto/diagramas incrementales; E3/E5/E6 consumen cada versión |
+| `US-611` | E2 · Chat IA | Andrés González Habib | Chat natural, contextual, seguro y demostrable | contrato y fixtures permiten integrar/probar antes del despliegue real |
+| `US-621` | E3 · UX/UI y storytelling | Marina García del Buey | Propuesta visual, gráficas, pantallas y storytelling | diseña con contratos existentes y `SIN_DATO`; no espera E1/E2/E4 |
+| `US-631` | E4 · ML-03 | Estefany Lucero Hernández Loredo | ML-03 funcional y explicación mejorada de los tres modelos | fixture contractual primero; endpoint/modelo real lo sustituye después |
+| `US-641` | E5 · Frontend y deploy | Diana Aracely Alvarez Varela | Frontend integrado y candidata desplegada en producción | integra verticalmente desde el primer componente; no espera cierre de E1–E4 |
+| `US-651` | E6 · QA | Edward Ulysses Ruiz Bustillos | Metodología, criterios, ejecución y dictamen integral | prueba contratos, componentes e integraciones en cada PR; E2E final en candidata |
 | `US-654` | Gobierno | Edgar Edmundo Coronel Navarrete | Trazabilidad, revisiones diarias y decisión go/no-go | integra el estado de E1–E6 |
 
 ## Padrón operativo S7 — participación, no asignación de tareas
@@ -85,20 +89,21 @@ migrarse a la rama personal de su autor mediante un PR trazable.
 | Fecha | 18:00 — salida obligatoria |
 |---|---|
 | Jue 10 | Gates de definición anteriores; criterios de aceptación ratificados y PR inicial por frente |
-| Vie 11 | Primera integración E1→E3→E5, chat y ML-03 consumibles; QA ejecuta pruebas parciales |
+| Vie 11 | Integraciones verticales paralelas de E1–E5; QA ejecuta contratos y pruebas parciales |
 | Sáb 12 | Candidata integrada en entorno de prueba, storytelling completo y defectos priorizados |
 | Dom 13 | 18:00 ensayo final + QA; 20:00 *code freeze* de la candidata aprobada y decisión go/no-go |
 | Lun 14 | Primera hora: healthchecks, entrega y cierre de `US-006`; sólo contingencia autorizada por PO |
 
-Orden de integración: **E1 documentación/datos → E3 storytelling/UX → E5 frontend**;
-**E4 ML-03 → E5**; **E2 chat → E5**; **E6 prueba continuamente todas las entregas**.
+Integración sin cadena de espera: **E1–E5 trabajan en paralelo** contra contratos/fixtures
+versionados; **E6 prueba continuamente** cada componente y reserva sólo el E2E para la candidata.
+Una pieza ausente se muestra como `SIN_DATO` o sustituto rotulado, nunca como bloqueo silencioso.
 
 ## Agenda de control de las 18:00 (30 minutos)
 
 1. Demostración contra evidencia, no reporte verbal (5 min por frente crítico).
-2. Estado de US/PR/checks y bloqueo con dueño y hora de resolución.
+2. Estado de US/PR/checks; impedimentos se desacoplan con contrato, fixture o `SIN_DATO` y continúan.
 3. QA actualiza aceptación: verde, rojo o no ejecutado; nunca “casi”.
-4. Confirmación de dependencias que entran al frontend al día siguiente.
+4. Confirmación de contratos/componentes que el frontend integra en el siguiente incremento.
 5. Decisión del PO y actualización del tablero/DevLog.
 
 ## Definition of Done de recuperación
