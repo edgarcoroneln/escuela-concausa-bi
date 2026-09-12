@@ -10,11 +10,18 @@ export const kpis = [
   { label: "Escuelas en riesgo alto", value: "7", hint: "Índice ≥ 0.50 (línea de alerta, DEC-019)" },
 ];
 
-export const matriculaPorCiclo = [
-  { ciclo: "2022-2023", matricula: 6512340 },
-  { ciclo: "2023-2024", matricula: 6598110 },
-  { ciclo: "2024-2025", matricula: 6704229 },
-];
+// Fix 12-sep (Christian): /series no existe y nunca existio -- se descarto
+// en US-411, y fact_escuela_ciclo solo materializa 2 ciclos (no hay
+// tendencia real de 3+ puntos que graficar). VistaGeneral.jsx ya no pide
+// esta lista: deriva los 2 puntos de KpisOut real (matricula_total +
+// variacion_matricula, ver matriculaComparacion2Ciclos alla). Este mock
+// queda con la forma cruda de KpisOut (no de {ciclo, matricula}) solo para
+// alimentar esa misma derivacion en modo demo -- valores consistentes con
+// los 2 ultimos puntos que este archivo ya traia (2023-2024 -> 2024-2025).
+export const kpisMockParaComparacion2Ciclos = {
+  matricula_total: 6704229,
+  variacion_matricula: 0.0161, // (6704229 - 6598110) / 6598110, mismos 2 ciclos que antes
+};
 
 export const escuelasPorNivel = [
   { nombre: "Primaria", valor: 62 },
@@ -72,20 +79,27 @@ export const driverIcons = {
 };
 
 // Nivel de atención por umbral -- ADR-011 (Edgar) / DEC-024, no el semáforo
-// original del mockup de UX/UI. Reutiliza LINEA_DE_ALERTA (DEC-019, =0.50,
-// src/api/repositorio_gold.py) y RIESGO_ESTABLE del backend: el frontend
-// deriva su propio nivel directo de indice_riesgo y NO consume/reinterpreta
-// gold.recomendaciones.prioridad (esa columna sigue anclada a 0.60, ver
-// ADR-011). Corrige el corte anterior (Alto ≥0.65/Medio 0.50-0.64), que no
-// estaba alineado con el resto del sistema.
+// original del mockup de UX/UI. Deriva su propio nivel directo de
+// indice_riesgo y NO consume/reinterpreta gold.recomendaciones.prioridad
+// (esa columna sigue anclada a 0.60, ver ADR-011 y DEC-023 -- prohibido
+// explícitamente, columna hoy en "media" donde el nivel real es "alta",
+// BUG-063).
+//
+// Fix 12-sep (hallazgo de Diana, mismo patrón que BUG-058): los cortes ya
+// NO están fijos aquí -- vienen de `cortes` (GET /api/v1/version,
+// cortes_atencion, DEC-026), leídos con useCortesAtencion() en
+// lib/cortesAtencion.js. Escribir 0.50/0.30 a mano en este archivo es
+// exactamente el error que ya causó un bug por el mismo motivo (diccionario
+// de entidades hardcodeado); este archivo ya no es la fuente de verdad de
+// esos números, aunque coincidan hoy con los ratificados en DEC-019/DEC-024.
 //
 // Sin color propio (03_Visual_Identity.md S3, revisión de Marina 10-sep):
 // icono + texto únicamente -- ▲ alta · ■ media · ● baja, en tinta única
 // (var(--color-ink)). El semáforo por nivel quedó rechazado igual que el
 // color por driver -- ver src/lib/riskRamp.js.
-export function nivelRiesgo(indice) {
-  if (indice >= 0.5) return { label: "Alta", icon: "▲" };
-  if (indice >= 0.3) return { label: "Media", icon: "■" };
+export function nivelRiesgo(indice, cortes) {
+  if (indice >= cortes.alta) return { label: "Alta", icon: "▲" };
+  if (indice >= cortes.media) return { label: "Media", icon: "■" };
   return { label: "Baja", icon: "●" };
 }
 
