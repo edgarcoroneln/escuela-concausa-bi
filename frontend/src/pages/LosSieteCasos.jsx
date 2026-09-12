@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
+import RiskGauge from "../components/RiskGauge.jsx";
+import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
 import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelasEnRiesgo } from "../lib/api.js";
@@ -35,12 +37,21 @@ export default function LosSieteCasos() {
           </p>
           {status === "demo" && <div className="mt-2"><DemoBadge /></div>}
         </div>
-        <button
-          className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
-          style={{ background: "var(--color-header)", color: "#fff" }}
-        >
-          Comparar los 7 casos
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/panorama"
+            className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
+            style={{ background: "var(--color-surface-alt, #f4f4f5)", color: "var(--color-ink)" }}
+          >
+            ← Volver al panorama
+          </Link>
+          <button
+            className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
+            style={{ background: "var(--color-header)", color: "#fff" }}
+          >
+            Comparar los 7 casos
+          </button>
+        </div>
       </div>
 
       {status === "loading" && (
@@ -73,18 +84,17 @@ export default function LosSieteCasos() {
                     <p className="text-xs mb-4" style={{ color: "var(--color-ink-faint)" }}>{e.municipio}, {e.entidad}</p>
                   )}
 
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-2xl font-extrabold tabular" style={{ color: "var(--color-ink)" }}>
-                      {e.indice_riesgo.toFixed(2)}
-                    </span>
-                    {!esReal && (
-                      <span className="text-xs font-semibold tabular" style={{ color: "var(--color-ink-faint)" }}>
-                        {e.variacion}%
-                      </span>
-                    )}
+                  <div className="flex justify-center mb-1">
+                    <RiskGauge
+                      value={e.indice_riesgo}
+                      color={color}
+                      alertLine={cortes.alta}
+                      max={cortes.ancla_calibracion ?? 0.6}
+                      size={104}
+                    />
                   </div>
-                  <p className="text-[11px] mb-4" style={{ color: "var(--color-ink-faint)" }}>
-                    {riesgo.icon} {riesgo.label} · Índice de riesgo{!esReal && " · Variación matrícula"}
+                  <p className="text-[11px] text-center mb-4" style={{ color: "var(--color-ink-faint)" }}>
+                    {riesgo.icon} {riesgo.label}{!esReal && ` · Variación matrícula ${e.variacion}%`}
                   </p>
 
                   <span
@@ -107,6 +117,19 @@ export default function LosSieteCasos() {
             );
           })}
         </div>
+      )}
+
+      {escuelas.length > 0 && cortes && (
+        <Card>
+          {/* Leyenda obligatoria (02_Data_Visualization_Spec.md §7.bis.2, fila "P3 · Pista del
+              índice de riesgo") -- una sola vez para toda la cuadrícula, no repetida por tarjeta. */}
+          <LeyendaGrafica
+            queSeVe="Una tarjeta por escuela. El número es su índice de riesgo y la pista muestra dónde cae ese índice, con la línea de alerta marcada."
+            unidad="Índice de 0 a 1 que traduce la variación de matrícula que el modelo proyecta. No es probabilidad ni porcentaje."
+            sinDato="Una escuela sin predicción lo dice en su tarjeta y no recibe marca en la pista; no se coloca en 0."
+            cicloYRecorte={`Ciclo más reciente materializado. Las ${escuelas.length} escuelas en riesgo, de mayor a menor índice.`}
+          />
+        </Card>
       )}
     </PageContainer>
   );

@@ -6,6 +6,8 @@ import App from "./App.jsx";
 import Home from "./pages/Home.jsx";
 import Panorama from "./pages/Panorama.jsx";
 import LosSieteCasos from "./pages/LosSieteCasos.jsx";
+import Conclusion from "./pages/Conclusion.jsx";
+import Explorador from "./pages/Explorador.jsx";
 import VistaGeneral from "./pages/VistaGeneral.jsx";
 import Comparativa from "./pages/Comparativa.jsx";
 import MapaCasos from "./pages/MapaCasos.jsx";
@@ -27,6 +29,8 @@ const router = createBrowserRouter([
       { path: "panorama", element: <Panorama /> },
       { path: "casos", element: <LosSieteCasos /> },
       { path: "escuela/:cct", element: <ExpedienteEscuela /> },
+      { path: "conclusion", element: <Conclusion /> },
+      { path: "explorador", element: <Explorador /> },
       { path: "vista-general", element: <VistaGeneral /> },
       { path: "comparativa", element: <Comparativa /> },
       { path: "mapa", element: <MapaCasos /> },

@@ -6,11 +6,11 @@ export const FASES = [
   { n: "02", label: "Panorama de riesgo", to: "/panorama" },
   { n: "03", label: "Selección de caso", to: "/casos" },
   { n: "04", label: "Expediente", disabledHint: "Elige un caso en Selección de caso" },
-  { n: "05", label: "Conclusión Top 3", disabledHint: "Pantalla nueva, todavía no construida" },
+  { n: "05", label: "Conclusión Top 3", to: "/conclusion" },
 ];
 
 export const EXPLORACION = [
-  { n: "06", label: "Explorador de escuelas", disabledHint: "Pendiente: consolidar mapa, drivers y comparaciones" },
+  { n: "06", label: "Explorador de escuelas", to: "/explorador" },
 ];
 
 export const HEREDADAS = [

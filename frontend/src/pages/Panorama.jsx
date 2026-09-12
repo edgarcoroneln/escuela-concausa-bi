@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
 import DriverMatrix from "../components/DriverMatrix.jsx";
 import Card from "../components/Card.jsx";
+import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
 import { getPanoramaEscuelas } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { panoramaMock } from "../data/mock.js";
@@ -80,6 +81,15 @@ export default function Panorama() {
             subtitle="Cada fila es una escuela; cada columna, una de las 6 líneas de evidencia. Claro = menos presión, oscuro = más."
           >
             <DriverMatrix data={matrizData} />
+            {/* Leyenda obligatoria (02_Data_Visualization_Spec.md §7.bis.2, fila "P2 · Matriz de
+                casos") -- además del degradado propio de DriverMatrix, el bloque de 4 declaraciones
+                que pide la §7.bis.1. */}
+            <LeyendaGrafica
+              queSeVe="Una fila por escuela en riesgo y una columna por pista del entorno. El tono de la celda dice cuánta presión ejerce esa pista sobre esa escuela; el recuadro con ▲ marca la que más destaca."
+              unidad="Posición relativa de 0 a 1 frente al resto de escuelas observadas, no porcentaje: 0 es la menor presión observada y 1 la mayor."
+              sinDato="Celda rayada: esa pista no se pudo verificar para esa escuela. No es un cero ni quiere decir que no haya problema."
+              cicloYRecorte={`Ciclo más reciente materializado. Las ${n} escuelas que cruzan la línea de alerta, de las escuelas del alcance (CDMX, Estado de México, Nuevo León y Jalisco).`}
+            />
           </Card>
 
           <div className="flex justify-end">

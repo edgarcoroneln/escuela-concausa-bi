@@ -78,6 +78,25 @@ export const driverIcons = {
   D6: "🌫️",
 };
 
+// Recomendación GENERAL por driver para la Pantalla 5 (Conclusión Top 3,
+// 01_UX_Architecture.md §2). Texto autoral de este frente (US-641,
+// 12-sep) -- se buscó en todo el vault una "recomendación general por
+// driver" ya redactada por Monserrat/Marina y no existe ninguna: solo hay
+// ejemplos de recomendación POR ESCUELA (ver parDiferenciador arriba, D4 y
+// D2). Estas seis líneas se redactaron a mano, en el mismo tono operativo
+// de esos ejemplos, para cubrir el hueco -- no salen del modelo ni de
+// PrediccionOut.recomendacion (esa es siempre por escuela). Si Monserrat
+// publica un texto oficial más adelante, este objeto es el que se
+// reemplaza.
+export const recomendacionGeneralPorDriver = {
+  D1: "Fortalecer becas y apoyos socioeconómicos focalizados en las familias de estas comunidades.",
+  D2: "Coordinar con seguridad pública rutas escolares seguras y entornos protegidos.",
+  D3: "Priorizar mantenimiento y rehabilitación de la infraestructura escolar.",
+  D4: "Ampliar conectividad y dotación de equipo de cómputo.",
+  D5: "Gestionar el abasto de agua potable y sistemas de captación en la escuela.",
+  D6: "Evaluar medidas de ventilación y mitigación de la contaminación en el entorno escolar.",
+};
+
 // Nivel de atención por umbral -- ADR-011 (Edgar) / DEC-024, no el semáforo
 // original del mockup de UX/UI. Deriva su propio nivel directo de
 // indice_riesgo y NO consume/reinterpreta gold.recomendaciones.prioridad

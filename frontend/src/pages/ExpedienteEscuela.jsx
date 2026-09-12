@@ -3,15 +3,16 @@ import { Link, useParams } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import RiskGauge from "../components/RiskGauge.jsx";
+import DriverBars from "../components/DriverBars.jsx";
+import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
-import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
+import { driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuela, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
 
 const TABS = ["Resumen", "Drivers", "Comparación", "Predicción", "Recomendación"];
-const DRIVER_CODES = ["D1", "D2", "D3", "D4", "D5", "D6"];
 
 // Conectado al API real 10-sep (revisión de Edgar, PR #302) vía getEscuela(cct)
 // (EscuelaDetalleOut: sí trae latitud/longitud, a diferencia de la lista --
@@ -92,7 +93,7 @@ export default function ExpedienteEscuela() {
   return (
     <PageContainer>
       <Link to="/casos" className="text-sm" style={{ color: "var(--color-ink-faint)" }}>
-        ← Volver a casos
+        ← Regresar a selección
       </Link>
 
       <div className="flex items-start justify-between flex-wrap gap-4">
@@ -152,7 +153,12 @@ export default function ExpedienteEscuela() {
               </tbody>
             </table>
             <div className="flex flex-col items-center gap-3">
-              <RiskGauge value={escuela.indice_riesgo} color={color} />
+              <RiskGauge
+                value={escuela.indice_riesgo}
+                color={color}
+                alertLine={cortes.alta}
+                max={cortes.ancla_calibracion ?? 0.6}
+              />
               <span
                 className="text-xs font-semibold px-3 py-1 rounded-full inline-flex items-center gap-1.5"
                 style={{ background: "var(--color-surface)", border: `2px solid ${DOMINANT_OUTLINE}`, color: "var(--color-ink)" }}
@@ -170,30 +176,19 @@ export default function ExpedienteEscuela() {
                 Completitud de datos: {(escuela.indice_completitud_drivers * 100).toFixed(0)}%
                 {escuela.es_estimado_por_grupo && " · valores estimados por grupo (no medición individual)"}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {DRIVER_CODES.map((code) => {
-                  const valor = escuela[code.toLowerCase()];
-                  const sinDato = valor === null || valor === undefined;
-                  return (
-                    <div
-                      key={code}
-                      className="flex items-center justify-between px-3 py-2.5 rounded-lg"
-                      style={{ background: "var(--color-surface-alt, #f4f4f5)" }}
-                    >
-                      <span className="text-sm flex items-center gap-2">
-                        <span>{driverIcons[code]}</span>
-                        {driverNombres[code]}
-                      </span>
-                      <span
-                        className="text-sm font-semibold tabular"
-                        style={{ color: sinDato ? "var(--color-ink-faint)" : riskRampColor(valor) }}
-                      >
-                        {sinDato ? "SIN_DATO" : valor.toFixed(2)}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+              <DriverBars
+                drivers={{ D1: escuela.d1, D2: escuela.d2, D3: escuela.d3, D4: escuela.d4, D5: escuela.d5, D6: escuela.d6 }}
+                driverDominante={escuela.driver_dominante}
+              />
+              {/* Leyenda obligatoria (02_Data_Visualization_Spec.md §7.bis.2, fila "P4 · Comparativa
+                  de los 6 drivers") -- texto literal, solo el ciclo se resuelve en vivo (nunca
+                  tecleado, §8.2). */}
+              <LeyendaGrafica
+                queSeVe="Las seis pistas del entorno de esta escuela, siempre en el mismo orden. La barra mide cuánta presión ejerce cada una; la marcada con ▲ es la que más destaca según el modelo."
+                unidad="Posición relativa de 0 a 1 entre las escuelas observadas. Infraestructura y conectividad se leen como falta: 1 es carencia total del servicio."
+                sinDato="Pista rayada de punta a punta, con el motivo por el que falta. Un cero real se dibuja como una barra mínima con su «0.00»: no se parecen."
+                cicloYRecorte={`Ciclo ${prediccion?.id_ciclo ?? "más reciente materializado"}, una sola escuela. Pobreza y rezago e inseguridad son valores de su municipio, compartidos con las demás escuelas de ahí.`}
+              />
             </div>
           ) : (
             <p className="text-sm py-6" style={{ color: "var(--color-ink-faint)" }}>
@@ -271,6 +266,16 @@ export default function ExpedienteEscuela() {
           </p>
         )}
       </Card>
+
+      <div className="flex justify-end">
+        <Link
+          to="/conclusion"
+          className="inline-block text-sm font-semibold px-5 py-3 rounded-full"
+          style={{ background: "var(--color-primary)", color: "#ffffff" }}
+        >
+          Ver la conclusión →
+        </Link>
+      </div>
     </PageContainer>
   );
 }
