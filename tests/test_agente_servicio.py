@@ -41,10 +41,8 @@ def test_orquesta_consulta_segura_con_dependencias_inyectadas() -> None:
     assert [nombre for nombre, _ in llamadas] == ["recuperar", "generar", "ejecutar"]
 
 
-def test_pregunta_fuera_de_alcance_no_invoca_dependencias() -> None:
-    """Fase 1: el vocabulario no reconoce el tema, así que se intenta el respaldo semántico del
-    RAG antes de rechazar. Para un tema realmente ajeno, el RAG confirma "no relevante"
-    (`ContextoNoEncontrado`) y ni el LLM ni el ejecutor SQL llegan a invocarse."""
+def test_pregunta_sin_contexto_rag_no_invoca_llm_ni_bd() -> None:
+    """El RAG no encuentra contexto y evita continuar hacia el LLM o la base de datos."""
 
     def sin_contexto_relevante(pregunta: str) -> str:
         raise ContextoNoEncontrado("sin contexto relevante para ese tema")
