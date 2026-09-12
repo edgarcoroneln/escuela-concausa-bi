@@ -779,6 +779,8 @@ def _seccion_decisiones(_repo: RepositorioAbout) -> SeccionOut:
                     ["ADR-008", "Contenerización propia de Airflow con SQLAlchemy fijado en 1.4.x", "accepted", "2026-08-25"],
                     ["ADR-009", "Monitoreo de runs de MLflow con alertas por webhook genérico", "proposed", "2026-08-31"],
                     ["ADR-010", "Puente OAuth → frontend: código de un solo uso, nunca tokens en la URL", "proposed", "2026-09-03"],
+                    ["ADR-011", "Rediseño UX/UI narrativo con gráficas nativas como experiencia principal", "accepted", "2026-09-10"],
+                    ["ADR-012", "Retiro del embebido de Superset/Streamlit: frontend nativo en React", "accepted", "2026-09-10"],
                 ],
             ),
         ],
