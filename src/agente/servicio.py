@@ -124,16 +124,6 @@ def _preparar_para_redaccion(
             fuera_de_alcance=False,
         )
 
-    if not alcance.permitido:
-        # No permitimos que vecinos semánticos accidentales del RAG conviertan una pregunta ajena
-        # en una consulta de Gold. Las preguntas naturales del dominio ya pasan por el vocabulario
-        # ampliado; el SQL continúa protegido por preparar_sql_seguro y el rol read-only.
-        return ResultadoConsulta(
-            respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
-            sql_generado=None,
-            fuera_de_alcance=True,
-        )
-
     try:
         contexto = recuperar_contexto(pregunta)
     except ContextoNoEncontrado:
