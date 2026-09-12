@@ -1,23 +1,47 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Topbar from "./components/Topbar.jsx";
-import { SessionProvider } from "./lib/session.jsx";
+import Sidebar from "./components/Sidebar.jsx";
+import Header from "./components/Header.jsx";
+import AsistenteFaro from "./components/AsistenteFaro.jsx";
+import { SessionProvider, useSession } from "./lib/session.jsx";
 
-// Layout raíz: barra superior fija + <Outlet/>. Sin padding/max-width aquí
-// a propósito -> cada página decide su propio contenedor, porque Home
-// necesita un hero a todo lo ancho (como en el mockup de UX/UI) mientras
-// el resto de las pantallas van en un contenedor centrado.
+// Layout raiz (Fase 2 del rediseño, US-641): barra lateral fija +
+// cabecera fija + <Outlet/>, con el Asistente FARO flotante montado una
+// sola vez aqui para que su conversacion sobreviva la navegacion entre
+// pantallas (01_UX_Architecture.md §6). Antes era un unico Topbar plano
+// (Fase 1) -- ver Sidebar.jsx y Header.jsx para el porque del cambio.
 //
-// SessionProvider (US-405, ADR-012) envuelve todo desde aquí -- corre el
-// canje de ?code_faro= y la carga de sesión sin importar en qué ruta caiga
-// la vuelta de Google, y Topbar es quien la consume para decidir entre
-// "Iniciar sesión" y el avatar.
+// El Asistente FARO solo aparece con sesion iniciada (equivalente a "no en
+// Login/P0" del spec: esta SPA no tiene una ruta de login propia, el acceso
+// es un redirect externo a Google, asi que "anonimo" es nuestro P0).
+//
+// `onPreguntar` viaja a cada pagina via el contexto del Outlet (useOutletContext)
+// para que el glosario de cualquier pantalla pueda precargar una pregunta en
+// el Asistente sin que este dependa de vivir dentro de esa pagina.
+function Layout() {
+  const session = useSession();
+  const [preguntaInicial, setPreguntaInicial] = useState(null);
+
+  return (
+    <div style={{ minHeight: "100svh", background: "var(--color-bg)" }}>
+      <Sidebar session={session} />
+      <Header session={session} />
+      <main style={{ paddingLeft: "var(--faro-sidebar-expanded)", paddingTop: "4rem" }}>
+        <Outlet context={{ onPreguntar: setPreguntaInicial }} />
+      </main>
+      <AsistenteFaro
+        visible={session.status === "autenticado"}
+        preguntaInicial={preguntaInicial}
+        onPreguntaInicialConsumida={() => setPreguntaInicial(null)}
+      />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <SessionProvider>
-      <div style={{ minHeight: "100svh", background: "var(--color-bg)" }}>
-        <Topbar />
-        <Outlet />
-      </div>
+      <Layout />
     </SessionProvider>
   );
 }
