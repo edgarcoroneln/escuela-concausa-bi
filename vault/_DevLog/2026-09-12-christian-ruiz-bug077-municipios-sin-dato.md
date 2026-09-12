@@ -87,6 +87,28 @@ Verifiqué antes de tocar nada que un `Decimal` de Postgres —`d3`, `d4` e `ind
 son `numeric`— no rompe la validación de salida, en vez de asumirlo: Pydantic lo convierte. Era el
 riesgo obvio después de `BUG-077`.
 
+## Humo del contrato contra el despliegue real
+
+`BUG-079` dejó la lección clara: **el código en `main` no cambia producción**. La imagen desplegada era
+del 8-sep y el login estuvo roto días con el arreglo ya mergeado. `BUG-077` es del mismo tipo — hasta
+que se rehaga la imagen, `/municipios` sigue en 500 allá arriba.
+
+`tests/test_smoke_contrato_prod.py` contesta la pregunta que el CI no puede contestar: **¿lo que está
+arriba es lo que mergeamos?** Se salta completo salvo que se pida con `FARO_SMOKE=1`, porque sale a la
+red y depende de un despliegue que no controla.
+
+- **Sin sesión** verifica salud y que `/version` publique `cortes_atencion`. Con eso solo ya se sabe si
+  la imagen es anterior al contrato actual, y el mensaje de fallo incluye el commit desplegado.
+- **Con sesión** (`FARO_SMOKE_COOKIE`, `SEC-006`) verifica que `/municipios` **no** responda 500 con los
+  huecos de cobertura, que el detalle de un municipio sin entidad tampoco reviente, y que `/escuelas`
+  traiga drivers, coordenadas y la comparación de ciclo. Si faltan campos, el mensaje dice
+  explícitamente que hay que reconstruir y redesplegar.
+- **La credencial se lee del entorno, nunca se imprime, y los cuerpos de respuesta no entran a los
+  mensajes de error**: en una ruta autenticada traen datos reales (`Secrets_Policy.md`).
+
+Corriéndolo ya contra producción, la parte pública **pasa**: la imagen desplegada sí incluye los cortes
+del nivel de atención. Lo que falta es este PR.
+
 ## Seguridad / calidad
 
 - [x] Prueba propia (`test_un_municipio_sin_entidad_degrada_a_sin_dato`), sobre lista **y** detalle
@@ -104,7 +126,7 @@ riesgo obvio después de `BUG-077`.
 ## 🤖 Sesión de IA
 
 - **Agente / modelo:** Claude Code / claude-opus-5.
-- **Creados:** este DevLog.
+- **Creados:** este DevLog, `tests/test_smoke_contrato_prod.py`.
 - **Modificados:** `src/api/schemas.py`, `src/api/repositorio_gold.py`,
   `tests/test_api_contract.py`, `tests/fixtures_gold.py`, `api/openapi.v1.json`,
   `vault/03_Architecture/API_Specification.md`, `vault/_DevLog/_index.md`.
