@@ -140,13 +140,25 @@ tener que pasarle `--vars` a dbt.
 | `bronze_cemabe_sample.csv` | `cemabe_2013` | `cemabe` | 72 |
 | `bronze_coneval_irs_sample.csv` | `coneval_irs_2020` | `coneval_irs` | 12 |
 | `bronze_coneval_pobreza_sample.csv` | `coneval_pobreza_2020` | `coneval_pobreza` | 12 |
-| `bronze_sesnsp_sample.csv` | `sesnsp_test` | `sesnsp` | 72 |
-| `bronze_conapo_sample.csv` | `conapo_sample` | `conapo` | 36 |
+| `bronze_sesnsp_sample.csv` | `sesnsp` | `sesnsp` | 72 |
+| `bronze_conapo_sample.csv` | `conapo` | `conapo` | 36 |
 | `bronze_sinaica_estaciones_sample.csv` | `sinaica_estaciones_test` | `sinaica_estaciones` | 4 |
 | `bronze_sinaica_observaciones_sample.csv` | `sinaica_observaciones_test` | `sinaica_observaciones` | 10 |
 
 CONEVAL son **dos** archivos desde el 2026-09-04 (BUG-045 partió el esquema viejo en `irs` +
 `pobreza`). Toda la documentación anterior dice "siete fixtures de drivers": hoy son ocho.
+
+> **Corrección 2026-09-09 (Manuel Serranía, US-225):** `--tabla sesnsp`/`--tabla conapo`, **no**
+> `sesnsp_test`/`conapo_sample` como decía esta tabla hasta hoy. `dbt/models/sources.yml` cambió el
+> `identifier` por default de esas dos fuentes de vuelta a los nombres "reales"
+> (`sesnsp`/`conapo`, para que calcen con lo que cargan los loaders de producción
+> `cargar_bronze_sesnsp_real.py`/`cargar_bronze_conapo_real.py`) después de que este runbook se
+> verificó el 04-sep. Con los nombres viejos, `dbt run --full-refresh` falla con
+> `relation "bronze.sesnsp" does not exist` / `"bronze.conapo" does not exist` en
+> `silver.delitos_municipio`/`silver.poblacion_municipio`, aunque el fixture sí se haya cargado (a
+> otra tabla). Si vuelve a pasar con cualquier fuente: `grep -A1 "name: <fuente>" dbt/models/sources.yml`
+> y usa el `identifier` que diga ahí, no el de esta tabla — este documento describe el estado de una
+> fecha, `sources.yml` es la fuente de verdad viva.
 
 ### 3.3 Geometrías, dbt, ML y cubos — **el orden no es negociable**
 

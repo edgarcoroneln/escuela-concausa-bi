@@ -64,6 +64,205 @@
         "title": "AgenteRespuestaOut",
         "type": "object"
       },
+      "BloqueBarras": {
+        "description": "Barras horizontales simples (D3). Reemplaza al icicle original (US-601): con una\ndisparidad de datos como bronze/silver/gold (silver es ~6x más chica que gold), un icicle\nreparte el ANCHO por proporción y la capa chica se vuelve una franja casi invisible -- una\nbarra por categoría, cada una con su propia fila y etiqueta, no compite por espacio.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemBarra"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "tipo": {
+            "const": "barras",
+            "default": "barras",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "BloqueBarras",
+        "type": "object"
+      },
+      "BloqueDiagramaFlujo": {
+        "description": "Diagrama de 3 columnas con curvas (D3, sin plugin de Sankey): nodos por columna +\nenlaces entre IDs de nodo. El frontend resalta al pasar el mouse los enlaces de un nodo.",
+        "properties": {
+          "enlaces": {
+            "items": {
+              "$ref": "#/components/schemas/EnlaceFlujo"
+            },
+            "title": "Enlaces",
+            "type": "array"
+          },
+          "nodos": {
+            "items": {
+              "$ref": "#/components/schemas/NodoFlujo"
+            },
+            "title": "Nodos",
+            "type": "array"
+          },
+          "tipo": {
+            "const": "diagrama_flujo",
+            "default": "diagrama_flujo",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nodos",
+          "enlaces"
+        ],
+        "title": "BloqueDiagramaFlujo",
+        "type": "object"
+      },
+      "BloqueMapa": {
+        "description": "Mapa de municipios (D3, sin librería de mapas): el frontend colorea cada feature del\n`geojson` según `cve_ent` contra `resaltados`. `fondo`, si viene, es la silueta nacional\nsimplificada (gris, detrás de los 4 estados resaltados) -- pedido explícito del usuario\ndespués de ver el mapa sin contexto nacional.",
+        "properties": {
+          "fondo": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fondo"
+          },
+          "geojson": {
+            "additionalProperties": true,
+            "title": "Geojson",
+            "type": "object"
+          },
+          "resaltados": {
+            "items": {
+              "$ref": "#/components/schemas/ResaltadoMapa"
+            },
+            "title": "Resaltados",
+            "type": "array"
+          },
+          "tipo": {
+            "const": "mapa",
+            "default": "mapa",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "geojson",
+          "resaltados"
+        ],
+        "title": "BloqueMapa",
+        "type": "object"
+      },
+      "BloqueMarkdown": {
+        "properties": {
+          "texto": {
+            "title": "Texto",
+            "type": "string"
+          },
+          "tipo": {
+            "const": "markdown",
+            "default": "markdown",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "texto"
+        ],
+        "title": "BloqueMarkdown",
+        "type": "object"
+      },
+      "BloqueMermaid": {
+        "properties": {
+          "alto": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alto"
+          },
+          "codigo": {
+            "title": "Codigo",
+            "type": "string"
+          },
+          "tipo": {
+            "const": "mermaid",
+            "default": "mermaid",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codigo"
+        ],
+        "title": "BloqueMermaid",
+        "type": "object"
+      },
+      "BloqueMetricas": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MetricaItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "tipo": {
+            "const": "metricas",
+            "default": "metricas",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "BloqueMetricas",
+        "type": "object"
+      },
+      "BloqueTabla": {
+        "properties": {
+          "columnas": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Columnas",
+            "type": "array"
+          },
+          "filas": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Filas",
+            "type": "array"
+          },
+          "tipo": {
+            "const": "tabla",
+            "default": "tabla",
+            "title": "Tipo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "columnas",
+          "filas"
+        ],
+        "title": "BloqueTabla",
+        "type": "object"
+      },
       "ContextoConversacionalIn": {
         "additionalProperties": false,
         "description": "Contexto estructurado del turno anterior del chat (US-305).\n\nExiste para que *\"¿cuáles son las recomendaciones para **esas** escuelas?\"* pueda resolverse\nsin que el LLM invente CCTs. C3 lo consume en `construir_prompt_sistema()`.\n\n**Este objeto es entrada del cliente, no estado de confianza.** Quien llame a la API puede\nescribir aquí lo que quiera —el endpoint es público bajo `require_lectura`—, así que se trata\ncomo hostil:\n\n- `extra=\"forbid\"` (heredado): un `sql`, `sql_generado` o `rol` en el cuerpo se rechaza con 422\n  en vez de ignorarse. **El frontend no puede colar SQL por esta puerta.**\n- Los CCT se validan por forma, así que no pueden transportar saltos de línea ni comillas.\n- `resumen` es el único campo de texto libre y por eso es el más peligroso: entra literal al\n  prompt, donde un salto de línea permitiría falsificar la estructura del bloque de contexto.\n  Se rechazan los caracteres de control.\n- Todo está acotado en tamaño: un contexto no puede empujar el prompt hasta desplazar las\n  instrucciones de seguridad.\n\nNada de esto sustituye a los guardarraíles de C3 (`preparar_sql_seguro`, solo `SELECT`/`WITH`\nsobre Gold, `LIMIT 1000`). Es la capa de antes: lo que nunca debió llegar al LLM.",
@@ -114,6 +313,24 @@
           }
         },
         "title": "ContextoConversacionalIn",
+        "type": "object"
+      },
+      "EnlaceFlujo": {
+        "properties": {
+          "destino": {
+            "title": "Destino",
+            "type": "string"
+          },
+          "origen": {
+            "title": "Origen",
+            "type": "string"
+          }
+        },
+        "required": [
+          "origen",
+          "destino"
+        ],
+        "title": "EnlaceFlujo",
         "type": "object"
       },
       "EscuelaDetalleOut": {
@@ -482,6 +699,42 @@
         "title": "HistorialTurnoIn",
         "type": "object"
       },
+      "ItemBarra": {
+        "properties": {
+          "etiqueta": {
+            "title": "Etiqueta",
+            "type": "string"
+          },
+          "nota": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota"
+          },
+          "valor": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor"
+          }
+        },
+        "required": [
+          "etiqueta",
+          "valor"
+        ],
+        "title": "ItemBarra",
+        "type": "object"
+      },
       "KpisOut": {
         "properties": {
           "escuelas_en_riesgo": {
@@ -512,6 +765,42 @@
           "indice_completitud_drivers"
         ],
         "title": "KpisOut",
+        "type": "object"
+      },
+      "MetricaItem": {
+        "properties": {
+          "etiqueta": {
+            "title": "Etiqueta",
+            "type": "string"
+          },
+          "nota": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota"
+          },
+          "valor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor"
+          }
+        },
+        "required": [
+          "etiqueta",
+          "valor"
+        ],
+        "title": "MetricaItem",
         "type": "object"
       },
       "MetricsOut": {
@@ -600,6 +889,29 @@
           "nombre_entidad"
         ],
         "title": "MunicipioOut",
+        "type": "object"
+      },
+      "NodoFlujo": {
+        "properties": {
+          "columna": {
+            "title": "Columna",
+            "type": "integer"
+          },
+          "etiqueta": {
+            "title": "Etiqueta",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "columna",
+          "etiqueta"
+        ],
+        "title": "NodoFlujo",
         "type": "object"
       },
       "Page_EscuelaOut_": {
@@ -843,6 +1155,29 @@
         "title": "RefreshIn",
         "type": "object"
       },
+      "ResaltadoMapa": {
+        "properties": {
+          "color": {
+            "title": "Color",
+            "type": "string"
+          },
+          "cve_ent": {
+            "title": "Cve Ent",
+            "type": "string"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cve_ent",
+          "nombre",
+          "color"
+        ],
+        "title": "ResaltadoMapa",
+        "type": "object"
+      },
       "Rol": {
         "description": "Los 2 roles del PRD (RBAC de US-403).",
         "enum": [
@@ -851,6 +1186,106 @@
         ],
         "title": "Rol",
         "type": "string"
+      },
+      "SeccionOut": {
+        "description": "El contenido de una sección (`GET /secciones/{id}`), siempre con esta forma.",
+        "properties": {
+          "advertencias": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Advertencias",
+            "type": "array"
+          },
+          "bloques": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "barras": "#/components/schemas/BloqueBarras",
+                  "diagrama_flujo": "#/components/schemas/BloqueDiagramaFlujo",
+                  "mapa": "#/components/schemas/BloqueMapa",
+                  "markdown": "#/components/schemas/BloqueMarkdown",
+                  "mermaid": "#/components/schemas/BloqueMermaid",
+                  "metricas": "#/components/schemas/BloqueMetricas",
+                  "tabla": "#/components/schemas/BloqueTabla"
+                },
+                "propertyName": "tipo"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/BloqueMarkdown"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueMermaid"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueTabla"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueMetricas"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueMapa"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueBarras"
+                },
+                {
+                  "$ref": "#/components/schemas/BloqueDiagramaFlujo"
+                }
+              ]
+            },
+            "title": "Bloques",
+            "type": "array"
+          },
+          "fuente": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fuente",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "titulo",
+          "fuente",
+          "bloques"
+        ],
+        "title": "SeccionOut",
+        "type": "object"
+      },
+      "SeccionResumen": {
+        "description": "Una entrada del manifest (`GET /secciones`).",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "orden": {
+            "title": "Orden",
+            "type": "integer"
+          },
+          "titulo": {
+            "title": "Titulo",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "titulo",
+          "orden"
+        ],
+        "title": "SeccionResumen",
+        "type": "object"
       },
       "SesionOut": {
         "description": "Respuesta del **modo cookie** (ADR-012). Deliberadamente **sin JWT**.\n\nEl modo cookie existe para que el token no sea alcanzable desde JavaScript. Si la respuesta\ntrajera el `TokenPair`, un XSS podría llamar al endpoint —el navegador adjunta la cookie solo—\ny leer los dos tokens del JSON, **anulando por completo el beneficio de `HttpOnly`**. Por eso\naquí solo viaja lo que no es una credencial.\n\n`expira_en` permite al frontend programar el refresco **antes** de que el token venza, en vez\nde descubrirlo con un 401 a media pantalla. No es sensible: es una duración, no un secreto.",
@@ -1000,6 +1435,75 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/about/secciones": {
+      "get": {
+        "description": "El manifest: qué secciones hay hoy, en qué orden. Agregar una sección nueva es agregar\nuna entrada aquí (+ su función de contenido) -- la página no cambia.",
+        "operationId": "listar_secciones_api_v1_about_secciones_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SeccionResumen"
+                  },
+                  "title": "Response Listar Secciones Api V1 About Secciones Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Listar Secciones",
+        "tags": [
+          "Cómo funciona"
+        ]
+      }
+    },
+    "/api/v1/about/secciones/{id_seccion}": {
+      "get": {
+        "description": "El contenido de una sección, siempre con el sobre `{id, titulo, fuente, advertencias,\nbloques}` -- ver el docstring del módulo.",
+        "operationId": "obtener_seccion_api_v1_about_secciones__id_seccion__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_seccion",
+            "required": true,
+            "schema": {
+              "title": "Id Seccion",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeccionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Obtener Seccion",
+        "tags": [
+          "Cómo funciona"
+        ]
+      }
+    },
     "/api/v1/admin/export": {
       "get": {
         "description": "Exporta datos en bruto (rol: **analista**). En el stub devuelve una referencia, no el stream.",
