@@ -58,3 +58,22 @@ regla), fuera de alcance de este frente.
   autenticado vuelve siempre al origen, no a la ruta original.
 
 Sin `vault_lint` corrido (cambios solo en `frontend/src`).
+
+
+## Segunda vuelta -- panel dividido con mapa real (mismo día, a pedido explícito de Diana)
+
+Diana pidió acercar el LAYOUT del login al mockup (panel dividido, elemento visual al lado, insignias
+de entidades, tarjeta alrededor del botón), pero confirmó explícitamente **mantener el tono llano**
+del resto de la app -- no la narrativa "Sistema Nacional de Observación Socioescolar"/"La Escuela como
+Sensor Social" del mockup Stitch, la misma que ya se dejó fuera de P1, P2 y P6 por no estar en el spec
+aprobado (pregunta hecha con `AskUserQuestion`, eligió "Solo layout visual, tono actual").
+
+`Login.jsx` ahora es un panel dividido: columna izquierda igual que antes (identidad, tarjeta con el
+botón de Google, disclaimer); columna derecha (oculta en móvil, `hidden md:flex`) con un mapa real de
+México -- mismo geojson (`data/geo/mexico-states.json`) y `d3-geo` que ya usa `components/MapaRiesgo.jsx`,
+resaltando las 4 entidades del alcance (`MX-CMX`, `MX-MEX`, `MX-NLE`, `MX-JAL`) sobre el resto del país
+en gris -- y las 4 insignias de entidad debajo. Es geografía real, no un gráfico decorativo inventado
+tipo "vector cartográfico de cobertura activa" del mockup. Sin simulador de estados de error (ya
+descartado en la primera vuelta) ni texto de "auditoría de accesos" no verificado -- el disclaimer del
+pie queda como "Plataforma de uso interno para el equipo FARO", sin afirmar algo que no se confirmó
+contra el backend.
