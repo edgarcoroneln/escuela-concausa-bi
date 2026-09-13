@@ -20,8 +20,8 @@ El objetivo de **ML-01** es realizar una regresión supervisada para predecir el
 - No utiliza features de escuelas sin datos consistentes (cobertura parcial respetada, sin imputar ceros a lo ciego).
 
 ## 3. Métrica Obtenida
-- **Resultados actuales**: Actualmente el modelo cumple con `MAE < 0.03` y `RMSE < 0.05`, pero estos resultados **provienen exclusivamente de datos sintéticos**.
-- **Bloqueo de corrida real**: El intento de reentrenar ML-01 con backtesting de datos reales fue bloqueado al encontrar un error interno de `scikit-learn` sin resolver (escalado a Héctor, C3). 
+- **Resultados actuales (sobre Gold real)**: Tras resolver el bloqueo por el error interno de `scikit-learn` (BUG-015), el modelo fue entrenado y evaluado exitosamente sobre datos reales (5 de septiembre).
+- **Desempeño**: El modelo obtuvo un **MAE de 0.141458** y un **RMSE de 0.436326**, logrando superar al baseline (MAE de 0.159223) con una **mejora del 11.04 %**.
 - (Ver detalle de entrenamiento: [[vault/15_ML_Models/ML01_Entrenamiento]]).
 
 ## 4. Limitaciones Conocidas
