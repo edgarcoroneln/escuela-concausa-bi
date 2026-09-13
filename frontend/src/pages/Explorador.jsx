@@ -289,7 +289,7 @@ export default function Explorador() {
           <span className="text-label-micro-mono uppercase" style={{ color: "var(--faro-signal)" }}>
             Parámetros de consulta
           </span>
-          <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
+          <span className="text-label-micro-mono uppercase" style={{ color: "var(--color-ink-faint)" }}>
             {filtrosActivos} de 3 filtros activos
           </span>
         </div>
@@ -297,7 +297,7 @@ export default function Explorador() {
           <label className="flex flex-col gap-1.5">
             <span className="text-label-ui inline-flex items-center gap-1.5" style={{ color: "var(--color-ink)" }}>
               <IconCalendarMonth size={15} style={{ color: "var(--faro-signal)" }} />
-              Ciclo escolar
+              1. Ciclo escolar
             </span>
             <select
               className="text-sm px-3 py-2 rounded-lg"
@@ -314,7 +314,7 @@ export default function Explorador() {
           <label className="flex flex-col gap-1.5">
             <span className="text-label-ui inline-flex items-center gap-1.5" style={{ color: "var(--color-ink)" }}>
               <IconLocationOn size={15} style={{ color: "var(--faro-signal)" }} />
-              Entidad
+              2. Entidad federativa
             </span>
             <select
               className="text-sm px-3 py-2 rounded-lg"
@@ -331,7 +331,7 @@ export default function Explorador() {
           <label className="flex flex-col gap-1.5">
             <span className="text-label-ui inline-flex items-center gap-1.5" style={{ color: "var(--color-ink)" }}>
               <IconSchool size={15} style={{ color: "var(--faro-signal)" }} />
-              Nivel educativo
+              3. Nivel educativo
             </span>
             <select
               className="text-sm px-3 py-2 rounded-lg"
@@ -373,6 +373,35 @@ export default function Explorador() {
             className="xl:col-span-7 rounded-2xl overflow-hidden flex flex-col"
             style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}
           >
+            {/* Encabezado de la tabla: mismo renglón "Muestra filtrada" +
+                "Orden" del mockup, pero con los filtros y el orden REALES
+                de esta consulta -- nunca "Estado de México (15) ·
+                Secundaria" fijo si el usuario no eligió esos filtros. */}
+            <div className="p-3 flex items-center justify-between flex-wrap gap-2" style={{ background: "var(--color-surface-alt)" }}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-label-ui uppercase font-semibold" style={{ color: "var(--color-ink)" }}>
+                  Muestra filtrada
+                  {(filtros.cve_ent || filtros.nivel) && (
+                    <>
+                      {": "}
+                      {[
+                        filtros.cve_ent ? `${ENTIDADES.find((e) => e.cve === filtros.cve_ent)?.nombre} (${filtros.cve_ent})` : null,
+                        filtros.nivel ? NIVELES.find((n) => n.cve === filtros.nivel)?.nombre : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </>
+                  )}
+                </span>
+                <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
+                  ({escuelas.length} de {typeof total === "number" ? total.toLocaleString("es-MX") : "…"} registros)
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-label-micro-mono font-medium" style={{ color: "var(--color-ink-faint)" }}>ORDEN:</span>
+                <span className="text-label-micro-mono font-semibold" style={{ color: "var(--faro-signal)" }}>FARO_INDEX DESC</span>
+              </div>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -380,7 +409,7 @@ export default function Explorador() {
                     <th className="p-3 pl-4">CCT / Nombre del plantel</th>
                     <th className="p-3">Municipio / Estado</th>
                     <th className="p-3 text-center">Nivel</th>
-                    <th className="p-3 text-center">Índice FARO</th>
+                    <th className="p-3 text-center">FARO Score</th>
                     <th className="p-3 text-center">Atención</th>
                     <th className="p-3 text-right pr-4">Acción</th>
                   </tr>
@@ -451,7 +480,7 @@ export default function Explorador() {
                               border: "1px solid var(--color-border)",
                             }}
                           >
-                            {estaSeleccionada ? "Viendo" : "Ver"}
+                            {estaSeleccionada ? "EXPEDIENTE" : "VER"}
                           </button>
                         </td>
                       </tr>
@@ -517,7 +546,7 @@ export default function Explorador() {
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="flex flex-col gap-1 min-w-0">
                     <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--faro-signal)" }}>
-                      Expediente diagnóstico
+                      Expediente diagnóstico en tiempo real
                     </span>
                     <h2 className="text-headline-sm" style={{ color: "var(--color-ink)" }}>{seleccionada.cct}</h2>
                     <p className="text-body-sm" style={{ color: "var(--color-ink-faint)" }}>{seleccionada.nombre}</p>
@@ -538,7 +567,7 @@ export default function Explorador() {
                 <div className="p-3 rounded-xl flex items-center justify-between gap-3 flex-wrap" style={{ background: "var(--color-surface-alt)" }}>
                   <div className="flex flex-col">
                     <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--color-ink-faint)" }}>
-                      Índice de riesgo FARO
+                      Índice algorítmico FARO (normalizado)
                     </span>
                     {typeof seleccionada.indice_riesgo === "number" ? (
                       <div className="flex items-baseline gap-1">
@@ -571,9 +600,9 @@ export default function Explorador() {
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <span className="text-label-ui font-semibold uppercase" style={{ color: "var(--color-ink)" }}>
-                      Descomposición por drivers
+                      Descomposición por drivers (0.0 – 1.0)
                     </span>
-                    <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>0 a 1</span>
+                    <span className="text-label-micro-mono uppercase" style={{ color: "var(--color-ink-faint)" }}>Escala real del modelo</span>
                   </div>
                   <DriverBars drivers={driversParaGrafica} driverDominante={seleccionada.driver_dominante} />
                 </div>
