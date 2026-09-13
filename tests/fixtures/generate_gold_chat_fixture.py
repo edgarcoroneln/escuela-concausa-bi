@@ -80,12 +80,23 @@ def conectar():
 
 def elegir_ccts(cur, n_escuelas: int, seed: float) -> list[str]:
     """CCTs a incluir: el par del diferenciador siempre + muestra aleatoria reproducible
-    del resto del alcance, hasta completar n_escuelas."""
+    del resto del alcance, hasta completar n_escuelas.
+
+    Muestrea solo entre CCTs que YA tienen fila en fact_escuela_ciclo para el id_ciclo
+    mas reciente (join explicito abajo) -- si no, exportar_dim_escuela_y_fact() los
+    descarta despues por su propio INNER JOIN contra ese mismo filtro, y el fixture sale
+    con menos filas de las pedidas sin avisar. Hallazgo real (13-sep): gold.dim_escuela
+    tiene ~77k filas en las 4 entidades del alcance, pero gold.fact_escuela_ciclo no
+    cubre a todas para el ciclo mas reciente -- un primer intento pidiendo 260 solo
+    devolvio 147 por este motivo, no porque faltara catalogo de escuelas."""
     cur.execute("select setseed(%s)", (seed,))
     cur.execute(
         """
         select e.cct
         from gold.dim_escuela e
+        join gold.fact_escuela_ciclo f
+          on f.cct = e.cct
+         and f.id_ciclo = (select max(id_ciclo) from gold.fact_escuela_ciclo)
         where e.cve_ent in %s
           and e.cct not in %s
         order by random()
