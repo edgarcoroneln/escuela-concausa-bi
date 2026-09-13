@@ -92,7 +92,7 @@ def _app_con_sesion() -> AppTest:
     return app.run(timeout=20)
 
 
-def test_chat_conserva_historial_y_muestra_sql_y_rechazo(api_agente: None) -> None:
+def test_chat_conserva_historial_oculta_sql_y_muestra_rechazo(api_agente: None) -> None:
     app = _app_con_sesion()
     assert not app.exception
     assert app.title[0].value == "Agente FARO"
@@ -111,12 +111,14 @@ def test_chat_conserva_historial_y_muestra_sql_y_rechazo(api_agente: None) -> No
     assert not app.exception
     assert any("Nuevo León" in markdown.value for markdown in app.markdown)
     assert any("Hay cuatro escuelas" in markdown.value for markdown in app.markdown)
-    assert any("SELECT count(*)" in code.value for code in app.code)
+    assert not any("SELECT count(*)" in markdown.value for markdown in app.markdown)
+    assert not any("SELECT count(*)" in code.value for code in app.code)
 
     app.chat_input[0].set_value("Cuantas escuelas hay?").run(timeout=20)
     assert not app.exception
     assert any("Hay cuatro escuelas" in markdown.value for markdown in app.markdown)
-    assert any("SELECT count(*)" in code.value for code in app.code)
+    assert not any("SELECT count(*)" in markdown.value for markdown in app.markdown)
+    assert not any("SELECT count(*)" in code.value for code in app.code)
 
     app.chat_input[0].set_value("Borra las escuelas").run(timeout=20)
     assert not app.exception
