@@ -113,3 +113,29 @@ convierte el vacío en `SIN_DATO`. Para `P277`, cero significa ausencia, `1..999
   decodificación y reportar reemplazos, no fallar silenciosamente.
 - El fixture sintético actual supone un único CSV ya conformado; no representa el contrato físico
   de los dos archivos oficiales.
+
+## 11. Verificación de producción (2026-09-13)
+
+- **Contexto:** investigación de un reporte en Panorama de Riesgo (producción) donde D3 salía
+  SIN_DATO en las 7 escuelas de mayor riesgo. Verificado contra `gold.fact_escuela_ciclo` en
+  Cloud SQL, tras un `dbt run` limpio (PASS=10, ERROR=0) que reconstruyó `silver.cemabe`
+  (203,638 filas) y `gold.fact_escuela_ciclo` (132,566 filas).
+- **Cobertura por fila de ciclo:** 85.8% OK (113,744 / 132,566).
+- **Cobertura por escuela** (exigiendo D3 = OK en todos los ciclos de esa escuela): 84.6% —
+  prácticamente igual a la cifra por fila porque `d3_cobertura` se calcula uniendo
+  `silver.cemabe` por `cct` (ya deduplicada a una fila por escuela en `cemabe.sql`), así que no
+  varía entre los ciclos de una misma escuela.
+- **Cobertura en producción:** 85.1% — consistente con las dos cifras anteriores.
+- **Por sostenimiento** (`gold.dim_escuela.sostenimiento`, que solo admite `PÚBLICO`/`PRIVADO`
+  por diseño de [[vault/14_Data_Sources/DS-02_Catalogo_CCT|DS-02]]): público 86.6% OK
+  (90,075/104,032), privado 83.0% OK (23,669/28,534). No existe ninguna categoría
+  "comunitario"/CONAFE en los datos reales — se investigó esa hipótesis específicamente y se
+  descartó.
+- **Explicación del hueco (~14-15%):** coincide con el riesgo ya anotado arriba en §10 ("CCT que
+  ya no existen en el catálogo actual (DS-02) → filas huérfanas") — escuelas cuyo `cct` no tiene
+  fila en `silver.cemabe` (censo 2013), ya sea por reasignación de clave o por ser de creación
+  posterior al levantamiento.
+- **Conclusión:** D3 no requiere fix de código ni recarga de producción. El comportamiento
+  observado es la limitación de cobertura del censo 2013 ya documentada en este archivo, no una
+  regresión de este sprint.
+- **Responsable:** Diana Alvarez · **Fecha:** 2026-09-13.
