@@ -566,6 +566,43 @@ def test_about_memoria_tecnica_vive_dentro_de_arquitectura(client: TestClient) -
     assert "FastAPI + OAuth2/JWT + RBAC" in herramientas
 
 
+def test_about_arquitectura_refleja_adr012(client: TestClient) -> None:
+    """La sección describe la arquitectura VIGENTE, no la de la demo del 9-sep.
+
+    `ADR-012` retiró Streamlit y el embebido de Superset como interfaz del producto. Esta
+    documentación es lo primero que lee alguien que llega al proyecto: si sigue diciendo que
+    FARO Web es una app de Streamlit, manda a la persona equivocada al lugar equivocado. Es
+    exactamente el tipo de desfase que ya nos costó caro —una ficha de modelo afirmando un
+    umbral que no se cumplía— y por eso se guarda con una prueba y no con buena intención.
+    """
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    componentes = next(
+        b for b in bloques if b["tipo"] == "tabla" and b["columnas"][0] == "Componente"
+    )
+    nombres = [fila[0] for fila in componentes["filas"]]
+
+    assert any("React" in n for n in nombres), "falta la SPA, que es la interfaz real del producto"
+    assert any("nginx" in n for n in nombres), "falta quién sirve la SPA y proxea el API"
+
+    # Streamlit puede seguir listado -- el código existe -- pero NO como la interfaz vigente.
+    fila_streamlit = next((f for f in componentes["filas"] if "Streamlit" in f[0]), None)
+    if fila_streamlit is not None:
+        assert "histórico" in fila_streamlit[0].lower() or "retirado" in fila_streamlit[1].lower(), (
+            "si Streamlit sigue en la tabla, su fila tiene que decir que ya no es la interfaz"
+        )
+
+    # Superset no debe describirse como la superficie que ve el usuario final.
+    fila_superset = next(f for f in componentes["filas"] if "Superset" in f[0])
+    assert "interno" in fila_superset[1].lower(), (
+        "Superset quedó como motor de cubos interno (ADR-012); su fila debe decirlo"
+    )
+
+    # La tabla de memoria técnica tiene que nombrar el stack real del frontend.
+    por_capa = next(b for b in bloques if b["tipo"] == "tabla" and b["columnas"] == ["Capa", "Herramienta"])
+    herramientas = " ".join(f"{c} {h}" for c, h in por_capa["filas"]).lower()
+    assert "react" in herramientas and "nginx" in herramientas
+
+
 def test_about_arquitectura_trae_el_diagrama(client: TestClient) -> None:
     """El diagrama de componentes es un bloque `svg` con su texto alternativo.
 

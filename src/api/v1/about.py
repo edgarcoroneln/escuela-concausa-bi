@@ -263,12 +263,13 @@ _ARQ_COMPONENTES: list[dict] = [
     {"x": 954, "y": 250, "w": 180, "h": 82, "celula": "C4", "enfasis": True,
      "titulo": "FastAPI",
      "subs": ["OAuth2 · JWT · RBAC", "Gold, predicciones,", "agente y esta sección"]},
-    {"x": 954, "y": 110, "w": 180, "h": 64, "celula": "C2",
-     "titulo": "Apache Superset", "subs": ["10 dashboards", "sobre los 9 cubos"]},
-    {"x": 1194, "y": 200, "w": 150, "h": 112, "celula": "C2", "enfasis": True,
+    {"x": 954, "y": 104, "w": 180, "h": 72, "celula": "C2", "punteado": True,
+     "titulo": "Apache Superset", "subs": ["10 dashboards", "uso interno del equipo",
+                                            "ya no se embebe (ADR-012)"]},
+    {"x": 1194, "y": 196, "w": 150, "h": 120, "celula": "C2", "enfasis": True,
      "titulo": "FARO Web",
-     "subs": ["Streamlit — shell único", "· dashboards", "· panel de ML",
-              "· chat del agente", "· login por rol"]},
+     "subs": ["React 19 + Vite", "servido por nginx", "· 7 pantallas del relato",
+              "· expediente de escuela", "· asistente", "· login por rol"]},
 ]
 
 #: Las tres capas dentro de la caja de PostgreSQL, con los mismos colores que las barras de
@@ -297,9 +298,10 @@ _ARQ_FLECHAS: list[dict] = [
      "anc": "middle"},
     {"d": "M 660 332 H 690 V 478 H 1044 V 338",
      "etq": "lee Gold · predicciones · recomendaciones", "ex": 866, "ey": 470, "anc": "middle"},
-    {"linea": (1134, 288, 1188, 272), "etq": "REST", "ex": 1161, "ey": 303, "anc": "middle"},
-    {"d": "M 1134 142 H 1164 V 230 H 1188", "etq": "embebido", "ex": 1160, "ey": 192,
-     "anc": "end"},
+    # La etiqueta va DEBAJO de las dos cajas: el hueco entre FastAPI (borde 1134) y FARO Web
+    # (borde 1194) mide 60 px y el texto ~97 px. Centrarla ahí la encimaba con ambas.
+    {"linea": (1134, 288, 1188, 268), "etq": "REST · mismo origen", "ex": 1164, "ey": 350,
+     "anc": "middle"},
 ]
 
 _ARQ_ANCHO, _ARQ_ALTO = 1360, 620
@@ -308,8 +310,10 @@ _ARQ_ALT = (
     "Airflow a PostgreSQL, donde dbt-core transforma bronze a silver a gold y Great "
     "Expectations valida cada capa; desde gold, scikit-learn con MLflow entrena los modelos y "
     "escribe predicciones de vuelta, ChromaDB aporta contexto RAG, FastAPI expone todo por "
-    "REST, Apache Superset lee los nueve cubos, y FARO Web en Streamlit reúne dashboards, "
-    "panel de ML y chat. Docker y GCP Cloud Run empaquetan y despliegan el sistema completo."
+    "REST en el mismo origen, y FARO Web —una SPA en React servida por nginx— reúne las siete "
+    "pantallas del relato, el expediente de escuela y el asistente. Apache Superset aparece con "
+    "borde punteado porque lee los nueve cubos para uso interno del equipo: desde ADR-012 ya no "
+    "se embebe al usuario final. Docker y GCP Cloud Run empaquetan y despliegan todo."
 )
 
 
@@ -429,10 +433,15 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
         bloques=[
             BloqueMarkdown(
                 texto=(
-                    "FARO va de 8 fuentes públicas a una página única con dashboards, un panel "
-                    "de ML y un agente conversacional, pasando por tres capas de datos "
-                    "(bronze/silver/gold) y tres modelos de Machine Learning registrados en "
-                    "MLflow. Cada componente tiene un dueño de célula distinto."
+                    "FARO va de 8 fuentes públicas a una aplicación web con el relato de los "
+                    "casos, un expediente por escuela y un asistente conversacional, pasando por "
+                    "tres capas de datos (bronze/silver/gold) y tres modelos de Machine Learning "
+                    "registrados en MLflow.\n\n"
+                    "**Actualizado al 12 de septiembre.** La interfaz **ya no es Streamlit con "
+                    "Superset embebido**: `ADR-012` la retiró a petición del profesor tras la "
+                    "demo del 9-sep, y el producto es ahora una SPA propia en React servida por "
+                    "nginx. Superset sigue vivo como motor de cubos **interno**; lo que se retiró "
+                    "es su exposición al usuario final."
                 )
             ),
             BloqueMarkdown(
@@ -443,8 +452,11 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     "—`predicciones`— es una escritura de vuelta: los modelos leen de Gold y "
                     "publican en Gold, no en una base aparte. Los tres recuadros de borde "
                     "grueso (PostgreSQL, FastAPI y FARO Web) son los puntos por los que pasa "
-                    "todo lo demás. El recuadro punteado de las fuentes no tiene dueño porque "
-                    "no es código nuestro: son los portales públicos de las dependencias."
+                    "todo lo demás. **Los recuadros punteados son los que no están en la ruta "
+                    "del usuario final**: las fuentes, porque no son código nuestro sino los "
+                    "portales públicos de las dependencias; y Superset, porque desde `ADR-012` "
+                    "sirve al equipo por dentro pero ya no se embebe en el producto — por eso "
+                    "no sale una flecha suya hacia FARO Web."
                 )
             ),
             _diagrama_arquitectura(),
@@ -458,8 +470,10 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     ["scikit-learn / XGBoost + MLflow", "Entrena y registra los 3 modelos de ML (ML-01/02/03)", "C3 · Andrés González Habib"],
                     ["FastAPI + OAuth2/JWT + RBAC", "Expone Gold, predicciones, el agente y esta misma sección", "C4 · Christian Ruiz"],
                     ["ChromaDB + sentence-transformers", "Recuperación de contexto (RAG) del agente conversacional", "C3 · Carlos Mayorga"],
-                    ["Apache Superset", "Los 10 dashboards del proyecto", "C2 · Manuel Serranía / Marina García / Monserrat Miranda / Oscar Quiroz"],
-                    ["Streamlit (FARO Web)", "Shell único: dashboards + panel de ML + chat + login por rol", "C2 · Manuel Serranía"],
+                    ["Apache Superset", "Motor de cubos y BI **interno**. Sus 10 dashboards siguen existiendo para el equipo; lo que se retiró (ADR-012) es su exposición embebida al usuario final", "C2 · Manuel Serranía / Marina García / Monserrat Miranda / Oscar Quiroz"],
+                    ["React 19 + Vite (FARO Web)", "La interfaz del producto: las 7 pantallas del relato, el expediente de escuela, el asistente y el login", "E5 · Diana Alvarez"],
+                    ["nginx", "Sirve la SPA como estático y hace de proxy a la API en el mismo origen (sin CORS, sin tokens en la URL)", "E5 · Luis Téllez"],
+                    ["Streamlit (shell histórico)", "Fue FARO Web hasta el 10-sep. **Retirado como interfaz del producto** (ADR-012, a petición del profesor tras la demo); el código sigue en `src/frontend/` mientras se completa la migración", "C2 · Manuel Serranía"],
                     ["Docker + docker-compose / GCP Cloud Run", "Empaqueta y despliega todo el sistema con URL pública", "C5 · Luis Téllez"],
                 ],
             ),
@@ -468,7 +482,12 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     "**Cómo se dividió el equipo.** Cada fila de la tabla de arriba tiene un "
                     "dueño de célula porque el backend se construyó como 5 franjas verticales, "
                     "no una sola pila compartida: cada célula es dueña de punta a punta de su "
-                    "parte del pipeline, desde el código hasta las pruebas."
+                    "parte del pipeline, desde el código hasta las pruebas.\n\n"
+                    "La tabla de abajo describe **cómo se construyó**, que es lo que explica la "
+                    "forma del sistema. Desde el 9 de septiembre el equipo trabaja reorganizado "
+                    "en **6 equipos de remediación** (`Plan_Recuperacion_2026-09-09`), así que "
+                    "las dos filas nuevas de arriba —la SPA y nginx— citan su equipo actual "
+                    "(`E5`) y no una célula: no existían cuando el reparto era por células."
                 )
             ),
             BloqueTabla(
@@ -536,7 +555,9 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     ["ML", "scikit-learn, XGBoost + MLflow"],
                     ["API", "FastAPI + OAuth2/JWT + RBAC"],
                     ["Agente", "ChromaDB + sentence-transformers"],
-                    ["BI", "Apache Superset"],
+                    ["Frontend", "React 19 + Vite + Tailwind · d3 y Recharts para las gráficas"],
+                    ["Servidor web", "nginx (estático + proxy al API en el mismo origen)"],
+                    ["BI interno", "Apache Superset (motor de cubos; ya no se embebe al usuario final)"],
                     ["Contenedores", "Docker + docker-compose"],
                     ["Nube", "GCP (Cloud Run + Cloud SQL + Artifact Registry)"],
                 ],
