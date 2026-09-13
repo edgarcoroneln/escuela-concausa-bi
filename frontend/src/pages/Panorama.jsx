@@ -67,6 +67,11 @@ export default function Panorama() {
     // criterio que MunicipioOut.cve_ent/cve_mun, no un dato inventado.
     cveEnt: typeof e.cve_mun === "string" ? e.cve_mun.slice(0, 2) : null,
     drivers: { D1: e.d1, D2: e.d2, D3: e.d3, D4: e.d4, D5: e.d5, D6: e.d6 },
+    // Driver dominante ya resuelto por el backend/mock -- se usa para dibujar
+    // el contorno ambar (03_Visual_Identity.md S3), mismo patron que ya
+    // implementa DriverBars.jsx en el Expediente (Pantalla 4). Antes no se
+    // pasaba: hallazgo de la revision visual del 13-sep contra los mockups.
+    dominante: e.driver_dominante,
   }));
 
   const [entidadHover, setEntidadHover] = useState(null);

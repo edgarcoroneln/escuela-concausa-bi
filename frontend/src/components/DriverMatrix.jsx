@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import Card from "./Card.jsx";
 import { driverIcons, driverNombres } from "../data/mock.js";
-import { riskRampColor } from "../lib/riskRamp.js";
+import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 
@@ -130,7 +130,7 @@ export default function DriverMatrix({ data = [], onSelect, atenuarCct }) {
     const cellGroups = svg
       .append("g")
       .selectAll("g")
-      .data(data.flatMap((d) => DRIVERS.map((driver) => ({ cct: d.cct, driver, valor: d.drivers[driver] }))))
+      .data(data.flatMap((d) => DRIVERS.map((driver) => ({ cct: d.cct, driver, valor: d.drivers[driver], esDominante: driver === d.dominante }))))
       .join("g")
       .attr("transform", (d) => `translate(${x(d.driver)},${y(d.cct)})`)
       .attr("data-cct", (d) => d.cct);
@@ -141,9 +141,14 @@ export default function DriverMatrix({ data = [], onSelect, atenuarCct }) {
       .attr("height", y.bandwidth())
       .attr("rx", 6)
       .attr("fill", (d) => (d.valor == null ? "url(#sinDatoStripes)" : color(d.valor)))
-      .attr("stroke", "var(--color-border)")
+      .attr("stroke", (d) => (d.esDominante ? DOMINANT_OUTLINE : "var(--color-border)"))
+      .attr("stroke-width", (d) => (d.esDominante ? 2 : 1))
       .append("title")
-      .text((d) => (d.valor == null ? `${driverNombres[d.driver]} · SIN_DATO` : `${driverNombres[d.driver]}: ${d.valor.toFixed(2)}`));
+      .text((d) =>
+        d.valor == null
+          ? `${driverNombres[d.driver]} · SIN_DATO`
+          : `${driverNombres[d.driver]}: ${d.valor.toFixed(2)}${d.esDominante ? " · Driver dominante" : ""}`
+      );
 
     cellGroups
       .filter((d) => d.valor != null)
@@ -189,6 +194,13 @@ export default function DriverMatrix({ data = [], onSelect, atenuarCct }) {
         <span>Menos presión</span>
         <div style={{ width: 100, height: 8, borderRadius: 4, background: "linear-gradient(90deg, #eef2f7, #93a5c0, #0f172a)" }} />
         <span>Más presión</span>
+        <span className="flex items-center gap-1.5 ml-4">
+          <span
+            className="inline-block"
+            style={{ width: 14, height: 14, borderRadius: 3, background: "#93a5c0", outline: `2px solid ${DOMINANT_OUTLINE}`, outlineOffset: "-1px" }}
+          />
+          Driver dominante
+        </span>
         <span className="flex items-center gap-1.5 ml-4">
           <svg width="14" height="14">
             <defs>
