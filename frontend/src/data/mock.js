@@ -27,6 +27,15 @@ export const kpisMockParaComparacion2Ciclos = {
   indice_completitud_drivers: 0.62,
 };
 
+// "Universo del alcance" (13-sep, Panorama.jsx -- ver getUniversoEscuelas
+// en lib/api.js). Mismo numero documentado en 02_Data_Visualization_Spec.md
+// linea 107 ("Universo del alcance | 44,114 escuelas ... | Page.total de
+// /escuelas"), para que el modo demo muestre exactamente el mismo total que
+// el mockup en vez de inventar uno nuevo. Forma identica al sobre de
+// paginacion real (Page[EscuelaOut]: {items, total, page, size}) para que
+// useApiResource no necesite un camino aparte por si esta en modo demo.
+export const universoEscuelasMock = { items: [], total: 44114, page: 1, size: 1 };
+
 export const escuelasPorNivel = [
   { nombre: "Primaria", valor: 62 },
   { nombre: "Secundaria", valor: 28 },

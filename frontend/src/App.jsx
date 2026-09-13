@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar.jsx";
 import Header from "./components/Header.jsx";
 import AsistenteFaro from "./components/AsistenteFaro.jsx";
@@ -25,8 +25,21 @@ import { isDemoMode } from "./lib/demoMode.js";
 // `onPreguntar` viaja a cada pagina via el contexto del Outlet (useOutletContext)
 // para que el glosario de cualquier pantalla pueda precargar una pregunta en
 // el Asistente sin que este dependa de vivir dentro de esa pagina.
+//: Rutas que se ven sin sesión, con el mismo chrome que el resto.
+//:
+//: **Por qué existe esta lista.** `about` (US-601) está declarado **público siempre** del lado
+//: del API, y a propósito: `src/api/v1/__init__.py` lo justifica en que es metadata del sistema
+//: —arquitectura, modelo de datos, stack—, no dato de escuela, así que no debe ocultarse cuando
+//: C4 endurezca la lectura de Gold. Sin esta lista, la compuerta de abajo contradecía esa
+//: decisión: el API servía la sección a cualquiera y la interfaz pedía login para verla.
+//:
+//: Se mantiene como lista explícita, no como un flag por pantalla: que una ruta sea pública es
+//: una decisión de producto y conviene que se lea de un vistazo, en un solo lugar.
+const RUTAS_PUBLICAS = ["/como-funciona"];
+
 function Layout() {
   const session = useSession();
+  const { pathname } = useLocation();
   const [preguntaInicial, setPreguntaInicial] = useState(null);
 
   // El modo demo (VITE_USE_MOCK=true, "Solo quiero previsualizar sin
@@ -40,7 +53,7 @@ function Layout() {
       return <div style={{ minHeight: "100svh", background: "#0b1524" }} aria-hidden="true" />;
     }
 
-    if (session.status === "anonimo") {
+    if (session.status === "anonimo" && !RUTAS_PUBLICAS.includes(pathname)) {
       return <Login />;
     }
   }

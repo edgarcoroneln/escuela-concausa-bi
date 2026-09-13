@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { driverIcons, driverNombres } from "../data/mock.js";
+import { driverNombres } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
@@ -30,16 +30,24 @@ function Barra({ valor, color }) {
 }
 
 // Gráfica comparativa de los 6 drivers de UNA escuela (Pantalla 4, §4 y
-// §7.bis.2 "P4 · Comparativa de los 6 drivers"). CSS/SVG plano, sin D3 --
-// a diferencia de DriverMatrix.jsx (que sí necesita D3 para su cuadrícula
-// de muchas escuelas), aquí es una sola fila de 6 barras y una tabla
-// HTML+CSS lo resuelve entero. Misma rampa monocromática (riskRampColor)
-// que el resto del producto: el color nunca identifica un driver, mide
-// presión.
+// §7.bis.2 "P4 · Comparativa de los 6 drivers"; reutilizado también en el
+// panel inspector de la Pantalla 3, "Desglose preliminar de vectores").
+// CSS/SVG plano, sin D3 -- a diferencia de DriverMatrix.jsx (que sí
+// necesita D3 para su cuadrícula de muchas escuelas), aquí es una sola
+// fila de 6 barras y una tabla HTML+CSS lo resuelve entero. Misma rampa
+// monocromática (riskRampColor) que el resto del producto: el color nunca
+// identifica un driver, mide presión.
 //
 // SIN_DATO se dibuja como "pista rayada de punta a punta" (§7.bis.2), no
 // como una barra en 0 -- un valor real de 0 se vería igual a "no hay dato"
 // si no se distinguieran.
+//
+// 13-sep -- Diana pidió (desde la Pantalla 3) quitar el emoji por driver
+// (🏘️🚨🏗️📶💧🌫️) y mostrar en su lugar el id del vector (D1..D6), como ya
+// hace el propio mockup ("D1 Pobreza y Rezago Social", etc.). Este
+// componente es compartido con la Pantalla 4 (Expediente de Escuela), así
+// que el cambio también se ve ahí -- avisado en el chat, por si Diana
+// quiere revisarlo cuando llegue a esa pantalla.
 export default function DriverBars({ drivers, driverDominante }) {
   return (
     <div className="flex flex-col gap-3">
@@ -50,7 +58,12 @@ export default function DriverBars({ drivers, driverDominante }) {
         return (
           <div key={code} className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 shrink-0" style={{ width: "11rem" }}>
-              <span>{driverIcons[code]}</span>
+              <span
+                className="text-xs font-bold shrink-0"
+                style={{ color: esDominante ? DOMINANT_OUTLINE : "var(--color-ink-faint)", width: "1.5rem" }}
+              >
+                {code}
+              </span>
               <span className="text-xs font-medium" style={{ color: "var(--color-ink)" }}>
                 {driverNombres[code]}
               </span>
