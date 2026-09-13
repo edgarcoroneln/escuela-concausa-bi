@@ -12,6 +12,7 @@ from src.agente.guardrails import (
     pregunta_en_alcance,
     preparar_sql_seguro,
 )
+from src.agente.llm import ErrorLLM
 from src.agente.prompt import NO_SQL_NECESARIO, construir_prompt_sistema
 from src.agente.recuperacion import (
     ContextoNoEncontrado,
@@ -123,47 +124,31 @@ def _preparar_para_redaccion(
             fuera_de_alcance=False,
         )
 
-    if not alcance.permitido:
-        # El vocabulario no reconoció el tema: antes de rechazar, se le da una segunda oportunidad
-        # a la pregunta vía la señal semántica del RAG (Fase 1). No es un hueco de seguridad: la
-        # intención de escritura ya se descartó arriba, y el SQL sigue pasando por
-        # `preparar_sql_seguro` + el rol read-only pase lo que pase aquí.
-        try:
-            contexto = recuperar_contexto(pregunta)
-        except ContextoNoEncontrado:
-            return ResultadoConsulta(
-                respuesta=alcance.razon or "Pregunta fuera del alcance de FARO.",
-                sql_generado=None,
-                fuera_de_alcance=True,
-            )
-        except ErrorRecuperacion:
-            return ResultadoConsulta(
-                respuesta="El contexto de FARO no está disponible temporalmente.",
-                sql_generado=None,
-                fuera_de_alcance=False,
-            )
-    else:
-        try:
-            contexto = recuperar_contexto(pregunta)
-        except ContextoNoEncontrado:
-            return ResultadoConsulta(
-                respuesta="No encontré contexto de Gold para responder esa pregunta.",
-                sql_generado=None,
-                fuera_de_alcance=False,
-            )
-        except ErrorRecuperacion:
-            return ResultadoConsulta(
-                respuesta="El contexto de FARO no está disponible temporalmente.",
-                sql_generado=None,
-                fuera_de_alcance=False,
-            )
+    try:
+        contexto = recuperar_contexto(pregunta)
+    except ContextoNoEncontrado:
+        return ResultadoConsulta(
+            respuesta="No encontré contexto de Gold para responder esa pregunta.",
+            sql_generado=None,
+            fuera_de_alcance=False,
+        )
+    except ErrorRecuperacion:
+        return ResultadoConsulta(
+            respuesta="El contexto de FARO no está disponible temporalmente.",
+            sql_generado=None,
+            fuera_de_alcance=False,
+        )
 
     prompt = construir_prompt_sistema(contexto, contexto_conversacional)
     try:
         sql_crudo = generar_sql(prompt, pregunta)
-    except ValueError as exc:
+    except (ValueError, ErrorLLM) as exc:
         return ResultadoConsulta(
-            respuesta=f"La consulta generada fue rechazada: {exc}",
+            respuesta=(
+                "No pude generar una consulta segura para esa pregunta; intenta reformularla."
+                if isinstance(exc, ErrorLLM)
+                else f"La consulta generada fue rechazada: {exc}"
+            ),
             sql_generado=None,
             fuera_de_alcance=False,
         )

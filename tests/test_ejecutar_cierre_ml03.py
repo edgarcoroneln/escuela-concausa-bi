@@ -75,3 +75,22 @@ def test_ejecuta_ml03_sin_registrar_si_hay_casos_completos(
     assert evidencia["ml03"]["estado"] == "ejecutado"
     assert evidencia["ml03"]["k_seleccionado"] in {2, 3, 4, 5, 6}
     assert "mlflow" not in evidencia
+    assert "estabilidad" not in evidencia["ml03"]
+
+
+def test_estabilidad_es_opcional_y_reproducible(features: pd.DataFrame) -> None:
+    """`--estabilidad` es lo que reproduce el bloque `estabilidad` (ARI) de
+    `ML03_Comparacion_RISK011_20260910.json`; por defecto no corre (repite el
+    entrenamiento una vez por semilla adicional)."""
+    completas = features.dropna().copy()
+
+    sin_estabilidad, _ = generar_evidencia(completas, evaluar_estabilidad=False)
+    con_estabilidad, resultado = generar_evidencia(
+        completas, evaluar_estabilidad=True, semillas_estabilidad=(7, 21, 42)
+    )
+
+    assert "estabilidad" not in sin_estabilidad["ml03"]
+    estabilidad = con_estabilidad["ml03"]["estabilidad"]
+    assert estabilidad["k"] == resultado.k_seleccionado
+    assert estabilidad["semillas"] == [7, 21, 42]
+    assert 0.0 <= estabilidad["ari_minimo"] <= estabilidad["ari_promedio"] <= 1.0

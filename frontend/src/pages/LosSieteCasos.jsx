@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
-import { driverColors, driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
+import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
+import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelasEnRiesgo } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 
@@ -50,7 +51,7 @@ export default function LosSieteCasos() {
       {escuelas.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {escuelas.map((e, i) => {
-            const color = driverColors[e.driver_dominante] ?? "var(--color-primary)";
+            const color = riskRampColor(e.indice_riesgo);
             const riesgo = nivelRiesgo(e.indice_riesgo);
             return (
               <Card key={e.cct} hover className="flex flex-col justify-between">
@@ -69,7 +70,7 @@ export default function LosSieteCasos() {
                   )}
 
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-2xl font-extrabold tabular" style={{ color: riesgo.color }}>
+                    <span className="text-2xl font-extrabold tabular" style={{ color: "var(--color-ink)" }}>
                       {e.indice_riesgo.toFixed(2)}
                     </span>
                     {!esReal && (
@@ -79,12 +80,12 @@ export default function LosSieteCasos() {
                     )}
                   </div>
                   <p className="text-[11px] mb-4" style={{ color: "var(--color-ink-faint)" }}>
-                    Índice de riesgo{!esReal && " · Variación matrícula"}
+                    {riesgo.icon} {riesgo.label} · Índice de riesgo{!esReal && " · Variación matrícula"}
                   </p>
 
                   <span
                     className="text-xs font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
-                    style={{ background: `${color}1a`, color }}
+                    style={{ background: "var(--color-surface)", border: `2px solid ${DOMINANT_OUTLINE}`, color: "var(--color-ink)" }}
                   >
                     <span>{driverIcons[e.driver_dominante]}</span>
                     {driverNombres[e.driver_dominante]}

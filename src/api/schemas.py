@@ -69,9 +69,34 @@ class HealthOut(BaseModel):
     status: str = "ok"
 
 
+class CortesAtencionOut(BaseModel):
+    """Cortes del **nivel de atencion** (`DEC-023`), para que el frontend no los teclee.
+
+    Son **definiciones**, no datos: por eso viajan en un endpoint publico y sin filtros. Existen
+    porque las dos constantes viven en capas distintas del repo --la linea de alerta en la API
+    (`DEC-019`) y la matricula estable en `src/modelos/riesgo.py`, alcance de C3-- y el front
+    necesita las dos. Escribirlas a mano en el front repetiria `BUG-058`, que fue exactamente eso:
+    un corte hardcodeado que quedo desincronizado de la capa que lo calcula.
+    """
+
+    alta: StrictFloat = Field(description="`indice_riesgo >= alta` => nivel de atencion alta.")
+    media: StrictFloat = Field(description="`>= media` y `< alta` => media; por debajo, baja.")
+    # No es un corte de etiqueta: se expone para que el glosario de la UI pueda explicar por que
+    # DB-09 dice `media` donde el front dice *alta*, sin teclear el 0.60 (`BUG-063`, `DEC-026`).
+    ancla_calibracion: StrictFloat = Field(
+        description=(
+            "Ancla de la sigmoide (`DEC-006`): `indice_riesgo` en este valor significa que la "
+            "escuela proyecta perder 5 % de su matricula. **No es un corte de presentacion.**"
+        )
+    )
+
+
 class VersionOut(BaseModel):
     api: str = "v1"
     commit: StrictStr
+    # Agregado 2026-09-11 (US-621): ver `CortesAtencionOut`. Opcional en el modelo para no romper a
+    # ningun cliente que ya valide esta respuesta con su propio esquema cerrado.
+    cortes_atencion: CortesAtencionOut | None = None
 
 
 class TokenPair(BaseModel):
@@ -134,12 +159,18 @@ class EscuelaOut(BaseModel):
     indice_riesgo: StrictFloat | None = Field(None, ge=0, le=1)
     driver_dominante: StrictStr | None = None  # "D1".."D6"
     tiene_prediccion: bool  # True si hay fila en gold.predicciones (modelo ML-01) para este cct
+    # Coordenadas subidas del detalle al listado el 2026-09-11 (US-621, mapa de riesgo en D3 del
+    # frontend de React): pintar 7 marcadores costaba 7 llamadas a `/escuelas/{cct}`, y el mapa de
+    # una entidad completa, una por escuela. `dim_escuela` ya las tiene y el listado ya hace ese
+    # JOIN, asi que no agrega ninguna consulta. `None` es SIN_DATO real: hay escuelas del CCT sin
+    # georreferencia, y el front las omite del mapa en vez de dibujarlas en el (0, 0).
+    latitud: float | None = None
+    longitud: float | None = None
 
 
 class EscuelaDetalleOut(EscuelaOut):
+    # `latitud`/`longitud` se heredan de EscuelaOut desde el 2026-09-11 (antes vivian solo aqui).
     sostenimiento: StrictStr
-    latitud: float | None = None
-    longitud: float | None = None
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
     # None => SIN_DATO explícito (regla de cobertura parcial del CLAUDE.md §4)
     d1: float | None = None
@@ -157,6 +188,12 @@ class EscuelaDetalleOut(EscuelaOut):
 class MunicipioOut(BaseModel):
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     nombre_municipio: StrictStr
+    # Agregados 2026-09-11 (US-621, pedido de Diana Alvarez para el frontend de React): la consulta
+    # ya los traia -- `select(dim_municipio)` devuelve la fila completa -- pero el contrato no los
+    # declaraba, asi que el cliente tenia que mantener su propio mapa de 4 claves de entidad a
+    # nombre, o pintar "09" en una etiqueta. Es aditivo: ningun cliente existente se rompe.
+    cve_ent: StrictStr = Field(min_length=2, max_length=2)
+    nombre_entidad: StrictStr
     # SIN_DATO explícito (P-03/US-103): con `gold.dim_municipio` = universo INEGI (317 municipios
     # de las 4 entidades), la población entra por LEFT JOIN a CONAPO; donde no hay fila queda NULL,
     # nunca 0 ni municipio borrado. Se expone como null, igual que rezago/pobreza, en vez de romper.
@@ -192,6 +229,25 @@ class PrediccionOut(BaseModel):
     # se inventa un entero. BUG-010. Al aterrizar ML-03, vuelve a StrictInt obligatorio con
     # aviso a C2/C3 (regla de oro del contrato, API_Specification.md).
     cluster: StrictInt | None = None  # ML-03
+    # `gold.recomendaciones.prioridad` -- "alta" | "media" | "baja" (`publicar_gold.Prioridad`).
+    # Es **procedencia auditable de Gold**, y la paridad con la columna que muestra DB-09.
+    #
+    # **El frontend NO etiqueta con este campo.** El paquete de UX aprobado (`DEC-023`) define el
+    # **nivel de atencion**, que el front calcula desde `indice_riesgo` con los cortes de
+    # `GET /version` (`cortes_atencion`: alta >= 0.50, media >= 0.30), y dice literalmente que a esa
+    # etiqueta "no se le dice prioridad ... esa palabra nombra una columna de Gold que usa otro corte
+    # y que el front no consume" (`00_Storytelling_Scope.md` §5.3.bis).
+    #
+    # **Por que difieren hoy:** `prioridad_de_riesgo()` llama `alta` solo desde el **ancla de la
+    # sigmoide** (0.60, calibracion de `DEC-006`), y el maximo que ML-01 predice sobre el Gold real
+    # es **0.5717** -- asi que ninguna de las 45,276 filas es `alta` y la tarjeta de DB-09 lee 0
+    # (`BUG-063`). `DEC-026` alinea la columna a la linea de alerta (0.50) y republica Gold; hasta
+    # que eso corra, este campo dira `media` donde el front dice *atencion alta*.
+    #
+    # `StrictStr | None`, no un `Literal`: el valor lo escribe C3 en Gold y un valor inesperado debe
+    # poder leerse y verse, no reventar la lectura con un 500. Tampoco se inventa cuando falta: sin
+    # fila de recomendacion viaja `None`, mismo criterio SIN_DATO que `cluster`.
+    prioridad: StrictStr | None = None
     mlflow_run_id: StrictStr
 
 

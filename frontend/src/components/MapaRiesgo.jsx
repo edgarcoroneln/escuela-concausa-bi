@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import Card from "./Card.jsx";
-import { driverColors } from "../data/mock.js";
+import { riskRampColor } from "../lib/riskRamp.js";
 import mexicoStates from "../data/geo/mexico-states.json";
 
 // Mapa real de México con D3 (d3-geo, proyección Mercator ajustada al bbox del
@@ -59,7 +59,7 @@ export default function MapaRiesgo({ data = [], selectedCct, onSelect, height = 
     marks
       .append("circle")
       .attr("r", (d) => (d.cct === selectedCct ? 9 : 6.5))
-      .attr("fill", (d) => driverColors[d.driver_dominante] ?? "var(--color-alert)")
+      .attr("fill", (d) => riskRampColor(d.indice_riesgo))
       .attr("stroke", "#fff")
       .attr("stroke-width", (d) => (d.cct === selectedCct ? 2.5 : 1.5))
       .attr("opacity", 0.9);

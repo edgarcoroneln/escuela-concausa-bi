@@ -145,6 +145,7 @@ MUNICIPIOS_FAKE: list[dict] = [
     {
         "cve_mun": "09010",
         "cve_ent": "09",
+        "nombre_entidad": "Ciudad de México",
         "nombre_municipio": "Álvaro Obregón",
         "poblacion": 759137,
         "indice_rezago_social": -1.12,
@@ -153,6 +154,7 @@ MUNICIPIOS_FAKE: list[dict] = [
     {
         "cve_mun": "15057",
         "cve_ent": "15",
+        "nombre_entidad": "México",
         "nombre_municipio": "Naucalpan de Juárez",
         "poblacion": 834434,
         "indice_rezago_social": -0.98,
@@ -161,6 +163,7 @@ MUNICIPIOS_FAKE: list[dict] = [
     {
         "cve_mun": "19039",
         "cve_ent": "19",
+        "nombre_entidad": "Nuevo León",
         "nombre_municipio": "Monterrey",
         "poblacion": 1142994,
         "indice_rezago_social": -1.45,
@@ -169,6 +172,7 @@ MUNICIPIOS_FAKE: list[dict] = [
     {
         "cve_mun": "14039",
         "cve_ent": "14",
+        "nombre_entidad": "Jalisco",
         "nombre_municipio": "Guadalajara",
         "poblacion": 1385629,
         "indice_rezago_social": -1.30,
@@ -179,6 +183,8 @@ MUNICIPIOS_FAKE: list[dict] = [
 _CAMPOS_ESCUELA_OUT = (
     "cct", "nombre", "nivel", "cve_mun",
     "matricula_total", "indice_riesgo", "driver_dominante", "tiene_prediccion",
+    # US-621 (2026-09-11): el listado ya trae coordenadas para el mapa del frontend.
+    "latitud", "longitud",
 )
 
 

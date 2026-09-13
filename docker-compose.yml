@@ -109,6 +109,20 @@ services:
       DATABASE_URL_READ_ONLY: ${DATABASE_URL_READ_ONLY:-}
       CHROMA_HOST: ${CHROMA_HOST:-chromadb}
       CHROMA_PORT: ${CHROMA_PORT:-8000}
+      # Auth OAuth2 con Google + JWT (US-402/US-405, ADR-012). Sin estas 4, la Settings
+      # del contenedor cae a sus defaults hardcodeados de src/api/config.py sin importar
+      # lo que diga el .env de la raiz -- ese archivo nunca se copia ni se monta dentro
+      # del contenedor (docker/api.Dockerfile solo copia src/), y compose solo inyecta
+      # las variables que estan listadas aqui explicitamente. Encontrado 11-sep probando
+      # el boton de login (US-405): FRONTEND_REDIRECT_URIS se quedaba siempre en el
+      # default "http://localhost:8501" del codigo, sin importar el .env local.
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-http://localhost:8000/api/v1/auth/callback}
+      FRONTEND_REDIRECT_URIS: ${FRONTEND_REDIRECT_URIS:-http://localhost:8501}
+      AUTH_LECTURA_PUBLICA: ${AUTH_LECTURA_PUBLICA:-true}
+      ANALISTA_EMAILS: ${ANALISTA_EMAILS:-}
     ports:
       - "127.0.0.1:${API_PORT}:${API_PORT}"  # Solo localhost (seguridad)
     volumes:

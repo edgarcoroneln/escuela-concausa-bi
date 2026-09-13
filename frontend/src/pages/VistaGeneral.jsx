@@ -27,7 +27,9 @@ import { useApiResource } from "../lib/useApiResource.js";
 // El resto de la página (KPIs, mapa, matrícula por ciclo, distribución por
 // nivel) sigue en mock -- mismos gaps de contrato ya documentados en
 // Arquitectura_Frontend_React.md §9 (sin variación de matrícula por ciclo,
-// sin lat/lon ni nombre de municipio/entidad).
+// sin lat/lon ni nombre de municipio/entidad). Rotulado con DemoBadge
+// 11-sep (revisión de Edgar, PR #321): el dato seguía siendo mock, pero en
+// pantalla no se notaba -- mismo patrón ya aplicado a "El diferenciador".
 const PAR_DIFERENCIADOR = [
   { cct: "15DPR0920D", ubicacion: "Ecatepec de Morelos, Estado de México" },
   { cct: "15DPR2254O", ubicacion: "Ecatepec de Morelos, Estado de México" },
@@ -69,11 +71,16 @@ export default function VistaGeneral() {
     <PageContainer>
       <PageHeader title="Panorama general" subtitle="Una visión rápida de la situación de las 7 escuelas en riesgo." />
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {kpis.map((k) => (
-          <KpiCard key={k.label} {...k} tone={k.label.includes("riesgo alto") ? "alert" : "default"} />
-        ))}
-      </section>
+      <div>
+        <div className="mb-2">
+          <DemoBadge />
+        </div>
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {kpis.map((k) => (
+            <KpiCard key={k.label} {...k} tone={k.label.includes("riesgo alto") ? "alert" : "default"} />
+          ))}
+        </section>
+      </div>
 
       {parStatus === "loading" ? (
         <Card title="El diferenciador">
@@ -96,23 +103,38 @@ export default function VistaGeneral() {
         </div>
       )}
 
-      <MapaRiesgoCard subtitle="Ubicación de las 7 escuelas" data={escuelasEnRiesgo} />
+      <div>
+        <div className="mb-2">
+          <DemoBadge />
+        </div>
+        <MapaRiesgoCard subtitle="Ubicación de las 7 escuelas" data={escuelasEnRiesgo} />
+      </div>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <BarChartCard
-          title="Matrícula por ciclo"
-          subtitle="Alumnado inscrito, últimos 3 ciclos"
-          data={matriculaPorCiclo}
-          xKey="ciclo"
-          yKey="matricula"
-        />
-        <DonutChartCard
-          title="Distribución por nivel educativo"
-          subtitle="Universo cubierto"
-          data={escuelasPorNivel}
-          nameKey="nombre"
-          valueKey="valor"
-        />
+        <div>
+          <div className="mb-2">
+            <DemoBadge />
+          </div>
+          <BarChartCard
+            title="Matrícula por ciclo"
+            subtitle="Alumnado inscrito, últimos 3 ciclos"
+            data={matriculaPorCiclo}
+            xKey="ciclo"
+            yKey="matricula"
+          />
+        </div>
+        <div>
+          <div className="mb-2">
+            <DemoBadge />
+          </div>
+          <DonutChartCard
+            title="Distribución por nivel educativo"
+            subtitle="Universo cubierto"
+            data={escuelasPorNivel}
+            nameKey="nombre"
+            valueKey="valor"
+          />
+        </div>
       </section>
     </PageContainer>
   );

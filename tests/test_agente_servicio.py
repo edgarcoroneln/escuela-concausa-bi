@@ -41,10 +41,8 @@ def test_orquesta_consulta_segura_con_dependencias_inyectadas() -> None:
     assert [nombre for nombre, _ in llamadas] == ["recuperar", "generar", "ejecutar"]
 
 
-def test_pregunta_fuera_de_alcance_no_invoca_dependencias() -> None:
-    """Fase 1: el vocabulario no reconoce el tema, así que se intenta el respaldo semántico del
-    RAG antes de rechazar. Para un tema realmente ajeno, el RAG confirma "no relevante"
-    (`ContextoNoEncontrado`) y ni el LLM ni el ejecutor SQL llegan a invocarse."""
+def test_pregunta_sin_contexto_rag_no_invoca_llm_ni_bd() -> None:
+    """El RAG no encuentra contexto y evita continuar hacia el LLM o la base de datos."""
 
     def sin_contexto_relevante(pregunta: str) -> str:
         raise ContextoNoEncontrado("sin contexto relevante para ese tema")
@@ -60,8 +58,9 @@ def test_pregunta_fuera_de_alcance_no_invoca_dependencias() -> None:
         redactar_respuesta=no_debe_llamarse,
     )
 
-    assert resultado.fuera_de_alcance
+    assert not resultado.fuera_de_alcance
     assert resultado.sql_generado is None
+    assert "No encontré contexto" in resultado.respuesta
 
 
 def test_pregunta_sin_vocabulario_exacto_pasa_por_respaldo_semantico() -> None:
@@ -362,7 +361,7 @@ def test_stream_no_invoca_al_redactor_hasta_que_se_itera() -> None:
 
 
 def test_stream_pregunta_fuera_de_alcance_no_llega_al_redactor() -> None:
-    """Igual guardarraíl que la ruta síncrona: rechazada, sin fragmentos que transmitir."""
+    """El RAG confirma que no hay contexto, sin llegar al redactor ni generar SQL."""
 
     def no_debe_llamarse(*args):
         raise AssertionError("no debe invocar al redactor en streaming")
@@ -376,7 +375,7 @@ def test_stream_pregunta_fuera_de_alcance_no_llega_al_redactor() -> None:
     )
 
     assert resultado.fragmentos is None
-    assert resultado.fuera_de_alcance
+    assert not resultado.fuera_de_alcance
     assert resultado.respuesta_fija
 
 
