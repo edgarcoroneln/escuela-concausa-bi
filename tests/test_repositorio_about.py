@@ -24,8 +24,11 @@ from src.api.repositorio_about import RepositorioAboutPostgres
 class _MotorFalso:
     """Motor que cuenta consultas y puede fallar con la excepción que se le indique."""
 
-    def __init__(self, excepcion: Exception | None = None) -> None:
+    def __init__(self, excepcion: Exception | None = None, *, solo_en_conteos: bool = False) -> None:
         self.excepcion = excepcion
+        #: `True` modela una tabla lenta: el catálogo responde y sólo el `COUNT(*)` se cancela.
+        #: `False` modela la base caída, donde no responde nada.
+        self.solo_en_conteos = solo_en_conteos
         self.consultas: list[str] = []
         self.dialect = create_engine("sqlite://").dialect
 
@@ -51,7 +54,8 @@ class _Contexto:
         self._motor.consultas.append(texto)
         if "statement_timeout" in texto:
             return _Resultado(0)
-        if self._motor.excepcion is not None:
+        es_conteo = "COUNT(*)" in texto
+        if self._motor.excepcion is not None and (es_conteo or not self._motor.solo_en_conteos):
             raise self._motor.excepcion
         return _Resultado(7)
 
@@ -88,7 +92,6 @@ def test_base_caida_no_se_reporta_como_tabla_inexistente() -> None:
     assert filas is None
     assert "no respondió" in nota, f"la nota inventa la causa: {nota!r}"
     assert "materializada" not in nota
-    assert repo.hubo_error_de_conexion() is True
 
 
 def test_tabla_ausente_sigue_diciendo_que_no_esta_materializada() -> None:
@@ -98,7 +101,7 @@ def test_tabla_ausente_sigue_diciendo_que_no_esta_materializada() -> None:
 
     assert filas is None
     assert "materializada" in nota
-    assert repo.hubo_error_de_conexion() is False, (
+    assert repo.conteos_capas().base_no_disponible is False, (
         "una tabla ausente no es una caída de la base; declararlo así haría que la sección "
         "muestre una advertencia falsa"
     )
@@ -108,12 +111,10 @@ def test_la_bandera_se_reinicia_entre_intentos() -> None:
     """Una caída vieja no debe teñir un intento nuevo que sí funcionó."""
     motor = _MotorFalso(_error(OperationalError))
     repo = RepositorioAboutPostgres(engine=motor)
-    repo.conteos_capas()
-    assert repo.hubo_error_de_conexion() is True
+    assert repo.conteos_capas().base_no_disponible is True
 
     motor.excepcion = None
-    repo.conteos_capas()
-    assert repo.hubo_error_de_conexion() is False
+    assert repo.conteos_capas().base_no_disponible is False
 
 
 # --------------------------------------------------------------- 2. cache
@@ -150,7 +151,7 @@ def test_un_resultado_con_la_base_caida_no_se_cachea() -> None:
         "el resultado con la base caída quedó cacheado: la recuperación no se vería hasta que "
         "venciera el TTL"
     )
-    assert repo.hubo_error_de_conexion() is False
+    assert repo.conteos_capas().base_no_disponible is False
 
 
 # --------------------------------------------------------------- 3. timeout
@@ -210,3 +211,120 @@ def test_el_texto_del_conteo_usa_comillas_dobles_sobre_el_identificador() -> Non
 def test_text_sigue_disponible_para_el_modulo() -> None:
     """Guarda trivial contra un refactor que quite el import y rompa el `SET LOCAL`."""
     assert text is not None
+
+
+# --------------------------------------------------------------- 4. el cache, POR EL ENDPOINT
+#
+# Las pruebas de arriba usan una instancia directa, y eso escondía el defecto real: FastAPI llama
+# a `get_repositorio_about()` en **cada petición**, así que sin `@lru_cache` cada una estrenaba su
+# propio `TTLCache` vacío y el barrido se repetía completo. Lo midió Edgar Coronel pasando por el
+# endpoint —3 GET, 3 barridos— que es justo lo que estas pruebas no hacían.
+
+
+def _cliente_con_motor(motor):
+    """`TestClient` sin `dependency_overrides`: pasa por `get_repositorio_about()` de verdad."""
+    from fastapi.testclient import TestClient
+
+    from src.api.app import app
+    from src.api.repositorio_about import RepositorioAboutPostgres, get_repositorio_about
+
+    # Tolerante a que alguien quite el @lru_cache: la prueba debe FALLAR con su mensaje, no
+    # reventar con AttributeError antes de llegar a la aserción.
+    getattr(get_repositorio_about, "cache_clear", lambda: None)()
+    original = RepositorioAboutPostgres.__init__
+
+    def _init(self, engine=None):
+        original(self, engine=motor)
+
+    RepositorioAboutPostgres.__init__ = _init
+    try:
+        yield TestClient(app)
+    finally:
+        RepositorioAboutPostgres.__init__ = original
+        getattr(get_repositorio_about, "cache_clear", lambda: None)()
+
+
+@pytest.fixture
+def cliente_real(request):
+    motor = request.param if hasattr(request, "param") else _MotorFalso()
+    gen = _cliente_con_motor(motor)
+    cliente = next(gen)
+    cliente.motor = motor
+    yield cliente
+    next(gen, None)
+
+
+def test_tres_peticiones_hacen_un_solo_barrido(cliente_real) -> None:
+    """El defecto que reportó Edgar: sin `@lru_cache` eran 3 barridos, uno por petición."""
+    for _ in range(3):
+        assert cliente_real.get("/api/v1/about/secciones/capas").status_code == 200
+
+    barridos = cliente_real.motor.consultas.count(
+        'SELECT COUNT(*) FROM "gold"."fact_escuela_ciclo"'
+    )
+    assert barridos == 1, (
+        f"se hicieron {barridos} barridos en 3 peticiones: el cache no se comparte entre "
+        "ellas. Revisa que `get_repositorio_about()` siga con @lru_cache."
+    )
+
+
+def test_la_dependencia_es_un_singleton() -> None:
+    """La causa raíz, afirmada directamente: dos llamadas devuelven el MISMO objeto."""
+    from src.api.repositorio_about import get_repositorio_about
+
+    get_repositorio_about.cache_clear()
+    try:
+        assert get_repositorio_about() is get_repositorio_about()
+    finally:
+        get_repositorio_about.cache_clear()
+
+
+# --------------------------------------------------------------- 5. timeout ≠ caída
+
+
+def _timeout() -> Exception:
+    """`OperationalError` con el SQLSTATE de `query_canceled`, como lo manda psycopg2."""
+    class _Orig(Exception):
+        pgcode = "57014"
+
+    return OperationalError("SELECT 1", {}, _Orig())
+
+
+def test_una_tabla_lenta_no_se_reporta_como_base_caida() -> None:
+    """`bronze.sesnsp` tiene 12.5 M de filas: su `COUNT(*)` puede exceder el timeout con la base
+    perfectamente sana. Declararlo caída es inventar la causa, igual que decir que no existe."""
+    repo = RepositorioAboutPostgres(engine=_MotorFalso(_timeout(), solo_en_conteos=True))
+    resultado = repo.conteos_capas()
+
+    assert resultado.base_no_disponible is False, "un timeout no es una caída"
+    assert resultado.tablas_lentas, "la tabla lenta debería declararse como tal"
+    notas = {f["nota"] for f in resultado.filas if f["nota"]}
+    assert any("excedió su tiempo" in n for n in notas)
+    assert not any("no respondió" in n for n in notas)
+
+
+def test_un_resultado_con_tablas_lentas_SI_se_cachea() -> None:
+    """A diferencia de la caída: el resultado es legítimo —el resto de los conteos salieron— y
+    repetir el barrido para volver a chocar con el mismo timeout es la carga que el cache evita."""
+    motor = _MotorFalso(_timeout(), solo_en_conteos=True)
+    repo = RepositorioAboutPostgres(engine=motor)
+    repo.conteos_capas()
+    tras_el_primero = len(motor.consultas)
+    repo.conteos_capas()
+
+    assert len(motor.consultas) == tras_el_primero, (
+        "el resultado con tablas lentas no se cacheó: cada visita volvería a esperar el timeout"
+    )
+
+
+def test_la_seccion_distingue_las_dos_causas_en_su_advertencia() -> None:
+    from src.api.v1.about import _advertencias_de_capas
+
+    assert _advertencias_de_capas(False, ()) == []
+
+    (caida,) = _advertencias_de_capas(True, ())
+    assert "no respondió" in caida and "no** porque las tablas no existan" in caida
+
+    (lenta,) = _advertencias_de_capas(False, ("bronze.sesnsp",))
+    assert "bronze.sesnsp" in lenta
+    assert "no es que falten ni que la base esté caída" in lenta.lower()

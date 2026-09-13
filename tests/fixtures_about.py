@@ -6,12 +6,14 @@ Mismo espíritu que `fixtures_gold.py`: en memoria, sin Postgres, para que
 """
 from __future__ import annotations
 
+from src.api.repositorio_about import ConteosCapas
+
 
 class RepositorioAboutFake:
     """Devuelve conteos fijos, con una tabla ausente a propósito para ejercitar `SIN_DATO`."""
 
-    def conteos_capas(self) -> list[dict]:
-        return [
+    def conteos_capas(self) -> ConteosCapas:
+        return ConteosCapas(filas=[
             {"capa": "bronze", "tabla": "formato911_2024_2025", "filas": 45276, "nota": None},
             {
                 "capa": "bronze",
@@ -27,14 +29,14 @@ class RepositorioAboutFake:
                 "filas": None,
                 "nota": "Tabla no materializada todavía.",
             },
-        ]
+        ])
 
 
 class RepositorioAboutSinPostgresFake:
     """Postgres inalcanzable: todo vuelve `None`/nota, nunca una excepción."""
 
-    def conteos_capas(self) -> list[dict]:
-        return [
+    def conteos_capas(self) -> ConteosCapas:
+        return ConteosCapas(filas=[
             {
                 "capa": capa,
                 "tabla": "sin_datos",
@@ -42,4 +44,4 @@ class RepositorioAboutSinPostgresFake:
                 "nota": "Tabla no materializada todavía.",
             }
             for capa in ("bronze", "silver", "gold")
-        ]
+        ])

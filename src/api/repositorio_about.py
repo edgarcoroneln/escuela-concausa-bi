@@ -12,6 +12,8 @@ from __future__ import annotations
 import logging
 import re
 import threading
+from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Protocol
 
 from cachetools import TTLCache
@@ -28,6 +30,37 @@ _logger = logging.getLogger(__name__)
 #: `cache[x]` consulta el reloj DOS veces y la entrada puede expirar entre ambas (mismo hallazgo
 #: que documenta `cache_predicciones.py`). El candado protege el estado, no detiene el tiempo.
 _AUSENTE = object()
+
+#: SQLSTATE de `query_canceled`: Postgres abortó la consulta por `statement_timeout`. psycopg2 lo
+#: reporta como `OperationalError`, igual que una caída — pero **no es lo mismo** y confundirlos
+#: hace que una tabla lenta se declare como base caída. `bronze.sesnsp` tiene 12.5 M de filas y su
+#: `COUNT(*)` puede exceder el timeout con la base perfectamente sana (hallazgo de Edgar Coronel al
+#: revisar el PR #350).
+_SQLSTATE_CONSULTA_CANCELADA = "57014"
+
+
+def _es_timeout(exc: Exception) -> bool:
+    """`True` si el `OperationalError` viene de `statement_timeout` y no de una caída."""
+    return getattr(getattr(exc, "orig", None), "pgcode", None) == _SQLSTATE_CONSULTA_CANCELADA
+
+
+@dataclass(frozen=True)
+class ConteosCapas:
+    """Resultado de `conteos_capas()`, con el motivo del fallo **dentro** del propio resultado.
+
+    Antes el motivo vivía en un atributo de instancia (`self._error_de_conexion`) que la sección
+    leía después. Con `get_repositorio_about()` bajo `@lru_cache` el repositorio es un **singleton
+    compartido entre hilos**, así que ese atributo se volvía una carrera: dos peticiones
+    concurrentes podían pisarse la bandera y una acabaría declarando una caída que le pasó a la
+    otra. Viajando con el resultado no hay estado mutable que compartir.
+    """
+
+    filas: list[dict] = field(default_factory=list)
+    #: La base no respondió. **No** cubre "la tabla no existe" ni "la consulta tardó demasiado".
+    base_no_disponible: bool = False
+    #: Tablas cuyo `COUNT(*)` excedió el `statement_timeout`. El dato existe, sólo tardó — por eso
+    #: no cuenta como caída y no impide cachear el resto.
+    tablas_lentas: tuple[str, ...] = ()
 
 # Nombres fijos de tabla (Data_Model.md §3/§4). Son constantes del código, nunca llegan desde una
 # petición -- este endpoint no acepta parámetros -- así que no hay superficie de inyección al
@@ -84,20 +117,14 @@ _IDENTIFICADOR_SEGURO = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
 class RepositorioAbout(Protocol):
-    def conteos_capas(self) -> list[dict]:
+    def conteos_capas(self) -> ConteosCapas:
         """`[{capa, tabla, filas, nota}]` de bronze/silver/gold.
 
         `filas` es `None` cuando la tabla todavía no está materializada -- disponibilidad
         ausente, no un `0` inventado, mismo espíritu que el `SIN_DATO` de cobertura de drivers.
         """
 
-    def hubo_error_de_conexion(self) -> bool:
-        """`True` si el último `conteos_capas()` falló por conexión, no por tabla ausente.
 
-        Permite a la sección declarar la causa una vez arriba en lugar de repetirla en cada fila.
-        Los dobles de prueba que no lo implementen se tratan como "sin error" (ver
-        `_hubo_error_de_conexion` en `v1/about.py`), para no obligarlos a crecer por esto.
-        """
         ...
 
 
@@ -150,9 +177,11 @@ class RepositorioAboutPostgres:
                 ).scalar_one()
             return int(total), None
         except OperationalError as exc:
-            # Base inalcanzable o consulta cancelada por el timeout. **No** es "la tabla no
-            # existe": afirmar eso sería inventar la causa.
-            self._error_de_conexion = True
+            if _es_timeout(exc):
+                # La tabla existe y la base está sana: el `COUNT(*)` no cupo en el timeout.
+                # Declararlo como caída sería inventar la causa, igual que decir que no existe.
+                _logger.info("conteo de %s.%s excedió el timeout", esquema, tabla)
+                return None, "No se pudo contar: la tabla es grande y la consulta excedió su tiempo."
             _logger.warning(
                 "conteo de %s.%s no disponible (%s)", esquema, tabla, type(exc).__name__
             )
@@ -177,9 +206,8 @@ class RepositorioAboutPostgres:
                     .all()
                 )
         except OperationalError as exc:
-            self._error_de_conexion = True
             _logger.warning("catálogo de bronze no disponible (%s)", type(exc).__name__)
-            return []
+            raise
         except DBAPIError:
             return []
         return [n for n in nombres if any(n.startswith(p) for p in PREFIJOS_BRONZE)]
@@ -187,39 +215,49 @@ class RepositorioAboutPostgres:
     #: Clave única del cache: hoy se cachea la lista completa de una sola vez.
     _CLAVE_CACHE = "conteos_capas"
 
-    def hubo_error_de_conexion(self) -> bool:
-        """`True` si el último `conteos_capas()` falló por conexión y no por tabla ausente.
-
-        Lo consume `_seccion_capas` para declarar la causa **una vez arriba**, en vez de repetir
-        treinta notas que dirían mal por qué falta cada número.
-        """
-        return self._error_de_conexion
-
-    def conteos_capas(self) -> list[dict]:
+    def conteos_capas(self) -> ConteosCapas:
         with self._candado:
             en_cache = self._cache.get(self._CLAVE_CACHE, _AUSENTE)
         if en_cache is not _AUSENTE:
             return en_cache
 
-        resultado = self._contar_todas_las_capas()
+        try:
+            resultado = self._contar_todas_las_capas()
+        except OperationalError as exc:
+            # El catálogo de Bronze no se pudo leer: sin él no hay barrido que valga. Se responde
+            # con el motivo, no con una lista vacía que parecería "no hay nada materializado".
+            _logger.warning("barrido de capas abortado (%s)", type(exc).__name__)
+            return ConteosCapas(filas=[], base_no_disponible=not _es_timeout(exc))
 
         # Un resultado producido con la base caída NO se cachea: si se guardara, la página
         # seguiría diciendo "no disponible" hasta que venza el TTL aunque Postgres ya hubiera
         # vuelto. Mismo criterio que `cache_predicciones.py`, que nunca cachea errores.
-        if not self._error_de_conexion:
+        #
+        # Una tabla **lenta** sí se cachea: el resultado es legítimo —el resto de los conteos
+        # salieron— y repetir el barrido cada visita para volver a chocar con el mismo timeout
+        # es justo la carga que este cache existe para evitar.
+        if not resultado.base_no_disponible:
             with self._candado:
                 self._cache[self._CLAVE_CACHE] = resultado
         return resultado
 
-    def _contar_todas_las_capas(self) -> list[dict]:
-        # Cada llamada parte de cero: el error es del intento actual, no de uno viejo.
-        self._error_de_conexion = False
+    def _contar_todas_las_capas(self) -> ConteosCapas:
         resultado: list[dict] = []
+        caida = False
+        lentas: list[str] = []
+
+        def _anotar(capa: str, tabla: str) -> None:
+            filas, nota = self._contar(capa, tabla)
+            resultado.append({"capa": capa, "tabla": tabla, "filas": filas, "nota": nota})
+            if nota and "no respondió" in nota:
+                nonlocal caida
+                caida = True
+            elif nota and "excedió su tiempo" in nota:
+                lentas.append(f"{capa}.{tabla}")
 
         bronze_existentes = self._tablas_bronze_existentes()
         for nombre in bronze_existentes:
-            filas, nota = self._contar("bronze", nombre)
-            resultado.append({"capa": "bronze", "tabla": nombre, "filas": filas, "nota": nota})
+            _anotar("bronze", nombre)
         prefijos_cubiertos = {
             prefijo for prefijo in PREFIJOS_BRONZE
             for nombre in bronze_existentes
@@ -237,17 +275,29 @@ class RepositorioAboutPostgres:
                 )
 
         for tabla in TABLAS_SILVER:
-            filas, nota = self._contar("silver", tabla)
-            resultado.append({"capa": "silver", "tabla": tabla, "filas": filas, "nota": nota})
+            _anotar("silver", tabla)
 
         for tabla in TABLAS_GOLD:
-            filas, nota = self._contar("gold", tabla)
-            resultado.append({"capa": "gold", "tabla": tabla, "filas": filas, "nota": nota})
+            _anotar("gold", tabla)
 
-        return resultado
+        return ConteosCapas(
+            filas=resultado, base_no_disponible=caida, tablas_lentas=tuple(lentas)
+        )
 
 
+@lru_cache
 def get_repositorio_about() -> RepositorioAbout:
     """Dependencia de FastAPI (`Depends(get_repositorio_about)`). Las pruebas rápidas la
-    sustituyen con `app.dependency_overrides` (ver `tests/fixtures_about.py`)."""
+    sustituyen con `app.dependency_overrides` (ver `tests/fixtures_about.py`).
+
+    **`@lru_cache` no es un detalle: sin él el cache de `conteos_capas()` no sirve de nada.**
+    FastAPI llama a esta función en **cada petición**, así que sin el singleton cada una
+    estrenaba su propio `TTLCache` vacío y volvía a hacer el barrido completo de ~30 `COUNT(*)`.
+    Medido por Edgar Coronel al revisar el PR #350: 3 `GET` daban 3 barridos; con `@lru_cache`
+    dan 1. Es el mismo patrón que hace funcionar a `cache_predicciones.py`, que depende del
+    `@lru_cache` de `get_repositorio_modelos()`.
+
+    Consecuencia que el `ConteosCapas` resuelve: el repositorio pasa a ser **compartido entre
+    hilos**, así que ningún motivo de fallo puede vivir en un atributo de instancia.
+    """
     return RepositorioAboutPostgres()

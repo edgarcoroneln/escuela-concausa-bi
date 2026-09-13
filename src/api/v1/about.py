@@ -732,20 +732,39 @@ def _barras_capas(conteos: list[dict]) -> BloqueBarras:
     return BloqueBarras(items=items)
 
 
-def _hubo_error_de_conexion(repo: RepositorioAbout) -> bool:
-    """Lee la bandera del repositorio tolerando dobles de prueba que no la implementen.
+def _advertencias_de_capas(sin_base: bool, lentas: tuple[str, ...]) -> list[str]:
+    """Declara **por qué** faltan conteos, una sola vez y arriba.
 
-    El método se agregó después que el `Protocol` (revisión de Edgar Coronel al PR #350), y los
-    dobles de `tests/fixtures_about.py` no tienen por qué crecer sólo por esto: si falta, se
-    asume que no hubo error de conexión, que es el caso de cualquier doble en memoria.
+    Son tres causas distintas y confundirlas afirma cosas falsas: que la base no responda, que una
+    tabla tarde más que su `statement_timeout`, y que la tabla no exista. La tercera se dice en la
+    nota de su propia fila; las dos primeras van aquí porque afectan a toda la sección.
     """
-    return bool(getattr(repo, "hubo_error_de_conexion", lambda: False)())
+    avisos: list[str] = []
+    if sin_base:
+        avisos.append(
+            "Los conteos de esta sección no se pudieron leer: **la base de datos no respondió**. "
+            "Las filas de abajo aparecen como `SIN_DATO` por eso, **no** porque las tablas no "
+            "existan — es un problema de disponibilidad, no del esquema. El resto de la sección "
+            "es contenido fijo y sí es correcto."
+        )
+    if lentas:
+        avisos.append(
+            "Estas tablas no alcanzaron a contarse dentro del tiempo permitido: "
+            + ", ".join(f"`{t}`" for t in lentas)
+            + ". **No es que falten ni que la base esté caída**: son tan grandes que su conteo "
+            "excede el límite que esta sección se impone para no colgar una petición pública."
+        )
+    return avisos
 
 
 def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
-    conteos = repo.conteos_capas()
-    # Se lee DESPUÉS de `conteos_capas()`: la bandera describe ese intento, no uno anterior.
-    sin_base = _hubo_error_de_conexion(repo)
+    # El motivo del fallo viaja DENTRO del resultado, no en un atributo del repositorio: bajo
+    # `@lru_cache` el repositorio es un singleton compartido entre hilos y un atributo sería una
+    # carrera entre peticiones concurrentes (revisión de Edgar Coronel al PR #350).
+    resultado = repo.conteos_capas()
+    conteos = resultado.filas
+    sin_base = resultado.base_no_disponible
+    lentas = resultado.tablas_lentas
 
     def _suma(capa: str) -> int | None:
         valores = [c["filas"] for c in conteos if c["capa"] == capa and c["filas"] is not None]
@@ -800,18 +819,7 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
         # Se declara arriba y una sola vez. Sin esto, con la base caída la página repetía
         # "Tabla no materializada todavía" en las ~30 filas — afirmando algo sobre el esquema
         # cuando el problema era la conexión (revisión de Edgar Coronel al PR #350).
-        advertencias=(
-            [
-                (
-                    "Los conteos de esta sección no se pudieron leer: **la base de datos no "
-                    "respondió**. Las filas de abajo aparecen como `SIN_DATO` por eso, **no** "
-                    "porque las tablas no existan — es un problema de disponibilidad, no del "
-                    "esquema. El resto de la sección es contenido fijo y sí es correcto."
-                )
-            ]
-            if sin_base
-            else []
-        ),
+        advertencias=_advertencias_de_capas(sin_base, lentas),
         bloques=[
             BloqueMarkdown(
                 texto=(
@@ -1049,6 +1057,7 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
         fuente=[
             "vault/15_ML_Models/Publicacion_Gold.md §9 (approved) — corrida real de ML-01 y ML-02",
             "vault/10_Risk_Governance/Decision_Log.md — DEC-027 (ML-03)",
+            "vault/15_ML_Models/ML03_Comparacion_RISK011_20260910.json — Silhouette medido de ML-03",
             "src/modelos/evaluar.py::UMBRALES — umbrales de aceptación",
         ],
         advertencias=[
@@ -1058,7 +1067,8 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
                 "`vault/15_ML_Models/` siguen en `in_review` y **están más atrasados que esta "
                 "tabla**: la ficha de ML-01 todavía afirma que cumple `MAE < 0.03` y que el "
                 "entrenamiento real está bloqueado, dos cosas que dejaron de ser ciertas el "
-                "5 de septiembre. Actualizarlas es de su dueño (US-324)."
+                "5 de septiembre. Actualizarlas es de su dueño (US-324). El Silhouette de ML-03 sale del "
+                "JSON de la comparación de `RISK-011` (0.4620526551), no de su ficha."
             ),
         ],
         bloques=[
