@@ -6,12 +6,21 @@ import logging
 import os
 from typing import Any
 
-try:
-    import chromadb
-    from sentence_transformers import SentenceTransformer
-except ImportError:
-    chromadb = None
-    SentenceTransformer = None
+chromadb = None
+SentenceTransformer = None
+
+
+def _cargar_dependencias() -> None:
+    global chromadb, SentenceTransformer
+    if chromadb is not None and SentenceTransformer is not None:
+        return
+    try:
+        import chromadb as chromadb_mod  # noqa: I001
+        from sentence_transformers import SentenceTransformer as sentence_transformer_cls
+    except ImportError:
+        return
+    chromadb = chromadb_mod
+    SentenceTransformer = sentence_transformer_cls
 
 NOMBRE_COLECCION = "faro_gold_schema"
 NOMBRE_MODELO_EMBEDDINGS = "paraphrase-multilingual-MiniLM-L12-v2"
@@ -48,6 +57,7 @@ def _cargar_modelo() -> Any:
     if _modelo_cache is not None:
         return _modelo_cache
 
+    _cargar_dependencias()
     if SentenceTransformer is None:
         raise ErrorRecuperacion("sentence-transformers no está instalado.")
     try:
@@ -82,8 +92,16 @@ def recuperar_contexto(
     if top_k < 1:
         raise ValueError("top_k debe ser mayor que cero.")
 
+    if os.getenv("AGENTE_RAG_STATIC", "false").lower() == "true":
+        from src.agente.indexar_esquema import ESQUEMA_GOLD
+
+        return "Tablas relevantes del esquema Gold:\n" + "".join(
+            f"- {documento['texto']}\n" for documento in ESQUEMA_GOLD
+        )
+
     modelo = modelo or _cargar_modelo()
     if cliente is None:
+        _cargar_dependencias()
         if chromadb is None:
             raise ErrorRecuperacion("chromadb no está instalado.")
         try:

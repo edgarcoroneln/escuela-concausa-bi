@@ -36,6 +36,7 @@ PREGUNTA_REFERENCIAL = re.compile(
 # ejecutarse (columna/tabla mal referenciada, etc.), se le devuelve el error al LLM para que
 # regenere una versión corregida, acotado para no disparar costo/latencia sin límite.
 MAX_REINTENTOS_SQL = 1
+MAX_FILAS_REDACTOR = 10
 
 
 @dataclass(frozen=True)
@@ -77,7 +78,41 @@ class ResultadoConsultaStream:
 
 
 def _preparacion_sin_sql(pregunta: str, contexto: str) -> PreparacionRedaccion:
-    """Fila de contexto conceptual (`NO_SQL_NECESARIO`), ya lista para la etapa de redacción."""
+    """Fila de contexto conceptual (`NO_SQL_NECESARIO`), ya lista para la etapa de redacción.
+
+    Caso especial de cobertura geográfica (2026-09-13, hallazgo de revisión del PR): para una
+    entidad fuera de `SCOPE_ENTIDADES` el contexto RAG no siempre deja claro que la ausencia es
+    una decisión de alcance y no un hueco de dato, así que aquí se responde explícito sin pasar
+    por el redactor. Para todo lo demás se conserva el contrato original: el contexto recuperado
+    viaja completo al redactor (`contexto_faro`), que es quien compone la respuesta -- una lista
+    fija de frases aquí solo cubriría un puñado de preguntas y dejaría sin responder cualquier
+    otra pregunta conceptual que el RAG sí sabe contestar (D3-D6, índice de riesgo, cobertura...).
+    """
+    texto = pregunta.lower()
+    entidades_fuera = {
+        "oaxaca": "Oaxaca",
+        "chiapas": "Chiapas",
+        "puebla": "Puebla",
+        "yucatán": "Yucatán",
+        "yucatan": "Yucatán",
+        "guerrero": "Guerrero",
+    }
+    for clave, entidad in entidades_fuera.items():
+        if clave in texto:
+            return PreparacionRedaccion(
+                pregunta=pregunta,
+                filas=[
+                    {
+                        "respuesta_faro": (
+                            f"No hay datos Gold para {entidad}: está fuera del alcance geográfico "
+                            "actual del proyecto. Gold cubre Ciudad de México, Estado de México, "
+                            f"Nuevo León y Jalisco. La ausencia de {entidad} es una decisión de "
+                            f"cobertura, no un dato faltante."
+                        )
+                    }
+                ],
+                sql_generado=None,
+            )
     return PreparacionRedaccion(
         pregunta=pregunta,
         filas=[
@@ -217,7 +252,29 @@ def _preparar_para_redaccion(
                     fuera_de_alcance=False,
                 )
 
-    return PreparacionRedaccion(pregunta=pregunta, filas=filas, sql_generado=sql_actual)
+    # La consulta puede devolver cientos de escuelas. Pasarlas todas al segundo llamado del LLM
+    # dispara latencia y puede exceder el contexto; el SQL conserva el límite auditable y la
+    # respuesta se redacta sobre una muestra acotada. Sin el total, el redactor no tiene forma de
+    # distinguir "hay 10 escuelas" de "muestro 10 de 237" (hallazgo de revisión del PR,
+    # 2026-09-13): se le pasa aparte, marcado explícitamente como metadato de muestreo.
+    filas_totales = list(filas)
+    muestra = filas_totales[:MAX_FILAS_REDACTOR]
+    filas_para_redactor = list(muestra)
+    if len(filas_totales) > len(muestra):
+        filas_para_redactor.append(
+            {
+                "_muestra_de_total": (
+                    f"Estas son {len(muestra)} filas de un total de {len(filas_totales)} que "
+                    "cumplen la consulta (limitada por auditoría, no por el resultado real). No "
+                    "afirmes que el total es el número de filas que ves aquí."
+                )
+            }
+        )
+    return PreparacionRedaccion(
+        pregunta=pregunta,
+        filas=filas_para_redactor,
+        sql_generado=sql_actual,
+    )
 
 
 def procesar_consulta(
