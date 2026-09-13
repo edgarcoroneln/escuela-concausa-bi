@@ -51,3 +51,31 @@ seeds:
           - accepted_values:
               arguments:
                 values: ['escuela', 'municipio', 'region']
+
+  - name: dim_entidad
+    description: >
+      Catálogo canónico de las 4 SCOPE_ENTIDADES del proyecto (Data_Model.md §7,
+      dbt/macros/scope_entidades.sql) — cve_ent -> nombre_entidad oficial. Creado para BUG-077
+      (2026-09-12, Edgar Coronel, regresión QA): `gold.dim_municipio.nombre_entidad` se tomaba
+      de `silver.rezago_municipio` (CONEVAL) por LEFT JOIN, bajo el supuesto de que CONEVAL
+      cubre el 100% del universo INEGI de municipios -- supuesto falso en el Postgres local
+      verificado (307 de 317 filas con `nombre_entidad` NULL), lo que rompía
+      `GET /api/v1/municipios` con 500 vía `MunicipioOut.nombre_entidad: StrictStr`. El nombre de
+      la entidad no depende de ningún dato externo variable -- las 4 entidades del alcance son
+      fijas y conocidas -- así que se resuelve como catálogo propio en vez de heredar la
+      cobertura parcial de una fuente ajena (mismo criterio que `dim_driver`, BUG-022).
+    columns:
+      - name: cve_ent
+        description: PK — clave INEGI de entidad (2 dígitos), mismo universo de `scope_entidades()`
+        tests:
+          - unique
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['09', '15', '19', '14']
+
+      - name: nombre_entidad
+        description: Nombre oficial de la entidad (Data_Model.md §7)
+        tests:
+          - not_null
+          - unique

@@ -166,19 +166,61 @@ class EscuelaOut(BaseModel):
     # georreferencia, y el front las omite del mapa en vez de dibujarlas en el (0, 0).
     latitud: float | None = None
     longitud: float | None = None
-
-
-class EscuelaDetalleOut(EscuelaOut):
-    # `latitud`/`longitud` se heredan de EscuelaOut desde el 2026-09-11 (antes vivian solo aqui).
-    sostenimiento: StrictStr
-    indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
-    # None => SIN_DATO explícito (regla de cobertura parcial del CLAUDE.md §4)
+    # --- Los seis drivers, en el listado desde 2026-09-12 (US-621) ---
+    # Subidos del detalle porque la matriz de drivers y el mapa los piden para muchas escuelas a la
+    # vez: antes costaba una peticion por escuela. `fact_escuela_ciclo` ya esta unida al listado, asi
+    # que no agrega consultas.
+    #
+    # **`None` es SIN_DATO, nunca cero** (regla de cobertura parcial, CLAUDE.md §4): D5 es regional y
+    # D6 cubre ~80 zonas urbanas, asi que el hueco es el caso **normal**, no la excepcion. Un `0.0`
+    # afirmaria que ese driver no influyo, que es una afirmacion falsa sobre la causa.
     d1: float | None = None
     d2: float | None = None
     d3: float | None = None
     d4: float | None = None
     d5: float | None = None
     d6: float | None = None
+    # Cuantas de las seis pistas tienen dato ("3 de 6" en la UI). **Opcional, y esto es deliberado:**
+    # antes era obligatorio en el detalle, y `BUG-077` acaba de mostrar lo que cuesta -- un nulo en
+    # una fila reventaba la pagina completa. Aqui viaja en el listado, donde el radio de daño es
+    # mayor todavia.
+    indice_completitud_drivers: float | None = Field(default=None, ge=0, le=1)
+    # --- Comparacion con el ciclo anterior (2026-09-12, US-621) ---
+    # Lo mas cercano a una "serie historica" que existe hoy: `/series` se declaro fuera de alcance en
+    # US-411 y la grafica de US-212 se consumia como cubo de Superset, retirado por `ADR-012`. `fact`
+    # ya materializa estas dos columnas (`BUG-031`, Diana). **Con dos puntos se dibuja un cambio, no
+    # una tendencia**, y asi debe presentarse.
+    #
+    # `matricula_ciclo_anterior` es `None` cuando la escuela no tiene ciclo previo materializado --el
+    # primer ciclo de la serie-- y entonces la variacion tampoco significa nada.
+    matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
+    # **La unidad va en el nombre, a proposito** (Edgar, QA, 2026-09-12). Esta columna de
+    # `gold.fact_escuela_ciclo` son **alumnos absolutos** -- `matricula_total - matricula_ciclo_anterior`,
+    # rango observado -24 a 24--, mientras que `KpisOut.variacion_matricula` es una **razon** en
+    # [-1, 1]. Publicar los dos con el mismo nombre en el mismo contrato es exactamente el hueco que
+    # costo `BUG-031`: la especificacion del cubo asumio que esta columna ya era una razon, y seis
+    # tableros pintaron -54.5 % donde el valor real era -0.19 % (factor 287). Ahi la unidad estaba
+    # documentada y **aun asi** alguien la asumio; el nombre es la unica defensa que nadie puede
+    # dejar de leer.
+    #
+    # Para el %: `matricula_total / matricula_ciclo_anterior - 1`, con guarda de denominador cero.
+    # **No lo derivamos aqui** porque el agregado correcto es razon de sumas, no promedio de razones
+    # (`BUG-031`), y publicar un porcentaje por escuela invita justo a promediarlo.
+    variacion_matricula_alumnos: float | None = Field(
+        default=None,
+        description=(
+            "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** "
+            "(matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: "
+            "matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, "
+            "que si es una razon en [-1, 1]."
+        ),
+    )
+
+
+class EscuelaDetalleOut(EscuelaOut):
+    # `latitud`/`longitud` se heredan desde 2026-09-11; los seis drivers,
+    # `indice_completitud_drivers` y la comparacion de matricula, desde 2026-09-12.
+    sostenimiento: StrictStr
     # DEC-008 (Edgar, 2026-08-20): indice_riesgo de gold.predicciones puede repartirse a nivel
     # grupo en vez de ser una predicción directa por cct. None mientras tiene_prediccion=False
     # (todavía no existe la columna en gold.predicciones -- pendiente de Diana/Héctor).
@@ -192,8 +234,15 @@ class MunicipioOut(BaseModel):
     # ya los traia -- `select(dim_municipio)` devuelve la fila completa -- pero el contrato no los
     # declaraba, asi que el cliente tenia que mantener su propio mapa de 4 claves de entidad a
     # nombre, o pintar "09" en una etiqueta. Es aditivo: ningun cliente existente se rompe.
-    cve_ent: StrictStr = Field(min_length=2, max_length=2)
-    nombre_entidad: StrictStr
+    #
+    # **Opcionales desde 2026-09-12: `None` es SIN_DATO, no un 500.** Al declararlos obligatorios,
+    # una fila de `gold.dim_municipio` con la entidad en NULL reventaba la validacion de salida y
+    # `/municipios` respondia **500 para la pagina completa** -- un hueco en una fila tumbaba el
+    # listado entero. Es la regla de cobertura parcial del proyecto: donde no hay dato se declara
+    # `null`, igual que `poblacion`, `indice_rezago_social` y `pobreza_pct`, y el cliente pinta el
+    # municipio sin la etiqueta de entidad en vez de quedarse sin tabla.
+    cve_ent: StrictStr | None = Field(default=None, min_length=2, max_length=2)
+    nombre_entidad: StrictStr | None = None
     # SIN_DATO explícito (P-03/US-103): con `gold.dim_municipio` = universo INEGI (317 municipios
     # de las 4 entidades), la población entra por LEFT JOIN a CONAPO; donde no hay fila queda NULL,
     # nunca 0 ni municipio borrado. Se expone como null, igual que rezago/pobreza, en vez de romper.
@@ -208,7 +257,15 @@ class KpisOut(BaseModel):
     # +1 duplicar la matrícula agregada de todo un filtro (irreal). Field(ge=-1, le=1) es la
     # guardia de BUG-031: si la fórmula volviera a devolver alumnos absolutos (p. ej. -54.5),
     # Pydantic rechaza con 500 en vez de pintar -5450% en el tablero.
-    variacion_matricula: StrictFloat = Field(ge=-1, le=1)
+    variacion_matricula: StrictFloat = Field(
+        ge=-1,
+        le=1,
+        description=(
+            "Variacion agregada como **razon** en [-1, 1] (razon de sumas: "
+            "SUM(matricula_total)/SUM(matricula_ciclo_anterior) - 1). -0.00496 es -0.496 %. "
+            "Ojo: EscuelaOut.variacion_matricula_alumnos es otra unidad -- alumnos absolutos."
+        ),
+    )
     escuelas_en_riesgo: StrictInt
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
 

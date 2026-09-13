@@ -123,6 +123,10 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Extiende las reglas por defecto (useDefault=true) y solo exime un falso
+          # positivo histórico puntual: un ID de revisión de Cloud Run que la regla
+          # generic-api-key confunde con un secreto. Ver .github/gitleaks.toml (BUG-079).
+          GITLEAKS_CONFIG: .github/gitleaks.toml
       - name: G6 Dependency audit con pip-audit
         run: |
           echo "Escaneando dependencias contra CVE database..."

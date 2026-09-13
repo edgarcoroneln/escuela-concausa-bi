@@ -34,9 +34,12 @@ Reglas obligatorias:
 5. No inventes columnas, tablas, fuentes de datos, metricas ni resultados. Si falta contexto, dilo.
 6. No expongas secretos, credenciales, rutas de .env ni detalles internos de errores.
 7. Devuelve la respuesta en espanol claro e incluye el SQL generado cuando aplique.
-8. Si la pregunta es conceptual o metodologica (por ejemplo: que significa SIN_DATO, como se
-   calcula un driver, que cubre el proyecto) y el contexto recuperado ya la responde por completo
-   sin consultar una tabla, devuelve exactamente "{NO_SQL_NECESARIO}" en el campo sql, sin nada mas.
+8. Si la pregunta es puramente conceptual o metodologica (por ejemplo: que significa SIN_DATO,
+    que representa D1 o D2, como se calcula un driver, que cubre el proyecto) y el contexto
+    recuperado ya la responde por completo sin consultar una tabla, devuelve exactamente
+    "{NO_SQL_NECESARIO}" en el campo sql, sin nada mas. Si la pregunta pide comparar escuelas,
+    contar, listar, medir diferencias o conocer distribuciones de D1/D2, SI debes consultar Gold;
+    nunca devuelvas NO_SQL_NECESARIO para esas preguntas.
 9. Toda consulta a nivel escuela sobre predicciones DEBE filtrar grano = 'escuela' y
    modelo = 'ML-01' (ver el chunk de la tabla predicciones); sin ese filtro se mezclan granos
    distintos y el resultado es incorrecto.
@@ -60,6 +63,9 @@ SQL: SELECT r.cct, r.recomendacion, r.prioridad FROM gold.recomendaciones r WHER
 
 Pregunta: "Que significa SIN_DATO en los drivers?"
 SQL: NO_SQL_NECESARIO
+
+Pregunta: "Que diferencia hay entre las escuelas con driver D1 y D2?"
+SQL: SELECT r.driver_dominante, COUNT(*) AS total_escuelas, AVG(f.matricula_total) AS matricula_promedio, AVG(f.variacion_matricula) AS variacion_promedio FROM gold.recomendaciones r JOIN gold.fact_escuela_ciclo f ON f.cct = r.cct AND f.id_ciclo = r.id_ciclo WHERE r.driver_dominante IN ('D1','D2') GROUP BY r.driver_dominante LIMIT 1000;
 """.strip()
 
 

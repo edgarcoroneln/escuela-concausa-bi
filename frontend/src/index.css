@@ -96,6 +96,11 @@
   --faro-sidebar-collapsed: 4.5rem;
   --faro-sidebar-expanded: 17.5rem;
   --faro-inspector-width: 26rem;
+  /* Ancho vigente del rail -- por defecto el expandido; el breakpoint de
+     abajo lo redefine a --faro-sidebar-collapsed en movil. Sidebar.jsx,
+     Header.jsx y App.jsx leen SIEMPRE esta variable, nunca -expanded/
+     -collapsed directo, para que los tres queden sincronizados sin JS. */
+  --faro-sidebar-width: var(--faro-sidebar-expanded);
 
   /* --- Elevacion (03_Visual_Identity.md S5 / Stitch "Surface Stack System") --- */
   --faro-shadow-none: none;                                                        /* nivel 1, tarjetas en reposo */
@@ -156,6 +161,20 @@
   --radius-card: var(--faro-radius-md);     /* spec: tarjetas de datos, 6px */
 }
 
+/* Breakpoint Mobile de Design_Tokens_Stitch.md ("Mobile (< 768px): ...
+   collapsed analytical controls") -- coincide con el `md` de Tailwind, asi
+   que las clases `md:hidden`/`hidden md:*` de Sidebar.jsx caen exactamente
+   en el mismo punto que este ancho. El rail nunca desaparece del todo (no
+   hay mockup de nav movil distinto, ver DevLog de esta fecha): se angosta
+   a --faro-sidebar-collapsed y Sidebar.jsx oculta las etiquetas de texto,
+   dejando solo los numeros/iconos -- mismo patron que un rail de iconos
+   convencional. */
+@media (max-width: 767px) {
+  :root {
+    --faro-sidebar-width: var(--faro-sidebar-collapsed);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -209,4 +228,77 @@ h1, h2, h3 {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Aparición escalonada de tarjetas (checklist 12-sep, item accionable sin
+   dependencia de API) -- se combina con --delay inline por tarjeta (ver
+   LosSieteCasos.jsx) para que las 7 no entren de golpe. Respeta
+   prefers-reduced-motion. */
+@keyframes aparicionEscalonada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.aparicion-escalonada {
+  animation: aparicionEscalonada 420ms ease-out both;
+  animation-delay: var(--delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .aparicion-escalonada {
+    animation: none;
+  }
+}
+
+/* Escala tipografica EXACTA de la identidad final -- fuente:
+   vault/04_UX_Design/FARO_Storytelling_UX/mockups/Design_Tokens_Stitch.md
+   (seccion "typography", YAML de Stitch). A peticion explicita de Diana
+   (13-sep, auditoria de Login): la tipografia debe coincidir con la
+   plantilla "sin excepciones" -- tamanos Tailwind aproximados (text-sm,
+   text-lg, etc.) no bastan porque no coinciden pixel a pixel con el spec.
+   Estas clases quedan disponibles para las 7 pantallas, no solo Login.
+   `font-weight` va explicito en cada una porque el spec lo fija por estilo
+   (nunca decorativo, solo 500/600 en encabezados -- ver mismo doc, seccion
+   "Rules for Application"). En <768px, headline-xl/headline-lg caen a las
+   variantes -mobile del propio spec (mismo breakpoint que el rail de
+   Sidebar.jsx, ver arriba). */
+.text-headline-xl,
+.text-headline-xl-mobile,
+.text-headline-lg,
+.text-headline-lg-mobile,
+.text-headline-sm {
+  font-family: var(--faro-font-display);
+  font-weight: 600;
+}
+.text-title-md,
+.text-body-md,
+.text-body-sm,
+.text-label-ui {
+  font-family: var(--faro-font-sans);
+}
+.text-label-data-mono,
+.text-label-micro-mono {
+  font-family: var(--faro-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.text-headline-xl { font-size: 32px; line-height: 40px; letter-spacing: -0.02em; }
+.text-headline-xl-mobile { font-size: 26px; line-height: 34px; letter-spacing: -0.015em; }
+.text-headline-lg { font-size: 24px; line-height: 32px; letter-spacing: -0.015em; }
+.text-headline-lg-mobile { font-size: 20px; line-height: 28px; letter-spacing: -0.01em; }
+.text-headline-sm { font-size: 18px; line-height: 24px; letter-spacing: -0.01em; }
+.text-title-md { font-size: 15px; line-height: 22px; letter-spacing: -0.005em; font-weight: 600; }
+.text-body-md { font-size: 14px; line-height: 22px; letter-spacing: 0em; font-weight: 400; }
+.text-body-sm { font-size: 12px; line-height: 18px; letter-spacing: 0em; font-weight: 400; }
+.text-label-data-mono { font-size: 12px; line-height: 16px; letter-spacing: 0.02em; font-weight: 500; }
+.text-label-micro-mono { font-size: 10px; line-height: 14px; letter-spacing: 0.06em; font-weight: 600; }
+.text-label-ui { font-size: 11px; line-height: 16px; letter-spacing: 0.03em; font-weight: 600; }
+
+@media (max-width: 767px) {
+  .text-headline-xl { font-size: 26px; line-height: 34px; letter-spacing: -0.015em; }
+  .text-headline-lg { font-size: 20px; line-height: 28px; letter-spacing: -0.01em; }
 }

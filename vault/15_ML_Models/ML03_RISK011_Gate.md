@@ -20,8 +20,8 @@ tags: [ml, ml-03, risk-011, kmeans, governance, mlflow]
 | Elemento | Estado vigente en `main` | Qué no debe afirmarse |
 |---|---|---|
 | Corte 8-sep | D1-D4 + `indice_completitud_drivers`, `k=3`, Silhouette 0.4644549058; documentado en [[vault/15_ML_Models/ML03_Entrenamiento_US321]] | Que el perfil 2 sea un hallazgo sustantivo: coincide con cobertura D6. |
-| RISK-011 | `abierto` en [[vault/10_Risk_Governance/Risk_Register]] | Que esté cerrado sólo porque existe una alternativa de código. |
-| Variante D1-D4 | Candidata en revisión en PR #317; todavía no es evidencia canónica de `main` | Que `k=2`, ARI o un `run_id` candidatos ya estén aprobados o publicados. |
+| RISK-011 | `mitigando` por [[vault/10_Risk_Governance/Decision_Log\|DEC-027]] | Que la mitigación metodológica convierta a ML-03 en modelo operativo. |
+| Variante D1-D4 | Evidencia técnica aceptada: `k=2`, Silhouette `0.4620526551`; completitud sólo como auditoría | Que exista un `run_id` recuperable, una promoción o una publicación Gold. |
 | Integración | El Panel mantiene `SIN_DATO`; no hay productor Gold ni consulta C4 para ML-03 | Que ML-03 ya sea el tercer modelo operativo. |
 
 La documentación histórica del corte 8-sep se conserva. Si una variante supera esta compuerta,
@@ -82,26 +82,27 @@ Un registro recuperable no aprueba RISK-011 y no permite cambiar `gold.features_
 `gold.predicciones`, API ni Panel. El registro se hace después de la revisión técnica de la evidencia,
 usando la guarda `--tracking-uri` junto con `--confirmar-registro`.
 
-## 5. Secuencia de integración posterior al gate
+## 5. Estado y secuencia de integración posterior al gate
 
-1. **Deni:** sincroniza PR #317 con `origin/main` mediante merge, elimina diffs ajenos de
-   Gold/dbt/arquitectura y deja CI verde sobre el SHA final.
-2. **Estefany:** revisa vector, evidencia agregada, límites de ARI y consistencia MLflow. Esta
-   revisión cubre las rutas críticas `src/modelos/**` y `vault/15_ML_Models/**` de ownership.
-3. **Edgar:** decide explícitamente si acepta la mitigación y el estado de RISK-011. Sólo entonces
-   se actualiza [[vault/10_Risk_Governance/Risk_Register]].
-4. **C1:** en un PR propio y con revisión de esquema, propone `gold.ml03_asignaciones` idempotente.
-5. **C3/C4:** productor batch y lectura API en PRs separados. La API consulta Gold; no entrena ni
-   consulta MLflow por request.
-6. **C2/QA:** prueba Gold → API → Panel con una escuela elegible y una excluida. El cluster jamás se
-   interpreta como riesgo y `SIN_DATO` sigue siendo explícito cuando no hay asignación.
+1. **Completado:** Deni sincronizó y entregó PR #317; CI quedó verde sobre `7cb8481` y el PR se
+   integró en `main`.
+2. **Completado:** Estefany aprobó técnicamente el vector D1-D4, la evidencia agregada y el límite
+   de ARI como estabilidad de inicialización.
+3. **Completado:** Edgar aceptó la mitigación metodológica en DEC-027 y cambió RISK-011 a
+   `mitigando`. También declaró ML-03 como deuda no operativa de esta entrega.
+4. **Diferido, requiere nueva decisión del PO:** C1 propone en un PR propio
+   `gold.ml03_asignaciones` idempotente, con revisión de esquema.
+5. **Diferido, después de C1:** C3 implementa el productor batch y C4 la lectura API en PRs
+   separados. La API consulta Gold; no entrena ni consulta MLflow por request.
+6. **Diferido, después de C1/C3/C4:** C2 y QA ejecutan Gold → API → Panel con una escuela elegible y
+   una excluida. El cluster jamás se interpreta como riesgo y `SIN_DATO` sigue siendo explícito
+   cuando no hay asignación.
 
-No se modifica Gold durante los pasos 1-3. Ningún paso posterior se inicia si Edgar decide
-conservar ML-03 como deuda explícita.
+No se modifica Gold mientras DEC-027 conserve ML-03 como deuda explícita. La reactivación exige una
+decisión nueva y trazable del PO, una base canónica aislada y la verificación independiente de MLflow.
 
 ## 6. Criterio de salida de esta compuerta
 
-La compuerta queda satisfecha sólo cuando el PR sincronizado tiene CI verde, la evidencia mínima
-está disponible, MLflow tiene una redacción verificable y Estefany aprueba técnicamente. El riesgo
-permanece abierto hasta la decisión de Edgar; ML-03 permanece no operativo hasta que C1, C4 y QA
-cierren su propio recorrido E2E.
+La compuerta metodológica quedó satisfecha con PR #317, la evidencia agregada, la aprobación técnica
+y DEC-027. La compuerta operativa sigue pendiente: MLflow debe tener evidencia recuperable y C1, C3,
+C4 y QA deben cerrar su propio recorrido E2E antes de que ML-03 pueda operar.

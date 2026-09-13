@@ -51,9 +51,6 @@ mensajes = st.session_state.setdefault("mensajes_agente", [])
 for mensaje in mensajes:
 	with st.chat_message(mensaje["rol"]):
 		st.markdown(mensaje["contenido"])
-		if mensaje.get("sql"):
-			with st.expander("SQL generado"):
-				st.code(mensaje["sql"], language="sql")
 
 pregunta_sugerida = None
 for fila in range(0, len(PREGUNTAS_SUGERIDAS), 3):
@@ -92,9 +89,6 @@ if pregunta:
 			estilo = st.warning if respuesta.fuera_de_alcance else st.markdown
 			placeholder.empty()
 			estilo(respuesta.respuesta)
-			if respuesta.sql_generado:
-				with st.expander("SQL generado"):
-					st.code(respuesta.sql_generado, language="sql")
 			mensajes.append(
 				{
 					"rol": "assistant",

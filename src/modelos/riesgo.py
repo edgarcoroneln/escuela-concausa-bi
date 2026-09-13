@@ -47,15 +47,23 @@ los separó, y aquí sólo vive el primero:
 | | Valor | Qué es | Dónde vive |
 |---|---|---|---|
 | **Ancla de la sigmoide** | `0.60` | calibración: `-0.05` de variación ↦ `0.60` de riesgo (`DEC-006`) | `ANCLA_SIGMOIDE`, en este módulo |
-| **Línea de alerta** | `0.50` | corte de negocio para *contar* escuelas en riesgo (`DEC-019`) | `src/api/repositorio_gold.py::LINEA_DE_ALERTA` (C4) |
+| **Línea de alerta** | `0.50` | corte de negocio: cuándo una escuela *enciende alerta* (`DEC-019`) y desde dónde su recomendación es `alta` (`DEC-026`) | `LINEA_DE_ALERTA`, en este módulo |
 
 **`ANCLA_SIGMOIDE` se queda en 0.60.** `DEC-019` cambió el criterio de alerta, no la calibración:
 no se recalibra, no se re-entrena y no cambia un solo `indice_riesgo` ya publicado.
 
-**Este módulo no define la línea de alerta a propósito.** `RISK-010` sigue abierto porque `0.50` ya
-está escrito dos veces (C4 y C2); definirlo aquí una tercera vez agravaría justo lo que ese riesgo
-señala. La fuente única —una `var` de dbt y una constante importada, más una prueba que ate los
-sitios— es trabajo post-freeze.
+**Este módulo ahora SÍ define la línea de alerta, y es un cambio de postura deliberado.** El
+6-sep se decidió lo contrario —no definirla aquí— con este argumento: `0.50` ya estaba escrito dos
+veces (C4 y C2) y una tercera copia agravaría `RISK-010`. El argumento era correcto **mientras la
+capa de modelos no necesitara el número**. `DEC-026` cambió eso: `prioridad_de_riesgo()` tiene que
+usarlo, y las tres opciones eran importarlo del API —invirtiendo la dependencia, los modelos no
+deben depender de la capa que los expone—, escribir una tercera copia, o **hacer de éste la fuente
+canónica**. Se eligió la tercera.
+
+Esto **no cierra `RISK-010` por sí solo**: las copias de C4 y C2 siguen existiendo. Lo que sí hace
+es dar el lugar al que deben apuntar y **atarlas con una prueba**
+(`tests/test_linea_de_alerta_unica.py`), que era la mitad que faltaba — el riesgo decía literalmente
+*«no hay prueba que los ate»*. Retirar las copias es trabajo de sus dueños.
 
 > **Estatus:** la unidad del target quedó ratificada en `ADR-007` (fracción, 29-ago) y el umbral de
 > −5 % en `DEC-006` (13-ago). **Queda abierta una sola ancla: el `0.30` de escuela estable**, que es
@@ -81,6 +89,19 @@ VARIACION_EN_RIESGO = -0.05
 #: de alerta de los tableros**, que `DEC-019` fijó en 0.50 y vive en `repositorio_gold.py` (C4).
 #: Mismo nombre que usan C4 (`src/api/repositorio_gold.py`) y C2 (`src/frontend/prediccion_client.py`).
 ANCLA_SIGMOIDE = 0.60
+
+#: **Línea de alerta** (`DEC-019`, 6-sep): el corte de negocio con el que se cuenta una escuela
+#: como "en riesgo" y, desde `DEC-026` (12-sep), desde el cual su recomendación es de prioridad
+#: `alta`. **No es el ancla**: el ancla calibra la sigmoide y se queda en 0.60.
+#:
+#: Por qué 0.50 y no otro (`DEC-019`, criterio de negocio de C2): equivale a proyectar −3.4 %,
+#: justo por debajo del 3.7 % de deserción real en secundaria — la alerta enciende **antes** de que
+#: la escuela alcance la norma nacional. Más abajo deja de ser alerta: 0.40 marcaría el 26 % del
+#: universo y 0.35 el 55 %.
+#:
+#: Fuente canónica. C4 (`src/api/repositorio_gold.py`) y C2 (`src/frontend/prediccion_client.py`)
+#: conservan su propia copia; `tests/test_linea_de_alerta_unica.py` las ata a ésta.
+LINEA_DE_ALERTA = 0.50
 
 #: Alias histórico de `ANCLA_SIGMOIDE`. El nombre viejo daba a entender que era el corte de los
 #: tableros; `DEC-019` mostró que no lo es. Se conserva para no romper importaciones existentes.
