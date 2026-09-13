@@ -22,7 +22,8 @@ El objetivo de **ML-01** es realizar una regresión supervisada para predecir el
 ## 3. Métrica Obtenida
 - **Resultados actuales (sobre Gold real)**: Tras resolver el bloqueo por el error interno de `scikit-learn` (BUG-015), el modelo fue entrenado y evaluado exitosamente sobre datos reales (5 de septiembre).
 - **Desempeño**: El modelo obtuvo un **MAE de 0.141458** y un **RMSE de 0.436326**, logrando superar al baseline (MAE de 0.159223) con una **mejora del 11.04 %**.
-- (Ver detalle de entrenamiento: [[vault/15_ML_Models/ML01_Entrenamiento]]).
+- **El umbral de aceptación sigue incumplido, y se declara**: `src/modelos/evaluar.py::UMBRALES` fija `ML-01_mae: 0.03`. La corrida real da **0.141458**, es decir **4.7× por encima del umbral**. Se reporta tal cual, con el mismo criterio que se aplicó al Silhouette de ML-03 en `US-312`: **un modelo que no alcanza su umbral no se presenta como si lo hiciera.** Lo que sí se puede afirmar, y no era cierto con pérdida cuadrática, es que le gana al baseline temporal por 11.04 %.
+- (Ver detalle de entrenamiento: [[vault/15_ML_Models/ML01_Entrenamiento]]; declaración canónica del umbral incumplido: [[vault/15_ML_Models/Publicacion_Gold]] §9).
 
 ## 4. Limitaciones Conocidas
 - Es sensible a datos históricos fuertemente ruidosos (outliers) generados por cierres temporales o errores en los censos anteriores.
