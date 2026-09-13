@@ -684,6 +684,83 @@ def test_los_bloques_markdown_si_pueden_traer_markdown(client: TestClient) -> No
     )
 
 
+#: Vocabulario que delata texto escrito para **el equipo** y no para quien lee la página.
+#:
+#: La sección es documentación pública del sistema. Una instrucción interna ("nadie debe…"),
+#: una asignación de trabajo ("actualizarlo es de su dueño") o una referencia al proceso de
+#: desarrollo (una historia, un PR, quién revisó qué) no le sirven a nadie que llegue a leer cómo
+#: funciona FARO: le hablan al equipo por encima del hombro del lector.
+#:
+#: **No prohíbe citar decisiones.** `ADR-012` o `DEC-027` como procedencia de un hecho sí ayudan a
+#: entender por qué el sistema es como es; lo que se prohíbe es dirigirse al equipo.
+_FRASES_PARA_EL_EQUIPO = [
+    "nadie debe",
+    "su dueño",
+    "es de su dueño",
+    "actualizarlas es",
+    "actualizarlo es",
+    "queda pendiente de",
+    "falta que",
+    "hay que pedir",
+    "se le pide a",
+    "pendiente de revisión",
+    "en el PR",
+]
+
+
+def test_ningun_texto_visible_le_habla_al_equipo(client: TestClient) -> None:
+    """La sección documenta el sistema para quien lo lee, no coordina al equipo que lo hizo.
+
+    Detectado por el usuario al ver en «Arquitectura del backend» una nota que decía *"Nadie debe
+    presentarlo como modelo productivo en esta entrega"* — una instrucción interna, y además en la
+    sección equivocada. El vault, los DevLogs y los PRs son el lugar de ese lenguaje; esta página
+    no.
+    """
+    hallazgos: list[str] = []
+
+    for resumen in client.get(f"{API_PREFIX}/about/secciones").json():
+        seccion = client.get(f"{API_PREFIX}/about/secciones/{resumen['id']}").json()
+
+        visibles: list[tuple[str, str]] = [
+            (f"advertencia[{i}]", a) for i, a in enumerate(seccion.get("advertencias", []))
+        ]
+        for j, bloque in enumerate(seccion["bloques"]):
+            if bloque["tipo"] == "markdown":
+                visibles.append((f"markdown[{j}]", bloque["texto"]))
+            elif bloque["tipo"] == "tabla":
+                for f, fila in enumerate(bloque["filas"]):
+                    visibles.extend(
+                        (f"tabla[{j}].{f}.{c}", celda) for c, celda in enumerate(fila)
+                    )
+
+        for donde, texto in visibles:
+            bajo = texto.lower()
+            for frase in _FRASES_PARA_EL_EQUIPO:
+                if frase in bajo:
+                    hallazgos.append(f"{seccion['id']} · {donde} · «{frase}»")
+
+    assert not hallazgos, (
+        "este texto le habla al equipo, no a quien lee la página. Va en el DevLog o en el PR, "
+        f"no en la sección: {hallazgos}"
+    )
+
+
+def test_la_nota_de_ml03_vive_en_la_seccion_de_modelos(client: TestClient) -> None:
+    """Estaba en «Arquitectura del backend», después de la tabla de stack, sin venir a cuento.
+
+    Fue un `replace` que enganchó el primer cierre de sección que encontró. La prueba fija dónde
+    corresponde: quien lee sobre ML-03 es quien necesita saber que no está conectado al producto.
+    """
+    def _markdowns(seccion: str) -> str:
+        bloques = client.get(f"{API_PREFIX}/about/secciones/{seccion}").json()["bloques"]
+        return " ".join(b["texto"] for b in bloques if b["tipo"] == "markdown")
+
+    assert "no operativo" in _markdowns("modelos-ml").lower()
+    assert "ml-03" not in _markdowns("arquitectura").lower(), (
+        "la nota de ML-03 volvió a colarse en la sección de arquitectura"
+    )
+
+
 def test_about_seccion_inexistente_da_404(client: TestClient) -> None:
     r = client.get(f"{API_PREFIX}/about/secciones/no-existe")
     assert r.status_code == 404
