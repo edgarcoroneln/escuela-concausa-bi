@@ -39,6 +39,18 @@
 // existe y funciona, solo vive fuera del shell autenticado). Si alguien
 // hace clic estando ya autenticado, simplemente vuelve a ver Login.jsx (esa
 // ruta no depende de la sesión para renderizar, ver main.jsx).
+//
+// 13-sep, tercera ronda -- reconciliación contra el PR #350 de Héctor
+// Morales (US-601, "Cómo funciona FARO"), ya mergeado a main. Su rama
+// adoptó a propósito los mismos 2 nombres que Diana ya había dejado aquí
+// como placeholder ("Cómo funciona FARO" bajo "Referencia Técnica",
+// comentario del PR #350) para que reconciliar fuera solo habilitar el
+// item, no fusionar 2 definiciones distintas. Se hace exactamente eso:
+// "Cómo funciona FARO" deja de ser disabledHint y pasa a rutear a la
+// página real que trajo su PR (/como-funciona, pages/ComoFunciona.jsx).
+// "Guía de Identidad" se queda tal cual (disabledHint): no es parte del
+// PR #350, sigue sin ningún avance conocido en el repo -- no se inventa
+// una ruta ni se quita el item solo porque su vecino ya se resolvió.
 export const FASES = [
   { n: "00", label: "Iniciar Sesión", to: "/login" },
   { n: "01", label: "Entrada a FARO", to: "/", end: true },
@@ -50,11 +62,7 @@ export const FASES = [
 ];
 
 export const REFERENCIA_TECNICA = [
-  {
-    n: "US",
-    label: "Cómo funciona FARO",
-    disabledHint: "Pendiente: lo entrega el Equipo 1 (US-601) — construido, aún sin mergear a main",
-  },
+  { n: "US", label: "Cómo funciona FARO", to: "/como-funciona" },
   {
     n: "ID",
     label: "Guía de Identidad",
@@ -73,7 +81,7 @@ export const REFERENCIA_TECNICA = [
 // parametro. NOTA: Header.jsx dejo de usar este helper para el breadcrumb
 // (ahora muestra el texto estatico "SURVEILLANCE_NODE" de la plantilla);
 // se conserva por si se retoma un breadcrumb dinamico mas adelante.
-const TODAS = [...FASES];
+const TODAS = [...FASES, ...REFERENCIA_TECNICA];
 
 export function tituloDeRuta(pathname) {
   if (pathname.startsWith("/escuela/")) return "Expediente de Escuela";

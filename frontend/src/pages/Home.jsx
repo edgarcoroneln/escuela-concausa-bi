@@ -297,6 +297,34 @@ export default function Home() {
             Estado: sensores listos
           </span>
         </div>
+
+        {/* Acceso a "Cómo funciona" desde la entrada (criterio 27 de la §9 de UX): quien llega
+            por primera vez y quiere saber qué es esto antes de empezar debe poder entrar sin ir a
+            buscarlo al rail. Va DESPUÉS de los tres pasos y con peso visual bajo: no compite con
+            el recorrido narrativo, lo acompaña. */}
+        <Link
+          to="/como-funciona"
+          className="flex items-center justify-between gap-4 p-4 rounded-2xl transition-colors"
+          style={{
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            color: "var(--color-ink)",
+          }}
+        >
+          <span className="text-sm">
+            <span style={{ fontWeight: 600 }}>¿Cómo funciona por dentro?</span>
+            <span style={{ color: "var(--color-ink-faint)" }}>
+              {" "}— las 8 fuentes, las tres capas de datos, los cubos y los tres modelos.
+            </span>
+          </span>
+          <span
+            className="font-mono-dato text-[11px] shrink-0"
+            style={{ color: "var(--faro-signal)" }}
+            aria-hidden="true"
+          >
+            →
+          </span>
+        </Link>
       </PageContainer>
 
       <WalkthroughOverlay abierto={walkthroughAbierto} onCerrar={cerrarWalkthrough} />

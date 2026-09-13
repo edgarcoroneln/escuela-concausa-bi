@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
 
 // Overlay de glosario, disponible "en todas las pantallas posteriores al
@@ -112,6 +113,20 @@ export default function GlosarioOverlay({ abierto, onCerrar, onPreguntar }) {
             </div>
           ))}
         </div>
+
+        {/* Acceso a "Cómo funciona" desde el glosario (criterio 27 de la §9 de UX). Es el punto
+            más natural de los dos que pide el criterio: quien abre el glosario ya está
+            preguntando cómo se calcula algo, así que el salto de "qué significa este término" a
+            "cómo se produce el dato" es continuo. Cierra el overlay al navegar para no dejarlo
+            encima de la pantalla nueva. */}
+        <Link
+          to="/como-funciona"
+          onClick={onCerrar}
+          className="text-sm underline"
+          style={{ color: "var(--faro-signal)" }}
+        >
+          Ver cómo se producen estos datos, de la fuente al tablero →
+        </Link>
       </div>
     </div>
   );
