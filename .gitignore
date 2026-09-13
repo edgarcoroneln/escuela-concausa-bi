@@ -38,6 +38,7 @@ data/gold/
 *.parquet
 *.csv
 !tests/fixtures/*.csv
+!tests/fixtures/gold/*.csv
 *.xlsx
 
 # ---- Herramientas ----

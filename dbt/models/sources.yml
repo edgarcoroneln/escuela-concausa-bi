@@ -31,12 +31,20 @@ sources:
         identifier: "{{ var('bronze_sesnsp_identifier', 'sesnsp') }}"
         description: "DS-04 · SESNSP Incidencia Delictiva Municipal. Serie mensual nacional a nivel municipio."
 
+      # FIX (2026-09-13, Diana, hallazgo de producción): el default de estos dos
+      # identifiers apuntaba a las tablas *_test (fixtures), a diferencia de TODAS las
+      # demas fuentes de este archivo, que por convención sí tienen el default apuntando
+      # a la tabla real de producción. Confirmado contra el loader real
+      # (src/ingesta/cargar_bronze_sinaica_real.py: TABLAS = {'estaciones':
+      # 'sinaica_estaciones', 'observaciones': 'sinaica_observaciones'}) -- estos SÍ son
+      # los nombres reales de producción, no un supuesto. Un dbt run en producción sin
+      # pasar --vars explícito ya no cae de vuelta a los fixtures de prueba.
       - name: sinaica_observaciones
-        identifier: "{{ var('bronze_sinaica_observaciones_identifier', 'sinaica_observaciones_test') }}"
+        identifier: "{{ var('bronze_sinaica_observaciones_identifier', 'sinaica_observaciones') }}"
         description: "DS-05 · SINAICA. Observaciones horarias por estación y parámetro."
 
       - name: sinaica_estaciones
-        identifier: "{{ var('bronze_sinaica_estaciones_identifier', 'sinaica_estaciones_test') }}"
+        identifier: "{{ var('bronze_sinaica_estaciones_identifier', 'sinaica_estaciones') }}"
         description: "DS-05 · SINAICA. Catálogo de estaciones con identidad y georreferencia."
 
       - name: conagua
