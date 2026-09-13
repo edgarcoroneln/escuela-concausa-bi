@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -11,6 +12,7 @@ import httpx
 
 MAX_TURNOS_HISTORIAL = 10
 MAX_LARGO_TURNO = 500
+API_TIMEOUT_S = float(os.environ.get("FARO_API_TIMEOUT_S", "15"))
 
 
 @dataclass(frozen=True)
@@ -108,7 +110,7 @@ def consultar_agente(
             f"{api_base_url.rstrip('/')}/api/v1/agente/consulta",
             json=payload,
             headers=headers,
-            timeout=15.0,
+            timeout=API_TIMEOUT_S,
         )
         response.raise_for_status()
         payload = response.json()
@@ -154,7 +156,7 @@ def consultar_agente_stream(
             f"{api_base_url.rstrip('/')}/api/v1/agente/consulta/stream",
             json=payload,
             headers=headers,
-            timeout=15.0,
+            timeout=API_TIMEOUT_S,
         ) as response:
             response.raise_for_status()
             for linea in response.iter_lines():
