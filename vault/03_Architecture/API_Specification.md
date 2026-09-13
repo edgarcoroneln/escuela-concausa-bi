@@ -3,11 +3,11 @@ id: DOC-APISPEC
 title: "API Specification — FARO"
 owner: "Karla Alejandra Monter Benitez"
 status: in_review
-version: "1.3"
+version: "1.4"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/03_Architecture/Data_Model"]
 traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416", "US-305"]
-last_reviewed: "2026-09-11"
+last_reviewed: "2026-09-12"
 tags: [architecture, api, contract, fastapi, oauth2]
 ---
 
@@ -183,6 +183,39 @@ ciclos materializados a la vez (**20.6M en vez de ~7M reales** para las 4 entida
 > evitan en otras capas. **No es un bug si una entidad rezagada sale vacía sin `ciclo` explícito**
 > — es el filtro correcto y hay que pasar `ciclo` explícito para leer su último dato disponible.
 
+**Los seis drivers y la comparación de matrícula en `EscuelaOut` (2026-09-12, US-621).** `d1`..`d6`,
+`indice_completitud_drivers`, `matricula_ciclo_anterior` y `variacion_matricula_alumnos` **suben del
+detalle al listado**. Salen de `gold.fact_escuela_ciclo`, que el listado ya tiene unida, así que **no agregan
+ninguna consulta**; siguen en el detalle, heredados de `EscuelaOut`.
+
+- **La matriz de drivers y el mapa se llenan con UNA petición**, no una por escuela.
+- `indice_completitud_drivers` pasa a **opcional**, y es deliberado: era obligatorio en el detalle, y
+  `BUG-077` mostró lo que cuesta — un nulo en una fila reventaba la página completa. En el listado el
+  radio de daño es mayor.
+- **`null` es SIN_DATO, nunca cero** (CLAUDE.md §4): D5 es regional y D6 cubre ~80 zonas urbanas, así
+  que el hueco es el caso **normal**. Un `0.0` afirmaría que ese driver no influyó (`BUG-055`).
+- **`variacion_matricula_alumnos` son alumnos, no un porcentaje — y por eso lo dice el nombre.**
+  Es `matricula_total - matricula_ciclo_anterior` tal como lo materializa `gold.fact_escuela_ciclo`
+  (rango observado −24 a 24), mientras que **`KpisOut.variacion_matricula` es una razón** en [−1, 1]
+  (−0.00496 = −0.496 %). Dos unidades con el mismo nombre en el mismo contrato es exactamente el hueco
+  de `BUG-031`: la especificación del cubo asumió que la columna ya era una razón y **seis tableros
+  pintaron −54.5 % donde el valor real era −0.19 %** (factor 287). Ahí la unidad estaba documentada y
+  aun así se asumió mal; el nombre es la única defensa que no se puede dejar de leer. Hallado por Edgar
+  (QA) al revisar el PR, antes de que el campo llegara a `main`.
+  **Para el porcentaje por escuela:** `matricula_total / matricula_ciclo_anterior - 1`, con guarda de
+  denominador cero. La API **no** lo deriva a propósito: el agregado correcto es razón de sumas, no
+  promedio de razones, y publicar un porcentaje por escuela invita justo a promediarlo (`BUG-031` otra vez).
+- **`matricula_ciclo_anterior` / `variacion_matricula_alumnos` NO son una serie histórica.** Son dos puntos:
+  con ellos se dibuja un **cambio**, no una tendencia, y así deben presentarse. Es lo más cercano que
+  existe hoy — `/series` sigue fuera de alcance (ver abajo) y la gráfica de `US-212` vivía en un cubo
+  de Superset, retirado por `ADR-012`. `fact` ya materializaba las dos columnas (`BUG-031`).
+  `matricula_ciclo_anterior` es `null` en el primer ciclo materializado de una escuela, y entonces
+  `variacion_matricula_alumnos` no significa nada.
+- Fijado por `tests/test_api_contract.py::test_escuelas_listado_trae_los_seis_drivers`,
+  `::test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior` y
+  `::test_la_variacion_por_escuela_y_la_de_kpis_no_comparten_nombre` — esta última falla si el nombre
+  ambiguo vuelve al contrato **o** si el valor deja de ser la diferencia en alumnos.
+
 **`latitud` y `longitud` en `EscuelaOut` (2026-09-11, US-621 — mapa de riesgo del frontend):** las
 coordenadas **suben del detalle al listado**. Antes, pintar los 7 casos del storytelling costaba 7
 llamadas a `/escuelas/{cct}`, y el mapa de una entidad completa, una por escuela. `dim_escuela` ya las
@@ -190,6 +223,14 @@ tiene y el listado ya hace ese JOIN, así que **no agrega ninguna consulta**. Si
 heredan de `EscuelaOut`, no se movieron. `None` es `SIN_DATO` real —hay CCT sin georreferencia— y el
 cliente debe **omitir** esas escuelas del mapa, nunca dibujarlas en el `(0, 0)`. Fijado por
 `tests/test_api_contract.py::test_escuelas_listado_trae_coordenadas`.
+
+**`cve_ent`/`nombre_entidad` son `null` cuando no hay dato, no un 500 (2026-09-12).** Al declararlos
+obligatorios, una sola fila de `gold.dim_municipio` con la entidad en NULL reventaba la validación de
+salida y `/municipios` respondía **500 para la página completa**: un hueco en una fila tumbaba el
+listado entero. Es la regla de cobertura parcial del proyecto — donde no hay dato se declara `null`,
+igual que `poblacion`, `indice_rezago_social` y `pobreza_pct`, y el cliente pinta el municipio sin la
+etiqueta de entidad en vez de quedarse sin tabla. Las claves **siempre están presentes**: el hueco se
+declara, no se omite. Fijado por `tests/test_api_contract.py::test_un_municipio_sin_entidad_degrada_a_sin_dato`.
 
 **`cve_ent` y `nombre_entidad` en `MunicipioOut` (2026-09-11, US-621 — pedido de Diana Alvarez):**
 la consulta ya los traía (`select(dim_municipio)` devuelve la fila completa), pero el contrato no los
@@ -448,27 +489,35 @@ class EscuelaOut(BaseModel):
     # Subidas del detalle al listado el 2026-09-11 (US-621, mapa del frontend). None => SIN_DATO.
     latitud: float | None
     longitud: float | None
+    # Subidos el 2026-09-12 (US-621): matriz de drivers y mapa con UNA petición. None => SIN_DATO.
+    d1: float | None; d2: float | None; d3: float | None
+    d4: float | None; d5: float | None; d6: float | None
+    indice_completitud_drivers: float | None = Field(default=None, ge=0, le=1)
+    # Dos puntos, no una serie: con ellos se dibuja un cambio, no una tendencia (BUG-031).
+    matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
+    # ALUMNOS ABSOLUTOS, y la unidad va en el nombre: KpisOut.variacion_matricula es una razón.
+    variacion_matricula_alumnos: float | None = None
 
 class EscuelaDetalleOut(EscuelaOut):
-    sostenimiento: StrictStr                  # latitud/longitud se heredan de EscuelaOut
-    indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
-    d1: float | None; d2: float | None; d3: float | None
-    d4: float | None; d5: float | None; d6: float | None   # None => SIN_DATO
+    # Desde 2026-09-12 solo agrega `sostenimiento` y `es_estimado_por_grupo`: drivers, completitud y
+    # comparación de matrícula se heredan de EscuelaOut (están en el listado).
+    sostenimiento: StrictStr
     es_estimado_por_grupo: bool | None        # DEC-008: indice_riesgo repartido a nivel grupo
 
 class MunicipioOut(BaseModel):
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     nombre_municipio: StrictStr
     # Agregados 2026-09-11 (US-621): la consulta ya los traía; el contrato no los declaraba.
-    cve_ent: StrictStr = Field(min_length=2, max_length=2)
-    nombre_entidad: StrictStr
+    # Opcionales desde 2026-09-12: `None` es SIN_DATO, no un 500 que tumba la página completa.
+    cve_ent: StrictStr | None = Field(default=None, min_length=2, max_length=2)
+    nombre_entidad: StrictStr | None = None
     poblacion: StrictInt = Field(ge=0)
     indice_rezago_social: float | None
     pobreza_pct: float | None
 
 class KpisOut(BaseModel):
     matricula_total: StrictInt
-    variacion_matricula: StrictFloat
+    variacion_matricula: StrictFloat = Field(ge=-1, le=1)   # RAZÓN, no alumnos (BUG-031)
     escuelas_en_riesgo: StrictInt
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
 
