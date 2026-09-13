@@ -1,0 +1,51 @@
+version: 2
+
+seeds:
+  - name: dim_estado_inegi
+    description: >
+      Catálogo nacional Estado (texto, tal como lo devuelve CONAGUA/IMTA en
+      bronze.conagua_presas) -> cve_ent INEGI. Construido y verificado contra los 26 nombres
+      de estado que realmente trae bronze.conagua_presas (2026-09-13, carga real DS-06) -- no
+      se adivinó ortografía de los 6 estados que la fuente no trae (Baja California Sur,
+      Campeche, Ciudad de México, Quintana Roo, Tabasco, Yucatán). Usado por
+      models/silver/agua_presa_entidad.sql (D5 v1). Bronze/Silver son nacionales
+      (Data_Model.md §7) -- el recorte a SCOPE_ENTIDADES pasa después, en
+      gold.fact_escuela_ciclo.
+    columns:
+      - name: estado
+        description: "Nombre de estado tal como lo trae CONAGUA/IMTA (bronze.conagua_presas.estado)."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: cve_ent
+        description: "Clave INEGI de entidad a 2 dígitos."
+        data_tests:
+          - not_null
+
+  - name: dim_presa_cutzamala
+    description: >
+      Asignación explícita (no geoespacial, no inferida) de las 3 presas del Sistema Cutzamala
+      a CDMX (cve_ent 09) -- Valle de Bravo y Villa Victoria (Estado de México) más El Bosque
+      (Michoacán). CDMX no tiene presas propias en bronze.conagua_presas (su agua viene de
+      fuera de su territorio); sin este seed, D5 quedaría SIN_DATO para todas las escuelas de
+      CDMX en alcance. Decisión de modelado explícita para D5 v1 -- PENDIENTE de revisión de
+      Edgar (dueño de gold.fact_escuela_ciclo) y Emilio (dueño DS-06) antes de mergear. Ver
+      models/silver/agua_presa_entidad.sql para el resto de las limitaciones conocidas.
+    columns:
+      - name: id_presa
+        description: "FK a bronze.conagua_presas.id_presa."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: cve_ent_abastece
+        description: "Entidad a la que se asigna esta presa además de (o en vez de) su propio estado."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['09']
+
+      - name: nota
+        description: "Justificación en texto plano de la asignación."

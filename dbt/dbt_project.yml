@@ -88,3 +88,26 @@ seeds:
       +schema: gold
       +column_types:
         cve_ent: varchar(2)
+
+    # dim_estado_inegi / dim_presa_cutzamala: mismo patrón de BUG-077 (arriba) -- se fuerza
+    # cve_ent/cve_ent_abastece a texto para no perder el cero a la izquierda al inferir el CSV.
+    # Seeds de apoyo para D5 v1 (silver.agua_presa_entidad) -- ver ese modelo para contexto
+    # completo y limitaciones conocidas. PENDIENTE de aprobación de Edgar/Emilio.
+    dim_estado_inegi:
+      +schema: silver
+      +column_types:
+        # Mismo BUG-077: "01","02",...,"32" se pueden leer todos como enteros validos, asi que
+        # dbt los infiere como INTEGER y se pierde el cero a la izquierda -- forzado a texto
+        # para que el UNION con dim_presa_cutzamala.cve_ent_abastece (ya varchar(2)) no truene
+        # con "UNION types integer and character varying cannot be matched" (verificado
+        # 2026-09-13).
+        cve_ent: varchar(2)
+    dim_presa_cutzamala:
+      +schema: silver
+      +column_types:
+        # BUG-077 otra vez, ahora con id_presa: bronze.conagua_presas.id_presa llega como TEXT
+        # (así lo devuelve la API de CONAGUA/IMTA, ver cargar_bronze_conagua_real.py), pero
+        # "2126" sin comillas en el CSV se infiere como INTEGER -- el JOIN contra bronze
+        # revienta con "operator does not exist: integer = text" (verificado 2026-09-13).
+        id_presa: varchar(10)
+        cve_ent_abastece: varchar(2)
