@@ -157,3 +157,26 @@ evaluó una cadena vacía. La invocación correcta es
 `PR_BODY="$(cat cuerpo.md)" bash .github/scripts/verificar_plantilla_pr.sh`. Es el mismo modo de
 falla que el PM ya registró dos veces —dar por verificado lo que se comprobó mal— y por eso queda
 escrito aquí en vez de corregirse en silencio.
+
+## Adenda 2 — ajustes pedidos por Edgar Coronel en la revisión del PR #350
+
+Aprobó el contenido y pidió ajustes antes de mergear. Aplicados:
+
+**1 · Fuera `.claude/settings.json` y los 4 archivos de `gx/**`.** Mismo caso que los tres `.md`:
+no están en `main`, entraron por el merge de `dev/manuel-serrania` y sobreviven ahí. Se retiran del
+control de versiones; **siguen en disco**, que es lo correcto porque son locales.
+
+**Hallazgo al verificarlo, más fuerte que «están fuera de alcance»: los cinco estaban rastreados
+pese a estar en `.gitignore`.** `gx/` está ignorado en la línea 50 —con el comentario de que es *«el
+contexto por defecto que crea Great Expectations 0.18+ al llamar `get_context()` sin dir»*— y
+`/.claude/` en la 104. Además **ningún código los usa**: las ocho validaciones de `src/ingesta/`
+apuntan a `context_root_dir="great_expectations"`, la carpeta real, no a `gx/`. O sea que `gx/` es
+andamiaje autogenerado que el repositorio ya declaraba que nunca debía versionarse, y se coló de
+todas formas. Vale la pena que alguien revise cómo, porque el mecanismo puede repetirse.
+
+**2 · `superset/**` declarado como transversal.** El geojson de la silueta nacional y su generador
+son alcance de **Equipo 3** (`superset/**` es verde de Marina García del Buey, con Monserrat
+Miranda y Oscar Quiroz). Se declara en la descripción del PR y se pide su revisión.
+
+**Nota devuelta a Edgar:** dijo «tres ajustes» y enumeró dos. Se aplicaron los dos; queda pendiente
+que confirme cuál era el tercero.
