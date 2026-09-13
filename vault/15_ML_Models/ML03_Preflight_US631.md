@@ -2,7 +2,7 @@
 id: DOC-ML03-PREFLIGHT-US631
 title: "US-631 — Preflight de integración segura de ML-03"
 owner: "Estefany Lucero Hernández Loredo"
-status: draft
+status: in_review
 source_of_truth: false
 traces_up: ["US-631", "REQ-003", "RISK-011", "DOC-ML03-RISK011-GATE"]
 traces_down: ["vault/15_ML_Models/ML03_RISK011_Gate", "src/modelos/preflight_ml03.py"]
@@ -11,8 +11,8 @@ tags: [ml, ml-03, preflight, cobertura, risk-011, sprint-7]
 
 # US-631 — Preflight de integración segura de ML-03
 
-> Este documento ejecuta la compuerta canónica [[vault/15_ML_Models/ML03_RISK011_Gate]]. No cambia
-> la decisión sobre RISK-011 ni sustituye la evidencia histórica del 8-sep-2026.
+> Este documento implementa la compuerta canónica [[vault/15_ML_Models/ML03_RISK011_Gate]].
+> DEC-027 aceptó la mitigación metodológica; no autorizó operación, Gold, API ni Panel.
 
 ## Diagnóstico consolidado
 
@@ -50,16 +50,40 @@ verdad recuperable, y después debe existir la ruta Gold → API → Panel → Q
 | Filas sin alguno de D1-D4 | Excluir y contabilizar | No se imputa hasta una decisión humana respaldada por evidencia temporal. |
 | ARI o Silhouette | Métricas técnicas, no causalidad ni prioridad | No prueban eficacia de una intervención. |
 
-## Plan de cierre por responsable
+## Plan de activación por responsable
 
 | Orden | Responsable | Entregable verificable | Criterio de salida |
 |---|---|---|---|
-| 1 | Estefany / E4 | Preflight agregado y revisión de #317 | SHA sincronizado, CI verde, vector y documentación sin contradicciones. |
-| 2 | Estefany / E4 | Verificación MLflow | Experimento, parámetros D1-D4, métrica, artefacto descargable y carga exitosa; si falla, `run_id: null`. |
-| 3 | Edgar | Decisión RISK-011 | Acepta la mitigación o conserva ML-03 como deuda; no se cierra por narrativa. |
-| 4 | Diana / C1 | `gold.ml03_asignaciones` idempotente | Grano `cct × id_ciclo`, unicidad, `cluster >= 0`, versión y `run_id` trazables. |
-| 5 | C4 | Lectura API desde Gold | Entero sólo para asignación válida; `null` para ausencia. |
-| 6 | C2 + QA | Prueba E2E en candidata | Misma escuela/ciclo/versión en Gold, API y Panel; una elegible y una excluida. |
+| 0 | Edgar / Estefany / Deni | Mitigación metodológica | **Completado:** DEC-027 acepta D1-D4; #317 fue mergeado y RISK-011 está `mitigando`. |
+| 1 | Estefany / E4 | Verificación MLflow reproducible | Base canónica aislada, experimento, parámetros D1-D4, métrica, artefacto descargable y carga exitosa; mientras falle, `run_id: null`. |
+| 2 | Edgar | Autorización de reactivación operativa | Decisión nueva, explícita y trazable que sustituya la deuda declarada en DEC-027. |
+| 3 | Diana / C1 | `gold.ml03_asignaciones` idempotente | Grano `cct × id_ciclo`, unicidad, `cluster >= 0`, versión y `run_id` trazables. |
+| 4 | Estefany / C3 y C4 | Productor batch y lectura API desde Gold | C3 escribe sólo después de C1; C4 devuelve entero para asignación válida y `null` para ausencia. |
+| 5 | C2 + QA | Prueba E2E en candidata | Misma escuela/ciclo/versión en Gold, API y Panel; una elegible y una excluida. |
+
+Los pasos 1 a 5 no se inician durante la deuda explícita de DEC-027. Este plan es el contrato para
+retomarlos en un ciclo autorizado, no evidencia de que la integración ya exista.
+
+## Preparación local no operativa — fixture sintético
+
+La restauración local de un fixture sintético permite probar el código de ML-03, pero no reemplaza
+el corte canónico ni habilita una promoción. Antes de solicitar la reactivación del paso 1, la
+persona ejecutora debe completar estas comprobaciones locales:
+
+1. El EDA debe representar correlaciones indefinidas por falta de variación como `null`, sin
+   `RuntimeWarning`; no debe convertirlas en cero ni omitir la variable de cobertura.
+2. Debe conservar la tabla completa de `k=2..6`, perfiles agregados y tamaños de cluster. Si la
+   diferencia entre los dos mejores Silhouette es pequeña, se debe documentar la comparación de
+   interpretabilidad y parsimonia; no se declara que el mayor valor aislado sea una decisión de
+   negocio.
+3. El ARI entre semillas se etiqueta exclusivamente como estabilidad de inicialización. No sustituye
+   la validación temporal ni una evaluación externa.
+4. La evidencia local debe registrar que la fuente es sintética, que no hubo registro MLflow y que
+   no se escribió en Gold, API ni Panel.
+
+Estas comprobaciones reducen fallas de ejecución y de interpretación. La selección que acompañe una
+corrida canónica sólo se decide después de la autorización del paso 2 y con el protocolo temporal
+predeclarado.
 
 ## Qué debe hacer Datos antes de aumentar cobertura
 

@@ -20,6 +20,22 @@ COLUMNAS_NO_ENTRENABLES = frozenset(
 )
 
 
+def _correlacion_pearson_segura(
+    izquierda: pd.Series, derecha: pd.Series
+) -> float | None:
+    """Calcula Pearson sólo cuando el par tiene variación suficiente.
+
+    Una correlación no está definida si una de las dos series no cambia tras
+    retirar sus nulos. Devolver ``None`` conserva ese hecho en la evidencia
+    agregada y evita que NumPy emita un ``RuntimeWarning`` por dividir entre
+    una desviación estándar igual a cero.
+    """
+    pares = pd.concat([izquierda, derecha], axis=1).dropna()
+    if len(pares) < 2 or any(pares.iloc[:, indice].nunique() < 2 for indice in (0, 1)):
+        return None
+    return float(pares.iloc[:, 0].corr(pares.iloc[:, 1]))
+
+
 def validar_features_para_analisis(df: pd.DataFrame) -> None:
     """Verifica el mínimo contrato antes de generar un diagnóstico.
 
@@ -90,7 +106,7 @@ def resumen_eda(df: pd.DataFrame) -> pd.DataFrame:
                 "correlacion_target": (
                     None
                     if columna == COLUMNA_TARGET
-                    else float(serie.corr(df[COLUMNA_TARGET]))
+                    else _correlacion_pearson_segura(serie, df[COLUMNA_TARGET])
                 ),
             }
         )
@@ -98,10 +114,21 @@ def resumen_eda(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def correlaciones_drivers(df: pd.DataFrame) -> pd.DataFrame:
-    """Calcula correlaciones entre drivers y completitud, sin incluir el target."""
+    """Calcula correlaciones definidas entre drivers y completitud.
+
+    Las celdas sin variación suficiente quedan como nulas: no representan una
+    correlación de cero ni se usan como input del clustering.
+    """
     validar_features_para_analisis(df)
     columnas = [*DRIVERS, COLUMNA_COMPLETITUD]
-    return df[columnas].astype(float).corr()
+    numericas = df[columnas].astype(float)
+    matriz = pd.DataFrame(index=columnas, columns=columnas, dtype=float)
+    for izquierda in columnas:
+        for derecha in columnas:
+            matriz.loc[izquierda, derecha] = _correlacion_pearson_segura(
+                numericas[izquierda], numericas[derecha]
+            )
+    return matriz
 
 
 def cobertura_por_driver(df: pd.DataFrame) -> pd.DataFrame:

@@ -2,10 +2,13 @@ import { Link } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import Card from "../components/Card.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
+import RiskGauge from "../components/RiskGauge.jsx";
+import LeyendaGrafica from "../components/LeyendaGrafica.jsx";
 import { driverIcons, driverNombres, escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelasEnRiesgo } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
+import { useCortesAtencion } from "../lib/cortesAtencion.js";
 
 // Conectado al API real 10-sep (revisión de Edgar, PR #302): ya no son 7
 // CCT con "PLACEHOLDER-*" fijos, sino el catálogo real ordenado desc por
@@ -18,6 +21,13 @@ import { useApiResource } from "../lib/useApiResource.js";
 // inventan) hasta que el API las exponga.
 export default function LosSieteCasos() {
   const { status, data, error } = useApiResource(getEscuelasEnRiesgo, { mock: escuelasMock });
+  // Cortes del nivel de atención desde /version (DEC-026, hallazgo de Diana
+  // 12-sep) -- nivelRiesgo() ya no trae 0.50/0.30 fijos, ver data/mock.js.
+  // CORRECCIÓN 12-sep (revisión de Edgar, PR #325): antes solo se leía
+  // `cortes` -- si /version fallaba, la grilla simplemente no aparecía
+  // (`escuelas.length > 0 && cortes`) sin decir por qué. Ahora se distingue
+  // loading / error (o cortes ausentes) / ok-demo.
+  const { status: cortesStatus, cortes, error: cortesError } = useCortesAtencion();
   const esReal = status === "ok";
   const escuelas = status === "ok" ? data : status === "demo" ? data : [];
 
@@ -25,18 +35,28 @@ export default function LosSieteCasos() {
     <PageContainer>
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>Nuestros 7 casos</h1>
+          <h1 className="text-2xl" style={{ color: "var(--color-ink)", fontWeight: 700 }}>Los casos que requieren atención</h1>
           <p className="text-sm mt-1" style={{ color: "var(--color-ink-faint)" }}>
-            Siete escuelas presentan una señal de riesgo. Cada una cuenta una historia distinta.
+            {escuelas.length > 0
+              ? `${escuelas.length} escuelas presentan una señal de riesgo. Cada una cuenta una historia distinta.`
+              : "Estas escuelas presentan una señal de riesgo. Cada una cuenta una historia distinta."}
           </p>
           {status === "demo" && <div className="mt-2"><DemoBadge /></div>}
         </div>
-        <button
-          className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
-          style={{ background: "var(--color-header)", color: "#fff" }}
-        >
-          Comparar los 7 casos
-        </button>
+        {/* Boton "Comparar los 7 casos" retirado (checklist 12-sep, decision de
+            Diana Alvarez): no tenia onClick ni destino -- ninguna vista de
+            comparacion dedicada existe en el repo, y esta misma cuadricula de
+            tarjetas (gauge + driver dominante por escuela, lado a lado) ya
+            cumple ese rol comparativo. */}
+        <div className="flex items-center gap-2">
+          <Link
+            to="/panorama"
+            className="text-sm font-semibold px-4 py-2.5 rounded-full whitespace-nowrap"
+            style={{ background: "var(--color-surface-alt, #f4f4f5)", color: "var(--color-ink)" }}
+          >
+            ← Volver al panorama
+          </Link>
+        </div>
       </div>
 
       {status === "loading" && (
@@ -48,13 +68,28 @@ export default function LosSieteCasos() {
         </p>
       )}
 
-      {escuelas.length > 0 && (
+      {(status === "ok" || status === "demo") && cortesStatus !== "loading" && !cortes && (
+        // Cortes ausentes: /version falló o no trajo cortes_atencion -- sin
+        // ellos no se puede calcular el nivel de atención de cada escuela
+        // (nivelRiesgo() los necesita), así que se avisa en vez de dejar la
+        // grilla vacía sin explicación.
+        <p className="text-sm" style={{ color: "var(--color-risk-high)" }}>
+          No fue posible cargar los cortes de atención desde /version{cortesStatus === "error" && cortesError ? ` (${cortesError})` : ""}. Intenta de nuevo más tarde.
+        </p>
+      )}
+
+      {escuelas.length > 0 && cortes && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {escuelas.map((e, i) => {
             const color = riskRampColor(e.indice_riesgo);
-            const riesgo = nivelRiesgo(e.indice_riesgo);
+            const riesgo = nivelRiesgo(e.indice_riesgo, cortes);
             return (
-              <Card key={e.cct} hover className="flex flex-col justify-between">
+              <Card
+                key={e.cct}
+                hover
+                className="flex flex-col justify-between aparicion-escalonada"
+                style={{ "--delay": `${i * 60}ms` }}
+              >
                 <div>
                   <p className="text-sm font-bold mb-1" style={{ color: "var(--color-ink)" }}>
                     Escuela {String(i + 1).padStart(2, "0")}
@@ -69,18 +104,17 @@ export default function LosSieteCasos() {
                     <p className="text-xs mb-4" style={{ color: "var(--color-ink-faint)" }}>{e.municipio}, {e.entidad}</p>
                   )}
 
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span className="text-2xl font-extrabold tabular" style={{ color: "var(--color-ink)" }}>
-                      {e.indice_riesgo.toFixed(2)}
-                    </span>
-                    {!esReal && (
-                      <span className="text-xs font-semibold tabular" style={{ color: "var(--color-ink-faint)" }}>
-                        {e.variacion}%
-                      </span>
-                    )}
+                  <div className="flex justify-center mb-1">
+                    <RiskGauge
+                      value={e.indice_riesgo}
+                      color={color}
+                      alertLine={cortes.alta}
+                      max={cortes.ancla_calibracion ?? 0.6}
+                      size={104}
+                    />
                   </div>
-                  <p className="text-[11px] mb-4" style={{ color: "var(--color-ink-faint)" }}>
-                    {riesgo.icon} {riesgo.label} · Índice de riesgo{!esReal && " · Variación matrícula"}
+                  <p className="text-[11px] text-center mb-4" style={{ color: "var(--color-ink-faint)" }}>
+                    {riesgo.icon} {riesgo.label}{!esReal && ` · Variación matrícula ${e.variacion}%`}
                   </p>
 
                   <span
@@ -93,7 +127,7 @@ export default function LosSieteCasos() {
                 </div>
 
                 <Link
-                  to={`/casos/${e.cct}`}
+                  to={`/escuela/${e.cct}`}
                   className="text-sm font-semibold mt-5 inline-block"
                   style={{ color: "var(--color-primary)" }}
                 >
@@ -103,6 +137,19 @@ export default function LosSieteCasos() {
             );
           })}
         </div>
+      )}
+
+      {escuelas.length > 0 && cortes && (
+        <Card>
+          {/* Leyenda obligatoria (02_Data_Visualization_Spec.md §7.bis.2, fila "P3 · Pista del
+              índice de riesgo") -- una sola vez para toda la cuadrícula, no repetida por tarjeta. */}
+          <LeyendaGrafica
+            queSeVe="Una tarjeta por escuela. El número es su índice de riesgo y la pista muestra dónde cae ese índice, con la línea de alerta marcada."
+            unidad="Índice de 0 a 1 que traduce la variación de matrícula que el modelo proyecta. No es probabilidad ni porcentaje."
+            sinDato="Una escuela sin predicción lo dice en su tarjeta y no recibe marca en la pista; no se coloca en 0."
+            cicloYRecorte={`Ciclo más reciente materializado. Las ${escuelas.length} escuelas en riesgo, de mayor a menor índice.`}
+          />
+        </Card>
       )}
     </PageContainer>
   );

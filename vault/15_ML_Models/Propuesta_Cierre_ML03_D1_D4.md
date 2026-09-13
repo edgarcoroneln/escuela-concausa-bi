@@ -275,16 +275,16 @@ Para D5 debe definirse primero si el indicador representa disponibilidad por acu
 sequía, almacenamiento u otra medida oficial. Para D6 debe implementarse backfill y agregación por
 ciclo, manteniendo `SIN_DATO` para escuelas fuera de cobertura espacial confiable.
 
-## 10. Decisión pendiente
+## 10. Decisión registrada y pendientes operativos
 
 | Rol | Decisión requerida | Estado |
 |---|---|---|
-| Deni Garrido | Presentar propuesta y evidencia reproducible | Completado para revisión |
-| Estefany Hernández | Revisión técnica de ML-03 | Pendiente |
-| PO | Aprobar D1-D4 y tratamiento de `RISK-011` | Pendiente |
-| Equipo 5 | Aceptar contrato de integración API/frontend | Pendiente después del gate |
-| Equipo 6 | Definir y ejecutar aceptación E2E | Pendiente después del gate |
+| Deni Garrido | Presentar propuesta y evidencia reproducible | Completado; PR #317 mergeado |
+| Estefany Hernández | Revisión técnica de ML-03 | Completado; aprobación técnica de la candidata |
+| PO | Aprobar D1-D4 y tratamiento de `RISK-011` | Completado; DEC-027 acepta la mitigación y declara deuda no operativa |
+| C1 / C3 / C4 | Contrato Gold, productor batch y lectura API | Diferido hasta una nueva autorización operativa del PO |
+| C2 + QA | Definir y ejecutar aceptación E2E | Diferido después de Gold, productor y API |
 
-El registro MLflow de la candidata está pendiente de recuperación verificable. Hasta completar esas
-decisiones, no se promueve el modelo, no se publica Gold y no se afirma que ML-03 esté aprobado o
-integrado en el producto.
+El registro MLflow de la candidata sigue pendiente de recuperación verificable. DEC-027 no lo
+sustituye: hasta que una nueva autorización reactive el plan y complete la cadena Gold → API → Panel
+→ QA, no se promueve el modelo ni se afirma que esté integrado en el producto.
