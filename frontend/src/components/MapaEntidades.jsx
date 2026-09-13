@@ -25,11 +25,18 @@ export const ENTIDADES_ALCANCE = ["MX-CMX", "MX-MEX", "MX-NLE", "MX-JAL"];
 // (const ENTIDADES, ahí también con comentario de que es SCOPE_ENTIDADES,
 // CLAUDE.md §4) -- se repite el mismo valor ya usado y validado contra el
 // API en esa pantalla, no se inventa aquí ninguna clave nueva.
+// lat/lon: coordenadas reales de la capital de cada entidad (no de una
+// escuela particular -- este catalogo es de alcance/entidad, no de
+// muestra) -- agregadas 13-sep para el panel "vector cartografico" de
+// Login.jsx (ver ese archivo): reemplaza al grafico decorativo del mockup
+// que traia coordenadas y conteos inventados (hallazgo DevLog 12-sep,
+// "comparativa-diseno-y-checklist-100.md" S0). Fuente: capitales
+// oficiales de cada entidad (INEGI/Wikipedia), no un dato del pipeline.
 export const ENTIDADES_LABEL = [
-  { id: "MX-CMX", cveEnt: "09", nombre: "CDMX", color: "var(--faro-entity-cdmx)" },
-  { id: "MX-MEX", cveEnt: "15", nombre: "Edomex", color: "var(--faro-entity-edomex)" },
-  { id: "MX-NLE", cveEnt: "19", nombre: "Nuevo León", color: "var(--faro-entity-nl)" },
-  { id: "MX-JAL", cveEnt: "14", nombre: "Jalisco", color: "var(--faro-entity-jalisco)" },
+  { id: "MX-CMX", cveEnt: "09", nombre: "CDMX", color: "var(--faro-entity-cdmx)", lat: 19.4326, lon: -99.1332 },
+  { id: "MX-MEX", cveEnt: "15", nombre: "Edomex", color: "var(--faro-entity-edomex)", lat: 19.2926, lon: -99.6568 },
+  { id: "MX-NLE", cveEnt: "19", nombre: "Nuevo León", color: "var(--faro-entity-nl)", lat: 25.6866, lon: -100.3161 },
+  { id: "MX-JAL", cveEnt: "14", nombre: "Jalisco", color: "var(--faro-entity-jalisco)", lat: 20.6597, lon: -103.3496 },
 ];
 export const ENTIDAD_COLOR = Object.fromEntries(ENTIDADES_LABEL.map((e) => [e.id, e.color]));
 

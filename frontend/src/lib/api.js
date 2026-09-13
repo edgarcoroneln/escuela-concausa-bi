@@ -58,6 +58,15 @@ export const getEscuelas = (params = {}) =>
   request(`/api/v1/escuelas?${new URLSearchParams(params)}`);
 export const getEscuela = (cct) => request(`/api/v1/escuelas/${cct}`);
 
+// "Universo del alcance" (13-sep, Panorama.jsx -- fidelidad de mockups/
+// 02_Panorama_Escuelas_Riesgo.png contra 02_Data_Visualization_Spec.md
+// línea 107: "Universo del alcance | 44,114 escuelas ... | `Page.total` de
+// `/escuelas`"). Pide la página más chica posible (size=1): a este llamado
+// solo le interesa el sobre de paginación (`total`), nunca su único item --
+// no existe hoy un endpoint dedicado solo al conteo.
+export const getUniversoEscuelas = () =>
+  request(`/api/v1/escuelas?${new URLSearchParams({ size: "1" })}`);
+
 // "Los 7 casos" -- escuelas en riesgo. El endpoint NO admite un filtro
 // indice_riesgo_min (revisión de Edgar en PR #302, 10-sep): el contrato
 // disponible es ordenar. Se pide el catálogo ordenado desc por indice_riesgo
@@ -156,12 +165,20 @@ export const getMunicipiosPorClaves = async (cveMuns) => {
 };
 
 
-// Pantalla 5 (Conclusión, "Concentración por municipio"): al escribirse
-// esta tarjeta pintaba cve_mun crudo porque, en ese momento, el contrato no
-// declaraba el nombre -- MunicipioOut ya trae nombre_municipio desde el
-// 11-sep (US-621), confirmado real por BUG-077 (317/317 municipios con
-// nombre poblado). Compone getPanoramaEscuelas() + getMunicipiosPorClaves()
-// -- una llamada por municipio ÚNICO, no por escuela.
+// Pantalla 5 (Conclusión): al escribirse esta función solo se pedía
+// nombre_municipio porque en ese momento la pantalla solo tenía la tarjeta
+// "Concentración por municipio" -- MunicipioOut ya trae nombre_municipio
+// desde el 11-sep (US-621), confirmado real por BUG-077 (317/317
+// municipios con nombre poblado). Compone getPanoramaEscuelas() +
+// getMunicipiosPorClaves() -- una llamada por municipio ÚNICO, no por
+// escuela.
+//
+// 13-sep -- se agrega cve_ent y nombre_entidad al merge (mismo objeto que
+// ya devuelve getMunicipiosPorClaves, sin llamada adicional): el rediseño
+// de Conclusion.jsx contra el mockup 05_Conclusion_Top3 necesita "alcance
+// de entidades" por driver dominante (cuántas entidades distintas
+// concentran ese driver), y MunicipioOut.cve_ent es la única fuente real
+// de esa entidad -- EscuelaOut no la trae.
 export const getConclusionEscuelas = async () => {
   const base = await getPanoramaEscuelas();
   if (base.error) return { data: null, error: base.error };
@@ -170,6 +187,8 @@ export const getConclusionEscuelas = async () => {
   const escuelas = base.data.map((e) => ({
     ...e,
     nombre_municipio: municipios.data[e.cve_mun]?.nombre_municipio ?? null,
+    cve_ent: municipios.data[e.cve_mun]?.cve_ent ?? null,
+    nombre_entidad: municipios.data[e.cve_mun]?.nombre_entidad ?? null,
   }));
   return { data: escuelas, error: null };
 };
