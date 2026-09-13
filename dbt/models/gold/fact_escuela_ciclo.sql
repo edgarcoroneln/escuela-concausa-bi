@@ -12,11 +12,12 @@
 -- D1-D4 replican la misma lógica real que gold.features_escuela (mismas fuentes Silver,
 -- mismo ADR-005 para D3/D4). D6 aire ya es real (ADR-006, US-105): interpolación IDW de
 -- silver.aire_estacion (SINAICA) hacia cada escuela georreferenciada de dim_escuela. D5
--- agua: v1 PROPUESTO (2026-09-13, Diana), PENDIENTE DE APROBACIÓN de Edgar (dueño de este
--- modelo) y de Emilio (dueño DS-06) -- todavía no se mergea. Usa silver.agua_presa_entidad
--- (capacidad instalada de presas por entidad; bronze.conagua_presas ya tiene datos reales
--- desde 2026-09-13) en vez del contrato diario/georreferenciado original que sigue sin
--- ingerirse -- ver ese modelo para las limitaciones conocidas (en especial CDMX/Cutzamala).
+-- agua sigue en SIN_DATO explícito: se propuso un v1 con silver.agua_presa_entidad
+-- (bronze.conagua_presas, capacidad NAMO por entidad) el 2026-09-13, pero Edgar (dueño de
+-- este modelo) lo rechazó en revisión de PR (#358) -- la capacidad de presas por entidad da
+-- el mismo valor a TODAS las escuelas de un estado, grano insuficiente para esta entrega. No
+-- es que falte bronze.conagua_presas (ya tiene datos reales): es que este v1 no se adoptó.
+-- El contrato original de DS-06 (diario/georreferenciado) sigue sin ingerirse.
 
 with matricula_ciclo as (
 
@@ -342,15 +343,6 @@ d6 as (
     cross join d6_rango rg
 
 ),
-
--- D5: agua/estrés hídrico, CONAGUA presas por entidad (v1 PROPUESTO, ver comentario de
--- encabezado y silver/agua_presa_entidad.sql -- PENDIENTE DE APROBACIÓN de Edgar y Emilio).
-d5 as (
-
-    select cve_ent, indice_estres_hidrico_infraestructura as d5, cobertura as d5_cobertura
-    from {{ ref('agua_presa_entidad') }}
-
-),
 ensamblado as (
 
     select
@@ -368,15 +360,14 @@ ensamblado as (
         coalesce(dd.d3_cobertura, 'SIN_DATO') as d3_cobertura,
         dd.d4,
         coalesce(dd.d4_cobertura, 'SIN_DATO') as d4_cobertura,
-        d5.d5,
-        coalesce(d5.d5_cobertura, 'SIN_DATO') as d5_cobertura,
+        cast(null as double precision) as d5,
+        'SIN_DATO' as d5_cobertura,
         d6.d6,
         coalesce(d6.d6_cobertura, 'SIN_DATO') as d6_cobertura
     from con_municipio cm
     left join d3_d4 dd on dd.cct = cm.cct
     left join d1 on d1.cve_mun = cm.cve_mun
     left join d2 on d2.cve_mun = cm.cve_mun
-    left join d5 on d5.cve_ent = left(cm.cve_mun, 2)
     left join d6 on d6.cct = cm.cct
 
 )

@@ -39,14 +39,17 @@ no acepta DSN remoto), extrae las 3 tablas, y anonimiza:
 local de pruebas vacio y carga los 3 CSV con `\copy`. `tests/fixtures/gold/README.md` documenta
 todo lo anterior para Andres.
 
+## Aprobacion de Edgar (revision de PR #358, 2026-09-13)
+
+Edgar aprobo el alcance y los datos: 260 escuelas anonimizadas, sin coordenadas ni
+infraestructura -- el criterio de anonimizacion descrito arriba (surrogate secuencial de CCT,
+exclusion de lat/long e infraestructura, resto de columnas reales sin perturbar) queda
+confirmado, sin ajustes pendientes.
+
 ## Pendiente
 
 - Correr el script contra mi Postgres local (requiere psql, no disponible en este entorno de
   ejecucion) y revisar los CSV resultantes antes de subir nada.
-- Aprobacion explicita de Edgar sobre alcance y datos incluidos -- la pidio Andres en su mensaje
-  original, todavia no confirmada.
-- Confirmar con Andres/Edgar si 260 escuelas y la exclusion de lat/long e infraestructura son
-  el criterio correcto, o ajustar.
 
 ## Verificacion
 
