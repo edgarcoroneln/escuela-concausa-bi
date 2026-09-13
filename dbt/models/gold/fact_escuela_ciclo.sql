@@ -12,8 +12,12 @@
 -- D1-D4 replican la misma lógica real que gold.features_escuela (mismas fuentes Silver,
 -- mismo ADR-005 para D3/D4). D6 aire ya es real (ADR-006, US-105): interpolación IDW de
 -- silver.aire_estacion (SINAICA) hacia cada escuela georreferenciada de dim_escuela. D5
--- agua sigue en SIN_DATO explícito: DS-06 CONAGUA (dueño Emilio Galnares Ruiz) todavía no
--- tiene su "prueba de descarga real" completa, no hay bronze.conagua con datos todavía.
+-- agua sigue en SIN_DATO explícito: se propuso un v1 con silver.agua_presa_entidad
+-- (bronze.conagua_presas, capacidad NAMO por entidad) el 2026-09-13, pero Edgar (dueño de
+-- este modelo) lo rechazó en revisión de PR (#358) -- la capacidad de presas por entidad da
+-- el mismo valor a TODAS las escuelas de un estado, grano insuficiente para esta entrega. No
+-- es que falte bronze.conagua_presas (ya tiene datos reales): es que este v1 no se adoptó.
+-- El contrato original de DS-06 (diario/georreferenciado) sigue sin ingerirse.
 
 with matricula_ciclo as (
 

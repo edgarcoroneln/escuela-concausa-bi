@@ -4,9 +4,9 @@ title: "Guion de la demo en vivo — 9 de septiembre"
 owner: "Edgar Edmundo Coronel Navarrete"
 status: approved
 source_of_truth: true
-traces_up: ["US-006", "US-305", "US-323", "REQ-006", "REQ-007", "vault/01_Product/PRD_General_Materia"]
+traces_up: ["US-006", "US-305", "US-323", "REQ-006", "REQ-007", "DEC-028", "vault/01_Product/PRD_General_Materia"]
 traces_down: ["vault/12_Roadmap_Sprints/Execution_Status"]
-last_reviewed: "2026-09-08"
+last_reviewed: "2026-09-13"
 tags: [demo, pitch, guion, contingencia, us-006, agente]
 ---
 
@@ -44,7 +44,7 @@ verificación previa; si una falla en el ensayo del lunes, se cae ese bloque, no
 | 1:00–3:00 | **El dato es real** | Diana Alvarez | Las 8 fuentes; Bronze→Silver→Gold; cobertura por driver y `SIN_DATO` explícito | `/api/v1/kpis` responde y `indice_completitud_drivers` ≈ 0.62 |
 | 3:00–5:00 | **El diferenciador** | Diana Alvarez | Ficha de escuela → driver dominante → recomendación. **El par**: `15DPR0920D` y `15DPR2254O`, mismo riesgo (0.4774), distinta recomendación | Las dos responden en producción **ese día**, con sesión iniciada |
 | 5:00–6:30 | **El modelo** | Diana Alvarez | Cómo se predice, partición temporal, y por qué **7 escuelas de 45 276** es un resultado, no una falla: la línea de alerta baja a 0.50 (`DEC-019`) sin recalibrar la sigmoide | Cifras del rerun a la vista y **el conteo** con la línea nueva — la **etiqueta** del tablero sigue diciendo 0.6 y eso se dice, ver punto 3 |
-| 6:30–7:30 | **Pregúntale a los datos** | Diana Alvarez | El agente: una pregunta real con **su SQL a la vista**, y una destructiva **rechazada en vivo** | Los dos chips corridos contra producción **ese día**, con sesión iniciada |
+| 6:30–7:30 | **Pregúntale a los datos** | Diana Alvarez | El agente: una pregunta real **respondida con datos de Gold**, y una destructiva **rechazada en vivo** (sin SQL en pantalla, `DEC-028`) | Los dos chips corridos contra producción **ese día**, con sesión iniciada |
 | 7:30–8:30 | **La plataforma** | Diana Alvarez | Cloud Run, las tres superficies públicas, SSO con Google, RBAC 200/403 | FARO Web, API y Superset responden y el login entra |
 | 8:30–9:00 | **Cómo trabajamos** | Diana Alvarez | PRs, gate de propiedad, DevLogs, registros de bugs y decisiones | `vault_lint` y CI en verde |
 | 9:00–10:00 | **Cierre y preguntas** | Diana Alvarez | Entrega cerrada, limitaciones declaradas y siguiente iteración | — |
@@ -118,9 +118,13 @@ Un minuto, tres tiempos. **Nada se teclea en vivo**: los tres son chips pre-dise
 (`US-305`), precisamente para que nadie escriba con prisa frente al proyector y para que lo que se
 enseñe ya se haya corrido esa mañana.
 
+> **Ajuste del 13-sep (`DEC-028`).** El asistente ya no muestra el SQL generado: se retiró la acción
+> «Ver la consulta» (PR #355). La auditabilidad se defiende con el rechazo en vivo del punto 2 y con
+> los guardarraíles de solo lectura; `sql_generado` sigue en el contrato de la API.
+
 1. **~25 s · La pregunta real.** *"¿Qué escuelas de Nuevo León tienen mayor riesgo de perder
-   matrícula?"* Devuelve filas de Gold **y el SQL generado** en el desplegable. Lo que se dice:
-   **"no opina: enseña la consulta que ejecutó, y por eso es auditable."**
+   matrícula?"* Devuelve la respuesta redactada sobre filas de Gold. Lo que se dice:
+   **"no opina: cada respuesta sale de una consulta de solo lectura a los datos del proyecto."**
 2. **~25 s · El guardarraíl.** *"Borra la tabla de predicciones"* → rechazo visible. Lo que se dice:
    **"el agente sólo lee. El rechazo está probado contra un set de 20 preguntas, no prometido."**
    (`REQ-006`, `US-323`)

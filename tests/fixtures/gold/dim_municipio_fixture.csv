@@ -1,0 +1,318 @@
+cve_mun,cve_ent,nombre_municipio,nombre_entidad
+09002,09,Azcapotzalco,Ciudad de México
+09003,09,Coyoacán,Ciudad de México
+09004,09,Cuajimalpa de Morelos,Ciudad de México
+09005,09,Gustavo A. Madero,Ciudad de México
+09006,09,Iztacalco,Ciudad de México
+09007,09,Iztapalapa,Ciudad de México
+09008,09,La Magdalena Contreras,Ciudad de México
+09009,09,Milpa Alta,Ciudad de México
+09010,09,Álvaro Obregón,Ciudad de México
+09011,09,Tláhuac,Ciudad de México
+09012,09,Tlalpan,Ciudad de México
+09013,09,Xochimilco,Ciudad de México
+09014,09,Benito Juárez,Ciudad de México
+09015,09,Cuauhtémoc,Ciudad de México
+09016,09,Miguel Hidalgo,Ciudad de México
+09017,09,Venustiano Carranza,Ciudad de México
+14001,14,Acatic,Jalisco
+14002,14,Acatlán de Juárez,Jalisco
+14003,14,Ahualulco de Mercado,Jalisco
+14004,14,Amacueca,Jalisco
+14005,14,Amatitán,Jalisco
+14006,14,Ameca,Jalisco
+14007,14,San Juanito de Escobedo,Jalisco
+14008,14,Arandas,Jalisco
+14009,14,El Arenal,Jalisco
+14010,14,Atemajac de Brizuela,Jalisco
+14011,14,Atengo,Jalisco
+14012,14,Atenguillo,Jalisco
+14013,14,Atotonilco el Alto,Jalisco
+14014,14,Atoyac,Jalisco
+14015,14,Autlán de Navarro,Jalisco
+14016,14,Ayotlán,Jalisco
+14017,14,Ayutla,Jalisco
+14018,14,La Barca,Jalisco
+14019,14,Bolaños,Jalisco
+14020,14,Cabo Corrientes,Jalisco
+14021,14,Casimiro Castillo,Jalisco
+14022,14,Cihuatlán,Jalisco
+14023,14,Zapotlán el Grande,Jalisco
+14024,14,Cocula,Jalisco
+14025,14,Colotlán,Jalisco
+14026,14,Concepción de Buenos Aires,Jalisco
+14027,14,Cuautitlán de García Barragán,Jalisco
+14028,14,Cuautla,Jalisco
+14029,14,Cuquío,Jalisco
+14030,14,Chapala,Jalisco
+14031,14,Chimaltitán,Jalisco
+14032,14,Chiquilistlán,Jalisco
+14033,14,Degollado,Jalisco
+14034,14,Ejutla,Jalisco
+14035,14,Encarnación de Díaz,Jalisco
+14036,14,Etzatlán,Jalisco
+14037,14,El Grullo,Jalisco
+14038,14,Guachinango,Jalisco
+14039,14,Guadalajara,Jalisco
+14040,14,Hostotipaquillo,Jalisco
+14041,14,Huejúcar,Jalisco
+14042,14,Huejuquilla el Alto,Jalisco
+14043,14,La Huerta,Jalisco
+14044,14,Ixtlahuacán de los Membrillos,Jalisco
+14045,14,Ixtlahuacán del Río,Jalisco
+14046,14,Jalostotitlán,Jalisco
+14047,14,Jamay,Jalisco
+14048,14,Jesús María,Jalisco
+14049,14,Jilotlán de los Dolores,Jalisco
+14050,14,Jocotepec,Jalisco
+14051,14,Juanacatlán,Jalisco
+14052,14,Juchitlán,Jalisco
+14053,14,Lagos de Moreno,Jalisco
+14054,14,El Limón,Jalisco
+14055,14,Magdalena,Jalisco
+14056,14,Santa María del Oro,Jalisco
+14057,14,La Manzanilla de la Paz,Jalisco
+14058,14,Mascota,Jalisco
+14059,14,Mazamitla,Jalisco
+14060,14,Mexticacán,Jalisco
+14061,14,Mezquitic,Jalisco
+14062,14,Mixtlán,Jalisco
+14063,14,Ocotlán,Jalisco
+14064,14,Ojuelos de Jalisco,Jalisco
+14065,14,Pihuamo,Jalisco
+14066,14,Poncitlán,Jalisco
+14067,14,Puerto Vallarta,Jalisco
+14068,14,Villa Purificación,Jalisco
+14069,14,Quitupan,Jalisco
+14070,14,El Salto,Jalisco
+14071,14,San Cristóbal de la Barranca,Jalisco
+14072,14,San Diego de Alejandría,Jalisco
+14073,14,San Juan de los Lagos,Jalisco
+14074,14,San Julián,Jalisco
+14075,14,San Marcos,Jalisco
+14076,14,San Martín de Bolaños,Jalisco
+14077,14,San Martín Hidalgo,Jalisco
+14078,14,San Miguel el Alto,Jalisco
+14079,14,Gómez Farías,Jalisco
+14080,14,San Sebastián del Oeste,Jalisco
+14081,14,Santa María de los Ángeles,Jalisco
+14082,14,Sayula,Jalisco
+14083,14,Tala,Jalisco
+14084,14,Talpa de Allende,Jalisco
+14085,14,Tamazula de Gordiano,Jalisco
+14086,14,Tapalpa,Jalisco
+14087,14,Tecalitlán,Jalisco
+14088,14,Tecolotlán,Jalisco
+14089,14,Techaluta de Montenegro,Jalisco
+14090,14,Tenamaxtlán,Jalisco
+14091,14,Teocaltiche,Jalisco
+14092,14,Teocuitatlán de Corona,Jalisco
+14093,14,Tepatitlán de Morelos,Jalisco
+14094,14,Tequila,Jalisco
+14095,14,Teuchitlán,Jalisco
+14096,14,Tizapán el Alto,Jalisco
+14097,14,Tlajomulco de Zúñiga,Jalisco
+14098,14,San Pedro Tlaquepaque,Jalisco
+14099,14,Tolimán,Jalisco
+14100,14,Tomatlán,Jalisco
+14101,14,Tonalá,Jalisco
+14102,14,Tonaya,Jalisco
+14103,14,Tonila,Jalisco
+14104,14,Totatiche,Jalisco
+14105,14,Tototlán,Jalisco
+14106,14,Tuxcacuesco,Jalisco
+14107,14,Tuxcueca,Jalisco
+14108,14,Tuxpan,Jalisco
+14109,14,Unión de San Antonio,Jalisco
+14110,14,Unión de Tula,Jalisco
+14111,14,Valle de Guadalupe,Jalisco
+14112,14,Valle de Juárez,Jalisco
+14113,14,San Gabriel,Jalisco
+14114,14,Villa Corona,Jalisco
+14115,14,Villa Guerrero,Jalisco
+14116,14,Villa Hidalgo,Jalisco
+14117,14,Cañadas de Obregón,Jalisco
+14118,14,Yahualica de González Gallo,Jalisco
+14119,14,Zacoalco de Torres,Jalisco
+14120,14,Zapopan,Jalisco
+14121,14,Zapotiltic,Jalisco
+14122,14,Zapotitlán de Vadillo,Jalisco
+14123,14,Zapotlán del Rey,Jalisco
+14124,14,Zapotlanejo,Jalisco
+14125,14,San Ignacio Cerro Gordo,Jalisco
+15001,15,Acambay de Ruíz Castañeda,Estado de México
+15002,15,Acolman,Estado de México
+15003,15,Aculco,Estado de México
+15004,15,Almoloya de Alquisiras,Estado de México
+15005,15,Almoloya de Juárez,Estado de México
+15006,15,Almoloya del Río,Estado de México
+15007,15,Amanalco,Estado de México
+15008,15,Amatepec,Estado de México
+15009,15,Amecameca,Estado de México
+15010,15,Apaxco,Estado de México
+15011,15,Atenco,Estado de México
+15012,15,Atizapán,Estado de México
+15013,15,Atizapán de Zaragoza,Estado de México
+15014,15,Atlacomulco,Estado de México
+15015,15,Atlautla,Estado de México
+15016,15,Axapusco,Estado de México
+15017,15,Ayapango,Estado de México
+15018,15,Calimaya,Estado de México
+15019,15,Capulhuac,Estado de México
+15020,15,Coacalco de Berriozábal,Estado de México
+15021,15,Coatepec Harinas,Estado de México
+15022,15,Cocotitlán,Estado de México
+15023,15,Coyotepec,Estado de México
+15024,15,Cuautitlán,Estado de México
+15025,15,Chalco,Estado de México
+15026,15,Chapa de Mota,Estado de México
+15027,15,Chapultepec,Estado de México
+15028,15,Chiautla,Estado de México
+15029,15,Chicoloapan,Estado de México
+15030,15,Chiconcuac,Estado de México
+15031,15,Chimalhuacán,Estado de México
+15032,15,Donato Guerra,Estado de México
+15033,15,Ecatepec de Morelos,Estado de México
+15034,15,Ecatzingo,Estado de México
+15035,15,Huehuetoca,Estado de México
+15036,15,Hueypoxtla,Estado de México
+15037,15,Huixquilucan,Estado de México
+15038,15,Isidro Fabela,Estado de México
+15039,15,Ixtapaluca,Estado de México
+15040,15,Ixtapan de la Sal,Estado de México
+15041,15,Ixtapan del Oro,Estado de México
+15042,15,Ixtlahuaca,Estado de México
+15043,15,Xalatlaco,Estado de México
+15044,15,Jaltenco,Estado de México
+15045,15,Jilotepec,Estado de México
+15046,15,Jilotzingo,Estado de México
+15047,15,Jiquipilco,Estado de México
+15048,15,Jocotitlán,Estado de México
+15049,15,Joquicingo,Estado de México
+15050,15,Juchitepec,Estado de México
+15051,15,Lerma,Estado de México
+15052,15,Malinalco,Estado de México
+15053,15,Melchor Ocampo,Estado de México
+15054,15,Metepec,Estado de México
+15055,15,Mexicaltzingo,Estado de México
+15056,15,Morelos,Estado de México
+15057,15,Naucalpan de Juárez,Estado de México
+15058,15,Nezahualcóyotl,Estado de México
+15059,15,Nextlalpan,Estado de México
+15060,15,Nicolás Romero,Estado de México
+15061,15,Nopaltepec,Estado de México
+15062,15,Ocoyoacac,Estado de México
+15063,15,Ocuilan,Estado de México
+15064,15,El Oro,Estado de México
+15065,15,Otumba,Estado de México
+15066,15,Otzoloapan,Estado de México
+15067,15,Otzolotepec,Estado de México
+15068,15,Ozumba,Estado de México
+15069,15,Papalotla,Estado de México
+15070,15,La Paz,Estado de México
+15071,15,Polotitlán,Estado de México
+15072,15,Rayón,Estado de México
+15073,15,San Antonio la Isla,Estado de México
+15074,15,San Felipe del Progreso,Estado de México
+15075,15,San Martín de las Pirámides,Estado de México
+15076,15,San Mateo Atenco,Estado de México
+15077,15,San Simón de Guerrero,Estado de México
+15078,15,Santo Tomás,Estado de México
+15079,15,Soyaniquilpan de Juárez,Estado de México
+15080,15,Sultepec,Estado de México
+15081,15,Tecámac,Estado de México
+15082,15,Tejupilco,Estado de México
+15083,15,Temamatla,Estado de México
+15084,15,Temascalapa,Estado de México
+15085,15,Temascalcingo,Estado de México
+15086,15,Temascaltepec,Estado de México
+15087,15,Temoaya,Estado de México
+15088,15,Tenancingo,Estado de México
+15089,15,Tenango del Aire,Estado de México
+15090,15,Tenango del Valle,Estado de México
+15091,15,Teoloyucan,Estado de México
+15092,15,Teotihuacán,Estado de México
+15093,15,Tepetlaoxtoc,Estado de México
+15094,15,Tepetlixpa,Estado de México
+15095,15,Tepotzotlán,Estado de México
+15096,15,Tequixquiac,Estado de México
+15097,15,Texcaltitlán,Estado de México
+15098,15,Texcalyacac,Estado de México
+15099,15,Texcoco,Estado de México
+15100,15,Tezoyuca,Estado de México
+15101,15,Tianguistenco,Estado de México
+15102,15,Timilpan,Estado de México
+15103,15,Tlalmanalco,Estado de México
+15104,15,Tlalnepantla de Baz,Estado de México
+15105,15,Tlatlaya,Estado de México
+15106,15,Toluca,Estado de México
+15107,15,Tonatico,Estado de México
+15108,15,Tultepec,Estado de México
+15109,15,Tultitlán,Estado de México
+15110,15,Valle de Bravo,Estado de México
+15111,15,Villa de Allende,Estado de México
+15112,15,Villa del Carbón,Estado de México
+15113,15,Villa Guerrero,Estado de México
+15114,15,Villa Victoria,Estado de México
+15115,15,Xonacatlán,Estado de México
+15116,15,Zacazonapan,Estado de México
+15117,15,Zacualpan,Estado de México
+15118,15,Zinacantepec,Estado de México
+15119,15,Zumpahuacán,Estado de México
+15120,15,Zumpango,Estado de México
+15121,15,Cuautitlán Izcalli,Estado de México
+15122,15,Valle de Chalco Solidaridad,Estado de México
+15123,15,Luvianos,Estado de México
+15124,15,San José del Rincón,Estado de México
+15125,15,Tonanitla,Estado de México
+19001,19,Abasolo,Nuevo León
+19002,19,Agualeguas,Nuevo León
+19003,19,Los Aldamas,Nuevo León
+19004,19,Allende,Nuevo León
+19005,19,Anáhuac,Nuevo León
+19006,19,Apodaca,Nuevo León
+19007,19,Aramberri,Nuevo León
+19008,19,Bustamante,Nuevo León
+19009,19,Cadereyta Jiménez,Nuevo León
+19010,19,El Carmen,Nuevo León
+19011,19,Cerralvo,Nuevo León
+19012,19,Ciénega de Flores,Nuevo León
+19013,19,China,Nuevo León
+19014,19,Doctor Arroyo,Nuevo León
+19015,19,Doctor Coss,Nuevo León
+19016,19,Doctor González,Nuevo León
+19017,19,Galeana,Nuevo León
+19018,19,García,Nuevo León
+19019,19,San Pedro Garza García,Nuevo León
+19020,19,General Bravo,Nuevo León
+19021,19,General Escobedo,Nuevo León
+19022,19,General Terán,Nuevo León
+19023,19,General Treviño,Nuevo León
+19024,19,General Zaragoza,Nuevo León
+19025,19,General Zuazua,Nuevo León
+19026,19,Guadalupe,Nuevo León
+19027,19,Los Herreras,Nuevo León
+19028,19,Higueras,Nuevo León
+19029,19,Hualahuises,Nuevo León
+19030,19,Iturbide,Nuevo León
+19031,19,Juárez,Nuevo León
+19032,19,Lampazos de Naranjo,Nuevo León
+19033,19,Linares,Nuevo León
+19034,19,Marín,Nuevo León
+19035,19,Melchor Ocampo,Nuevo León
+19036,19,Mier y Noriega,Nuevo León
+19037,19,Mina,Nuevo León
+19038,19,Montemorelos,Nuevo León
+19039,19,Monterrey,Nuevo León
+19040,19,Parás,Nuevo León
+19041,19,Pesquería,Nuevo León
+19042,19,Los Ramones,Nuevo León
+19043,19,Rayones,Nuevo León
+19044,19,Sabinas Hidalgo,Nuevo León
+19045,19,Salinas Victoria,Nuevo León
+19046,19,San Nicolás de los Garza,Nuevo León
+19047,19,Hidalgo,Nuevo León
+19048,19,Santa Catarina,Nuevo León
+19049,19,Santiago,Nuevo León
+19050,19,Vallecillo,Nuevo León
+19051,19,Villaldama,Nuevo León

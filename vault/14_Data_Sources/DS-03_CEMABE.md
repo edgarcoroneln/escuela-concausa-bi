@@ -113,3 +113,48 @@ convierte el vacío en `SIN_DATO`. Para `P277`, cero significa ausencia, `1..999
   decodificación y reportar reemplazos, no fallar silenciosamente.
 - El fixture sintético actual supone un único CSV ya conformado; no representa el contrato físico
   de los dos archivos oficiales.
+
+## 11. Verificación de cobertura de D3 (2026-09-13) — corregido en revisión de Edgar (PR #358)
+
+> **Corrección (2026-09-13, Edgar Coronel, revisión de PR #358):** esta sección decía
+> "verificado en Cloud SQL" y "cobertura en producción: 85.1%" con las mismas cifras
+> (`silver.cemabe` 203,638 filas / `gold.fact_escuela_ciclo` 132,566 filas) que ya se reconoció,
+> en el DevLog de D6 de esta misma fecha, que **no son de producción**. Confirmado con Diana: las
+> tres cifras de abajo (85.8%, 84.6% y el "85.1% en producción" ya retirado) salieron del mismo
+> entorno usado para verificar D6 — no de una consulta contra Cloud SQL de producción real. Se
+> corrige toda la sección con la misma honestidad que el DevLog de D6.
+
+- **Contexto:** investigación de un reporte en Panorama de Riesgo (producción) donde D3 salía
+  SIN_DATO en las 7 escuelas de mayor riesgo.
+- **Lo que sí se verificó — comportamiento del join/lógica, con censo real cargado:** contra un
+  entorno con `bronze.cemabe_2013` real cargado (203,638 filas en `silver.cemabe`, 132,566 en
+  `gold.fact_escuela_ciclo`) — **no producción** — la cobertura da 85.8% OK por fila de ciclo
+  (113,744/132,566) y 84.6% por escuela (exigiendo D3 = OK en todos los ciclos de esa escuela;
+  prácticamente igual a la cifra por fila porque `d3_cobertura` se calcula uniendo
+  `silver.cemabe` por `cct`, ya deduplicada a una fila por escuela en `cemabe.sql`, así que no
+  varía entre ciclos de una misma escuela). Esto confirma que el join/la lógica de D3 funciona
+  correctamente cuando hay censo real cargado.
+- **Lo que NO se verificó:** no hay ninguna consulta confirmada contra Cloud SQL de producción
+  real para D3. Edgar confirma que producción hoy solo tiene el Bronze de prueba de
+  `cemabe_2013` (72 filas) — el mismo patrón que SINAICA en D6 (ver DevLog
+  `2026-09-13-diana-alvarez-d5-agua-d6-fix-produccion-ds03.md`, sección 1). Con solo 72 filas de
+  censo real en Bronze, **la cobertura real de D3 en producción hoy es muchísimo menor que
+  85%** — no se puede afirmar un número sin correr la consulta ahí.
+- **Por sostenimiento** (`gold.dim_escuela.sostenimiento`, que solo admite `PÚBLICO`/`PRIVADO`
+  por diseño de [[vault/14_Data_Sources/DS-02_Catalogo_CCT|DS-02]]): 86.6%/83.0% OK — mismas
+  cifras del entorno no productivo de arriba, mismo caveat. La ausencia de una categoría
+  "comunitario"/CONAFE sí es un hecho de esquema confirmado independientemente del entorno (ver
+  [[vault/14_Data_Sources/DS-02_Catalogo_CCT|DS-02]]: `sostenimiento` solo admite esos dos
+  valores) — esa parte del descarte se mantiene.
+- **Explicación del hueco (~14-15%) que sí se sostiene, con censo real cargado:** coincide con el
+  riesgo ya anotado arriba en §10 ("CCT que ya no existen en el catálogo actual (DS-02) → filas
+  huérfanas") — escuelas cuyo `cct` no tiene fila en `silver.cemabe` (censo 2013), ya sea por
+  reasignación de clave o por ser de creación posterior al levantamiento.
+- **Conclusión corregida:** el join/la lógica de D3 **no requiere fix de código** — igual que con
+  D6, el comportamiento en producción hoy es un problema de **carga de datos, no de lógica**. A
+  diferencia de lo que decía la versión anterior de esta sección, **sí hace falta cargar el censo
+  CEMABE 2013 real en el Bronze de producción** (hoy solo tiene el fixture de 72 filas) y
+  regenerar/importar Gold ahí para que D3 refleje su cobertura real — mismo pendiente que D6/
+  SINAICA, no algo ya resuelto.
+- **Responsable:** Diana Alvarez · **Fecha:** 2026-09-13 (corregido 2026-09-13, revisión Edgar
+  Coronel, PR #358).
