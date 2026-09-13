@@ -39,7 +39,6 @@ FRONTEND_URL = os.environ.get("FARO_FRONTEND_URL", "http://localhost:8501").rstr
 # Segundos de espera al canjear. Corto a propósito: es una llamada local entre servicios y la
 # persona está mirando una pantalla en blanco mientras tanto.
 TIMEOUT_S = float(os.environ.get("FARO_API_TIMEOUT_S", "10"))
-LOCAL_PUBLIC = os.environ.get("FARO_LOCAL_PUBLIC", "false").lower() == "true"
 
 _PARAM_CODIGO = "code_faro"
 
@@ -184,13 +183,6 @@ def current_user() -> Optional[dict]:
     login, así que las páginas no tienen que saber nada del flujo OAuth: les basta con llamar a
     esto al principio.
     """
-    if LOCAL_PUBLIC:
-        return {
-            "sub": "local-demo",
-            "email": "demo@local",
-            "name": "Demo local",
-            "role": "ciudadano",
-        }
     usuario = st.session_state.get("user")
     if usuario is not None:
         return usuario

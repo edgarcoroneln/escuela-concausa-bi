@@ -313,6 +313,62 @@ def test_respuesta_directa_sin_sql_para_pregunta_conceptual() -> None:
     assert "SIN_DATO" in resultado.respuesta
 
 
+def test_pregunta_conceptual_sin_frase_fija_tambien_usa_el_contexto_rag() -> None:
+    """Regresión (revisión de PR 2026-09-13): antes de esta prueba, cualquier pregunta conceptual
+
+    que no coincidiera con un puñado de frases escritas a mano (5 en total) caía en un mensaje
+    genérico y el contexto recuperado por RAG se descartaba sin usarse, aunque sí traía la
+    respuesta. "¿Qué mide el driver D3?" es exactamente ese caso: no está en la lista fija, pero
+    el RAG sí tiene el dato.
+    """
+    observado: dict[str, object] = {}
+
+    def redactar(pregunta: str, filas):
+        observado["filas"] = filas
+        return "D3 mide infraestructura escolar."
+
+    resultado = procesar_consulta(
+        "¿Qué mide el driver D3?",
+        recuperar_contexto=lambda pregunta: "D3: infraestructura escolar (CEMABE).",
+        generar_sql=lambda prompt, pregunta: "NO_SQL_NECESARIO",
+        ejecutar_sql=lambda sql: (_ for _ in ()).throw(
+            AssertionError("una pregunta conceptual no debe ejecutar SQL")
+        ),
+        redactar_respuesta=redactar,
+    )
+
+    assert observado["filas"][0]["contexto_faro"] == "D3: infraestructura escolar (CEMABE)."
+    assert resultado.respuesta == "D3 mide infraestructura escolar."
+    assert not resultado.fuera_de_alcance
+
+
+def test_redactor_recibe_el_total_real_cuando_la_muestra_se_recorta() -> None:
+    """Regresión (revisión de PR 2026-09-13): con más filas que `MAX_FILAS_REDACTOR`, el redactor
+
+    solo veía la muestra recortada y sin ninguna pista de que era una muestra -- podía responder
+    "hay 10 escuelas" cuando en realidad había 237.
+    """
+    filas_completas = [{"cct": f"09ABC{i:04d}X"} for i in range(237)]
+    observado: dict[str, object] = {}
+
+    def redactar(pregunta: str, filas):
+        observado["filas"] = filas
+        return f"{len(filas)} filas redactadas."
+
+    procesar_consulta(
+        "Cuantas escuelas hay en total?",
+        recuperar_contexto=lambda pregunta: "gold.dim_escuela(cct)",
+        generar_sql=lambda prompt, pregunta: "SELECT cct FROM gold.dim_escuela",
+        ejecutar_sql=lambda sql: filas_completas,
+        redactar_respuesta=redactar,
+    )
+
+    filas_vistas = observado["filas"]
+    assert len(filas_vistas) == servicio.MAX_FILAS_REDACTOR + 1  # muestra + metadato de total
+    assert "237" in filas_vistas[-1]["_muestra_de_total"]
+    assert "10" in filas_vistas[-1]["_muestra_de_total"]
+
+
 # --------------------------------------------------------------------------- #
 # Fase 3 (streaming, 2026-09-10): mismos guardarraíles, redacción final en fragmentos
 # --------------------------------------------------------------------------- #
@@ -405,10 +461,7 @@ def test_stream_respuesta_directa_sin_sql_transmite_desde_contexto_faro() -> Non
         raise AssertionError("una pregunta conceptual no debe ejecutar SQL")
 
     def redactar_stream(pregunta: str, filas):
-        assert filas[0]["respuesta_faro"] == (
-            "SIN_DATO significa que la fuente no tiene información para ese driver. "
-            "No equivale a cero y debe excluirse de promedios y agregaciones."
-        )
+        assert filas[0]["contexto_faro"] == "Convención SIN_DATO: nunca se imputa como cero."
         yield "SIN_DATO "
         yield "nunca es cero."
 

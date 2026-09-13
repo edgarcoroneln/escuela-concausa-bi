@@ -78,7 +78,16 @@ class ResultadoConsultaStream:
 
 
 def _preparacion_sin_sql(pregunta: str, contexto: str) -> PreparacionRedaccion:
-    """Fila de contexto conceptual (`NO_SQL_NECESARIO`), ya lista para la etapa de redacción."""
+    """Fila de contexto conceptual (`NO_SQL_NECESARIO`), ya lista para la etapa de redacción.
+
+    Caso especial de cobertura geográfica (2026-09-13, hallazgo de revisión del PR): para una
+    entidad fuera de `SCOPE_ENTIDADES` el contexto RAG no siempre deja claro que la ausencia es
+    una decisión de alcance y no un hueco de dato, así que aquí se responde explícito sin pasar
+    por el redactor. Para todo lo demás se conserva el contrato original: el contexto recuperado
+    viaja completo al redactor (`contexto_faro`), que es quien compone la respuesta -- una lista
+    fija de frases aquí solo cubriría un puñado de preguntas y dejaría sin responder cualquier
+    otra pregunta conceptual que el RAG sí sabe contestar (D3-D6, índice de riesgo, cobertura...).
+    """
     texto = pregunta.lower()
     entidades_fuera = {
         "oaxaca": "Oaxaca",
@@ -86,6 +95,7 @@ def _preparacion_sin_sql(pregunta: str, contexto: str) -> PreparacionRedaccion:
         "puebla": "Puebla",
         "yucatán": "Yucatán",
         "yucatan": "Yucatán",
+        "guerrero": "Guerrero",
     }
     for clave, entidad in entidades_fuera.items():
         if clave in texto:
@@ -103,28 +113,14 @@ def _preparacion_sin_sql(pregunta: str, contexto: str) -> PreparacionRedaccion:
                 ],
                 sql_generado=None,
             )
-    respuestas_conceptuales = (
-        (("qué eres", "que eres", "quién eres", "quien eres"),
-         "Soy el agente FARO: un asistente de análisis sobre escuelas, matrícula, riesgo y drivers del proyecto."),
-        (("qué es faro", "que es faro"),
-         "FARO es la plataforma Escuela como Sensor Social: analiza matrícula escolar y los drivers territoriales que pueden explicar su variación."),
-        (("qué significa sin_dato", "que significa sin_dato", "qué significa sin dato", "que significa sin dato"),
-         "SIN_DATO significa que la fuente no tiene información para ese driver. No equivale a cero y debe excluirse de promedios y agregaciones."),
-        (("qué es d1", "que es d1", "qué significa d1", "que significa d1"),
-         "D1 representa pobreza y rezago social a nivel municipal."),
-        (("qué es d2", "que es d2", "qué significa d2", "que significa d2"),
-         "D2 representa inseguridad del entorno escolar."),
-    )
-    for patrones, respuesta in respuestas_conceptuales:
-        if any(patron in texto for patron in patrones):
-            return PreparacionRedaccion(
-                pregunta=pregunta,
-                filas=[{"respuesta_faro": respuesta}],
-                sql_generado=None,
-            )
     return PreparacionRedaccion(
         pregunta=pregunta,
-        filas=[{"respuesta_faro": "Puedo explicar conceptos de FARO, pero para responder con datos necesito una pregunta sobre escuelas, matrícula, drivers, riesgo o cobertura."}],
+        filas=[
+            {
+                "contexto_faro": contexto,
+                "nota": "Respuesta conceptual basada en documentación de FARO, sin consulta SQL.",
+            }
+        ],
         sql_generado=None,
     )
 
@@ -258,10 +254,25 @@ def _preparar_para_redaccion(
 
     # La consulta puede devolver cientos de escuelas. Pasarlas todas al segundo llamado del LLM
     # dispara latencia y puede exceder el contexto; el SQL conserva el límite auditable y la
-    # respuesta se redacta sobre una muestra acotada.
+    # respuesta se redacta sobre una muestra acotada. Sin el total, el redactor no tiene forma de
+    # distinguir "hay 10 escuelas" de "muestro 10 de 237" (hallazgo de revisión del PR,
+    # 2026-09-13): se le pasa aparte, marcado explícitamente como metadato de muestreo.
+    filas_totales = list(filas)
+    muestra = filas_totales[:MAX_FILAS_REDACTOR]
+    filas_para_redactor = list(muestra)
+    if len(filas_totales) > len(muestra):
+        filas_para_redactor.append(
+            {
+                "_muestra_de_total": (
+                    f"Estas son {len(muestra)} filas de un total de {len(filas_totales)} que "
+                    "cumplen la consulta (limitada por auditoría, no por el resultado real). No "
+                    "afirmes que el total es el número de filas que ves aquí."
+                )
+            }
+        )
     return PreparacionRedaccion(
         pregunta=pregunta,
-        filas=list(filas)[:MAX_FILAS_REDACTOR],
+        filas=filas_para_redactor,
         sql_generado=sql_actual,
     )
 

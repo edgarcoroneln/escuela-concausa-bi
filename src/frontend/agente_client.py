@@ -141,14 +141,6 @@ def consultar_agente_stream(
 ) -> RespuestaAgente:
     """Consulta streaming y usa el endpoint síncrono si streaming aún no existe."""
     texto = _validar_pregunta(pregunta)
-    if os.environ.get("FARO_LOCAL_PUBLIC", "false").lower() == "true":
-        return consultar_agente(
-            api_base_url,
-            texto,
-            post=post,
-            access_token=access_token,
-            historial=historial,
-        )
     headers = {"Authorization": f"Bearer {access_token}"} if access_token else None
     sql_generado: str | None = None
     fuera_de_alcance = False
