@@ -13,10 +13,10 @@ tags: [devlog, us-121a, us-122a, ds-03, ds-05, ds-06, d3, d5, d6, produccion]
 
 → [[vault/_DevLog/_index|Volver al índice]]
 
-> **Corrección de Edgar Coronel (revisión de PR #358, 2026-09-13):** este DevLog originalmente
-> afirmaba que D6 ya estaba verificado "en producción" y proponía D5 v1 como mergeable. Las dos
-> cosas eran incorrectas y se corrigen abajo (secciones 1 y 2) tal como las señaló Edgar en su
-> revisión, antes de que él aprobara el PR.
+> **Corrección de Edgar Coronel (revisión de PR #358, 2026-09-13, dos rondas):** este DevLog
+> originalmente afirmaba que D6 ya estaba verificado "en producción" y proponía D5 v1 como
+> mergeable (ronda 1, secciones 1 y 2). En una segunda ronda, Edgar notó que DS-03 §11 tenía el
+> mismo problema con D3 (85.8%/84.6%/85.1% "en producción") -- corregido también (sección 3).
 
 ## Qué se hizo
 
@@ -26,8 +26,9 @@ tags: [devlog, us-121a, us-122a, ds-03, ds-05, ds-06, d3, d5, d6, produccion]
 2. **D5 (agua), v1 propuesto y RECHAZADO en revisión**: nuevo modelo `silver.agua_presa_entidad`
    (capacidad NAMO de presas por entidad, CONAGUA). Edgar (dueño de `fact_escuela_ciclo.sql`) lo
    rechazó en la revisión del PR #358 y se sacó de la rama — ver sección 2.
-3. **DS-03 (CEMABE)**: verificación de producción del hueco de cobertura de D3, documentada en el
-   propio archivo DS-03 (§11). Sin cambios respecto a la revisión de Edgar.
+3. **DS-03 (CEMABE)**: verificación del hueco de cobertura de D3, documentada en el propio
+   archivo DS-03 (§11). **Corregida en una segunda ronda de revisión de Edgar** -- mismo error
+   que D6: las cifras no eran de producción real. Ver sección 3.
 4. Traído a la rama el trabajo ya coordinado de Andrés González (fixture de Gold para su
    chat/agente Text-to-SQL local) — **aprobado por Edgar** en la misma revisión (alcance y datos:
    260 escuelas anonimizadas, sin coordenadas ni infraestructura). Ver también su propio DevLog.
@@ -78,26 +79,28 @@ insuficiente para esta entrega, no se adopta. Por su indicación, se sacó del P
 D5 sigue pendiente de una versión con el contrato real de DS-06 (diario/georreferenciado), no de
 este atajo por infraestructura instalada.
 
-## 3. DS-03: verificación de producción de D3, hipótesis descartadas con datos reales
+## 3. DS-03: verificación de la lógica de D3 — mismo error de "producción" que D6, corregido
 
 Investigación del mismo bug de Panorama de Riesgo: D3 también salía `SIN_DATO` para las 7
-escuelas de mayor riesgo. A diferencia de D6, el código no documenta a D3 como cobertura parcial
-esperada (CEMABE es censo nacional a nivel escuela). Verificado contra `gold.fact_escuela_ciclo`
-real:
+escuelas de mayor riesgo. **Corrección (Edgar, revisión de PR #358):** igual que con D6 arriba,
+las cifras de abajo (85.8%, 84.6%, y un "85.1% en producción" ya retirado) **no salieron de
+producción real** — vinieron del mismo entorno con `bronze.cemabe_2013` real cargado que se usó
+para D6, no de Cloud SQL de producción. Corregido en detalle en DS-03 §11; resumen:
 
-- Cobertura por fila de ciclo: **85.8%** OK. Por escuela (exigiendo OK en todos sus ciclos):
-  **84.6%** — casi idéntico porque `d3_cobertura` se une por `cct` contra `silver.cemabe` ya
-  deduplicada (una fila por escuela), así que no varía entre ciclos de una misma escuela.
-  Producción: **85.1%**. Las tres cifras consistentes entre sí.
-- Se investigaron y **descartaron** dos hipótesis previas que no se sostuvieron con datos reales:
-  un "56% por escuela" (la cifra real dio 84.6%) y un "~5% comunitario/CONAFE" (`sostenimiento`
-  en `gold.dim_escuela` solo admite `PÚBLICO`/`PRIVADO` por diseño de DS-02 — confirmado tanto en
-  la documentación como contra los datos reales, público 86.6% OK / privado 83.0% OK, sin ninguna
-  tercera categoría).
-- El hueco (~14-15%) coincide con el riesgo ya anotado en DS-03 §10: CCT ausentes del censo
-  CEMABE 2013 (reasignación de clave o escuelas creadas después del levantamiento).
-- **Conclusión, documentada en DS-03 §11: D3 no requiere fix de código ni recarga de
-  producción.**
+- Con censo real cargado (no producción): cobertura por fila de ciclo **85.8%** OK, por escuela
+  **84.6%** — esto confirma que el join/la lógica de D3 (unión por `cct` contra `silver.cemabe`
+  ya deduplicada) funciona bien cuando hay censo real. No dice nada sobre el estado actual de
+  producción.
+- Se investigaron y **descartaron** dos hipótesis previas: un "56% por escuela" (la cifra del
+  entorno con censo real dio 84.6%) y un "~5% comunitario/CONAFE" (`sostenimiento` en
+  `gold.dim_escuela` solo admite `PÚBLICO`/`PRIVADO` por diseño de DS-02 — esto sí es un hecho de
+  esquema, confirmado independientemente del entorno).
+- El hueco (~14-15%, con censo real cargado) coincide con el riesgo ya anotado en DS-03 §10: CCT
+  ausentes del censo CEMABE 2013.
+- **Conclusión corregida, documentada en DS-03 §11:** el join/la lógica de D3 no requiere fix de
+  código, pero **sí hace falta cargar el censo CEMABE 2013 real en el Bronze de producción**
+  (hoy solo tiene el fixture de 72 filas, igual que SINAICA en D6) — no es un pendiente ya
+  resuelto, es el mismo pendiente que D6.
 
 ## 4. Fixture de Gold para Andrés (C2), traído a la rama — aprobado por Edgar
 
@@ -118,8 +121,9 @@ DevLog.
 - D6: 49.1% OK en ese entorno (antes 1.3%) — confirmado con 3 consultas cruzadas (cobertura,
   drivers completos por fila, resumen por driver). **En producción sigue en `SIN_DATO`** hasta
   cargar Bronze real ahí y regenerar/importar Gold.
-- D3 (DS-03): cobertura verificada por tres vías independientes (fila/escuela/producción), ver
-  arriba — esto sí es contra producción real.
+- D3 (DS-03): **corregido** — la cobertura de arriba (85.8%/84.6%) se verificó contra el mismo
+  entorno no productivo que D6, no contra producción real (ver sección 3 y DS-03 §11). No hay
+  verificación confirmada contra producción real para D3.
 - `pytest tests/ -q`: **1322 passed** (confirmado por Edgar en su revisión del PR #358; la
   corrida anterior de esta rama, antes de traer `main`, había dado 1307 passed/10 skipped).
 - `python3 vault/_Meta/scripts/check_ownership.py --autor DianaVarela96 --rama dev/diana-alvarez --base origin/main`:
