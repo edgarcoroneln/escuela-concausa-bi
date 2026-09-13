@@ -636,6 +636,54 @@ def test_about_seccion_respeta_el_sobre_generico(client: TestClient) -> None:
         assert "tipo" in bloque
 
 
+def test_ninguna_advertencia_ni_celda_trae_markdown_crudo(client: TestClient) -> None:
+    """El frontend NO interpreta markdown en `advertencias` ni en celdas de tabla.
+
+    `ComoFunciona.jsx` pinta `{a}` y `BloqueAbout.jsx` pinta `{celda}`: texto plano. Un `**` o una
+    comilla invertida en esas cadenas **se ve literal en pantalla**, y las cifras de ML son justo
+    lo que va a leer el profesor. Detectado por Edgar Coronel al revisar el PR #350 — siete
+    cadenas lo traían.
+
+    Sólo se revisan esos dos lugares: los bloques `markdown` sí pasan por un renderer
+    (`MarkdownLite`), así que ahí el markdown es correcto y no debe prohibirse.
+    """
+    crudo = ("**", "`")
+    hallazgos: list[str] = []
+
+    for resumen in client.get(f"{API_PREFIX}/about/secciones").json():
+        seccion = client.get(f"{API_PREFIX}/about/secciones/{resumen['id']}").json()
+
+        for i, aviso in enumerate(seccion.get("advertencias", [])):
+            if any(m in aviso for m in crudo):
+                hallazgos.append(f"{seccion['id']} · advertencia[{i}]")
+
+        for j, bloque in enumerate(seccion["bloques"]):
+            if bloque["tipo"] != "tabla":
+                continue
+            for f, fila in enumerate(bloque["filas"]):
+                for c, celda in enumerate(fila):
+                    if any(m in celda for m in crudo):
+                        hallazgos.append(f"{seccion['id']} · bloque[{j}] fila[{f}] col[{c}]")
+
+    assert not hallazgos, (
+        "estas cadenas se verían con los asteriscos y comillas literales en pantalla, porque el "
+        f"frontend las pinta como texto plano: {hallazgos}"
+    )
+
+
+def test_los_bloques_markdown_si_pueden_traer_markdown(client: TestClient) -> None:
+    """El complemento del anterior: la prohibición es de `advertencias` y celdas, no general.
+
+    Si alguien "limpiara" también los bloques `markdown` para hacer pasar la prueba de arriba,
+    la sección perdería su formato sin que nada lo avise.
+    """
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    textos = [b["texto"] for b in bloques if b["tipo"] == "markdown"]
+    assert any("**" in t or "`" in t for t in textos), (
+        "ningún bloque markdown trae formato: revisa que no se haya limpiado de más"
+    )
+
+
 def test_about_seccion_inexistente_da_404(client: TestClient) -> None:
     r = client.get(f"{API_PREFIX}/about/secciones/no-existe")
     assert r.status_code == 404

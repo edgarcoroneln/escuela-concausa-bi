@@ -138,6 +138,11 @@ def test_un_resultado_con_la_base_caida_no_se_cachea() -> None:
     """Si se cacheara, la página seguiría diciendo "no disponible" después de que Postgres vuelva.
 
     Mismo criterio que `cache_predicciones.py`, que nunca cachea errores.
+
+    **Nota:** aquí el catálogo de Bronze también falla, así que `conteos_capas()` sale por su
+    `return` temprano y este caso **no** ejercita el `if not resultado.base_no_disponible`. Lo
+    cubre `test_una_caida_a_media_barrida_tampoco_se_cachea` (Edgar Coronel lo señaló al revisar
+    el PR #350).
     """
     motor = _MotorFalso(_error(OperationalError))
     repo = RepositorioAboutPostgres(engine=motor)
@@ -323,8 +328,35 @@ def test_la_seccion_distingue_las_dos_causas_en_su_advertencia() -> None:
     assert _advertencias_de_capas(False, ()) == []
 
     (caida,) = _advertencias_de_capas(True, ())
-    assert "no respondió" in caida and "no** porque las tablas no existan" in caida
+    assert "no respondió" in caida and "no porque las tablas no existan" in caida
 
     (lenta,) = _advertencias_de_capas(False, ("bronze.sesnsp",))
     assert "bronze.sesnsp" in lenta
     assert "no es que falten ni que la base esté caída" in lenta.lower()
+
+    # Estas cadenas las pinta el frontend como texto plano: nada de markdown (ver
+    # `test_ninguna_advertencia_ni_celda_trae_markdown_crudo` en el contrato).
+    for aviso in (caida, lenta):
+        assert "**" not in aviso and "`" not in aviso
+
+
+def test_una_caida_a_media_barrida_tampoco_se_cachea() -> None:
+    """El caso que faltaba: el catálogo responde y el fallo aparece en los `COUNT(*)`.
+
+    Así `conteos_capas()` **sí** llega a construir un `ConteosCapas` y pasa por el
+    `if not resultado.base_no_disponible` — la rama que el otro caso no tocaba, porque salía por
+    el `return` temprano del `except`. Un `OperationalError` **sin** `pgcode` es una caída, no un
+    timeout: la distinción es justo lo que decide si se cachea.
+    """
+    motor = _MotorFalso(_error(OperationalError), solo_en_conteos=True)
+    repo = RepositorioAboutPostgres(engine=motor)
+
+    resultado = repo.conteos_capas()
+    assert resultado.base_no_disponible is True, "sin pgcode es caída, no timeout"
+    assert resultado.filas, "el barrido llegó a construirse: el catálogo sí respondió"
+
+    tras_el_primero = len(motor.consultas)
+    repo.conteos_capas()
+    assert len(motor.consultas) > tras_el_primero, (
+        "la caída a media barrida quedó cacheada: la recuperación no se vería hasta vencer el TTL"
+    )

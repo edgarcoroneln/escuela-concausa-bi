@@ -470,10 +470,10 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     ["scikit-learn / XGBoost + MLflow", "Entrena y registra los 3 modelos de ML (ML-01/02/03)", "C3 · Andrés González Habib"],
                     ["FastAPI + OAuth2/JWT + RBAC", "Expone Gold, predicciones, el agente y esta misma sección", "C4 · Christian Ruiz"],
                     ["ChromaDB + sentence-transformers", "Recuperación de contexto (RAG) del agente conversacional", "C3 · Carlos Mayorga"],
-                    ["Apache Superset", "Motor de cubos y BI **interno**. Sus 10 dashboards siguen existiendo para el equipo; lo que se retiró (ADR-012) es su exposición embebida al usuario final", "C2 · Manuel Serranía / Marina García / Monserrat Miranda / Oscar Quiroz"],
+                    ["Apache Superset", "Motor de cubos y BI interno. Sus 10 dashboards siguen existiendo para el equipo; lo que se retiró (ADR-012) es su exposición embebida al usuario final", "C2 · Manuel Serranía / Marina García / Monserrat Miranda / Oscar Quiroz"],
                     ["React 19 + Vite (FARO Web)", "La interfaz del producto: las 7 pantallas del relato, el expediente de escuela, el asistente y el login", "E5 · Diana Alvarez"],
                     ["nginx", "Sirve la SPA como estático y hace de proxy a la API en el mismo origen (sin CORS, sin tokens en la URL)", "E5 · Luis Téllez"],
-                    ["Streamlit (shell histórico)", "Fue FARO Web hasta el 10-sep. **Retirado como interfaz del producto** (ADR-012, a petición del profesor tras la demo); el código sigue en `src/frontend/` mientras se completa la migración", "C2 · Manuel Serranía"],
+                    ["Streamlit (shell histórico)", "Fue FARO Web hasta el 10-sep. Retirado como interfaz del producto (ADR-012, a petición del profesor tras la demo); el código seguía en src/frontend/ hasta que se completó la migración", "C2 · Manuel Serranía"],
                     ["Docker + docker-compose / GCP Cloud Run", "Empaqueta y despliega todo el sistema con URL pública", "C5 · Luis Téllez"],
                 ],
             ),
@@ -742,16 +742,16 @@ def _advertencias_de_capas(sin_base: bool, lentas: tuple[str, ...]) -> list[str]
     avisos: list[str] = []
     if sin_base:
         avisos.append(
-            "Los conteos de esta sección no se pudieron leer: **la base de datos no respondió**. "
-            "Las filas de abajo aparecen como `SIN_DATO` por eso, **no** porque las tablas no "
-            "existan — es un problema de disponibilidad, no del esquema. El resto de la sección "
-            "es contenido fijo y sí es correcto."
+            "Los conteos de esta sección no se pudieron leer: la base de datos no respondió. "
+            "Las filas de abajo aparecen como SIN_DATO por eso, no porque las tablas no existan "
+            "— es un problema de disponibilidad, no del esquema. El resto de la sección es "
+            "contenido fijo y sí es correcto."
         )
     if lentas:
         avisos.append(
             "Estas tablas no alcanzaron a contarse dentro del tiempo permitido: "
-            + ", ".join(f"`{t}`" for t in lentas)
-            + ". **No es que falten ni que la base esté caída**: son tan grandes que su conteo "
+            + ", ".join(lentas)
+            + ". No es que falten ni que la base esté caída: son tan grandes que su conteo "
             "excede el límite que esta sección se impone para no colgar una petición pública."
         )
     return avisos
@@ -1062,13 +1062,13 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
         ],
         advertencias=[
             (
-                "Las cifras salen de la corrida real sobre `gold.features_escuela` (136,046 filas, "
-                "3 ciclos), no de datos sintéticos. Los tres Model Cards de "
-                "`vault/15_ML_Models/` siguen en `in_review` y **están más atrasados que esta "
-                "tabla**: la ficha de ML-01 todavía afirma que cumple `MAE < 0.03` y que el "
-                "entrenamiento real está bloqueado, dos cosas que dejaron de ser ciertas el "
-                "5 de septiembre. Actualizarlas es de su dueño (US-324). El Silhouette de ML-03 sale del "
-                "JSON de la comparación de `RISK-011` (0.4620526551), no de su ficha."
+                "Las cifras salen de la corrida real sobre gold.features_escuela (136,046 filas, "
+                "3 ciclos), no de datos sintéticos. Los tres Model Cards de vault/15_ML_Models/ "
+                "siguen en in_review y están más atrasados que esta tabla: la ficha de ML-01 "
+                "todavía afirma que cumple MAE < 0.03 y que el entrenamiento real está "
+                "bloqueado, dos cosas que dejaron de ser ciertas el 5 de septiembre. "
+                "Actualizarlas es de su dueño (US-324). El Silhouette de ML-03 sale del JSON de "
+                "la comparación de RISK-011 (0.4620526551), no de su ficha."
             ),
         ],
         bloques=[
@@ -1078,20 +1078,20 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
                     [
                         "ML-01 · Regresión de matrícula",
                         "Predice la variación de matrícula por escuela (o municipio × nivel); su salida se transforma en un índice de riesgo [0,1].",
-                        "**MAE 0.1415** sobre Gold real, con pérdida absoluta. **No alcanza su umbral** (`ML-01_mae` = 0.03, 4.7× por encima) y se reporta así. Lo que sí supera es el baseline —predecir la media histórica—, por **11.04 %** (0.141458 contra 0.159223); con pérdida cuadrática no lo lograba.",
+                        "MAE 0.1415 sobre Gold real, con pérdida absoluta. No alcanza su umbral (ML-01_mae = 0.03, 4.7× por encima) y se reporta así. Lo que sí supera es el baseline —predecir la media histórica—, por 11.04 % (0.141458 contra 0.159223); con pérdida cuadrática no lo lograba.",
                         "En producción",
                     ],
                     [
                         "ML-02 · Clasificación del driver dominante",
                         "Clasifica cuál de los 6 drivers explica mejor el riesgo de una escuela — el corazón prescriptivo del proyecto.",
-                        "**F1 macro 0.8333** sobre Gold real, por encima de su umbral de 0.60. **Salvedad que hay que leer**: se entrena contra `driver_dominante`, una etiqueta derivada de los propios drivers, así que la cifra mide capacidad de recuperar una etiqueta determinista, **no de predecir un driver observado en campo**.",
+                        "F1 macro 0.8333 sobre Gold real, por encima de su umbral de 0.60. Salvedad que hay que leer: se entrena contra driver_dominante, una etiqueta derivada de los propios drivers, así que la cifra mide capacidad de recuperar una etiqueta determinista, no de predecir un driver observado en campo.",
                         "En producción",
                     ],
                     [
                         "ML-03 · Clustering de escuelas",
                         "Agrupa escuelas con perfiles similares, independientemente de su índice de riesgo directo.",
-                        "**Silhouette 0.4621** con `k=2` sobre el vector D1–D4 (`DEC-027`). El corte anterior —`k=3`, Silhouette 0.1086, con `indice_completitud_drivers` en el vector— se conserva como registro histórico y **no como corte válido**: su cluster 2 coincidía con la disponibilidad de D6, no con un perfil real de escuela.",
-                        "**No operativo esta entrega** (`DEC-027`)",
+                        "Silhouette 0.4621 con k=2 sobre el vector D1–D4 (DEC-027). El corte anterior —k=3, Silhouette 0.1086, con indice_completitud_drivers en el vector— se conserva como registro histórico y no como corte válido: su cluster 2 coincidía con la disponibilidad de D6, no con un perfil real de escuela.",
+                        "No operativo esta entrega (DEC-027)",
                     ],
                 ],
             ),
