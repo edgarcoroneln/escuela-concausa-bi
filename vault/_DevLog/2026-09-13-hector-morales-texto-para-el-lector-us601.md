@@ -80,3 +80,31 @@ Las dos **falsificadas**: reintroducir cada defecto las reprueba.
 - La ficha de ML-01 de Carlos Mayorga **sigue sin PR**: su rama tiene el commit con las cifras
   correctas, pero no llega a `main`. Mientras tanto la advertencia sobre fichas desactualizadas
   sigue siendo cierta; cuando mergee conviene revisarla.
+
+## Adenda — revisión de Marina García del Buey (PR #357)
+
+**Aprobó**, y aportó una mejora que cierra la mitad que le faltaba a la guarda.
+
+**Su hallazgo:** `_FRASES_PARA_EL_EQUIPO` caza frases pero **no IDs**. Y una historia de usuario en
+texto público es el mismo defecto sin ninguna de las once frases: *«esto llega en US-410»* pasaba en
+verde. **Comprobado inyectándolo** antes de darle la razón: las dos guardas anteriores lo dejaban
+pasar.
+
+Su criterio para la línea es el correcto y lo adopto tal cual: **una historia de usuario no es una
+decisión, es seguimiento de trabajo interno**. Un `ADR-` o un `DEC-` explican *por qué* el sistema
+es como es y le sirven al lector; un `US-` sólo le sirve a quien lo trabaja.
+
+`test_ningun_texto_visible_cita_un_id_de_trabajo_interno` prohíbe `US-`, `BUG-`, `RISK-` y `TASK-`
+en advertencias, markdown y celdas; `ADR-` y `DEC-` siguen permitidos. Le añadí **el complemento**,
+por el mismo motivo que al de markdown: `test_citar_decisiones_sigue_permitido` reprueba si alguien
+hace pasar la primera borrando también las citas de procedencia. Las dos falsificadas.
+
+**El texto ya estaba limpio** —el barrido da 16 `ADR-` y 2 `DEC-`, cero prohibidos—, así que esto es
+prevención, no corrección.
+
+**Su segundo hallazgo, que no es de este PR:** el criterio encontró un defecto en código ajeno.
+`frontend/src/pages/ExpedienteEscuela.jsx:587` muestra al usuario *«las columnas shap_d1…shap_d6
+todavía no están pobladas en producción (Equipo 4, US-631)»* — nombres de columna, número de
+historia y nombre de otro equipo, en la pantalla que ve el evaluador. **Verificado, y es exactamente
+lo que ella cita.** Es alcance de Diana Alvarez y Marina ya se lo pasó; aquí queda registrado
+porque muestra que la regla sirve fuera del archivo donde nació.
