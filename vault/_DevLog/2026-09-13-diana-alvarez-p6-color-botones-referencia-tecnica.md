@@ -74,7 +74,7 @@ habilitar el item, no fusionar 2 definiciones. Con el PR #350 ya mergeado a `mai
   con la etiqueta "Referencia Técnica" duplicada -- se consolidó en un solo arreglo, un
   solo bloque de render.
 
-## 4. Merge de `main`, y un hallazgo sin resolver: `check_ownership.py` reprueba 2 archivos
+## 4. Merge de main, y hallazgo resuelto: 2 archivos fuera de alcance retirados
 
 `git merge origin/main` sobre `dev/diana-alvarez` trajo, además del PR #350, todo lo demás
 que se mergeó a `main` desde el último `merge-base` (US-405/BUG-079 de Luis Téllez, US-601
@@ -85,9 +85,7 @@ Al correr `check_ownership.py` contra esta rama para preparar el PR, **reprueba 
 de un commit anterior de este mismo día** (`24a00bd`, antes de esta sesión):
 `diagnostico_duplicado_cct.sql` (raíz, sin dueño en ningún verde/amarillo/comunes) y
 `vault/13_Reports/Recortes_Pendientes_Junta_2026-09-12.md` (verde exclusivo de Edgar
-Coronel). **No resuelto en esta sesión** -- necesita una decisión de Diana (moverlos a otra
-rama del dueño real, o sacarlos de este PR) antes de abrir el PR, porque el gate de
-propiedad no deja mergear así.
+Coronel). **Resuelto**: los 2 archivos se retiraron de esta rama en el commit db9e20a1 (fix(ownership): saca de dev/diana-alvarez 2 archivos fuera de mi alcance), antes de abrir este PR.
 
 ## Verificación
 
@@ -96,11 +94,14 @@ propiedad no deja mergear así.
 - `git diff --check` limpio ✅
 - `python3 vault/_Meta/scripts/vault_lint.py .` limpio (solo un archivo ajeno al repo,
   sin trackear, generado por la propia app de escritorio -- no viaja en ningún commit) ✅
-- `python3 vault/_Meta/scripts/check_ownership.py` -- ❌ 2 archivos fuera de alcance (ver
-  punto 4), sin resolver
-- `npm run build` -- no se pudo correr desde este entorno: error de binding nativo de
-  `rolldown`/npm en `node_modules` (bug conocido de npm con dependencias opcionales), no
-  relacionado con este cambio -- pendiente que Diana lo confirme desde su Mac
+- - `python3 vault/_Meta/scripts/check_ownership.py --autor DianaVarela96 --rama dev/diana-alvarez --base origin/main`
+  ✅ Identidad, rama y alcance correctos. Los 2 archivos fuera de alcance
+  (`diagnostico_duplicado_cct.sql`, `vault/13_Reports/Recortes_Pendientes_Junta_2026-09-12.md`)
+  fueron retirados de esta rama en el commit `db9e20a1`.
+- `npm run build`
+  ✅ built in 635ms (corrido por Diana Alvarez, 13-sep-2026, desde su Mac).
+- `pytest tests/ -q`
+  ✅ 1307 passed, 10 skipped, 0 failed (corrido por Diana Alvarez, 13-sep-2026, desde su Mac).
 - `pytest tests/ -q` -- no se corrió desde este entorno (el `.venv` del repo apunta a un
   intérprete de macOS que no existe en esta VM Linux) -- pendiente que Diana lo confirme
 - Balance de llaves/paréntesis/corchetes no se verificó por separado en esta sesión (los
