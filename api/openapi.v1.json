@@ -246,10 +246,17 @@
             "title": "Es Estimado Por Grupo"
           },
           "indice_completitud_drivers": {
-            "maximum": 1.0,
-            "minimum": 0.0,
-            "title": "Indice Completitud Drivers",
-            "type": "number"
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indice Completitud Drivers"
           },
           "indice_riesgo": {
             "anyOf": [
@@ -285,6 +292,18 @@
               }
             ],
             "title": "Longitud"
+          },
+          "matricula_ciclo_anterior": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricula Ciclo Anterior"
           },
           "matricula_total": {
             "minimum": 0.0,
@@ -306,6 +325,18 @@
           "tiene_prediccion": {
             "title": "Tiene Prediccion",
             "type": "boolean"
+          },
+          "variacion_matricula_alumnos": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** (matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, que si es una razon en [-1, 1].",
+            "title": "Variacion Matricula Alumnos"
           }
         },
         "required": [
@@ -315,8 +346,7 @@
           "cve_mun",
           "matricula_total",
           "tiene_prediccion",
-          "sostenimiento",
-          "indice_completitud_drivers"
+          "sostenimiento"
         ],
         "title": "EscuelaDetalleOut",
         "type": "object"
@@ -335,6 +365,72 @@
             "title": "Cve Mun",
             "type": "string"
           },
+          "d1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D1"
+          },
+          "d2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D2"
+          },
+          "d3": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D3"
+          },
+          "d4": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D4"
+          },
+          "d5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D5"
+          },
+          "d6": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D6"
+          },
           "driver_dominante": {
             "anyOf": [
               {
@@ -345,6 +441,19 @@
               }
             ],
             "title": "Driver Dominante"
+          },
+          "indice_completitud_drivers": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indice Completitud Drivers"
           },
           "indice_riesgo": {
             "anyOf": [
@@ -381,6 +490,18 @@
             ],
             "title": "Longitud"
           },
+          "matricula_ciclo_anterior": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricula Ciclo Anterior"
+          },
           "matricula_total": {
             "minimum": 0.0,
             "title": "Matricula Total",
@@ -397,6 +518,18 @@
           "tiene_prediccion": {
             "title": "Tiene Prediccion",
             "type": "boolean"
+          },
+          "variacion_matricula_alumnos": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** (matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, que si es una razon en [-1, 1].",
+            "title": "Variacion Matricula Alumnos"
           }
         },
         "required": [
@@ -526,6 +659,7 @@
             "type": "integer"
           },
           "variacion_matricula": {
+            "description": "Variacion agregada como **razon** en [-1, 1] (razon de sumas: SUM(matricula_total)/SUM(matricula_ciclo_anterior) - 1). -0.00496 es -0.496 %. Ojo: EscuelaOut.variacion_matricula_alumnos es otra unidad -- alumnos absolutos.",
             "maximum": 1.0,
             "minimum": -1.0,
             "title": "Variacion Matricula",
@@ -566,10 +700,17 @@
       "MunicipioOut": {
         "properties": {
           "cve_ent": {
-            "maxLength": 2,
-            "minLength": 2,
-            "title": "Cve Ent",
-            "type": "string"
+            "anyOf": [
+              {
+                "maxLength": 2,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cve Ent"
           },
           "cve_mun": {
             "maxLength": 5,
@@ -589,8 +730,15 @@
             "title": "Indice Rezago Social"
           },
           "nombre_entidad": {
-            "title": "Nombre Entidad",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Entidad"
           },
           "nombre_municipio": {
             "title": "Nombre Municipio",
@@ -622,9 +770,7 @@
         },
         "required": [
           "cve_mun",
-          "nombre_municipio",
-          "cve_ent",
-          "nombre_entidad"
+          "nombre_municipio"
         ],
         "title": "MunicipioOut",
         "type": "object"
