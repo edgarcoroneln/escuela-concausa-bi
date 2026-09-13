@@ -405,7 +405,10 @@ def test_stream_respuesta_directa_sin_sql_transmite_desde_contexto_faro() -> Non
         raise AssertionError("una pregunta conceptual no debe ejecutar SQL")
 
     def redactar_stream(pregunta: str, filas):
-        assert filas[0]["contexto_faro"] == "Convención SIN_DATO: nunca se imputa como cero."
+        assert filas[0]["respuesta_faro"] == (
+            "SIN_DATO significa que la fuente no tiene información para ese driver. "
+            "No equivale a cero y debe excluirse de promedios y agregaciones."
+        )
         yield "SIN_DATO "
         yield "nunca es cero."
 

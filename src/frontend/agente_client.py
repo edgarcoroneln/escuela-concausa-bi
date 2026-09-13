@@ -12,7 +12,7 @@ import httpx
 
 MAX_TURNOS_HISTORIAL = 10
 MAX_LARGO_TURNO = 500
-API_TIMEOUT_S = float(os.environ.get("FARO_API_TIMEOUT_S", "120"))
+API_TIMEOUT_S = float(os.environ.get("FARO_API_TIMEOUT_S", "15"))
 
 
 @dataclass(frozen=True)
