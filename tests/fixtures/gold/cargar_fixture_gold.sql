@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS gold.fact_escuela_ciclo (
     id_ciclo                   TEXT,
     matricula_total            INTEGER,
     matricula_ciclo_anterior   INTEGER,
-    variacion_matricula        INTEGER,
+    variacion_matricula        DOUBLE PRECISION,
     indice_completitud_drivers DOUBLE PRECISION,
     d1 DOUBLE PRECISION,
     d2 DOUBLE PRECISION,
