@@ -284,3 +284,6 @@ P5 (§2) y cualquier referencia de navegación (logo, breadcrumbs) que apunte a 
 - **Cobertura parcial agregada:** cuando `indice_completitud_drivers` es bajo para una escuela, se
   comunica como evidencia incompleta, igual que un driver individual en `SIN_DATO`, nunca como ausencia
   del problema.
+- **Orden de tabulación** (hallazgo del gate de Marina, `03_Visual_Identity.md` §6): sigue el orden de
+  lectura de cada pantalla; los controles flotantes —Asistente FARO y el enlace a "Cómo funciona"— van
+  al final, después de todo el contenido de la pantalla. Una sola regla para las 7, no una por pantalla.

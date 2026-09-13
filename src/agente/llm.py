@@ -130,12 +130,13 @@ def generar_sql_con_llm(
     """Genera SQL estructurado; `preparar_sql_seguro` conserva la autoridad final."""
     if not prompt_sistema.strip() or not pregunta.strip():
         raise ValueError("El prompt y la pregunta no pueden estar vacios.")
+    mensaje_usuario = (
+        "Genera una sola consulta SQL para responder la pregunta. "
+        "Devuelve exclusivamente el campo sql.\n\nPregunta: " + pregunta
+    )
     objeto = _solicitar_objeto(
         prompt_sistema=prompt_sistema,
-        mensaje_usuario=(
-            "Genera una sola consulta SQL para responder la pregunta. "
-            "Devuelve exclusivamente el campo sql.\n\nPregunta: " + pregunta
-        ),
+        mensaje_usuario=mensaje_usuario,
         formato=_FORMATO_SQL,
         cliente=cliente,
     )

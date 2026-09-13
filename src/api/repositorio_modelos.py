@@ -96,6 +96,7 @@ class RepositorioModelosPostgres:
                 predicciones.c.mlflow_run_id,
                 recomendaciones.c.driver_dominante,
                 recomendaciones.c.recomendacion,
+                recomendaciones.c.prioridad,
                 *(recomendaciones.c[col] for col in COLUMNAS_SHAP),
             )
             .select_from(

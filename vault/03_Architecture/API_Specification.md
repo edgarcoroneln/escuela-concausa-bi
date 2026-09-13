@@ -3,11 +3,11 @@ id: DOC-APISPEC
 title: "API Specification — FARO"
 owner: "Karla Alejandra Monter Benitez"
 status: in_review
-version: "1.2"
+version: "1.4"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/03_Architecture/Data_Model"]
-traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416"]
-last_reviewed: "2026-09-03"
+traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416", "US-305"]
+last_reviewed: "2026-09-12"
 tags: [architecture, api, contract, fastapi, oauth2]
 ---
 
@@ -136,6 +136,15 @@ con la política vigente. Sin `redirect`, `/auth/callback` sigue devolviendo el 
 | GET | `/health` | público | — | `HealthOut` | 200 |
 | GET | `/version` | público | — | `VersionOut` | 200 |
 
+**`/version` publica los cortes del nivel de atención (2026-09-11, US-621).** `VersionOut.cortes_atencion`
+trae `alta` (0.50, `DEC-019`), `media` (0.30) y `ancla_calibracion` (0.60, `DEC-006`). Son
+**definiciones, no datos**: cambian con una decisión, no con el Gold, y por eso viajan en un endpoint
+público — el front necesita etiquetar **antes** de iniciar sesión. Existen en el contrato porque las
+dos constantes viven en capas distintas del repo (la línea de alerta en la API, la matrícula estable
+en `src/modelos/riesgo.py`, alcance de C3) y **teclearlas en el front repetiría `BUG-058`**.
+`ancla_calibracion` **no es un corte de etiqueta**: se expone para que el glosario de la UI pueda
+explicar por qué DB-09 dice `media` donde el front dice *atención alta*, sin escribir el 0.60 a mano.
+
 ### 3.2 Autenticación `/auth/*`
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
@@ -174,14 +183,70 @@ ciclos materializados a la vez (**20.6M en vez de ~7M reales** para las 4 entida
 > evitan en otras capas. **No es un bug si una entidad rezagada sale vacía sin `ciclo` explícito**
 > — es el filtro correcto y hay que pasar `ciclo` explícito para leer su último dato disponible.
 
+**Los seis drivers y la comparación de matrícula en `EscuelaOut` (2026-09-12, US-621).** `d1`..`d6`,
+`indice_completitud_drivers`, `matricula_ciclo_anterior` y `variacion_matricula_alumnos` **suben del
+detalle al listado**. Salen de `gold.fact_escuela_ciclo`, que el listado ya tiene unida, así que **no agregan
+ninguna consulta**; siguen en el detalle, heredados de `EscuelaOut`.
+
+- **La matriz de drivers y el mapa se llenan con UNA petición**, no una por escuela.
+- `indice_completitud_drivers` pasa a **opcional**, y es deliberado: era obligatorio en el detalle, y
+  `BUG-077` mostró lo que cuesta — un nulo en una fila reventaba la página completa. En el listado el
+  radio de daño es mayor.
+- **`null` es SIN_DATO, nunca cero** (CLAUDE.md §4): D5 es regional y D6 cubre ~80 zonas urbanas, así
+  que el hueco es el caso **normal**. Un `0.0` afirmaría que ese driver no influyó (`BUG-055`).
+- **`variacion_matricula_alumnos` son alumnos, no un porcentaje — y por eso lo dice el nombre.**
+  Es `matricula_total - matricula_ciclo_anterior` tal como lo materializa `gold.fact_escuela_ciclo`
+  (rango observado −24 a 24), mientras que **`KpisOut.variacion_matricula` es una razón** en [−1, 1]
+  (−0.00496 = −0.496 %). Dos unidades con el mismo nombre en el mismo contrato es exactamente el hueco
+  de `BUG-031`: la especificación del cubo asumió que la columna ya era una razón y **seis tableros
+  pintaron −54.5 % donde el valor real era −0.19 %** (factor 287). Ahí la unidad estaba documentada y
+  aun así se asumió mal; el nombre es la única defensa que no se puede dejar de leer. Hallado por Edgar
+  (QA) al revisar el PR, antes de que el campo llegara a `main`.
+  **Para el porcentaje por escuela:** `matricula_total / matricula_ciclo_anterior - 1`, con guarda de
+  denominador cero. La API **no** lo deriva a propósito: el agregado correcto es razón de sumas, no
+  promedio de razones, y publicar un porcentaje por escuela invita justo a promediarlo (`BUG-031` otra vez).
+- **`matricula_ciclo_anterior` / `variacion_matricula_alumnos` NO son una serie histórica.** Son dos puntos:
+  con ellos se dibuja un **cambio**, no una tendencia, y así deben presentarse. Es lo más cercano que
+  existe hoy — `/series` sigue fuera de alcance (ver abajo) y la gráfica de `US-212` vivía en un cubo
+  de Superset, retirado por `ADR-012`. `fact` ya materializaba las dos columnas (`BUG-031`).
+  `matricula_ciclo_anterior` es `null` en el primer ciclo materializado de una escuela, y entonces
+  `variacion_matricula_alumnos` no significa nada.
+- Fijado por `tests/test_api_contract.py::test_escuelas_listado_trae_los_seis_drivers`,
+  `::test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior` y
+  `::test_la_variacion_por_escuela_y_la_de_kpis_no_comparten_nombre` — esta última falla si el nombre
+  ambiguo vuelve al contrato **o** si el valor deja de ser la diferencia en alumnos.
+
+**`latitud` y `longitud` en `EscuelaOut` (2026-09-11, US-621 — mapa de riesgo del frontend):** las
+coordenadas **suben del detalle al listado**. Antes, pintar los 7 casos del storytelling costaba 7
+llamadas a `/escuelas/{cct}`, y el mapa de una entidad completa, una por escuela. `dim_escuela` ya las
+tiene y el listado ya hace ese JOIN, así que **no agrega ninguna consulta**. Siguen en el detalle: se
+heredan de `EscuelaOut`, no se movieron. `None` es `SIN_DATO` real —hay CCT sin georreferencia— y el
+cliente debe **omitir** esas escuelas del mapa, nunca dibujarlas en el `(0, 0)`. Fijado por
+`tests/test_api_contract.py::test_escuelas_listado_trae_coordenadas`.
+
+**`cve_ent`/`nombre_entidad` son `null` cuando no hay dato, no un 500 (2026-09-12).** Al declararlos
+obligatorios, una sola fila de `gold.dim_municipio` con la entidad en NULL reventaba la validación de
+salida y `/municipios` respondía **500 para la página completa**: un hueco en una fila tumbaba el
+listado entero. Es la regla de cobertura parcial del proyecto — donde no hay dato se declara `null`,
+igual que `poblacion`, `indice_rezago_social` y `pobreza_pct`, y el cliente pinta el municipio sin la
+etiqueta de entidad en vez de quedarse sin tabla. Las claves **siempre están presentes**: el hueco se
+declara, no se omite. Fijado por `tests/test_api_contract.py::test_un_municipio_sin_entidad_degrada_a_sin_dato`.
+
+**`cve_ent` y `nombre_entidad` en `MunicipioOut` (2026-09-11, US-621 — pedido de Diana Alvarez):**
+la consulta ya los traía (`select(dim_municipio)` devuelve la fila completa), pero el contrato no los
+declaraba, así que el cliente tenía que mantener su propio mapa de 4 claves a nombre de entidad, o
+pintar `"09"` en una etiqueta. Viajan **en la lista y en el detalle**: solo en el detalle costarían
+una petición por fila. Es **aditivo** — ningún cliente existente cambia — y también se puede ordenar
+por ellos. Fijado por `tests/test_api_contract.py::test_municipio_trae_la_entidad_y_su_clave`.
+
 **Ordenamiento (Decisión 3 de US-411, Karla Monter, 2026-08-20 — avisado a C2/C3):**
 - `order_by` es opcional; si se omite, el orden es el natural de la consulta (no garantizado
   entre llamadas). `order` es `asc` (por defecto) o `desc`. Un `order_by` fuera de la whitelist
   responde `422` (Pydantic `Literal`, no se acepta texto libre → nunca hay SQL inyectado por este
   parámetro).
 - `/escuelas` acepta `order_by ∈ {cct, nombre, matricula_total, indice_riesgo}`.
-- `/municipios` acepta `order_by ∈ {cve_mun, nombre_municipio, poblacion, indice_rezago_social,
-  pobreza_pct}`.
+- `/municipios` acepta `order_by ∈ {cve_mun, nombre_municipio, cve_ent, nombre_entidad, poblacion,
+  indice_rezago_social, pobreza_pct}`.
 - Los valores `SIN_DATO` (`indice_riesgo`/`indice_rezago_social`/`pobreza_pct` en `None`) siempre
   quedan **al final**, sin importar `asc`/`desc` — nunca se ordenan como si fueran cero.
 
@@ -207,6 +272,24 @@ C2/C3), no se retoma como pendiente de US-411.
 
 - `PrediccionOut` combina **ML-01** (`indice_riesgo`), **ML-02** (`driver_dominante` + recomendación)
   y **ML-03** (`cluster`, `None` mientras ML-03 no exista -- US-321, BUG-010).
+- **`prioridad`:** `"alta" | "media" | "baja"` de `gold.recomendaciones`. Es **procedencia auditable
+  de Gold** y la paridad con la columna que muestra DB-09.
+  > **El frontend NO etiqueta con este campo.** La etiqueta de producto es el **nivel de atención**
+  > (`DEC-023`), que el front calcula desde `indice_riesgo` con los cortes de `/version`
+  > (`cortes_atencion`). El paquete de UX lo dice literal: a esa etiqueta *"no se le dice prioridad …
+  > esa palabra nombra una columna de Gold que usa otro corte y que el front no consume"*
+  > (`00_Storytelling_Scope.md` §5.3.bis).
+  >
+  > **Por qué difieren hoy:** `publicar_gold.prioridad_de_riesgo()` llama `alta` solo desde el **ancla
+  > de la sigmoide** (0.60, calibración de `DEC-006`) y el máximo que ML-01 predice sobre el Gold real
+  > es **0.5717**, así que **ninguna de las 45,276 filas es `alta`** y la tarjeta de DB-09 lee 0
+  > (`BUG-063`). **`DEC-026`** alinea la columna a la línea de alerta (0.50) y republica Gold; hasta
+  > que eso corra, este campo dirá `media` donde el front dice *atención alta*. El cambio es de C3
+  > (`src/modelos/publicar_gold.py:197`) y **no altera este contrato**.
+  >
+  > Es `StrictStr | None`, no un `Literal`: el valor lo escribe C3 en Gold, y uno inesperado debe
+  > poder leerse y verse, no reventar la lectura con un 500. Sin fila de recomendación viaja `None`,
+  > mismo criterio `SIN_DATO` que `cluster`.
 - **`/predicciones/{cct}/explicacion` sirve contribuciones SHAP reales** desde el 2026-09-05
   (`BUG-053` cerrado). Lee `gold.recomendaciones.shap_d1..shap_d6`, que persiste `publicar_gold.py`
   a partir de `entrenar_ml02.explicar_driver` (C3). **Reutiliza la misma fila** que
@@ -249,40 +332,45 @@ C2/C3), no se retoma como pendiente de US-411.
 | Método | Ruta | Rol | Request | Response | Códigos |
 |---|---|---|---|---|---|
 | POST | `/agente/consulta` | ciudadano | `AgenteConsultaIn` | `AgenteRespuestaOut` | 200, 401, 422 |
-| POST | `/agente/consulta/stream` | ciudadano | `AgenteConsultaIn` | SSE (`meta`/`fragmento`/`fin`) | 200, 401, 422 |
+| POST | `/agente/consulta/stream` | ciudadano | `AgenteConsultaIn` | `text/event-stream` (SSE) | 200, 401, 422 |
 
 - El agente responde en lenguaje natural sobre Gold y devuelve la consulta generada para auditoría.
   **Nunca** ejecuta escritura/borrado; rechaza preguntas fuera de alcance (`fuera_de_alcance: true`).
 
-#### `/agente/consulta/stream` — Server-Sent Events (US-305, 2026-09-12)
+#### `/agente/consulta/stream` — la respuesta por Server-Sent Events (US-305, Fase 3, 2026-09-11)
 
-Mismo contrato de entrada que `/agente/consulta` (`AgenteConsultaIn`: `pregunta`, `contexto`,
-`historial`) y **los mismos guardarraíles** — internamente llama a la misma función de resolución,
-así que el filtro de intención (P-13), `preparar_sql_seguro` y la degradación segura ante fallas son
-idénticos. La autenticación (`Authorization: Bearer`) se hereda igual, vía `require_lectura` a nivel
-de router (§2).
+Mismos guardarraíles, mismo RBAC y **mismo cuerpo** (`contexto`, `historial`) que `/consulta`. Lo
+único que cambia es cómo viaja la salida: el SQL se genera y valida completo antes de emitir nada,
+y solo la **redacción final** se transmite según la produce el LLM.
 
-`Content-Type: text/event-stream`. Tres tipos de evento, en este orden:
-
-| Evento | Cardinalidad | `data` |
+| Evento | Cuántas veces | `data` |
 |---|---|---|
-| `meta` | 1, primero | `{"sql_generado": str \| null, "fuera_de_alcance": bool}` — igual que en `AgenteRespuestaOut`, para que el cliente decida el trato de la respuesta sin esperar el último fragmento |
-| `fragmento` | 0 o más | `{"texto": str}` — un trozo de la respuesta final, en orden |
-| `fin` | 1, último | `{}` — cierre del stream |
+| `meta` | una, al inicio | `{"sql_generado": str \| null, "fuera_de_alcance": bool}` — los campos de `AgenteRespuestaOut` |
+| `fragmento` | una o más | `{"texto": str}` — concatenados en orden forman la respuesta |
+| `fin` | una, al final | `{}` |
 
-La redacción final sí transmite en *streaming* real, token a token, según los cede el LLM
-(`procesar_consulta_stream` + `redactar_respuesta_stream_con_llm`, `src/agente/servicio.py` y
-`src/agente/llm.py` — Fase 3, 2026-09-12). La generación y ejecución de SQL no se transmiten (un SQL
-a medias no sirve de nada): solo la redacción. Cuando la pregunta se resuelve **antes** de llegar a
-esa etapa (rechazo de guardarraíl, SQL rechazado, degradación), el mensaje fijo se trocea en
-fragmentos de tamaño fijo (`TAM_FRAGMENTO_SSE`, `src/api/v1/agente.py`) solo para mantener la misma
-cadencia incremental — ahí sí es un trozado artificial, no streaming del LLM.
+- **Siempre llegan los tres**, también si algo falla a medio camino: el fallo se convierte en un
+  `fragmento` con el mensaje genérico y el `fin` llega igual. El cliente nunca queda esperando.
+- Ningún evento lleva trazas, prompts ni SQL crudo de error.
+- Un `\n` dentro del texto viaja escapado en el JSON del `data`, así que no puede falsificar un evento.
+- Cabeceras: `Cache-Control: no-cache` y `X-Accel-Buffering: no` (nginx no acumula la respuesta).
+- **Con sesión por cookie** (`ADR-012`), el cliente usa `fetch()` con `credentials: "same-origin"`
+  y lee el cuerpo como stream. `EventSource` no sirve aquí porque solo hace `GET`.
+- Fijado por `tests/test_agente_endpoint.py` (sección Fase 3).
 
-Si el redactor falla **antes** de ceder cualquier fragmento (LLM caído/timeout), se degrada con un
-único fragmento de respaldo (nunca un stream vacío, nunca el detalle interno). Si falla **a medias**
-(ya había cedido texto real), el stream simplemente se detiene ahí: el cliente conserva la respuesta
-parcial ya recibida, sin agregar un mensaje de error a media oración. El frontend conserva el
-*fallback* a `/agente/consulta` si recibe 404.
+**Degradación distinguible y observabilidad (Fase 4, 2026-09-11 — Karla Monter, C4).** Aplica a
+`/consulta` **y** a `/consulta/stream`. Hay **dos** mensajes genéricos, no uno:
+
+| Situación | Mensaje | Por qué |
+|---|---|---|
+| Una colaboración **no está configurada** (sin `ANTHROPIC_API_KEY`, sin DSN read-only) | *"El agente no está disponible en este entorno todavía…"* | No hay nada que reintentar: es la configuración esperada de CI/local |
+| Está configurada y **falló en ejecución** (timeout, red, SQL rechazado) | *"No se pudo completar la consulta en este momento. Vuelve a intentarlo…"* | Reintentar sí sirve; decir "no disponible" sería información falsa |
+| Falló **con fragmentos ya transmitidos** (solo stream) | se **conserva el texto parcial** y se agrega *"[…] La respuesta quedó incompleta…"* | Mandar el mensaje completo borraría de la pantalla lo que la persona ya leía |
+
+Ninguno de los dos mensajes cambia según el error concreto, así que **la distinción no filtra
+detalle interno**. Los fallos se registran con `logging` estructurado (`extra`: etapa, tipo de
+excepción, si estaba configurado), con traza solo cuando sí lo estaba — un incidente, no la
+degradación esperada. **Nunca se registra la pregunta ni el contexto** (privacidad por diseño).
 
 #### `contexto` — preguntas de seguimiento (US-305, 2026-09-08)
 
@@ -352,9 +440,17 @@ class Page(BaseModel, Generic[T]):
 # ---- salud / auth ----
 class HealthOut(BaseModel):
     status: str = "ok"
+class CortesAtencionOut(BaseModel):
+    # Cortes del nivel de atención (DEC-023). Definiciones, no datos: el front los lee en vez de
+    # teclearlos, porque las dos constantes viven en capas distintas del repo (BUG-058).
+    alta: StrictFloat               # indice_riesgo >= alta  => atención alta (0.50, DEC-019)
+    media: StrictFloat              # >= media y < alta      => media (0.30)
+    ancla_calibracion: StrictFloat  # 0.60 (DEC-006) -- NO es corte de etiqueta
+
 class VersionOut(BaseModel):
     api: str = "v1"
     commit: StrictStr
+    cortes_atencion: CortesAtencionOut | None = None   # 2026-09-11, US-621
 class TokenPair(BaseModel):
     access_token: StrictStr
     refresh_token: StrictStr
@@ -390,26 +486,38 @@ class EscuelaOut(BaseModel):
     indice_riesgo: StrictFloat | None = Field(None, ge=0, le=1)
     driver_dominante: StrictStr | None       # "D1".."D6"
     tiene_prediccion: bool                    # True si hay fila en gold.predicciones (ML-01)
-
-class EscuelaDetalleOut(EscuelaOut):
-    sostenimiento: StrictStr
+    # Subidas del detalle al listado el 2026-09-11 (US-621, mapa del frontend). None => SIN_DATO.
     latitud: float | None
     longitud: float | None
-    indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
+    # Subidos el 2026-09-12 (US-621): matriz de drivers y mapa con UNA petición. None => SIN_DATO.
     d1: float | None; d2: float | None; d3: float | None
-    d4: float | None; d5: float | None; d6: float | None   # None => SIN_DATO
+    d4: float | None; d5: float | None; d6: float | None
+    indice_completitud_drivers: float | None = Field(default=None, ge=0, le=1)
+    # Dos puntos, no una serie: con ellos se dibuja un cambio, no una tendencia (BUG-031).
+    matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
+    # ALUMNOS ABSOLUTOS, y la unidad va en el nombre: KpisOut.variacion_matricula es una razón.
+    variacion_matricula_alumnos: float | None = None
+
+class EscuelaDetalleOut(EscuelaOut):
+    # Desde 2026-09-12 solo agrega `sostenimiento` y `es_estimado_por_grupo`: drivers, completitud y
+    # comparación de matrícula se heredan de EscuelaOut (están en el listado).
+    sostenimiento: StrictStr
     es_estimado_por_grupo: bool | None        # DEC-008: indice_riesgo repartido a nivel grupo
 
 class MunicipioOut(BaseModel):
     cve_mun: StrictStr = Field(min_length=5, max_length=5)
     nombre_municipio: StrictStr
+    # Agregados 2026-09-11 (US-621): la consulta ya los traía; el contrato no los declaraba.
+    # Opcionales desde 2026-09-12: `None` es SIN_DATO, no un 500 que tumba la página completa.
+    cve_ent: StrictStr | None = Field(default=None, min_length=2, max_length=2)
+    nombre_entidad: StrictStr | None = None
     poblacion: StrictInt = Field(ge=0)
     indice_rezago_social: float | None
     pobreza_pct: float | None
 
 class KpisOut(BaseModel):
     matricula_total: StrictInt
-    variacion_matricula: StrictFloat
+    variacion_matricula: StrictFloat = Field(ge=-1, le=1)   # RAZÓN, no alumnos (BUG-031)
     escuelas_en_riesgo: StrictInt
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
 
@@ -421,6 +529,8 @@ class PrediccionOut(BaseModel):
     driver_dominante: StrictStr                       # ML-02
     recomendacion: StrictStr
     cluster: StrictInt | None = None                  # ML-03, None sin productor (BUG-010)
+    # "alta" | "media" | "baja" (2026-09-11). Sale del ANCLA 0.60, no de la línea de alerta 0.50.
+    prioridad: StrictStr | None = None
     mlflow_run_id: StrictStr
 class PrediccionBatchIn(BaseModel):
     ccts: list[StrictStr] = Field(min_length=1, max_length=1000)

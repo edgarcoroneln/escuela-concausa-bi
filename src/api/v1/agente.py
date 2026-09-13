@@ -12,19 +12,30 @@ forma **segura** ("no configurado") para que la app arranque y el CI corra sin L
 Andrés (y C5 en despliegue) las sobreescriben con `app.dependency_overrides` / implementaciones reales.
 
 Cualquier fallo interno del servicio se traduce a un mensaje genérico (sin filtrar detalle) — la
-respuesta pública nunca expone trazas, prompts ni SQL crudo de error.
+respuesta pública nunca expone trazas, prompts ni SQL crudo de error. **Dos mensajes genéricos, no
+uno** (Fase 4, Karla Monter): *"no está disponible"* cuando una colaboración no está configurada en
+este entorno, y *"no se pudo completar"* cuando sí lo está y falló en ejecución. Para la persona son
+situaciones distintas —esperar vs. reintentar— y para nosotros también: el segundo caso es un
+incidente y el primero es la configuración esperada del CI. Ningún mensaje cambia según el error
+concreto, así que la distinción no filtra nada.
 
-**`/consulta/stream` (US-305, PR #313 del frontend):** misma lógica servida como *Server-Sent
-Events*, con *streaming* real token a token del redactor final (`procesar_consulta_stream`,
-`src/agente/servicio.py`) -- no un trozado artificial de una respuesta ya completa. Comparte
-`_preparar_para_redaccion` (mismos guardarraíles) con `/consulta` a través de `servicio.py` — ver
-los docstrings de `_resolver_consulta`/`_resolver_consulta_stream`.
+**Observabilidad (Fase 4).** Los rechazos y los fallos se registran con `logging` estructurado
+(`extra`), no con texto interpolado, para poder filtrarlos en Cloud Logging. **Nunca se registra la
+pregunta ni el contexto**: son texto de la persona y el proyecto es privacidad por diseño; se
+registran la etapa, el tipo de excepción y las banderas del resultado.
+
+**`POST /agente/consulta/stream` (US-305, Fase 3).** Misma orquestación, mismos guardarraíles y mismo
+contrato de entrada que `/consulta`; lo único distinto es que la redacción final viaja por
+Server-Sent Events en vez de esperar el texto completo. La implementación es de Andrés González (C3),
+que la retiró de su PR por ownership (`c4f8e52`); se integra aquí, en el alcance de `src/api/**`.
+Ver `procesar_consulta_stream` en `src/agente/servicio.py` para el porqué: generar el SQL no produce
+nada útil a medias, así que solo se transmite la última etapa.
 """
 from __future__ import annotations
 
 import json
 import logging
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
@@ -36,8 +47,6 @@ from src.agente.servicio import (
     RecuperarContexto,
     RedactarRespuesta,
     RedactarRespuestaStream,
-    ResultadoConsulta,
-    ResultadoConsultaStream,
     procesar_consulta,
     procesar_consulta_stream,
 )
@@ -45,25 +54,54 @@ from src.api.schemas import AgenteConsultaIn, AgenteRespuestaOut
 
 router = APIRouter(prefix="/agente", tags=["Agente"])
 
-# Logging estructurado (Fase 4, plan 2026-09-09): solo para el catch-all de última línea de
-# defensa -- los casos ya distinguidos (guardarraíl, SQL rechazado, LLM caído en cada etapa) se
-# registran más cerca de la causa, en `src/agente/servicio.py`.
-_logger = logging.getLogger("faro.api.agente")
+logger = logging.getLogger(__name__)
 
-#: Tamaño de cada fragmento del evento `fragmento` cuando la respuesta ya viene resuelta como
-#: texto fijo (mensajes de guardarraíl/degradación, nunca del redactor real -- ese sí transmite
-#: sus propios fragmentos token a token vía `procesar_consulta_stream`).
-TAM_FRAGMENTO_SSE = 80
-
-# Mensaje seguro cuando el motor RAG/LLM no está configurado o falla en este entorno.
+# Mensaje seguro cuando una colaboración del agente **no está configurada** en este entorno
+# (sin `ANTHROPIC_API_KEY`, sin DSN read-only): no hay nada que reintentar.
 _MSG_NO_DISPONIBLE = (
     "El agente no está disponible en este entorno todavía. Intenta más tarde o consulta los "
     "tableros."
 )
 
+# Mensaje seguro cuando el motor **sí está configurado** y falló en ejecución (timeout del LLM,
+# corte de red, SQL rechazado por el guardarraíl). Aquí reintentar sí tiene sentido, y por eso el
+# texto es distinto: decirle "no está disponible" a alguien que puede reintentar es información
+# falsa. Es genérico igual que el otro -- no cambia según el error, así que no filtra detalle.
+_MSG_FALLO_TEMPORAL = (
+    "No se pudo completar la consulta en este momento. Vuelve a intentarlo en unos segundos."
+)
+
+# Cierre cuando el fallo ocurrió **con fragmentos ya transmitidos**: el texto parcial se conserva
+# (ya viajó) y esta nota explica por qué se corta, en vez de dejar una frase a medias sin aviso.
+_MSG_CORTE_PARCIAL = " […] La respuesta quedó incompleta por un problema al redactarla."
+
 
 class AgenteNoConfigurado(RuntimeError):
     """Una colaboración del agente (LLM/ejecutor) no está configurada en este entorno."""
+
+
+def _registrar_fallo(etapa: str, exc: BaseException, *, configurado: bool) -> None:
+    """Registra un fallo del agente sin escribir la pregunta ni el contexto (privacidad).
+
+    `extra` en vez de interpolar: en Cloud Logging cada campo queda filtrable, y el mensaje humano
+    no se vuelve una cadena distinta por cada error. `exc_info` solo cuando **sí** estaba
+    configurado: ahí la traza es un incidente que alguien debe ver; la degradación esperada del CI
+    no necesita una traza por petición.
+    """
+    logger.warning(
+        "fallo del agente",
+        extra={
+            "agente_etapa": etapa,
+            "agente_error": type(exc).__name__,
+            "agente_configurado": configurado,
+        },
+        exc_info=configurado,
+    )
+
+
+def _mensaje_de_fallo(exc: BaseException) -> str:
+    """Traduce la excepción a uno de los dos mensajes genéricos, sin filtrar su detalle."""
+    return _MSG_NO_DISPONIBLE if isinstance(exc, AgenteNoConfigurado) else _MSG_FALLO_TEMPORAL
 
 
 def _construir_contexto_conversacional(body: AgenteConsultaIn) -> dict | None:
@@ -122,67 +160,56 @@ def get_redactar_respuesta() -> RedactarRespuesta:
 
 
 def get_redactar_respuesta_stream() -> RedactarRespuestaStream:
-    """LLM redactor en streaming (Célula 3, Fase 3). Sin configurar por defecto."""
+    """LLM redactor en streaming (Fase 3, Célula 3). Sin configurar por defecto."""
 
-    def _no_configurado(pregunta: str, filas):  # noqa: ANN001 - firma del Callable
-        raise AgenteNoConfigurado(
-            "redactar_respuesta_stream no está configurado (pendiente Célula 3)."
-        )
+    def _no_configurado(pregunta: str, filas):  # noqa: ANN001, ANN202 - firma del Callable
+        raise AgenteNoConfigurado("redactar_respuesta_stream no está configurado (pendiente C3).")
+        yield  # pragma: no cover - hace de _no_configurado un generador, nunca se alcanza
 
     return _no_configurado
 
 
-def _resolver_consulta(
-    body: AgenteConsultaIn,
-    recuperar_contexto: RecuperarContexto,
-    generar_sql: GenerarSQL,
-    ejecutar_sql: EjecutarSQL,
-    redactar_respuesta: RedactarRespuesta,
-) -> ResultadoConsulta:
-    """Corre `procesar_consulta` con degradación segura (BUG-025): nunca filtra detalle interno.
+# --------------------------------------------------------------------------- #
+# `/consulta/stream` (Fase 3): framing SSE
+# --------------------------------------------------------------------------- #
 
-    Único punto de guardarraíles del agente para el endpoint síncrono; su contraparte en streaming
-    es `_resolver_consulta_stream`, y ambas delegan en las mismas funciones de `servicio.py`
-    (`_preparar_para_redaccion` es compartida) para que el streaming **nunca** sea una segunda
-    puerta con reglas distintas.
 
-    Este `except Exception` es el último recurso: los fallos ya identificables por fase (RAG caído,
-    SQL rechazado, LLM caído en cada etapa) se distinguen y registran más cerca de la causa, en
-    `servicio.py`. Si algo llega hasta aquí es porque no encajó en ningún caso ya conocido -- se
-    registra igual, porque un catch-all silencioso es tan malo como un mensaje genérico.
+def _evento_sse(nombre: str, datos: Mapping[str, object]) -> str:
+    """Un evento `text/event-stream`: `event: <nombre>` + `data: <json de una sola línea>`.
+
+    `json.dumps` escapa los saltos de línea, así que un `\\n` dentro del texto del LLM nunca puede
+    partir el `data:` y falsificar un evento nuevo en el cliente.
     """
-    try:
-        return procesar_consulta(
-            body.pregunta,
-            recuperar_contexto=recuperar_contexto,
-            generar_sql=generar_sql,
-            ejecutar_sql=ejecutar_sql,
-            redactar_respuesta=redactar_respuesta,
-            contexto_conversacional=_construir_contexto_conversacional(body),
-        )
-    except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
-        _logger.exception("agente.fallo_no_clasificado")
-        return ResultadoConsulta(
-            respuesta=_MSG_NO_DISPONIBLE, sql_generado=None, fuera_de_alcance=False
-        )
+    cuerpo = json.dumps(datos, ensure_ascii=False, separators=(",", ":"))
+    return f"event: {nombre}\ndata: {cuerpo}\n\n"
 
 
-def _resolver_consulta_stream(
+def _cierre_degradado(texto: str) -> Iterator[str]:
+    """Un último fragmento con el mensaje genérico y el `fin`: el cliente nunca queda colgado."""
+    yield _evento_sse("fragmento", {"texto": texto})
+    yield _evento_sse("fin", {})
+
+
+def _generar_eventos_stream(
     body: AgenteConsultaIn,
     recuperar_contexto: RecuperarContexto,
     generar_sql: GenerarSQL,
     ejecutar_sql: EjecutarSQL,
     redactar_respuesta_stream: RedactarRespuestaStream,
-) -> ResultadoConsultaStream:
-    """Igual que `_resolver_consulta`, pero para la variante en streaming.
+) -> Iterator[str]:
+    """Arma los eventos SSE de una consulta: `meta` primero, luego `fragmento`+ y `fin` al final.
 
-    Solo cubre la fase síncrona (guardarraíles + RAG + SQL, que `procesar_consulta_stream` ya
-    resuelve antes de devolver algo). Un fallo del redactor **durante** la transmisión de
-    fragmentos no pasa por aquí -- ocurre más tarde, dentro del propio generador, y ese caso ya lo
-    degrada `servicio.py::procesar_consulta_stream` sin dejar el stream vacío.
+    Invariantes que fijan las pruebas: **siempre** hay un `meta` al inicio, **al menos un**
+    `fragmento` y un `fin` al final, pase lo que pase. Ningún fallo —guardarraíles, RAG, SQL, o el
+    LLM ya a mitad de transmitir— expone una traza ni SQL crudo de error dentro del stream.
+
+    **Fase 4 (Karla Monter):** el mensaje distingue *no configurado* de *falló en ejecución*, y si
+    ya se habían transmitido fragmentos, **el texto parcial se conserva** y solo se agrega la nota
+    de corte. Volver a mandar el mensaje completo de error borraría de la pantalla lo que la persona
+    ya estaba leyendo.
     """
     try:
-        return procesar_consulta_stream(
+        resultado = procesar_consulta_stream(
             body.pregunta,
             recuperar_contexto=recuperar_contexto,
             generar_sql=generar_sql,
@@ -190,14 +217,49 @@ def _resolver_consulta_stream(
             redactar_respuesta_stream=redactar_respuesta_stream,
             contexto_conversacional=_construir_contexto_conversacional(body),
         )
-    except Exception:  # noqa: BLE001 - degradación segura: nunca filtrar detalle interno al cliente
-        _logger.exception("agente.fallo_no_clasificado_stream")
-        return ResultadoConsultaStream(
-            fragmentos=None,
-            respuesta_fija=_MSG_NO_DISPONIBLE,
-            sql_generado=None,
-            fuera_de_alcance=False,
+    except Exception as exc:  # noqa: BLE001 - degradación segura, igual que /consulta
+        _registrar_fallo(
+            "stream:preparacion", exc, configurado=not isinstance(exc, AgenteNoConfigurado)
         )
+        yield _evento_sse("meta", {"sql_generado": None, "fuera_de_alcance": False})
+        yield from _cierre_degradado(_mensaje_de_fallo(exc))
+        return
+
+    yield _evento_sse(
+        "meta",
+        {"sql_generado": resultado.sql_generado, "fuera_de_alcance": resultado.fuera_de_alcance},
+    )
+    if resultado.fragmentos is None:
+        # Rechazada o degradada antes de llegar a redactar: un solo fragmento con el texto fijo.
+        # Un rechazo del guardarraíl trae su propia explicación y NO es un fallo: no se registra
+        # como tal, pero sí se cuenta, que es lo que permite ver si el filtro se pasa de estricto.
+        if resultado.fuera_de_alcance:
+            logger.info("consulta fuera de alcance", extra={"agente_etapa": "stream:guardarrail"})
+        yield _evento_sse("fragmento", {"texto": resultado.respuesta_fija or _MSG_NO_DISPONIBLE})
+        yield _evento_sse("fin", {})
+        return
+
+    emitidos = 0
+    try:
+        for fragmento in resultado.fragmentos:
+            if fragmento:
+                emitidos += 1
+                yield _evento_sse("fragmento", {"texto": fragmento})
+    except Exception as exc:  # noqa: BLE001 - el LLM puede fallar a mitad de transmitir
+        _registrar_fallo(
+            "stream:redaccion", exc, configurado=not isinstance(exc, AgenteNoConfigurado)
+        )
+        # Con texto ya en pantalla se agrega la nota de corte; sin nada emitido, el mensaje entero.
+        yield from _cierre_degradado(
+            _MSG_CORTE_PARCIAL if emitidos else _mensaje_de_fallo(exc)
+        )
+        return
+    if not emitidos:
+        # Un redactor que termina sin ceder nada dejaría una burbuja vacía en el chat.
+        logger.warning("el redactor no transmitió nada", extra={"agente_etapa": "stream:redaccion"})
+        yield from _cierre_degradado(_MSG_FALLO_TEMPORAL)
+        return
+    yield _evento_sse("fin", {})
 
 
 @router.post("/consulta", response_model=AgenteRespuestaOut)
@@ -227,9 +289,20 @@ def consulta(
     opcional, retrocompatible y se valida como entrada hostil (`HistorialTurnoIn`): acotado en
     cantidad de turnos y en tamaño por turno, sin caracteres de control.
     """
-    resultado = _resolver_consulta(
-        body, recuperar_contexto, generar_sql, ejecutar_sql, redactar_respuesta
-    )
+    try:
+        resultado = procesar_consulta(
+            body.pregunta,
+            recuperar_contexto=recuperar_contexto,
+            generar_sql=generar_sql,
+            ejecutar_sql=ejecutar_sql,
+            redactar_respuesta=redactar_respuesta,
+            contexto_conversacional=_construir_contexto_conversacional(body),
+        )
+    except Exception as exc:  # noqa: BLE001 - degradación segura: nunca filtrar detalle al cliente
+        _registrar_fallo("consulta", exc, configurado=not isinstance(exc, AgenteNoConfigurado))
+        return AgenteRespuestaOut(
+            respuesta=_mensaje_de_fallo(exc), sql_generado=None, fuera_de_alcance=False
+        )
     return AgenteRespuestaOut(
         respuesta=resultado.respuesta,
         sql_generado=resultado.sql_generado,
@@ -237,63 +310,14 @@ def consulta(
     )
 
 
-def _evento_sse(evento: str, data: dict) -> str:
-    """Formatea un evento SSE (`event: <tipo>\\ndata: <json>\\n\\n`)."""
-    return f"event: {evento}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
-
-
-def _fragmentar(texto: str, tam: int = TAM_FRAGMENTO_SSE) -> Iterator[str]:
-    """Trocea `texto` en fragmentos de a lo más `tam` caracteres, en orden.
-
-    Siempre produce **al menos un** fragmento, incluso con `texto == ""`: el cliente ya mergeado
-    (`consultar_agente_stream` en `src/frontend/agente_client.py`, PR #313) trata una lista de
-    fragmentos vacía como stream inválido (`if not fragmentos: raise ValueError(...)`) -- `range()`
-    solo no lo garantizaría para un texto vacío.
-    """
-    if not texto:
-        yield texto
-        return
-    for inicio in range(0, len(texto), tam):
-        yield texto[inicio : inicio + tam]
-
-
-def _generar_eventos_sse(resultado: ResultadoConsultaStream) -> Iterator[str]:
-    """Arma la secuencia `meta` → `fragmento`+ → `fin` a partir de un `ResultadoConsultaStream`.
-
-    `meta` va primero y trae `sql_generado`/`fuera_de_alcance` completos (US-305): el cliente los
-    necesita para decidir el trato de la respuesta (p. ej. mostrar el SQL auditable) sin esperar al
-    último fragmento.
-
-    Dos orígenes posibles para los `fragmento`, indistinguibles para el cliente SSE (que solo ve
-    texto):
-    - `resultado.fragmentos` ya viene poblado (pregunta resuelta hasta la redacción): son
-      fragmentos **reales** del LLM, token a token, tal como los cede
-      `procesar_consulta_stream` -- se reenvían tal cual, sin trocear de nuevo.
-    - `resultado.fragmentos is None` (la pregunta se resolvió antes de llegar a redactar: rechazo
-      de guardarraíl, SQL rechazado, degradación): `respuesta_fija` es un mensaje ya fijo, que se
-      trocea con `_fragmentar` solo para mantener la misma cadencia de eventos incrementales.
-    """
-    yield _evento_sse(
-        "meta",
-        {"sql_generado": resultado.sql_generado, "fuera_de_alcance": resultado.fuera_de_alcance},
-    )
-    if resultado.fragmentos is not None:
-        for fragmento in resultado.fragmentos:
-            yield _evento_sse("fragmento", {"texto": fragmento})
-    else:
-        for fragmento in _fragmentar(resultado.respuesta_fija or ""):
-            yield _evento_sse("fragmento", {"texto": fragmento})
-    yield _evento_sse("fin", {})
-
-
 @router.post(
     "/consulta/stream",
-    summary="Consulta en lenguaje natural, servida como Server-Sent Events",
+    response_class=StreamingResponse,
     responses={
         200: {
             "description": (
-                "Stream SSE con eventos `meta` (una vez, con sql_generado/fuera_de_alcance), "
-                "`fragmento` (0 o más, con un trozo de la respuesta) y `fin` (una vez, cierre)."
+                "Server-Sent Events. `meta` una vez al inicio: `{sql_generado, fuera_de_alcance}`; "
+                "`fragmento` una o más veces: `{texto}`; `fin` una vez al final: `{}`."
             ),
             "content": {"text/event-stream": {"schema": {"type": "string"}}},
         }
@@ -306,29 +330,24 @@ def consulta_stream(
     ejecutar_sql: EjecutarSQL = Depends(get_ejecutar_sql),
     redactar_respuesta_stream: RedactarRespuestaStream = Depends(get_redactar_respuesta_stream),
 ) -> StreamingResponse:
-    """Igual que `POST /agente/consulta`, pero como *Server-Sent Events* con streaming real (US-305).
+    """Igual que `/consulta`, pero transmite la redacción final por Server-Sent Events (Fase 3).
 
-    Mismo contrato de entrada (`AgenteConsultaIn`: `pregunta`, `contexto`, `historial`) y **los
-    mismos guardarraíles** -- este endpoint no es una segunda puerta: `_resolver_consulta_stream`
-    llama a `procesar_consulta_stream`, que comparte `_preparar_para_redaccion` con la función que
-    usa `/consulta` (`procesar_consulta`), así que el filtro de intención (P-13), la validación de
-    SQL de solo lectura (`preparar_sql_seguro`) y la degradación segura ante fallas son idénticos.
-    La autenticación (`Authorization: Bearer`) y el interruptor híbrido de lectura pública también
-    se heredan igual: se aplican por router en `src/api/v1/__init__.py` (`require_lectura`), y este
-    endpoint vive en el mismo `router` que `/consulta`.
+    Mismos guardarraíles, mismo RBAC (`require_lectura`, a nivel de router) y el mismo contrato de
+    entrada (`contexto`, `historial`) que `/consulta`; lo único que cambia es cómo viaja la salida.
+    Tres tipos de evento, en este orden:
 
-    La etapa final (redacción) sí transmite en *streaming* real, token a token, según los va
-    cediendo el LLM (`redactar_respuesta_stream_con_llm`, `src/agente/llm.py`) -- la generación y
-    ejecución de SQL no se transmiten (un SQL a medias no sirve de nada), solo la redacción.
-    Cuando la pregunta se resuelve antes de llegar a esa etapa (rechazo de guardarraíl, SQL
-    rechazado, degradación), `_generar_eventos_sse` trocea el mensaje fijo en `TAM_FRAGMENTO_SSE`
-    caracteres para mantener la misma cadencia incremental.
+    - `meta` (una vez, al inicio): `{"sql_generado": ..., "fuera_de_alcance": ...}`, los mismos
+      campos de `AgenteRespuestaOut`, para que el cliente los tenga sin esperar el fin.
+    - `fragmento` (una o más veces): `{"texto": "..."}`, cada pedazo de la respuesta según llega.
+    - `fin` (una vez, al final): `{}`. Siempre llega, también cuando algo falló a medio camino.
+
+    `X-Accel-Buffering: no` le pide a nginx que no acumule la respuesta: sin eso, el proxy del
+    frontend (ADR-012) entregaría todos los fragmentos juntos al final y el streaming no se notaría.
     """
-    resultado = _resolver_consulta_stream(
-        body, recuperar_contexto, generar_sql, ejecutar_sql, redactar_respuesta_stream
-    )
     return StreamingResponse(
-        _generar_eventos_sse(resultado),
+        _generar_eventos_stream(
+            body, recuperar_contexto, generar_sql, ejecutar_sql, redactar_respuesta_stream
+        ),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )

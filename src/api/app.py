@@ -181,8 +181,7 @@ def create_app() -> FastAPI:
 
         app.dependency_overrides[get_generar_sql] = lambda: generar_sql_con_llm
         app.dependency_overrides[get_redactar_respuesta] = lambda: redactar_respuesta_con_llm
-        # Redactor en streaming real (Fase 3): `/agente/consulta/stream` lo usa en vez de trocear
-        # una respuesta ya completa -- ver `src/agente/llm.py::redactar_respuesta_stream_con_llm`.
+        # `/consulta/stream` (US-305, Fase 3): mismo gobierno por configuración que el redactor.
         app.dependency_overrides[get_redactar_respuesta_stream] = (
             lambda: redactar_respuesta_stream_con_llm
         )

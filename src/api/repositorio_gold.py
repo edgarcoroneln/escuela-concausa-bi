@@ -54,11 +54,22 @@ ANCLA_SIGMOIDE = 0.60
 #: a la vez), API despues. Ver `BUG-058` y el aviso de Marina Garcia del 2026-09-06.
 LINEA_DE_ALERTA = 0.50
 
+#: Corte inferior del **nivel de atencion** (`DEC-023`): `>= 0.30` es media, por debajo baja.
+#: Es el mismo numero que `src/modelos/riesgo.py::RIESGO_ESTABLE` (matricula estable), que no se
+#: importa aqui porque ese modulo trae `numpy`/`scipy` y la imagen de la API no los instala. La
+#: duplicacion la ata una prueba que **lee** ese archivo y compara -- mismo patron con el que
+#: `tests/test_linea_de_alerta.py` ata el 0.50 a los .sql de dbt, para que la divergencia falle en
+#: el CI en vez de aparecer en la demo (`BUG-058`).
+CORTE_ATENCION_MEDIA = 0.30
+
 # Whitelist de `order_by` (Decisión 3 de US-411, avisada a C2/C3, ver API_Specification.md §3.3).
 # Fuente de verdad para el Literal de FastAPI en `src/api/v1/gold.py` -- un valor fuera de aquí
 # nunca llega a construir SQL (ni siquiera necesita whitelist propia en la Postgres real).
 ESCUELAS_ORDENABLES = ("cct", "nombre", "matricula_total", "indice_riesgo")
-MUNICIPIOS_ORDENABLES = ("cve_mun", "nombre_municipio", "poblacion", "indice_rezago_social", "pobreza_pct")
+MUNICIPIOS_ORDENABLES = (
+    "cve_mun", "nombre_municipio", "cve_ent", "nombre_entidad", "poblacion",
+    "indice_rezago_social", "pobreza_pct",
+)
 
 
 class RepositorioGold(Protocol):
@@ -153,19 +164,34 @@ class RepositorioGoldPostgres:
             predicciones.c.indice_riesgo,
             recomendaciones.c.driver_dominante,
             (predicciones.c.cct.is_not(None)).label("tiene_prediccion"),
+            # En el listado desde el 2026-09-11 (US-621): el mapa del front necesita las
+            # coordenadas de muchas escuelas a la vez. No cuesta un JOIN nuevo -- `dim_escuela`
+            # ya esta unida aqui.
+            dim_escuela.c.latitud,
+            dim_escuela.c.longitud,
+            # Los seis drivers y su completitud, **en el listado** desde el 2026-09-12 (US-621):
+            # la matriz de drivers y el mapa los necesitan para muchas escuelas a la vez, y pedirlos
+            # por `/escuelas/{cct}` costaba una peticion por escuela. Salen de `fact`, que ya esta
+            # unida a esta consulta, asi que no agrega ningun JOIN.
+            fact.c.indice_completitud_drivers,
+            fact.c.d1,
+            fact.c.d2,
+            fact.c.d3,
+            fact.c.d4,
+            fact.c.d5,
+            fact.c.d6,
+            # Comparacion con el ciclo anterior (2026-09-12, US-621). `fact` ya las materializa
+            # --las expuso Diana en `BUG-031`-- y son lo mas cercano a una "serie" que existe hoy:
+            # con dos ciclos se dibuja un cambio, no una tendencia. Ver API_Specification §3.3.
+            fact.c.matricula_ciclo_anterior,
+            # Renombrada en la salida (Edgar, QA, 2026-09-12): la columna de Gold son **alumnos
+            # absolutos** y `KpisOut.variacion_matricula` es una razon. Mismo nombre, dos unidades
+            # en el mismo contrato = `BUG-031`. La columna de la base **no** se toca: es de C1.
+            fact.c.variacion_matricula.label("variacion_matricula_alumnos"),
         ]
         if detalle:
             columnas += [
                 dim_escuela.c.sostenimiento,
-                dim_escuela.c.latitud,
-                dim_escuela.c.longitud,
-                fact.c.indice_completitud_drivers,
-                fact.c.d1,
-                fact.c.d2,
-                fact.c.d3,
-                fact.c.d4,
-                fact.c.d5,
-                fact.c.d6,
             ]
 
         return select(*columnas).select_from(
@@ -198,6 +224,8 @@ class RepositorioGoldPostgres:
         return {
             "cve_mun": dim_municipio.c.cve_mun,
             "nombre_municipio": dim_municipio.c.nombre_municipio,
+            "cve_ent": dim_municipio.c.cve_ent,
+            "nombre_entidad": dim_municipio.c.nombre_entidad,
             "poblacion": dim_municipio.c.poblacion,
             "indice_rezago_social": dim_municipio.c.indice_rezago_social,
             "pobreza_pct": dim_municipio.c.pobreza_pct,
