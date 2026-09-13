@@ -1,16 +1,65 @@
 // Fuente unica del mapeo de fases -> rutas para Sidebar.jsx y Header.jsx
 // (evita que ambos mantengan su propia copia y se desincronicen). Ver el
 // comentario largo en Sidebar.jsx para el porque de cada mapeo interino.
+//
+// 13-sep -- pase de fidelidad "P1 Entrada" con Diana: pidio que el menu
+// izquierdo respete el orden Y LOS NOMBRES exactos de mockups/01_Entrada.html.
+// Cambios respecto a la version anterior:
+//   - Los items 01-06 vivian en 2 arreglos separados (FASES + EXPLORACION,
+//     bajo 2 etiquetas "Investigacion guiada" / "Exploracion libre"). En la
+//     plantilla los 7 items (00-06) son UNA sola lista bajo una sola
+//     etiqueta "Flujo de Investigacion" -- se fusionan aqui en un solo
+//     arreglo FASES.
+//   - Nombres corregidos 1:1 con el mockup: "Panorama de riesgo" ->
+//     "Panorama de Riesgo", "Selección de caso" -> "Selección de Caso",
+//     "Expediente" -> "Expediente de Escuela", "Conclusión Top 3" ->
+//     "Conclusión Global" (asi le llama el mockup, aunque el resto del
+//     proyecto -- PLAN_TRABAJO.md, US-xxx -- use "Top 3"; se prioriza la
+//     plantilla porque Diana pidio fidelidad literal de nombres en este
+//     punto), "Explorador de escuelas" -> "Explorador de Escuelas".
+//   - El item "00 Iniciar Sesión" del mockup NO se agregó en esa ronda: en
+//     el prototipo estatico las 7 pantallas comparten un solo <aside> que
+//     enumera las 7 vistas como pasos de una demo, incluido el login: en
+//     la app real Login vive fuera del shell autenticado (main.jsx: ruta
+//     "/login" aparte, sin Sidebar), asi que mostrar "Iniciar Sesión" como
+//     item de navegacion DENTRO de una sesion ya autenticada no tendria
+//     sentido funcional -- se documentó la omision en vez de copiarla ciega.
+//   - Se agrega REFERENCIA_TECNICA ("US" Cómo funciona FARO, "ID" Guía de
+//     Identidad), la 2da seccion del menu del mockup. Ambos items quedan
+//     con disabledHint porque ninguno tiene ruta real todavia: "Cómo
+//     funciona FARO" es la superficie US-601 del Equipo 1, ya construida
+//     pero sin mergear a main (confirmado por git diff origin/main...
+//     origin/dev/manuel-serrania, ver mensaje que se le redacto a Diana
+//     para el equipo el 13-sep); "Guía de Identidad" no tiene ningun
+//     avance conocido en el repo.
+//
+// 13-sep, segunda ronda -- Diana pidió explícitamente agregar "Iniciar
+// Sesión" arriba de "Entrada a FARO", revirtiendo la omisión de arriba: se
+// agrega como "00", con ruta real a /login (no disabledHint -- la ruta
+// existe y funciona, solo vive fuera del shell autenticado). Si alguien
+// hace clic estando ya autenticado, simplemente vuelve a ver Login.jsx (esa
+// ruta no depende de la sesión para renderizar, ver main.jsx).
 export const FASES = [
-  { n: "01", label: "Entrada", to: "/", end: true },
-  { n: "02", label: "Panorama de riesgo", to: "/panorama" },
-  { n: "03", label: "Selección de caso", to: "/casos" },
-  { n: "04", label: "Expediente", disabledHint: "Elige un caso en Selección de caso" },
-  { n: "05", label: "Conclusión Top 3", to: "/conclusion" },
+  { n: "00", label: "Iniciar Sesión", to: "/login" },
+  { n: "01", label: "Entrada a FARO", to: "/", end: true },
+  { n: "02", label: "Panorama de Riesgo", to: "/panorama" },
+  { n: "03", label: "Selección de Caso", to: "/casos" },
+  { n: "04", label: "Expediente de Escuela", disabledHint: "Elige un caso en Selección de Caso" },
+  { n: "05", label: "Conclusión Global", to: "/conclusion" },
+  { n: "06", label: "Explorador de Escuelas", to: "/explorador" },
 ];
 
-export const EXPLORACION = [
-  { n: "06", label: "Explorador de escuelas", to: "/explorador" },
+export const REFERENCIA_TECNICA = [
+  {
+    n: "US",
+    label: "Cómo funciona FARO",
+    disabledHint: "Pendiente: lo entrega el Equipo 1 (US-601) — construido, aún sin mergear a main",
+  },
+  {
+    n: "ID",
+    label: "Guía de Identidad",
+    disabledHint: "Pendiente de implementar",
+  },
 ];
 
 // Las 6 vistas "heredadas" de Fase 1 (vista-general, mapa, drivers,
@@ -21,11 +70,13 @@ export const EXPLORACION = [
 //
 // Ruta -> etiqueta de pantalla, para el breadcrumb del Header. La entrada
 // dinamica "/escuela/:cct" se resuelve aparte (Header.jsx) porque lleva un
-// parametro.
-const TODAS = [...FASES, ...EXPLORACION];
+// parametro. NOTA: Header.jsx dejo de usar este helper para el breadcrumb
+// (ahora muestra el texto estatico "SURVEILLANCE_NODE" de la plantilla);
+// se conserva por si se retoma un breadcrumb dinamico mas adelante.
+const TODAS = [...FASES];
 
 export function tituloDeRuta(pathname) {
-  if (pathname.startsWith("/escuela/")) return "Expediente";
+  if (pathname.startsWith("/escuela/")) return "Expediente de Escuela";
   const exacta = TODAS.find((f) => f.to === pathname);
   if (exacta) return exacta.label;
   return null;
