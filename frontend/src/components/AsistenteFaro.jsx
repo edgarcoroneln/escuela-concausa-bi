@@ -10,7 +10,7 @@ import { postAgenteConsultaStream } from "../lib/api.js";
 // Consume el cliente SSE ya construido en lib/api.js (postAgenteConsultaStream,
 // mergeado a main el 12-sep). El SQL generado NUNCA se muestra en el hilo de
 // lectura por defecto (§6, corrige src/frontend/pages/3_Chat.py:85-87): se
-// guarda por turno y solo se revela con la acción discreta "Ver la consulta".
+// conserva internamente para el contrato de auditoría, pero nunca se renderiza.
 //
 // Los 3 mensajes de error son literales del spec (§6, diagnóstico Equipo 2) --
 // no se inventan variantes. Un error de red/HTTP (servidor caído, 5xx) no
@@ -46,7 +46,6 @@ export default function AsistenteFaro({ visible, preguntaInicial, onPreguntaInic
   const [mensajes, setMensajes] = useState([]);
   const [pregunta, setPregunta] = useState("");
   const [enviando, setEnviando] = useState(false);
-  const [verConsultaDeIndice, setVerConsultaDeIndice] = useState(null);
   const listaRef = useRef(null);
   const abortRef = useRef(null);
 
@@ -177,24 +176,6 @@ export default function AsistenteFaro({ visible, preguntaInicial, onPreguntaInic
                 >
                   {m.rol === "asistente" && m.cargando && !m.texto ? "…" : m.texto}
                 </div>
-                {m.rol === "asistente" && m.sqlGenerado && (
-                  <button
-                    type="button"
-                    className="font-mono-dato text-[10px] underline"
-                    style={{ color: "rgba(255,255,255,0.5)" }}
-                    onClick={() => setVerConsultaDeIndice(verConsultaDeIndice === i ? null : i)}
-                  >
-                    {verConsultaDeIndice === i ? "Ocultar la consulta" : "Ver la consulta"}
-                  </button>
-                )}
-                {verConsultaDeIndice === i && m.sqlGenerado && (
-                  <pre
-                    className="font-mono-dato text-[10px] px-2 py-1.5 rounded max-w-[85%] overflow-x-auto"
-                    style={{ background: "rgba(0,0,0,0.35)", color: "rgba(255,255,255,0.8)" }}
-                  >
-                    {m.sqlGenerado}
-                  </pre>
-                )}
               </div>
             ))}
           </div>
