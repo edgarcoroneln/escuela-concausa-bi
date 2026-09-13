@@ -130,3 +130,30 @@ deja la página en blanco, y era lo verificable sin ver la pantalla.
 - **Decisión de Manuel:** retirar o no `BloqueMermaid` del contrato, que ya nada emite.
 - Con los ocho tipos portados, **retirar el shell de Streamlit ya no pierde funcionalidad** de esta
   sección; la decisión es de E5.
+
+## Adenda — CI del PR #350
+
+Tres checks reprobaron al abrir el PR. Los tres eran míos de resolver:
+
+**1 · Tres `.md` sueltos en la raíz reprobaban `vault_lint`** (los dos jobs de vault, misma causa):
+`PLAN_US206_EMBEBIDO.md`, `avisosequipo.md` y `plan7diasporpersona.md`. **No están en `main`**:
+entraron a mi rama el 11-sep, cuando mergeé `dev/manuel-serrania` para construir sobre US-601, y
+vienen del merge de `componentes-back` — el propio bosquejo de Manuel ya los señalaba como ajenos a
+la historia. Son notas de trabajo suyas (su plan de US-206, mensajes al equipo, planes de 7 días) y
+la raíz del repositorio les está prohibida por `Definition_of_Filed`.
+
+**Se retiran de mi rama, no se pierden**: siguen en `origin/dev/manuel-serrania` y en su historia.
+Lo que se evita es arrastrarlos a `main` a través de este PR. Dónde deben vivir es decisión de
+Manuel.
+
+**2 · El check de plantilla marcaba una casilla sin marcar.** La línea
+*«(Alternativa) No usé IA en este cambio»* lleva `<!-- opcional -->` en la plantilla oficial y yo lo
+omití al redactar el cuerpo. Como sí usé IA, la alternativa no aplica: se borra, que es lo que el
+propio mensaje del check indica.
+
+**Error de método, vale registrarlo:** verifiqué la plantilla en local y me dio verde **falso**. El
+script lee el cuerpo de la variable de entorno `PR_BODY` y yo se lo pasé como argumento, así que
+evaluó una cadena vacía. La invocación correcta es
+`PR_BODY="$(cat cuerpo.md)" bash .github/scripts/verificar_plantilla_pr.sh`. Es el mismo modo de
+falla que el PM ya registró dos veces —dar por verificado lo que se comprobó mal— y por eso queda
+escrito aquí en vez de corregirse en silencio.
