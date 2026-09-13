@@ -7,7 +7,7 @@ import os
 import streamlit as st
 
 from auth import encabezado, token_de_acceso
-from agente_client import consultar_agente_stream, preparar_historial
+from agente_client import consultar_agente, consultar_agente_stream, preparar_historial
 
 API_BASE_URL = os.environ.get("FARO_API_BASE_URL", "http://localhost:8000")
 PREGUNTAS_SUGERIDAS = [
@@ -51,9 +51,6 @@ mensajes = st.session_state.setdefault("mensajes_agente", [])
 for mensaje in mensajes:
 	with st.chat_message(mensaje["rol"]):
 		st.markdown(mensaje["contenido"])
-		if mensaje.get("sql"):
-			with st.expander("SQL generado"):
-				st.code(mensaje["sql"], language="sql")
 
 pregunta_sugerida = None
 for fila in range(0, len(PREGUNTAS_SUGERIDAS), 3):
@@ -66,6 +63,7 @@ pregunta_manual = st.chat_input("Escribe tu pregunta sobre escuelas, riesgo o dr
 pregunta = pregunta_sugerida or pregunta_manual
 if pregunta:
 	historial = preparar_historial(mensajes)
+	consultar = consultar_agente if os.environ.get("FARO_LOCAL_PUBLIC", "false").lower() == "true" else consultar_agente_stream
 	mensajes.append({"rol": "user", "contenido": pregunta})
 	with st.chat_message("user"):
 		st.markdown(pregunta)
@@ -75,16 +73,24 @@ if pregunta:
 		respuesta_parcial: list[str] = []
 		try:
 			with st.spinner("Consultando FARO..."):
-				respuesta = consultar_agente_stream(
-					API_BASE_URL,
-					pregunta,
-					access_token=access_token,
-					historial=historial,
-					on_fragment=lambda texto: [
-						respuesta_parcial.append(texto),
-						placeholder.markdown("".join(respuesta_parcial)),
-					],
-				)
+				if consultar is consultar_agente:
+					respuesta = consultar(
+						API_BASE_URL,
+						pregunta,
+						access_token=access_token,
+						historial=historial,
+					)
+				else:
+					respuesta = consultar(
+						API_BASE_URL,
+						pregunta,
+						access_token=access_token,
+						historial=historial,
+						on_fragment=lambda texto: [
+							respuesta_parcial.append(texto),
+							placeholder.markdown("".join(respuesta_parcial)),
+						],
+					)
 		except (ValueError, OSError) as exc:
 			placeholder.empty()
 			st.error(f"No se pudo consultar el agente: {exc}")
@@ -92,9 +98,6 @@ if pregunta:
 			estilo = st.warning if respuesta.fuera_de_alcance else st.markdown
 			placeholder.empty()
 			estilo(respuesta.respuesta)
-			if respuesta.sql_generado:
-				with st.expander("SQL generado"):
-					st.code(respuesta.sql_generado, language="sql")
 			mensajes.append(
 				{
 					"rol": "assistant",

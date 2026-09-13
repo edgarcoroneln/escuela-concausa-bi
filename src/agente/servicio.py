@@ -36,6 +36,7 @@ PREGUNTA_REFERENCIAL = re.compile(
 # ejecutarse (columna/tabla mal referenciada, etc.), se le devuelve el error al LLM para que
 # regenere una versión corregida, acotado para no disparar costo/latencia sin límite.
 MAX_REINTENTOS_SQL = 1
+MAX_FILAS_REDACTOR = 10
 
 
 @dataclass(frozen=True)
@@ -78,14 +79,52 @@ class ResultadoConsultaStream:
 
 def _preparacion_sin_sql(pregunta: str, contexto: str) -> PreparacionRedaccion:
     """Fila de contexto conceptual (`NO_SQL_NECESARIO`), ya lista para la etapa de redacción."""
+    texto = pregunta.lower()
+    entidades_fuera = {
+        "oaxaca": "Oaxaca",
+        "chiapas": "Chiapas",
+        "puebla": "Puebla",
+        "yucatán": "Yucatán",
+        "yucatan": "Yucatán",
+    }
+    for clave, entidad in entidades_fuera.items():
+        if clave in texto:
+            return PreparacionRedaccion(
+                pregunta=pregunta,
+                filas=[
+                    {
+                        "respuesta_faro": (
+                            f"No hay datos Gold para {entidad}: está fuera del alcance geográfico "
+                            "actual del proyecto. Gold cubre Ciudad de México, Estado de México, "
+                            f"Nuevo León y Jalisco. La ausencia de {entidad} es una decisión de "
+                            f"cobertura, no un dato faltante."
+                        )
+                    }
+                ],
+                sql_generado=None,
+            )
+    respuestas_conceptuales = (
+        (("qué eres", "que eres", "quién eres", "quien eres"),
+         "Soy el agente FARO: un asistente de análisis sobre escuelas, matrícula, riesgo y drivers del proyecto."),
+        (("qué es faro", "que es faro"),
+         "FARO es la plataforma Escuela como Sensor Social: analiza matrícula escolar y los drivers territoriales que pueden explicar su variación."),
+        (("qué significa sin_dato", "que significa sin_dato", "qué significa sin dato", "que significa sin dato"),
+         "SIN_DATO significa que la fuente no tiene información para ese driver. No equivale a cero y debe excluirse de promedios y agregaciones."),
+        (("qué es d1", "que es d1", "qué significa d1", "que significa d1"),
+         "D1 representa pobreza y rezago social a nivel municipal."),
+        (("qué es d2", "que es d2", "qué significa d2", "que significa d2"),
+         "D2 representa inseguridad del entorno escolar."),
+    )
+    for patrones, respuesta in respuestas_conceptuales:
+        if any(patron in texto for patron in patrones):
+            return PreparacionRedaccion(
+                pregunta=pregunta,
+                filas=[{"respuesta_faro": respuesta}],
+                sql_generado=None,
+            )
     return PreparacionRedaccion(
         pregunta=pregunta,
-        filas=[
-            {
-                "contexto_faro": contexto,
-                "nota": "Respuesta conceptual basada en documentación de FARO, sin consulta SQL.",
-            }
-        ],
+        filas=[{"respuesta_faro": "Puedo explicar conceptos de FARO, pero para responder con datos necesito una pregunta sobre escuelas, matrícula, drivers, riesgo o cobertura."}],
         sql_generado=None,
     )
 
@@ -217,7 +256,14 @@ def _preparar_para_redaccion(
                     fuera_de_alcance=False,
                 )
 
-    return PreparacionRedaccion(pregunta=pregunta, filas=filas, sql_generado=sql_actual)
+    # La consulta puede devolver cientos de escuelas. Pasarlas todas al segundo llamado del LLM
+    # dispara latencia y puede exceder el contexto; el SQL conserva el límite auditable y la
+    # respuesta se redacta sobre una muestra acotada.
+    return PreparacionRedaccion(
+        pregunta=pregunta,
+        filas=list(filas)[:MAX_FILAS_REDACTOR],
+        sql_generado=sql_actual,
+    )
 
 
 def procesar_consulta(

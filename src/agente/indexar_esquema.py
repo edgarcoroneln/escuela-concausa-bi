@@ -5,12 +5,21 @@ from __future__ import annotations
 import os
 from typing import Any
 
-try:
-    import chromadb
-    from sentence_transformers import SentenceTransformer
-except ImportError:
-    chromadb = None
-    SentenceTransformer = None
+chromadb = None
+SentenceTransformer = None
+
+
+def _cargar_dependencias() -> None:
+    global chromadb, SentenceTransformer
+    if chromadb is not None and SentenceTransformer is not None:
+        return
+    try:
+        import chromadb as chromadb_mod
+        from sentence_transformers import SentenceTransformer as sentence_transformer_cls
+    except ImportError:
+        return
+    chromadb = chromadb_mod
+    SentenceTransformer = sentence_transformer_cls
 
 # Definiciones estáticas de la capa Gold. Se vectorizan para que el agente recupere sólo lo
 # relevante a cada pregunta y escriba SQL contra columnas que EXISTEN.
@@ -136,6 +145,7 @@ def indexar_esquema(
 ) -> int:
     """Genera embeddings y hace upsert idempotente del catálogo Gold."""
     try:
+        _cargar_dependencias()
         if cliente is None:
             if chromadb is None:
                 raise ErrorIndexacion("chromadb no está instalado.")
