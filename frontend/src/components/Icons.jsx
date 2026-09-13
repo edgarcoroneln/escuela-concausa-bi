@@ -275,3 +275,30 @@ export function IconSchool({ size = 20, style, ...props }) {
     </svg>
   );
 }
+
+// 13-sep -- 2 iconos nuevos para los 2 botones del panel de "Expediente" de
+// Explorador.jsx (P6) que Diana pidió restaurar ("Exportar Ficha CCT (PDF)"
+// / "Vincular a Mesa de Enlace"). El mockup usa "file_download" y
+// "assignment_add" de Material Symbols; mismo criterio que
+// IconShield/IconRouter/IconCalendarMonth: sin certeza del trazo SVG exacto
+// de esos 2 glifos oficiales, se dibujan a mano con formas básicas --
+// equivalente honesto, no una copia literal del glifo de Google.
+export function IconDownload({ size = 20, style, ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" style={style} {...props}>
+      <line x1="12" y1="3.5" x2="12" y2="14.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <polyline points="7,10 12,15 17,10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M4.5 16.5V18.5C4.5 19.6 5.4 20.5 6.5 20.5H17.5C18.6 20.5 19.5 19.6 19.5 18.5V16.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+export function IconLink({ size = 20, style, ...props }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" style={style} {...props}>
+      <rect x="2.7" y="8.7" width="9" height="6.6" rx="3.3" transform="rotate(-45 2.7 8.7)" stroke="currentColor" strokeWidth="1.8" fill="none" />
+      <rect x="12.3" y="8.7" width="9" height="6.6" rx="3.3" transform="rotate(-45 12.3 8.7)" stroke="currentColor" strokeWidth="1.8" fill="none" />
+      <line x1="10.5" y1="13.5" x2="13.5" y2="10.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}

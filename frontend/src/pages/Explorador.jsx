@@ -9,7 +9,7 @@ import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelas, getUniversoEscuelas, getMunicipiosPorClaves, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
-import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool, IconVerified } from "../components/Icons.jsx";
+import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool, IconVerified, IconDownload, IconLink } from "../components/Icons.jsx";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 // D3/D4 se publican como "servicios presentes" (mayor = mejor) -- se orientan
@@ -40,18 +40,35 @@ const ORIENTADOS = ["D3", "D4"];
 // resuelven reconstruyendo la forma visual con la fuente real detrás:
 //
 // 1) El panel derecho "Expediente" del mockup trae escala 0-10 (el resto de
-//    la app usa 0-1), percentiles nacional/regional inventados, "18,492
-//    planteles"/"1 de 823" fijos, y botones "Exportar Ficha CCT (PDF)" /
-//    "Vincular a Mesa de Enlace" que no existen. 01_UX_Architecture.md §2 es
-//    explícito: P6 "reutiliza... misma lógica de expediente que P4... no se
-//    rediseña ni se duplica". Se honra reutilizando el MISMO componente real
-//    de la P4 (components/DriverBars.jsx, misma orientación D3/D4, mismo
-//    color monocromático, misma franja SIN_DATO rayada) y la MISMA
-//    recomendación real (getPrediccion(cct) de la escuela seleccionada en la
-//    tabla, igual que ExpedienteEscuela.jsx) -- panel condensado, no un
-//    expediente nuevo. Los 2 botones inventados del mockup se reemplazan por
-//    1 solo botón real: "Ver expediente completo", que navega a
-//    /escuela/:cct (la MISMA ruta que ya usa P3/P4).
+//    la app usa 0-1), percentiles nacional/regional inventados y "18,492
+//    planteles"/"1 de 823" fijos. 01_UX_Architecture.md §2 es explícito: P6
+//    "reutiliza... misma lógica de expediente que P4... no se rediseña ni se
+//    duplica". Se honra reutilizando el MISMO componente real de la P4
+//    (components/DriverBars.jsx, misma orientación D3/D4, mismo color
+//    monocromático, misma franja SIN_DATO rayada) y la MISMA recomendación
+//    real (getPrediccion(cct) de la escuela seleccionada en la tabla, igual
+//    que ExpedienteEscuela.jsx) -- panel condensado, no un expediente nuevo.
+//    Los 2 botones "Exportar Ficha CCT (PDF)" / "Vincular a Mesa de Enlace"
+//    SÍ se restauraron (13-sep, 3ra vuelta, a petición explícita de Diana),
+//    pero ninguno de los dos existe como feature real en el backend, así
+//    que cada uno se resolvió con una decisión honesta explícita en vez de
+//    fingir que ambos ya funcionan igual:
+//      - "Exportar Ficha CCT (PDF)" SÍ es funcional: dispara la impresión
+//        del navegador (que Diana o cualquier usuario puede "Guardar como
+//        PDF") acotada solo a esta tarjeta de expediente vía una regla
+//        @media print con id="ficha-imprimible" -- es un PDF real de datos
+//        reales, no un botón decorativo. No existe un endpoint dedicado de
+//        exportación en el backend; esta es la forma honesta de lograr el
+//        mismo resultado visible sin inventar uno.
+//      - "Vincular a Mesa de Enlace" NO tiene ningún concepto equivalente en
+//        el proyecto (no aparece en ningún doc de vault/ ni en schemas.py) --
+//        no hay campo real, cálculo real ni endpoint que conectar. Se deja
+//        visible (fidelidad de layout) pero `disabled`, con el mismo patrón
+//        ya usado en navFases.js para ítems reales-pero-no-implementados
+//        (`disabledHint`): un `title` explica que la función está pendiente,
+//        en vez de simular una conexión que no existe.
+//    El botón real "Ver expediente completo" (→ /escuela/:cct, la MISMA ruta
+//    que ya usa P3/P4) se conserva junto a los 2 anteriores.
 // 2) El "FARO // COPILOT" flotante del mockup (con su propia sugerencia de
 //    consulta fija y sin backend) sigue sin reconstruirse: ya existe como
 //    componente real montado una sola vez en App.jsx
@@ -67,7 +84,21 @@ const ORIENTADOS = ["D3", "D4"];
 //    visible que pide el mockup, contenido real en vez de uno nuevo sin
 //    respaldo.
 //
-// Además, el modal de inducción del mockup trae su propio texto largo
+// EXCEPCIÓN DE COLOR (13-sep, 3ra vuelta) -- SOLO esta pantalla: el badge de
+// "Nivel de atención" (tabla y panel) usa color por severidad (rojo/ámbar/
+// verde), a petición explícita de Diana ("los colores en los iconos de
+// atención... si es alto, medio o baja"), confirmando además que sea SOLO
+// en P6 ("Solo en P6 (como el mockup)"). El resto de la app (Panorama,
+// LosSieteCasos, ExpedienteEscuela, Conclusion) sigue la regla real de
+// 03_Visual_Identity.md §S3 y riskRamp.js ("sin color propio -- icono +
+// texto únicamente", "Calibrated Risk Tiers" rechazados explícitamente) --
+// esta pantalla queda deliberadamente inconsistente con las otras 4, es una
+// decisión de Diana, no un olvido. Los colores usados NO son inventados
+// para esta ocasión: son los tokens reales que ya existen en index.css
+// (--color-risk-high/mid/low), definidos en el sistema de diseño pero sin
+// otro uso hasta ahora más que el texto de error genérico.
+//
+// Ademas, el modal de induccion del mockup trae su propio texto largo
 // ("Esta herramienta permite consultar..."); el pop-up de bienvenida de P6
 // tiene su propio texto MANDATADO, entre comillas, en
 // 01_UX_Architecture.md §5 ("Esta es tu zona de exploración libre...") --
@@ -102,6 +133,15 @@ const NIVELES = [
 
 const LLAVE_POPUP_VISTO = "faro_explorador_popup_visto_v1";
 const TAMANO_PAGINA = 12;
+
+// Colores por severidad -- SOLO para esta pantalla, ver "EXCEPCIÓN DE COLOR"
+// arriba. Reutiliza los tokens reales --color-risk-high/mid/low de
+// index.css (no colores nuevos inventados para este cambio).
+const ATENCION_COLOR_P6 = {
+  Alta: { fg: "var(--color-risk-high)", bg: "rgba(224, 72, 60, 0.14)" },
+  Media: { fg: "var(--color-risk-mid)", bg: "rgba(232, 163, 61, 0.18)" },
+  Baja: { fg: "var(--color-risk-low)", bg: "rgba(27, 138, 114, 0.14)" },
+};
 
 async function fetchEscuelasFiltradas(filtros, pagina) {
   const params = {};
@@ -231,6 +271,19 @@ export default function Explorador() {
 
   return (
     <PageContainer>
+      {/* "Exportar Ficha CCT (PDF)" -- acota la impresión del navegador
+          (que el usuario guarda como PDF) solo a la tarjeta de expediente
+          seleccionada (#ficha-imprimible), ocultando el resto de la
+          pantalla. .no-imprimir oculta los propios botones de acción para
+          que no aparezcan en el PDF resultante. Ver nota "1)" arriba. */}
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          #ficha-imprimible, #ficha-imprimible * { visibility: visible; }
+          #ficha-imprimible { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none !important; }
+          #ficha-imprimible .no-imprimir { display: none !important; }
+        }
+      `}</style>
       {/* Encabezado operativo */}
       <div
         className="rounded-2xl p-6 flex flex-col gap-3"
@@ -459,7 +512,10 @@ export default function Explorador() {
                         </td>
                         <td className="p-3 text-center">
                           {riesgo ? (
-                            <span className="text-label-micro-mono font-semibold" style={{ color: "var(--color-ink)" }}>
+                            <span
+                              className="text-label-micro-mono font-semibold px-2 py-1 rounded inline-flex items-center gap-1"
+                              style={{ color: ATENCION_COLOR_P6[riesgo.label].fg, background: ATENCION_COLOR_P6[riesgo.label].bg }}
+                            >
                               {riesgo.icon} {riesgo.label.toUpperCase()}
                             </span>
                           ) : (
@@ -540,6 +596,7 @@ export default function Explorador() {
             const lugarSel = [seleccionada.nombre_municipio, seleccionada.nombre_entidad].filter(Boolean).join(", ");
             return (
               <div
+                id="ficha-imprimible"
                 className="xl:col-span-5 rounded-2xl p-5 flex flex-col gap-4"
                 style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}
               >
@@ -557,7 +614,7 @@ export default function Explorador() {
                   {riesgoSel && (
                     <span
                       className="text-label-ui font-bold px-2.5 py-1 rounded inline-flex items-center gap-1 shrink-0"
-                      style={{ background: "var(--color-surface-alt)", color: "var(--color-ink)" }}
+                      style={{ background: ATENCION_COLOR_P6[riesgoSel.label].bg, color: ATENCION_COLOR_P6[riesgoSel.label].fg }}
                     >
                       {riesgoSel.icon} ATENCIÓN {riesgoSel.label.toUpperCase()}
                     </span>
@@ -631,13 +688,34 @@ export default function Explorador() {
                   </div>
                 )}
 
-                <Link
-                  to={`/escuela/${seleccionada.cct}`}
-                  className="text-label-ui font-semibold px-4 py-2 rounded-lg inline-flex items-center justify-center gap-1.5 self-end"
-                  style={{ background: "var(--color-primary)", color: "#ffffff" }}
-                >
-                  Ver expediente completo →
-                </Link>
+                <div className="no-imprimir flex items-center justify-end gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="text-label-ui font-semibold px-3.5 py-2 rounded-lg inline-flex items-center gap-1.5"
+                    style={{ background: "var(--color-surface-alt)", color: "var(--color-ink)", border: "1px solid var(--color-border)" }}
+                  >
+                    <IconDownload size={16} />
+                    Exportar Ficha CCT (PDF)
+                  </button>
+                  <button
+                    type="button"
+                    disabled
+                    title="Función pendiente: 'Mesa de Enlace' aún no existe como concepto real en el proyecto (sin campo, cálculo o endpoint que conectar)."
+                    className="text-label-ui font-semibold px-3.5 py-2 rounded-lg inline-flex items-center gap-1.5 cursor-not-allowed"
+                    style={{ background: "var(--color-primary)", color: "#ffffff", opacity: 0.5 }}
+                  >
+                    <IconLink size={16} />
+                    Vincular a Mesa de Enlace
+                  </button>
+                  <Link
+                    to={`/escuela/${seleccionada.cct}`}
+                    className="text-label-ui font-semibold px-4 py-2 rounded-lg inline-flex items-center justify-center gap-1.5"
+                    style={{ background: "var(--color-primary)", color: "#ffffff" }}
+                  >
+                    Ver expediente completo →
+                  </Link>
+                </div>
               </div>
             );
           })()}
