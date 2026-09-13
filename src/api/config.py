@@ -117,6 +117,22 @@ class Settings(BaseSettings):
     predicciones_cache_ttl_segundos: int = 30
     predicciones_cache_max_entradas: int = 512
 
+    # ---- "Cómo funciona": cache y timeout de los conteos por capa (US-601) ----
+    # `GET /about/secciones/capas` es **público** y su único dato vivo son ~30 `COUNT(*)`, uno por
+    # tabla de bronze/silver/gold. Sin cache, cada visita los dispara todos contra Postgres: en un
+    # endpoint sin sesión eso es una superficie de carga que no hace falta regalar. El contenido
+    # cambia cuando corre el pipeline —minutos u horas—, no entre dos recargas de la página, así
+    # que un TTL de 60 s no le quita frescura útil a nadie. Señalado por Edgar Coronel al revisar
+    # el PR #350.
+    about_cache_ttl_segundos: int = 60
+    # Los conteos son una sola entrada de cache (la lista completa); el margen es por si más
+    # adelante se cachea por capa o por tabla.
+    about_cache_max_entradas: int = 8
+    # Más holgado que el de predicciones (3 s): son ~30 consultas en vez de una, y sobre tablas
+    # de Bronze que llegan a millones de filas. Aun así acotado: la página degrada a SIN_DATO
+    # antes que dejar una petición pública colgada.
+    about_timeout_ms: int = 5000
+
     @property
     def database_url(self) -> str:
         return (

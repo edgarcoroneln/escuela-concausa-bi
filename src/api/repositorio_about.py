@@ -9,14 +9,25 @@ Postgres real.
 """
 from __future__ import annotations
 
+import logging
 import re
+import threading
 from typing import Protocol
 
+from cachetools import TTLCache
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import DBAPIError, OperationalError
 
+from src.api.config import get_settings
 from src.api.db import get_engine
+
+_logger = logging.getLogger(__name__)
+
+#: Sentinel de ausencia para `TTLCache.get`. Hace falta uno propio porque `x in cache` seguido de
+#: `cache[x]` consulta el reloj DOS veces y la entrada puede expirar entre ambas (mismo hallazgo
+#: que documenta `cache_predicciones.py`). El candado protege el estado, no detiene el tiempo.
+_AUSENTE = object()
 
 # Nombres fijos de tabla (Data_Model.md §3/§4). Son constantes del código, nunca llegan desde una
 # petición -- este endpoint no acepta parámetros -- así que no hay superficie de inyección al
@@ -79,14 +90,50 @@ class RepositorioAbout(Protocol):
         `filas` es `None` cuando la tabla todavía no está materializada -- disponibilidad
         ausente, no un `0` inventado, mismo espíritu que el `SIN_DATO` de cobertura de drivers.
         """
+
+    def hubo_error_de_conexion(self) -> bool:
+        """`True` si el último `conteos_capas()` falló por conexión, no por tabla ausente.
+
+        Permite a la sección declarar la causa una vez arriba en lugar de repetirla en cada fila.
+        Los dobles de prueba que no lo implementen se tratan como "sin error" (ver
+        `_hubo_error_de_conexion` en `v1/about.py`), para no obligarlos a crecer por esto.
+        """
         ...
 
 
 class RepositorioAboutPostgres:
-    """Implementación real vía SQLAlchemy Core (mismo estilo que `repositorio_gold.py`)."""
+    """Implementación real vía SQLAlchemy Core (mismo estilo que `repositorio_gold.py`).
+
+    **Cache y timeout (US-601, revisión de Edgar Coronel al PR #350).** `conteos_capas()` dispara
+    ~30 `COUNT(*)`, uno por tabla, y lo hace desde un endpoint **público**. Sin cache, cada visita
+    los repite todos; con `TTLCache` se pagan una vez por ventana. Cada consulta corre además con
+    `SET LOCAL statement_timeout`, mismo patrón que `repositorio_modelos.py`: su efecto muere con
+    la transacción, así que nunca fuga al motor compartido cuando la conexión vuelve al pool.
+
+    **`no disponible` ≠ `no existe`.** Antes las dos condiciones caían en el mismo `except
+    DBAPIError` y la página decía *"Tabla no materializada todavía"* aunque la base estuviera
+    caída — una afirmación falsa sobre el esquema cuando el problema era la conexión. Ahora
+    `OperationalError` (base inalcanzable, timeout) se distingue del resto de `DBAPIError`
+    (tabla/esquema ausente), y `hubo_error_de_conexion()` deja que la sección lo declare arriba en
+    vez de repetir 30 notas equivocadas. Es la misma regla `SIN_DATO` del proyecto aplicada al
+    motivo: no saber por qué falta un dato no autoriza a inventar la causa.
+    """
 
     def __init__(self, engine: Engine | None = None) -> None:
         self._engine = engine or get_engine()
+        ajustes = get_settings()
+        self._timeout_ms = int(ajustes.about_timeout_ms)
+        self._cache: TTLCache = TTLCache(
+            maxsize=int(ajustes.about_cache_max_entradas),
+            ttl=int(ajustes.about_cache_ttl_segundos),
+        )
+        # Las rutas de `v1/about.py` son `def` síncronas, así que Starlette las corre en su
+        # threadpool: hay concurrencia real de hilos sobre esta instancia. `TTLCache` no es
+        # thread-safe por sí solo. Mismo criterio que `cache_predicciones.py`.
+        self._candado = threading.Lock()
+        # Se levanta cuando una consulta falla por CONEXIÓN, no por tabla ausente. Lo consulta
+        # `hubo_error_de_conexion()` para que la sección lo declare una vez arriba.
+        self._error_de_conexion = False
 
     def _contar(self, esquema: str, tabla: str) -> tuple[int | None, str | None]:
         if not (_IDENTIFICADOR_SEGURO.match(esquema) and _IDENTIFICADOR_SEGURO.match(tabla)):
@@ -94,12 +141,25 @@ class RepositorioAboutPostgres:
             # antes de construir SQL con un identificador que no viene de una petición.
             return None, "Nombre de tabla inválido."
         try:
-            with self._engine.connect() as conexion:
+            # `begin()` y no `connect()`: `SET LOCAL` sólo vive dentro de una transacción, y es
+            # justo lo que se quiere — el timeout no debe seguir a la conexión al pool.
+            with self._engine.begin() as conexion:
+                conexion.execute(text(f"SET LOCAL statement_timeout = {self._timeout_ms}"))
                 total = conexion.execute(
                     text(f'SELECT COUNT(*) FROM "{esquema}"."{tabla}"')
                 ).scalar_one()
             return int(total), None
+        except OperationalError as exc:
+            # Base inalcanzable o consulta cancelada por el timeout. **No** es "la tabla no
+            # existe": afirmar eso sería inventar la causa.
+            self._error_de_conexion = True
+            _logger.warning(
+                "conteo de %s.%s no disponible (%s)", esquema, tabla, type(exc).__name__
+            )
+            return None, "No se pudo consultar: la base de datos no respondió."
         except DBAPIError:
+            # Cualquier otro error del driver sobre una consulta tan simple es, en la práctica,
+            # tabla o esquema ausente (`ProgrammingError` / `UndefinedTable`).
             return None, "Tabla no materializada todavía."
 
     def _tablas_bronze_existentes(self) -> list[str]:
@@ -116,11 +176,44 @@ class RepositorioAboutPostgres:
                     .scalars()
                     .all()
                 )
+        except OperationalError as exc:
+            self._error_de_conexion = True
+            _logger.warning("catálogo de bronze no disponible (%s)", type(exc).__name__)
+            return []
         except DBAPIError:
             return []
         return [n for n in nombres if any(n.startswith(p) for p in PREFIJOS_BRONZE)]
 
+    #: Clave única del cache: hoy se cachea la lista completa de una sola vez.
+    _CLAVE_CACHE = "conteos_capas"
+
+    def hubo_error_de_conexion(self) -> bool:
+        """`True` si el último `conteos_capas()` falló por conexión y no por tabla ausente.
+
+        Lo consume `_seccion_capas` para declarar la causa **una vez arriba**, en vez de repetir
+        treinta notas que dirían mal por qué falta cada número.
+        """
+        return self._error_de_conexion
+
     def conteos_capas(self) -> list[dict]:
+        with self._candado:
+            en_cache = self._cache.get(self._CLAVE_CACHE, _AUSENTE)
+        if en_cache is not _AUSENTE:
+            return en_cache
+
+        resultado = self._contar_todas_las_capas()
+
+        # Un resultado producido con la base caída NO se cachea: si se guardara, la página
+        # seguiría diciendo "no disponible" hasta que venza el TTL aunque Postgres ya hubiera
+        # vuelto. Mismo criterio que `cache_predicciones.py`, que nunca cachea errores.
+        if not self._error_de_conexion:
+            with self._candado:
+                self._cache[self._CLAVE_CACHE] = resultado
+        return resultado
+
+    def _contar_todas_las_capas(self) -> list[dict]:
+        # Cada llamada parte de cero: el error es del intento actual, no de uno viejo.
+        self._error_de_conexion = False
         resultado: list[dict] = []
 
         bronze_existentes = self._tablas_bronze_existentes()

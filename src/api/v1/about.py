@@ -562,6 +562,16 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     ["Nube", "GCP (Cloud Run + Cloud SQL + Artifact Registry)"],
                 ],
             ),
+            BloqueMarkdown(
+                texto=(
+                    "**Por qué ML-03 dice «no operativo» y no un estado de avance.** `DEC-027` lo "
+                    "declara deuda explícita, no oculta: no se publica a Gold, no tiene endpoint "
+                    "en la API y no tiene panel. Nadie debe presentarlo como modelo productivo en "
+                    "esta entrega. Los otros dos sí están integrados punta a punta: alimentan "
+                    "`gold.predicciones` y `gold.recomendaciones`, y de ahí los tableros y la "
+                    "ficha de escuela."
+                )
+            ),
         ],
     )
 
@@ -722,8 +732,20 @@ def _barras_capas(conteos: list[dict]) -> BloqueBarras:
     return BloqueBarras(items=items)
 
 
+def _hubo_error_de_conexion(repo: RepositorioAbout) -> bool:
+    """Lee la bandera del repositorio tolerando dobles de prueba que no la implementen.
+
+    El método se agregó después que el `Protocol` (revisión de Edgar Coronel al PR #350), y los
+    dobles de `tests/fixtures_about.py` no tienen por qué crecer sólo por esto: si falta, se
+    asume que no hubo error de conexión, que es el caso de cualquier doble en memoria.
+    """
+    return bool(getattr(repo, "hubo_error_de_conexion", lambda: False)())
+
+
 def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
     conteos = repo.conteos_capas()
+    # Se lee DESPUÉS de `conteos_capas()`: la bandera describe ese intento, no uno anterior.
+    sin_base = _hubo_error_de_conexion(repo)
 
     def _suma(capa: str) -> int | None:
         valores = [c["filas"] for c in conteos if c["capa"] == capa and c["filas"] is not None]
@@ -775,6 +797,21 @@ def _seccion_capas(repo: RepositorioAbout) -> SeccionOut:
             "dbt/models/sources.yml (entidades de Bronze)",
             "dbt/models/silver/*.sql (llaves de conformación de Silver)",
         ],
+        # Se declara arriba y una sola vez. Sin esto, con la base caída la página repetía
+        # "Tabla no materializada todavía" en las ~30 filas — afirmando algo sobre el esquema
+        # cuando el problema era la conexión (revisión de Edgar Coronel al PR #350).
+        advertencias=(
+            [
+                (
+                    "Los conteos de esta sección no se pudieron leer: **la base de datos no "
+                    "respondió**. Las filas de abajo aparecen como `SIN_DATO` por eso, **no** "
+                    "porque las tablas no existan — es un problema de disponibilidad, no del "
+                    "esquema. El resto de la sección es contenido fijo y sí es correcto."
+                )
+            ]
+            if sin_base
+            else []
+        ),
         bloques=[
             BloqueMarkdown(
                 texto=(
@@ -1010,14 +1047,18 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
         id="modelos-ml",
         titulo="Modelos de Machine Learning",
         fuente=[
-            "vault/15_ML_Models/ML01_Model_Card.md",
-            "vault/15_ML_Models/ML02_Model_Card.md",
-            "vault/15_ML_Models/ML03_Model_Card.md",
+            "vault/15_ML_Models/Publicacion_Gold.md §9 (approved) — corrida real de ML-01 y ML-02",
+            "vault/10_Risk_Governance/Decision_Log.md — DEC-027 (ML-03)",
+            "src/modelos/evaluar.py::UMBRALES — umbrales de aceptación",
         ],
         advertencias=[
             (
-                "Los tres Model Cards siguen en estado in_review: las métricas mostradas "
-                "pueden cambiar con la próxima corrida de C3."
+                "Las cifras salen de la corrida real sobre `gold.features_escuela` (136,046 filas, "
+                "3 ciclos), no de datos sintéticos. Los tres Model Cards de "
+                "`vault/15_ML_Models/` siguen en `in_review` y **están más atrasados que esta "
+                "tabla**: la ficha de ML-01 todavía afirma que cumple `MAE < 0.03` y que el "
+                "entrenamiento real está bloqueado, dos cosas que dejaron de ser ciertas el "
+                "5 de septiembre. Actualizarlas es de su dueño (US-324)."
             ),
         ],
         bloques=[
@@ -1027,20 +1068,20 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
                     [
                         "ML-01 · Regresión de matrícula",
                         "Predice la variación de matrícula por escuela (o municipio × nivel); su salida se transforma en un índice de riesgo [0,1].",
-                        "MAE < 0.03, RMSE < 0.05 — provienen de datos sintéticos, la corrida con datos reales está bloqueada por un error interno de scikit-learn.",
-                        "in_review",
+                        "**MAE 0.1415** sobre Gold real, con pérdida absoluta. **No alcanza su umbral** (`ML-01_mae` = 0.03, 4.7× por encima) y se reporta así. Lo que sí supera es el baseline —predecir la media histórica—, por **11.04 %** (0.141458 contra 0.159223); con pérdida cuadrática no lo lograba.",
+                        "En producción",
                     ],
                     [
                         "ML-02 · Clasificación del driver dominante",
                         "Clasifica cuál de los 6 drivers explica mejor el riesgo de una escuela — el corazón prescriptivo del proyecto.",
-                        "F1 macro ≥ 0.60, Precision ≥ 0.50 por clase — el target sigue siendo un proxy pendiente de confirmación experta.",
-                        "in_review",
+                        "**F1 macro 0.8333** sobre Gold real, por encima de su umbral de 0.60. **Salvedad que hay que leer**: se entrena contra `driver_dominante`, una etiqueta derivada de los propios drivers, así que la cifra mide capacidad de recuperar una etiqueta determinista, **no de predecir un driver observado en campo**.",
+                        "En producción",
                     ],
                     [
                         "ML-03 · Clustering de escuelas",
                         "Agrupa escuelas con perfiles similares, independientemente de su índice de riesgo directo.",
-                        "Silhouette Score = 0.1086 — por debajo del umbral mínimo de aceptación (≥ 0.30); requiere iteración adicional.",
-                        "in_review",
+                        "**Silhouette 0.4621** con `k=2` sobre el vector D1–D4 (`DEC-027`). El corte anterior —`k=3`, Silhouette 0.1086, con `indice_completitud_drivers` en el vector— se conserva como registro histórico y **no como corte válido**: su cluster 2 coincidía con la disponibilidad de D6, no con un perfil real de escuela.",
+                        "**No operativo esta entrega** (`DEC-027`)",
                     ],
                 ],
             ),
