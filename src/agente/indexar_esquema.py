@@ -14,8 +14,8 @@ def _cargar_dependencias() -> None:
     if chromadb is not None and SentenceTransformer is not None:
         return
     try:
-        import chromadb as chromadb_mod
-        from sentence_transformers import SentenceTransformer as sentence_transformer_cls  # noqa: I001
+        import chromadb as chromadb_mod  # noqa: I001
+        from sentence_transformers import SentenceTransformer as sentence_transformer_cls
     except ImportError:
         return
     chromadb = chromadb_mod
