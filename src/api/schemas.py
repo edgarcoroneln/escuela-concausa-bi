@@ -192,9 +192,29 @@ class EscuelaOut(BaseModel):
     # una tendencia**, y asi debe presentarse.
     #
     # `matricula_ciclo_anterior` es `None` cuando la escuela no tiene ciclo previo materializado --el
-    # primer ciclo de la serie-- y entonces `variacion_matricula` tampoco significa nada.
+    # primer ciclo de la serie-- y entonces la variacion tampoco significa nada.
     matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
-    variacion_matricula: float | None = None
+    # **La unidad va en el nombre, a proposito** (Edgar, QA, 2026-09-12). Esta columna de
+    # `gold.fact_escuela_ciclo` son **alumnos absolutos** -- `matricula_total - matricula_ciclo_anterior`,
+    # rango observado -24 a 24--, mientras que `KpisOut.variacion_matricula` es una **razon** en
+    # [-1, 1]. Publicar los dos con el mismo nombre en el mismo contrato es exactamente el hueco que
+    # costo `BUG-031`: la especificacion del cubo asumio que esta columna ya era una razon, y seis
+    # tableros pintaron -54.5 % donde el valor real era -0.19 % (factor 287). Ahi la unidad estaba
+    # documentada y **aun asi** alguien la asumio; el nombre es la unica defensa que nadie puede
+    # dejar de leer.
+    #
+    # Para el %: `matricula_total / matricula_ciclo_anterior - 1`, con guarda de denominador cero.
+    # **No lo derivamos aqui** porque el agregado correcto es razon de sumas, no promedio de razones
+    # (`BUG-031`), y publicar un porcentaje por escuela invita justo a promediarlo.
+    variacion_matricula_alumnos: float | None = Field(
+        default=None,
+        description=(
+            "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** "
+            "(matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: "
+            "matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, "
+            "que si es una razon en [-1, 1]."
+        ),
+    )
 
 
 class EscuelaDetalleOut(EscuelaOut):
@@ -237,7 +257,15 @@ class KpisOut(BaseModel):
     # +1 duplicar la matrícula agregada de todo un filtro (irreal). Field(ge=-1, le=1) es la
     # guardia de BUG-031: si la fórmula volviera a devolver alumnos absolutos (p. ej. -54.5),
     # Pydantic rechaza con 500 en vez de pintar -5450% en el tablero.
-    variacion_matricula: StrictFloat = Field(ge=-1, le=1)
+    variacion_matricula: StrictFloat = Field(
+        ge=-1,
+        le=1,
+        description=(
+            "Variacion agregada como **razon** en [-1, 1] (razon de sumas: "
+            "SUM(matricula_total)/SUM(matricula_ciclo_anterior) - 1). -0.00496 es -0.496 %. "
+            "Ojo: EscuelaOut.variacion_matricula_alumnos es otra unidad -- alumnos absolutos."
+        ),
+    )
     escuelas_en_riesgo: StrictInt
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
 

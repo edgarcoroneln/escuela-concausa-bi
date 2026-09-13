@@ -326,7 +326,7 @@
             "title": "Tiene Prediccion",
             "type": "boolean"
           },
-          "variacion_matricula": {
+          "variacion_matricula_alumnos": {
             "anyOf": [
               {
                 "type": "number"
@@ -335,7 +335,8 @@
                 "type": "null"
               }
             ],
-            "title": "Variacion Matricula"
+            "description": "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** (matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, que si es una razon en [-1, 1].",
+            "title": "Variacion Matricula Alumnos"
           }
         },
         "required": [
@@ -518,7 +519,7 @@
             "title": "Tiene Prediccion",
             "type": "boolean"
           },
-          "variacion_matricula": {
+          "variacion_matricula_alumnos": {
             "anyOf": [
               {
                 "type": "number"
@@ -527,7 +528,8 @@
                 "type": "null"
               }
             ],
-            "title": "Variacion Matricula"
+            "description": "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** (matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, que si es una razon en [-1, 1].",
+            "title": "Variacion Matricula Alumnos"
           }
         },
         "required": [
@@ -657,6 +659,7 @@
             "type": "integer"
           },
           "variacion_matricula": {
+            "description": "Variacion agregada como **razon** en [-1, 1] (razon de sumas: SUM(matricula_total)/SUM(matricula_ciclo_anterior) - 1). -0.00496 es -0.496 %. Ojo: EscuelaOut.variacion_matricula_alumnos es otra unidad -- alumnos absolutos.",
             "maximum": 1.0,
             "minimum": -1.0,
             "title": "Variacion Matricula",

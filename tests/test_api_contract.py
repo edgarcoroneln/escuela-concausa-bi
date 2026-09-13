@@ -183,10 +183,42 @@ def test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior(client: Test
 
     for escuela in items:
         assert "matricula_ciclo_anterior" in escuela
-        assert "variacion_matricula" in escuela
+        assert "variacion_matricula_alumnos" in escuela
 
     con_anterior = [e for e in items if e["matricula_ciclo_anterior"] is not None]
     assert con_anterior, "el fixture debe tener al menos una escuela con ciclo previo"
+
+
+def test_la_variacion_por_escuela_y_la_de_kpis_no_comparten_nombre(client: TestClient) -> None:
+    """Dos unidades distintas **no** pueden llamarse igual en el mismo contrato (`BUG-031`).
+
+    `gold.fact_escuela_ciclo.variacion_matricula` son **alumnos absolutos** (-20) y el KPI-02 es una
+    **razon** en [-1, 1] (-0.00496). Publicar ambos como `variacion_matricula` es reproducir el hueco
+    que hizo que seis tableros pintaran -54.5 % donde el valor real era -0.19 %: alguien asume que la
+    columna ya es un porcentaje y la formatea como tal. Hallado por Edgar (QA) al revisar el PR.
+
+    Esta prueba fija las dos mitades: que la ruta por escuela **no** exponga el nombre ambiguo, y que
+    su valor sea de verdad la diferencia en alumnos -- si algun dia se convierte a razon, falla aqui
+    en vez de en un tablero.
+    """
+    escuela = client.get(f"{API_PREFIX}/escuelas").json()["items"][0]
+    assert "variacion_matricula" not in escuela, (
+        "el nombre ambiguo volvio al contrato por escuela: `variacion_matricula` es la razon de "
+        "KPI-02, y esta columna son alumnos absolutos"
+    )
+    assert (
+        escuela["variacion_matricula_alumnos"]
+        == escuela["matricula_total"] - escuela["matricula_ciclo_anterior"]
+    ), "no son alumnos absolutos: el nombre del campo estaria mintiendo"
+
+    detalle = client.get(f"{API_PREFIX}/escuelas/{escuela['cct']}").json()
+    assert "variacion_matricula" not in detalle
+    assert "variacion_matricula_alumnos" in detalle
+
+    # Y la razon sigue llamandose asi donde si es una razon: KPI-02 no se renombra -- lo consume el
+    # front y los seis tableros ya corregidos, y ahi el nombre no es ambiguo porque no hay otra.
+    kpis = client.get(f"{API_PREFIX}/kpis").json()
+    assert -1 <= kpis["variacion_matricula"] <= 1
 
 
 def test_un_municipio_sin_entidad_degrada_a_sin_dato(client: TestClient) -> None:

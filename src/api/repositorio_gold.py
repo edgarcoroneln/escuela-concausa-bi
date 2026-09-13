@@ -184,7 +184,10 @@ class RepositorioGoldPostgres:
             # --las expuso Diana en `BUG-031`-- y son lo mas cercano a una "serie" que existe hoy:
             # con dos ciclos se dibuja un cambio, no una tendencia. Ver API_Specification §3.3.
             fact.c.matricula_ciclo_anterior,
-            fact.c.variacion_matricula,
+            # Renombrada en la salida (Edgar, QA, 2026-09-12): la columna de Gold son **alumnos
+            # absolutos** y `KpisOut.variacion_matricula` es una razon. Mismo nombre, dos unidades
+            # en el mismo contrato = `BUG-031`. La columna de la base **no** se toca: es de C1.
+            fact.c.variacion_matricula.label("variacion_matricula_alumnos"),
         ]
         if detalle:
             columnas += [

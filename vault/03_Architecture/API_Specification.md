@@ -3,11 +3,11 @@ id: DOC-APISPEC
 title: "API Specification — FARO"
 owner: "Karla Alejandra Monter Benitez"
 status: in_review
-version: "1.3"
+version: "1.4"
 source_of_truth: true
 traces_up: ["REQ-004", "vault/03_Architecture/Data_Model"]
 traces_down: ["US-401", "US-402", "US-403", "US-404", "US-405", "US-411", "US-412", "US-415", "US-416", "US-305"]
-last_reviewed: "2026-09-11"
+last_reviewed: "2026-09-12"
 tags: [architecture, api, contract, fastapi, oauth2]
 ---
 
@@ -184,8 +184,8 @@ ciclos materializados a la vez (**20.6M en vez de ~7M reales** para las 4 entida
 > — es el filtro correcto y hay que pasar `ciclo` explícito para leer su último dato disponible.
 
 **Los seis drivers y la comparación de matrícula en `EscuelaOut` (2026-09-12, US-621).** `d1`..`d6`,
-`indice_completitud_drivers`, `matricula_ciclo_anterior` y `variacion_matricula` **suben del detalle al
-listado**. Salen de `gold.fact_escuela_ciclo`, que el listado ya tiene unida, así que **no agregan
+`indice_completitud_drivers`, `matricula_ciclo_anterior` y `variacion_matricula_alumnos` **suben del
+detalle al listado**. Salen de `gold.fact_escuela_ciclo`, que el listado ya tiene unida, así que **no agregan
 ninguna consulta**; siguen en el detalle, heredados de `EscuelaOut`.
 
 - **La matriz de drivers y el mapa se llenan con UNA petición**, no una por escuela.
@@ -194,14 +194,27 @@ ninguna consulta**; siguen en el detalle, heredados de `EscuelaOut`.
   radio de daño es mayor.
 - **`null` es SIN_DATO, nunca cero** (CLAUDE.md §4): D5 es regional y D6 cubre ~80 zonas urbanas, así
   que el hueco es el caso **normal**. Un `0.0` afirmaría que ese driver no influyó (`BUG-055`).
-- **`matricula_ciclo_anterior` / `variacion_matricula` NO son una serie histórica.** Son dos puntos:
+- **`variacion_matricula_alumnos` son alumnos, no un porcentaje — y por eso lo dice el nombre.**
+  Es `matricula_total - matricula_ciclo_anterior` tal como lo materializa `gold.fact_escuela_ciclo`
+  (rango observado −24 a 24), mientras que **`KpisOut.variacion_matricula` es una razón** en [−1, 1]
+  (−0.00496 = −0.496 %). Dos unidades con el mismo nombre en el mismo contrato es exactamente el hueco
+  de `BUG-031`: la especificación del cubo asumió que la columna ya era una razón y **seis tableros
+  pintaron −54.5 % donde el valor real era −0.19 %** (factor 287). Ahí la unidad estaba documentada y
+  aun así se asumió mal; el nombre es la única defensa que no se puede dejar de leer. Hallado por Edgar
+  (QA) al revisar el PR, antes de que el campo llegara a `main`.
+  **Para el porcentaje por escuela:** `matricula_total / matricula_ciclo_anterior - 1`, con guarda de
+  denominador cero. La API **no** lo deriva a propósito: el agregado correcto es razón de sumas, no
+  promedio de razones, y publicar un porcentaje por escuela invita justo a promediarlo (`BUG-031` otra vez).
+- **`matricula_ciclo_anterior` / `variacion_matricula_alumnos` NO son una serie histórica.** Son dos puntos:
   con ellos se dibuja un **cambio**, no una tendencia, y así deben presentarse. Es lo más cercano que
   existe hoy — `/series` sigue fuera de alcance (ver abajo) y la gráfica de `US-212` vivía en un cubo
   de Superset, retirado por `ADR-012`. `fact` ya materializaba las dos columnas (`BUG-031`).
   `matricula_ciclo_anterior` es `null` en el primer ciclo materializado de una escuela, y entonces
-  `variacion_matricula` no significa nada.
-- Fijado por `tests/test_api_contract.py::test_escuelas_listado_trae_los_seis_drivers` y
-  `::test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior`.
+  `variacion_matricula_alumnos` no significa nada.
+- Fijado por `tests/test_api_contract.py::test_escuelas_listado_trae_los_seis_drivers`,
+  `::test_escuelas_listado_trae_la_comparacion_con_el_ciclo_anterior` y
+  `::test_la_variacion_por_escuela_y_la_de_kpis_no_comparten_nombre` — esta última falla si el nombre
+  ambiguo vuelve al contrato **o** si el valor deja de ser la diferencia en alumnos.
 
 **`latitud` y `longitud` en `EscuelaOut` (2026-09-11, US-621 — mapa de riesgo del frontend):** las
 coordenadas **suben del detalle al listado**. Antes, pintar los 7 casos del storytelling costaba 7
@@ -482,7 +495,8 @@ class EscuelaOut(BaseModel):
     indice_completitud_drivers: float | None = Field(default=None, ge=0, le=1)
     # Dos puntos, no una serie: con ellos se dibuja un cambio, no una tendencia (BUG-031).
     matricula_ciclo_anterior: StrictInt | None = Field(default=None, ge=0)
-    variacion_matricula: float | None = None
+    # ALUMNOS ABSOLUTOS, y la unidad va en el nombre: KpisOut.variacion_matricula es una razón.
+    variacion_matricula_alumnos: float | None = None
 
 class EscuelaDetalleOut(EscuelaOut):
     # Desde 2026-09-12 solo agrega `sostenimiento` y `es_estimado_por_grupo`: drivers, completitud y
@@ -503,7 +517,7 @@ class MunicipioOut(BaseModel):
 
 class KpisOut(BaseModel):
     matricula_total: StrictInt
-    variacion_matricula: StrictFloat
+    variacion_matricula: StrictFloat = Field(ge=-1, le=1)   # RAZÓN, no alumnos (BUG-031)
     escuelas_en_riesgo: StrictInt
     indice_completitud_drivers: StrictFloat = Field(ge=0, le=1)
 

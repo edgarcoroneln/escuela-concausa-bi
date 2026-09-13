@@ -28,8 +28,8 @@ ESCUELAS_FAKE: list[dict] = [
         "cve_mun": "09010",  # Álvaro Obregón, CDMX
         "id_ciclo": "2024-2025",
         "matricula_total": 480,
-        "matricula_ciclo_anterior": 500,  # variacion_matricula = total - anterior (alumnos absolutos, como gold.fact_escuela_ciclo)
-        "variacion_matricula": -20,
+        "matricula_ciclo_anterior": 500,  # la variacion son alumnos absolutos = total - anterior, como gold.fact_escuela_ciclo
+        "variacion_matricula_alumnos": -20,
         "indice_riesgo": 0.72,
         "driver_dominante": "D2",
         "tiene_prediccion": True,
@@ -48,7 +48,7 @@ ESCUELAS_FAKE: list[dict] = [
         "id_ciclo": "2024-2025",
         "matricula_total": 610,
         "matricula_ciclo_anterior": 598,
-        "variacion_matricula": 12,
+        "variacion_matricula_alumnos": 12,
         "indice_riesgo": 0.55,
         "driver_dominante": "D1",
         "tiene_prediccion": True,
@@ -67,7 +67,7 @@ ESCUELAS_FAKE: list[dict] = [
         "id_ciclo": "2024-2025",
         "matricula_total": 320,
         "matricula_ciclo_anterior": 298,
-        "variacion_matricula": 22,
+        "variacion_matricula_alumnos": 22,
         "indice_riesgo": 0.31,
         "driver_dominante": "D4",
         "tiene_prediccion": True,
@@ -86,7 +86,7 @@ ESCUELAS_FAKE: list[dict] = [
         "id_ciclo": "2024-2025",
         "matricula_total": 540,
         "matricula_ciclo_anterior": 551,
-        "variacion_matricula": -11,
+        "variacion_matricula_alumnos": -11,
         "indice_riesgo": 0.48,
         "driver_dominante": "D5",
         "tiene_prediccion": True,
@@ -107,7 +107,7 @@ ESCUELAS_FAKE: list[dict] = [
         "id_ciclo": "2024-2025",
         "matricula_total": 200,
         "matricula_ciclo_anterior": 200,
-        "variacion_matricula": 0,
+        "variacion_matricula_alumnos": 0,
         "indice_riesgo": None,
         "driver_dominante": None,
         "tiene_prediccion": False,
@@ -129,7 +129,7 @@ ESCUELAS_FAKE: list[dict] = [
         "id_ciclo": "2023-2024",
         "matricula_total": 500,
         "matricula_ciclo_anterior": 510,
-        "variacion_matricula": -10,
+        "variacion_matricula_alumnos": -10,
         "indice_riesgo": 0.65,
         "driver_dominante": "D2",
         "tiene_prediccion": True,
@@ -188,7 +188,7 @@ _CAMPOS_ESCUELA_OUT = (
     # US-621 (2026-09-12): los seis drivers y la comparacion con el ciclo anterior, para que la
     # matriz de drivers y el mapa se llenen con UNA peticion en vez de una por escuela.
     "d1", "d2", "d3", "d4", "d5", "d6", "indice_completitud_drivers",
-    "matricula_ciclo_anterior", "variacion_matricula",
+    "matricula_ciclo_anterior", "variacion_matricula_alumnos",
 )
 
 

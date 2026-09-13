@@ -138,7 +138,7 @@ def test_escuelas_trae_drivers_coordenadas_y_comparacion_de_ciclo() -> None:
     esperados = (
         [f"d{i}" for i in range(1, 7)]
         + ["indice_completitud_drivers", "latitud", "longitud"]
-        + ["matricula_ciclo_anterior", "variacion_matricula"]
+        + ["matricula_ciclo_anterior", "variacion_matricula_alumnos"]
     )
     faltantes = sorted({campo for e in items for campo in esperados if campo not in e})
 
