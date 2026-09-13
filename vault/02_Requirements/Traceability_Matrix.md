@@ -725,6 +725,12 @@ anclas no existen en el DOM hasta hacer scroll.
 |---|---|---|---|---|
 | `REQ-003` | `US-631` · `RISK-011` · `BUG-030` | [[vault/15_ML_Models/ML03_Preflight_US631]] y `preflight_ml03.py` hacen visible, por ciclo y entidad, la elegibilidad D1--D4, las causas de exclusión y la cobertura D5/D6 sin convertir ausencias reales en valores ni exponer CCT. Las pruebas fijan que D5/D6 no cambian la elegibilidad y que una ausencia D1--D4 se cuenta como exclusión. | Ejecutar sobre dump canónico, conservar hash y conteos; verificar MLflow; resolver contrato D5; aplicar la compuerta de [[vault/15_ML_Models/ML03_RISK011_Gate]] y la decisión de Edgar. Gold/API/Panel y su E2E pertenecen a sus dueños. | 🟡 evidencia preventiva lista; cierre de US-631 bloqueado por compuertas y dependencias reales |
 
+## Evidencia incremental — 2026-09-13 · plan de activación posterior a DEC-027 (Estefany)
+
+| REQ | Historias | Evidencia entregada | Pendiente / a quién | Estado |
+|---|---|---|---|---|
+| `REQ-003` | `US-321` · `US-631` · `RISK-011` · `DEC-027` | Se reconcilian la compuerta, el preflight, la propuesta D1-D4 y el índice ML: PR #317 fue mergeado, DEC-027 acepta la mitigación metodológica y `RISK-011` pasa a `mitigando`. El vector D1-D4, `k=2` y Silhouette 0.4620526551 son evidencia técnica; el corte histórico se conserva sin presentarlo como operativo. | MLflow debe recuperar una corrida real sobre base canónica aislada; después de una nueva autorización del PO, C1 crea el contrato Gold, C3 el productor batch, C4 la lectura API y C2/QA el E2E con una escuela elegible y otra excluida. | 🟡 metodología cerrada; operación diferida como deuda explícita |
+
 ## Evidencia incremental — 2026-09-08 · el embebido de Superset llega a `main` (C2, Marina García)
 
 | REQ | Historias | Evidencia entregada | Desbloquea | Estado |
