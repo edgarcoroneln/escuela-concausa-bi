@@ -26,17 +26,13 @@ def main() -> None:
         "Las vistas de analista requieren el rol correspondiente."
     )
     st.subheader("Acceso rápido")
-    cols = st.columns(4)
+    cols = st.columns(3)
     with cols[0]:
         st.page_link("pages/1_Dashboards.py", label="📊 Dashboards", use_container_width=True)
     with cols[1]:
         st.page_link("pages/2_Panel_ML.py", label="🤖 Panel de ML", use_container_width=True)
     with cols[2]:
         st.page_link("pages/3_Chat.py", label="💬 Chat del agente", use_container_width=True)
-    with cols[3]:
-        st.page_link(
-            "pages/4_Como_Funciona.py", label="🛠️ Cómo funciona", use_container_width=True
-        )
 
 
 if __name__ == "__main__":
