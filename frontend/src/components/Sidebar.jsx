@@ -143,7 +143,7 @@ export default function Sidebar({ session }) {
             <NavItem key={f.n} {...f} />
           ))}
 
-          <SectionLabel>Referencia</SectionLabel>
+          <SectionLabel>Referencia Técnica</SectionLabel>
           {REFERENCIA.map((f) => (
             <NavItem key={f.to} {...f} />
           ))}
