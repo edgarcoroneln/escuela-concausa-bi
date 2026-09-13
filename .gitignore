@@ -17,6 +17,9 @@ secrets.yaml
 secrets.yml
 service-account*.json
 
+# ---- Claude Code: overrides personales (nunca compartir bypassPermissions con el equipo) ----
+.claude/settings.local.json
+
 # ---- Ambiente Python ----
 # .venv*/ cubre .venv, .venv311, .venv312… (.venv/ solo cazaba el nombre exacto)
 .venv*/

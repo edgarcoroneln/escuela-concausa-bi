@@ -14,8 +14,10 @@ from fastapi.testclient import TestClient
 
 from scripts.export_openapi import SALIDA
 from src.api.app import API_PREFIX, app
+from src.api.repositorio_about import get_repositorio_about
 from src.api.repositorio_gold import get_repositorio_gold
 from src.api.repositorio_modelos import get_repositorio_modelos
+from tests.fixtures_about import RepositorioAboutFake
 from tests.fixtures_gold import RepositorioGoldFake
 from tests.fixtures_modelos import (
     RepositorioModelosFake,
@@ -38,6 +40,7 @@ def client() -> TestClient:
     """
     app.dependency_overrides[get_repositorio_gold] = RepositorioGoldFake
     app.dependency_overrides[get_repositorio_modelos] = RepositorioModelosFake
+    app.dependency_overrides[get_repositorio_about] = RepositorioAboutFake
     try:
         yield TestClient(app)
     finally:
@@ -523,6 +526,259 @@ def test_admin_pipeline_run_202(client: TestClient) -> None:
 
 
 # --------------------------------------------------------------------------- #
+# "Cómo funciona" (US-601): manifest + sobre genérico de bloques
+# --------------------------------------------------------------------------- #
+
+
+def test_about_secciones_trae_el_manifest_completo(client: TestClient) -> None:
+    r = client.get(f"{API_PREFIX}/about/secciones")
+    assert r.status_code == 200
+    payload = r.json()
+    ids = {s["id"] for s in payload}
+    assert ids == {
+        "arquitectura",
+        "modelo-datos",
+        "capas",
+        "cubos",
+        "decisiones",
+        "modelos-ml",
+    }
+    for seccion in payload:
+        assert set(seccion.keys()) == {"id", "titulo", "orden"}
+    # El orden es 1..N sin huecos: al fundir "stack" en "arquitectura" se renumeró, y un hueco
+    # aquí significaría que alguien quitó una sección sin renumerar (el cliente ordena por este
+    # campo, así que un hueco no rompe nada visible -- por eso conviene cazarlo aquí).
+    assert sorted(s["orden"] for s in payload) == list(range(1, len(payload) + 1))
+
+
+def test_about_memoria_tecnica_vive_dentro_de_arquitectura(client: TestClient) -> None:
+    """`stack` dejó de ser sección propia (US-601): su tabla por capa se fundió en
+    `arquitectura`, que era la sección con más contexto para leerla. Si alguien la vuelve a
+    separar, esta prueba lo dice."""
+    assert client.get(f"{API_PREFIX}/about/secciones/stack").status_code == 404
+
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    tablas = [b for b in bloques if b["tipo"] == "tabla"]
+    por_capa = [t for t in tablas if t["columnas"] == ["Capa", "Herramienta"]]
+    assert len(por_capa) == 1, "la tabla de memoria técnica debe estar una sola vez"
+    herramientas = {fila[1] for fila in por_capa[0]["filas"]}
+    assert "Apache Airflow" in herramientas
+    assert "FastAPI + OAuth2/JWT + RBAC" in herramientas
+
+
+def test_about_arquitectura_refleja_adr012(client: TestClient) -> None:
+    """La sección describe la arquitectura VIGENTE, no la de la demo del 9-sep.
+
+    `ADR-012` retiró Streamlit y el embebido de Superset como interfaz del producto. Esta
+    documentación es lo primero que lee alguien que llega al proyecto: si sigue diciendo que
+    FARO Web es una app de Streamlit, manda a la persona equivocada al lugar equivocado. Es
+    exactamente el tipo de desfase que ya nos costó caro —una ficha de modelo afirmando un
+    umbral que no se cumplía— y por eso se guarda con una prueba y no con buena intención.
+    """
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    componentes = next(
+        b for b in bloques if b["tipo"] == "tabla" and b["columnas"][0] == "Componente"
+    )
+    nombres = [fila[0] for fila in componentes["filas"]]
+
+    assert any("React" in n for n in nombres), "falta la SPA, que es la interfaz real del producto"
+    assert any("nginx" in n for n in nombres), "falta quién sirve la SPA y proxea el API"
+
+    # Streamlit puede seguir listado -- el código existe -- pero NO como la interfaz vigente.
+    fila_streamlit = next((f for f in componentes["filas"] if "Streamlit" in f[0]), None)
+    if fila_streamlit is not None:
+        assert "histórico" in fila_streamlit[0].lower() or "retirado" in fila_streamlit[1].lower(), (
+            "si Streamlit sigue en la tabla, su fila tiene que decir que ya no es la interfaz"
+        )
+
+    # Superset no debe describirse como la superficie que ve el usuario final.
+    fila_superset = next(f for f in componentes["filas"] if "Superset" in f[0])
+    assert "interno" in fila_superset[1].lower(), (
+        "Superset quedó como motor de cubos interno (ADR-012); su fila debe decirlo"
+    )
+
+    # La tabla de memoria técnica tiene que nombrar el stack real del frontend.
+    por_capa = next(b for b in bloques if b["tipo"] == "tabla" and b["columnas"] == ["Capa", "Herramienta"])
+    herramientas = " ".join(f"{c} {h}" for c, h in por_capa["filas"]).lower()
+    assert "react" in herramientas and "nginx" in herramientas
+
+
+def test_about_arquitectura_trae_el_diagrama(client: TestClient) -> None:
+    """El diagrama de componentes es un bloque `svg` con su texto alternativo.
+
+    Se afirma lo que la página necesita para pintarlo (marcado + `alt` + `alto`), no el trazo
+    exacto: mover una caja no debe reprobar esta prueba, pero servir un SVG sin `alt` sí.
+    """
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    svgs = [b for b in bloques if b["tipo"] == "svg"]
+    assert len(svgs) == 1
+    diagrama = svgs[0]
+    assert diagrama["codigo"].startswith("<svg ")
+    assert diagrama["codigo"].rstrip().endswith("</svg>")
+    assert diagrama["alt"].strip()
+    assert isinstance(diagrama["alto"], int) and diagrama["alto"] > 0
+    # Las cinco células tienen que aparecer con su color: es lo que hace legible la leyenda.
+    for color in ("#4C72B0", "#55A868", "#8172B2", "#C44E52", "#937860"):
+        assert color in diagrama["codigo"], f"falta el color de célula {color}"
+
+
+def test_about_seccion_respeta_el_sobre_generico(client: TestClient) -> None:
+    """Cualquier sección, sin importar su contenido, responde el mismo sobre.
+
+    Es lo que permite que la página tenga un solo renderer por tipo de bloque en vez de uno
+    por sección (US-601): si el sobre se rompe, se rompe para todas las secciones a la vez.
+    """
+    r = client.get(f"{API_PREFIX}/about/secciones/modelo-datos")
+    assert r.status_code == 200
+    payload = r.json()
+    assert set(payload.keys()) == {"id", "titulo", "fuente", "advertencias", "bloques"}
+    for bloque in payload["bloques"]:
+        assert "tipo" in bloque
+
+
+def test_ninguna_advertencia_ni_celda_trae_markdown_crudo(client: TestClient) -> None:
+    """El frontend NO interpreta markdown en `advertencias` ni en celdas de tabla.
+
+    `ComoFunciona.jsx` pinta `{a}` y `BloqueAbout.jsx` pinta `{celda}`: texto plano. Un `**` o una
+    comilla invertida en esas cadenas **se ve literal en pantalla**, y las cifras de ML son justo
+    lo que va a leer el profesor. Detectado por Edgar Coronel al revisar el PR #350 — siete
+    cadenas lo traían.
+
+    Sólo se revisan esos dos lugares: los bloques `markdown` sí pasan por un renderer
+    (`MarkdownLite`), así que ahí el markdown es correcto y no debe prohibirse.
+    """
+    crudo = ("**", "`")
+    hallazgos: list[str] = []
+
+    for resumen in client.get(f"{API_PREFIX}/about/secciones").json():
+        seccion = client.get(f"{API_PREFIX}/about/secciones/{resumen['id']}").json()
+
+        for i, aviso in enumerate(seccion.get("advertencias", [])):
+            if any(m in aviso for m in crudo):
+                hallazgos.append(f"{seccion['id']} · advertencia[{i}]")
+
+        for j, bloque in enumerate(seccion["bloques"]):
+            if bloque["tipo"] != "tabla":
+                continue
+            for f, fila in enumerate(bloque["filas"]):
+                for c, celda in enumerate(fila):
+                    if any(m in celda for m in crudo):
+                        hallazgos.append(f"{seccion['id']} · bloque[{j}] fila[{f}] col[{c}]")
+
+    assert not hallazgos, (
+        "estas cadenas se verían con los asteriscos y comillas literales en pantalla, porque el "
+        f"frontend las pinta como texto plano: {hallazgos}"
+    )
+
+
+def test_los_bloques_markdown_si_pueden_traer_markdown(client: TestClient) -> None:
+    """El complemento del anterior: la prohibición es de `advertencias` y celdas, no general.
+
+    Si alguien "limpiara" también los bloques `markdown` para hacer pasar la prueba de arriba,
+    la sección perdería su formato sin que nada lo avise.
+    """
+    bloques = client.get(f"{API_PREFIX}/about/secciones/arquitectura").json()["bloques"]
+    textos = [b["texto"] for b in bloques if b["tipo"] == "markdown"]
+    assert any("**" in t or "`" in t for t in textos), (
+        "ningún bloque markdown trae formato: revisa que no se haya limpiado de más"
+    )
+
+
+def test_about_seccion_inexistente_da_404(client: TestClient) -> None:
+    r = client.get(f"{API_PREFIX}/about/secciones/no-existe")
+    assert r.status_code == 404
+
+
+def test_about_capas_expone_metrica_sin_dato_para_tabla_ausente(client: TestClient) -> None:
+    """`RepositorioAboutFake` incluye una tabla sin materializar a propósito: la sección
+    `capas` debe propagar `valor: null` con una nota, nunca un `0` inventado."""
+    r = client.get(f"{API_PREFIX}/about/secciones/capas")
+    assert r.status_code == 200
+    bloques = r.json()["bloques"]
+    items = {
+        item["etiqueta"]: item
+        for b in bloques
+        if b["tipo"] == "metricas"
+        for item in b["items"]
+    }
+    assert items["Filas en Gold (4 entidades)"]["valor"] is not None  # sí hay tablas con dato
+    assert items["Total de filas (bronze + silver + gold)"]["valor"] is not None
+    bloque_tabla = next(
+        b for b in bloques if b["tipo"] == "tabla" and b["columnas"] == ["Capa", "Tabla", "Filas", "Nota"]
+    )
+    filas_ausentes = [f for f in bloque_tabla["filas"] if f[2] == "—"]
+    assert filas_ausentes, "Debe listarse al menos una tabla sin materializar, con nota."
+
+
+def test_about_capas_trae_los_tres_er_titulados(client: TestClient) -> None:
+    """Pedido del usuario: los E-R de bronze, silver y gold van juntos en `capas`, cada uno con
+    su título -- no solo bronze/silver como antes.
+
+    Los tres pasaron de `mermaid` a `svg` dibujado por la API: obligar a cada frontend a traer un
+    motor de diagramas costaba una dependencia con avisos de severidad alta. Lo que esta prueba
+    protege es lo mismo de antes —**tres** E-R, cada uno con su título—, no la técnica con la que
+    se dibujan.
+    """
+    r = client.get(f"{API_PREFIX}/about/secciones/capas")
+    bloques = r.json()["bloques"]
+    diagramas = [b for b in bloques if b["tipo"] == "svg"]
+    assert len(diagramas) == 3
+    for d in diagramas:
+        assert d["codigo"].startswith("<svg ")
+        assert d["alt"].strip(), "un diagrama sin texto alternativo es invisible para un lector de pantalla"
+    titulos = [b["texto"] for b in bloques if b["tipo"] == "markdown" and b["texto"].startswith("### E-R")]
+    assert {t.splitlines()[0] for t in titulos} == {"### E-R — Bronze", "### E-R — Silver", "### E-R — Gold"}
+
+
+def test_about_capas_trae_barras_y_fuentes_de_bronze(client: TestClient) -> None:
+    """Reemplaza al icicle (retroalimentación del usuario: con gold ~6x más grande que silver,
+    el icicle volvía a silver casi invisible)."""
+    r = client.get(f"{API_PREFIX}/about/secciones/capas")
+    bloques = r.json()["bloques"]
+    bloque_barras = next(b for b in bloques if b["tipo"] == "barras")
+    assert {i["etiqueta"] for i in bloque_barras["items"]} == {"Bronze", "Silver", "Gold"}
+    tabla_fuentes = next(
+        b for b in bloques if b["tipo"] == "tabla" and b["columnas"] == ["Fuente", "Descripción", "Frecuencia"]
+    )
+    assert len(tabla_fuentes["filas"]) == 8  # DS-01..DS-08
+
+
+def test_about_modelo_datos_trae_mapa_con_fondo_y_drivers(client: TestClient) -> None:
+    r = client.get(f"{API_PREFIX}/about/secciones/modelo-datos")
+    bloques = r.json()["bloques"]
+    bloque_mapa = next(b for b in bloques if b["tipo"] == "mapa")
+    assert len(bloque_mapa["resaltados"]) == 4  # SCOPE_ENTIDADES
+    assert bloque_mapa["geojson"]["type"] == "FeatureCollection"
+    assert bloque_mapa["fondo"]["type"] == "FeatureCollection"  # silueta nacional (pedido del usuario)
+    assert len(bloque_mapa["fondo"]["features"]) >= 1
+    tabla_drivers = next(
+        b for b in bloques if b["tipo"] == "tabla" and b["columnas"] == ["ID", "Driver", "Fuente", "Cobertura"]
+    )
+    assert [f[0] for f in tabla_drivers["filas"]] == ["D1", "D2", "D3", "D4", "D5", "D6"]
+
+
+def test_about_cubos_trae_diagrama_de_flujo_con_las_3_columnas(client: TestClient) -> None:
+    r = client.get(f"{API_PREFIX}/about/secciones/cubos")
+    bloque = next(b for b in r.json()["bloques"] if b["tipo"] == "diagrama_flujo")
+    columnas = {n["columna"] for n in bloque["nodos"]}
+    assert columnas == {0, 1, 2}
+    cubos_en_col1 = {n["id"] for n in bloque["nodos"] if n["columna"] == 1}
+    assert len(cubos_en_col1) == 9  # los 9 cubos
+    dashboards_en_col2 = {n["id"] for n in bloque["nodos"] if n["columna"] == 2}
+    assert dashboards_en_col2 == {f"DB-{i:02d}" for i in range(1, 11)}
+    # cada enlace conecta nodos que existen
+    ids = {n["id"] for n in bloque["nodos"]}
+    assert all(e["origen"] in ids and e["destino"] in ids for e in bloque["enlaces"])
+
+
+def test_about_es_publico_sin_sesion(client: TestClient) -> None:
+    """A diferencia de `/escuelas`/`/predicciones`, `/about/*` no depende de
+    `AUTH_LECTURA_PUBLICA`: es metadata del sistema, nunca dato de escuela."""
+    r = client.get(f"{API_PREFIX}/about/secciones", headers={})
+    assert r.status_code == 200
+
+
+# --------------------------------------------------------------------------- #
 # OpenAPI publicado sincronizado con el código
 # --------------------------------------------------------------------------- #
 
@@ -571,6 +827,8 @@ def test_openapi_declara_todas_las_rutas(client: TestClient) -> None:
         f"{API_PREFIX}/agente/consulta",
         f"{API_PREFIX}/admin/pipeline/run",
         f"{API_PREFIX}/admin/metrics",
+        f"{API_PREFIX}/about/secciones",
+        f"{API_PREFIX}/about/secciones/{{id_seccion}}",
     ]
     for ruta in esperadas:
         assert ruta in paths, f"Falta la ruta {ruta} en el OpenAPI"

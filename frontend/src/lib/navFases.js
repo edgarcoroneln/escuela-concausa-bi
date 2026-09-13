@@ -13,6 +13,19 @@ export const EXPLORACION = [
   { n: "06", label: "Explorador de escuelas", to: "/explorador" },
 ];
 
+// Referencia Técnica (US-601): documenta cómo funciona el sistema -- componentes, modelo de
+// datos, capas, cubos, decisiones y modelos. No lleva número de fase a propósito: no forma parte
+// del relato de los 7 casos, se consulta aparte.
+//
+// **Nombres alineados con la reestructura de Diana Alvarez** (comentario en el PR #350, 13-sep):
+// ella ya dejó en su rama un placeholder deshabilitado llamado "Cómo funciona FARO" bajo una
+// sección "Referencia Técnica", anticipando que esto llegaría. Se adoptan sus dos nombres tal
+// cual para que al reconciliar no queden dos entradas compitiendo: su placeholder y esta entrada
+// son el mismo item, así que el merge es habilitarlo, no fusionar dos definiciones.
+export const REFERENCIA = [
+  { label: "Cómo funciona FARO", to: "/como-funciona" },
+];
+
 // Las 6 vistas "heredadas" de Fase 1 (vista-general, mapa, drivers,
 // comparacion-territorial, comparativa, hallazgos) se retiraron el 12-sep
 // (decisión de arquitectura de Marina García del Buey): la arquitectura
@@ -22,7 +35,7 @@ export const EXPLORACION = [
 // Ruta -> etiqueta de pantalla, para el breadcrumb del Header. La entrada
 // dinamica "/escuela/:cct" se resuelve aparte (Header.jsx) porque lleva un
 // parametro.
-const TODAS = [...FASES, ...EXPLORACION];
+const TODAS = [...FASES, ...EXPLORACION, ...REFERENCIA];
 
 export function tituloDeRuta(pathname) {
   if (pathname.startsWith("/escuela/")) return "Expediente";

@@ -10,6 +10,7 @@ import Conclusion from "./pages/Conclusion.jsx";
 import Explorador from "./pages/Explorador.jsx";
 import ExpedienteEscuela from "./pages/ExpedienteEscuela.jsx";
 import Login from "./pages/Login.jsx";
+import ComoFunciona from "./pages/ComoFunciona.jsx";
 
 // Rutas = las 7 pantallas del rediseño Fase 2 (US-641) contra las 7
 // plantillas de UX/UI de Equipo 3, más /explorador. Las 6 vistas
@@ -38,6 +39,9 @@ const router = createBrowserRouter([
       { path: "escuela/:cct", element: <ExpedienteEscuela /> },
       { path: "conclusion", element: <Conclusion /> },
       { path: "explorador", element: <Explorador /> },
+      // Pantalla de referencia (US-601), fuera de las 7 del relato: documenta cómo funciona
+      // el sistema. No la consume el storytelling, así que va al final y no altera su orden.
+      { path: "como-funciona", element: <ComoFunciona /> },
     ],
   },
 ]);

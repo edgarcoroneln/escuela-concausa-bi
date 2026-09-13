@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FASES, EXPLORACION } from "../lib/navFases.js";
+import { FASES, EXPLORACION, REFERENCIA } from "../lib/navFases.js";
 
 // Barra lateral persistente (Fase 2 del rediseño, US-641) -- reemplaza el
 // nav plano de Topbar.jsx por la navegacion de rail izquierdo que traen las
@@ -141,6 +141,11 @@ export default function Sidebar({ session }) {
         <nav className="flex flex-col gap-0.5 px-2 mb-2">
           {EXPLORACION.map((f) => (
             <NavItem key={f.n} {...f} />
+          ))}
+
+          <SectionLabel>Referencia Técnica</SectionLabel>
+          {REFERENCIA.map((f) => (
+            <NavItem key={f.to} {...f} />
           ))}
         </nav>
       </div>
