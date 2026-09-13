@@ -36,7 +36,7 @@ from src.modelos.publicar_gold import (
     filtrar_con_driver_observado,
     prioridad_de_riesgo,
 )
-from src.modelos.riesgo import RIESGO_ESTABLE, RIESGO_UMBRAL
+from src.modelos.riesgo import LINEA_DE_ALERTA, RIESGO_ESTABLE, RIESGO_UMBRAL
 
 # --------------------------------------------------------------------------- fixtures
 
@@ -75,11 +75,21 @@ def engine(tmp_path):
 
 
 def test_prioridad_usa_los_umbrales_ya_ratificados() -> None:
-    """No inventa números: reutiliza las anclas de DOC-INDICE-RIESGO."""
-    assert prioridad_de_riesgo(RIESGO_UMBRAL) is Prioridad.ALTA
-    assert prioridad_de_riesgo(RIESGO_UMBRAL - 0.01) is Prioridad.MEDIA
+    """No inventa números: reutiliza los cortes ya ratificados.
+
+    **Actualizado por `DEC-026` (12-sep).** Antes `ALTA` exigía `RIESGO_UMBRAL` —el alias del
+    ancla, 0.60— y esta prueba lo afirmaba. Ese corte era inalcanzable: el máximo real sobre el
+    Gold de producción es 0.5717, así que ninguna escuela calificaba (`BUG-063`). `ALTA` pasa a la
+    **línea de alerta** (0.50); el ancla no se mueve, sigue calibrando la sigmoide (`DEC-006`).
+    """
+    assert prioridad_de_riesgo(LINEA_DE_ALERTA) is Prioridad.ALTA
+    assert prioridad_de_riesgo(LINEA_DE_ALERTA - 0.01) is Prioridad.MEDIA
     assert prioridad_de_riesgo(RIESGO_ESTABLE) is Prioridad.MEDIA
     assert prioridad_de_riesgo(RIESGO_ESTABLE - 0.01) is Prioridad.BAJA
+
+    # El ancla sigue existiendo y sigue por encima de la línea: son dos cortes distintos.
+    assert prioridad_de_riesgo(RIESGO_UMBRAL) is Prioridad.ALTA
+    assert LINEA_DE_ALERTA < RIESGO_UMBRAL
 
 
 def test_prioridad_cubre_los_extremos() -> None:
