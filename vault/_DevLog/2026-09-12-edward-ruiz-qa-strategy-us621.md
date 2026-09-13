@@ -11,11 +11,11 @@ tags: [devlog, qa, estrategia, celula-6]
 
 # DevLog — 2026-09-12 — Estrategia operativa de QA para S7 (US-621)
 
-→ [[vault/_DevLog/_index|Volver al índice]] · [[vault/06_Quality_Testing/QA_team_documentation/Reporte_Auditoria_QA_UX|Reporte_Auditoria_QA_UX]]
+→ [[vault/_DevLog/_index|Volver al índice]] · [[vault/06_Quality_Testing/QA_Team_Documentation/Estrategia_Operativa_QA_S7|Estrategia_Operativa_QA_S7]]
 
 ## Qué se agrega
 
-`vault/06_Quality_Testing/QA_team_documentation/Reporte_Auditoria_QA_UX.md`: estrategia operativa
+`vault/06_Quality_Testing/QA_Team_Documentation/Estrategia_Operativa_QA_S7.md`: estrategia operativa
 del equipo de QA (3 personas) para la recuperación S7. Define el modelo de trabajo "Owner Checks"
 (QA orquesta, cada dueño de área entrega evidencia, QA valida sobre el producto real), la matriz de
 tres perspectivas de auditoría (Data & Lógica, Funcional E2E, UX & Storytelling), y las reglas de
@@ -27,7 +27,7 @@ El PR se abrió desde `feat/documentacion-qa` en vez de `dev/edward-ruiz` (regla
 persona, nunca por tema) y el título no seguía `[Nombre Apellido] - Descripción (ID) -
 [sync|CI|DoF|DevLog]`. `check_ownership.py` lo reprobó por ambos motivos. Edward confirmó que no
 puede operar su equipo en este momento, así que el PM resincronizó `dev/edward-ruiz` con `main` y
-trasladó el mismo archivo, sin modificar su contenido.
+trasladó el mismo archivo, actualizando su nombre.
 
 El PR original también marcaba en su checklist que la matriz de trazabilidad estaba actualizada y
 que existía un DevLog — ninguno de los dos se había commiteado. Se agregan aquí ambos para que el

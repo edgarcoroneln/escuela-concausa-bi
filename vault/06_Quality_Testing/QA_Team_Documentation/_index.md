@@ -13,4 +13,4 @@ tags: [qa, index]
 
 ## Documentos
 
-* [[vault/06_Quality_Testing/QA_team_documentation/Reporte_Auditoria_QA_UX|DOC-QA-ESTRATEGIA-FARO — Estrategia Operativa de QA y Auditoría UX]]
+| [[vault/06_Quality_Testing/QA_Team_Documentation/Estrategia_Operativa_QA_S7]] | DOC-QA-ESTRATEGIA-FARO — Estrategia Operativa de QA |
