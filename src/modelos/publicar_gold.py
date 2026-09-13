@@ -630,6 +630,47 @@ def escribir(
     return len(registros)
 
 
+def _verificar_shap_antes_de_publicar(args) -> None:
+    """Impide borrar en silencio el SHAP ya publicado (`DEC-026`, hallazgo de Christian Imanol).
+
+    `escribir()` hace `on_conflict_do_update` con `set_` sobre **todas** las columnas menos las
+    llaves. Sin `--con-shap`, `construir_recomendaciones_ml02` deja `shap_d1..d6` en `None`, así
+    que republicar **sobrescribe con NULL el SHAP que ya está arriba** — 45,276 filas, y el
+    endpoint `/predicciones/{cct}/explicacion` se queda sin datos sin que nada falle.
+
+    No basta con anotarlo en el runbook: el modo de falla es silencioso y destructivo, así que lo
+    rechaza el propio script. `--sin-shap-a-proposito` existe para el caso legítimo —un ambiente
+    donde el SHAP nunca se pobló— y obliga a declararlo, que es justo lo que se busca.
+
+    Se comprueba además que `shap` esté instalado **antes** de entrenar: descubrirlo después de
+    reentrenar ML-01 y ML-02 cuesta la corrida completa.
+    """
+    if not args.desde_gold or args.solo_predicciones:
+        # Sin `--desde-gold` se publica contra el fixture, donde no hay SHAP que perder;
+        # `--solo-predicciones` ni siquiera toca `gold.recomendaciones`.
+        return
+
+    if not args.con_shap and not args.sin_shap_a_proposito:
+        raise SystemExit(
+            "ERROR: `--desde-gold` sin `--con-shap` dejaría en NULL las columnas shap_d1..d6 de "
+            "TODAS las filas de gold.recomendaciones -- el upsert actualiza cada columna que no "
+            "sea llave, así que sobrescribe el SHAP que ya está publicado.\n"
+            "  Usa `--con-shap` para recalcularlo, o `--sin-shap-a-proposito` si de verdad "
+            "quieres publicar sin él en este ambiente."
+        )
+
+    if args.con_shap:
+        try:
+            import shap  # noqa: F401
+        except ImportError as exc:
+            raise SystemExit(
+                "ERROR: `--con-shap` necesita el paquete `shap` y no está instalado aquí. Se "
+                "comprueba antes de entrenar para no perder la corrida completa de ML-01 y "
+                "ML-02 y descubrirlo al final.\n  Instálalo (`pip install shap`) o corre con "
+                "`--sin-shap-a-proposito` asumiendo que el SHAP quedará en NULL."
+            ) from exc
+
+
 def _motor(url: str | None = None) -> Engine:
     """Crea el motor desde `--url`, `DATABASE_URL` o el `docker-compose.yml` local."""
     destino = url or os.environ.get("DATABASE_URL")
@@ -674,7 +715,17 @@ def main() -> int:
         action="store_true",
         help="calcula y persiste SHAP en batch; requiere el stack completo de C3",
     )
+    parser.add_argument(
+        "--sin-shap-a-proposito",
+        action="store_true",
+        help=(
+            "publica contra Gold real SIN SHAP, aceptando que las columnas shap_d1..d6 queden en "
+            "NULL para todas las filas. Sólo para ambientes donde el SHAP no está poblado."
+        ),
+    )
     args = parser.parse_args()
+
+    _verificar_shap_antes_de_publicar(args)
 
     engine = _motor(args.url)
     if args.desde_gold:
