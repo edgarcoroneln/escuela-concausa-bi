@@ -28,6 +28,20 @@
 -- pero silver.rezago_municipio (US-111, Deni) las expone como `entidad`/`municipio` a secas. El
 -- nombre_municipio canónico pasa a ser el de INEGI (gold.geo_municipio); pendiente reconciliar
 -- la nota de Data_Model.md §6 con Deni/Edgar.
+--
+-- FIX (BUG-077, 2026-09-12, Edgar Coronel / Diana Alvarez): el párrafo de arriba asumía que
+-- "CONEVAL publica el índice de rezago para TODOS los municipios del país", así que
+-- nombre_entidad podía tomarse de rezago_ultimo (CONEVAL) por LEFT JOIN sin riesgo. Falso en el
+-- Postgres local verificado: 307 de 317 filas quedaban con nombre_entidad NULL, y
+-- `MunicipioOut.nombre_entidad` es StrictStr (no admite None) -> 500 en /api/v1/municipios para
+-- el 97% del universo. El data_test not_null_dim_municipio_nombre_entidad ya existía para
+-- atrapar justo esto y sí falla, pero ningún workflow de CI corre `dbt test` (solo `dbt parse`),
+-- así que nunca se vio antes de producción. A diferencia de población/rezago/pobreza (datos
+-- reales que legítimamente pueden faltar por municipio, SIN_DATO), el nombre de la entidad NO es
+-- un dato variable: las 4 SCOPE_ENTIDADES son fijas y conocidas (scope_entidades()), así que se
+-- resuelve contra el catálogo propio `dim_entidad` (seed, ver _gold__seeds.yml) por cve_ent en
+-- vez de heredar la cobertura parcial de una fuente externa. cve_ent se sigue derivando por
+-- substring del cve_mun de INEGI (100% poblado, no depende de ningún JOIN).
 
 with geo as (
 
@@ -63,7 +77,6 @@ rezago_ultimo as (
 
     select
         cve_mun,
-        entidad as nombre_entidad,
         indice_rezago_social,
         indice_rezago_social_cobertura,
         grado_rezago,
@@ -79,7 +92,7 @@ select
     g.cve_mun,
     substring(g.cve_mun, 1, 2) as cve_ent,
     g.nombre_municipio,
-    r.nombre_entidad,
+    e.nombre_entidad,
     p.poblacion,
     case when r.indice_rezago_social_cobertura = 'OK' then r.indice_rezago_social end
         as indice_rezago_social,
@@ -88,3 +101,4 @@ select
 from geo g
 left join poblacion p on p.cve_mun = g.cve_mun
 left join rezago_ultimo r on r.cve_mun = g.cve_mun and r._rn = 1
+left join {{ ref('dim_entidad') }} e on e.cve_ent = substring(g.cve_mun, 1, 2)
