@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import warnings
+
 import pandas as pd
 import pytest
 
@@ -69,6 +71,25 @@ def test_correlaciones_excluyen_target(features: pd.DataFrame) -> None:
 
     assert set(matriz.columns) == {*DRIVERS, "indice_completitud_drivers"}
     assert COLUMNA_TARGET not in matriz.columns
+
+
+def test_correlaciones_constantes_quedan_nulas_sin_runtime_warning(
+    features: pd.DataFrame,
+) -> None:
+    """Una variable constante no tiene Pearson definido y no debe ensuciar la corrida."""
+    constantes = features.copy()
+    disponibles = constantes["d1_cobertura"].eq("OK")
+    constantes.loc[disponibles, "d1_pobreza"] = 1.0
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        eda = resumen_eda(constantes)
+        matriz = correlaciones_drivers(constantes)
+
+    fila_d1 = eda.loc[eda["feature"] == "d1_pobreza"].iloc[0]
+    assert pd.isna(fila_d1["correlacion_target"])
+    assert pd.isna(matriz.loc["d1_pobreza", "d2_inseguridad"])
+    assert pd.isna(matriz.loc["d1_pobreza", "d1_pobreza"])
 
 
 def test_variables_ml03_excluyen_llaves_y_target() -> None:

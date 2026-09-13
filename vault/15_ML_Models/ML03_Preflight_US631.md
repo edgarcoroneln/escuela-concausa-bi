@@ -64,6 +64,27 @@ verdad recuperable, y después debe existir la ruta Gold → API → Panel → Q
 Los pasos 1 a 5 no se inician durante la deuda explícita de DEC-027. Este plan es el contrato para
 retomarlos en un ciclo autorizado, no evidencia de que la integración ya exista.
 
+## Preparación local no operativa — fixture sintético
+
+La restauración local de un fixture sintético permite probar el código de ML-03, pero no reemplaza
+el corte canónico ni habilita una promoción. Antes de solicitar la reactivación del paso 1, la
+persona ejecutora debe completar estas comprobaciones locales:
+
+1. El EDA debe representar correlaciones indefinidas por falta de variación como `null`, sin
+   `RuntimeWarning`; no debe convertirlas en cero ni omitir la variable de cobertura.
+2. Debe conservar la tabla completa de `k=2..6`, perfiles agregados y tamaños de cluster. Si la
+   diferencia entre los dos mejores Silhouette es pequeña, se debe documentar la comparación de
+   interpretabilidad y parsimonia; no se declara que el mayor valor aislado sea una decisión de
+   negocio.
+3. El ARI entre semillas se etiqueta exclusivamente como estabilidad de inicialización. No sustituye
+   la validación temporal ni una evaluación externa.
+4. La evidencia local debe registrar que la fuente es sintética, que no hubo registro MLflow y que
+   no se escribió en Gold, API ni Panel.
+
+Estas comprobaciones reducen fallas de ejecución y de interpretación. La selección que acompañe una
+corrida canónica sólo se decide después de la autorización del paso 2 y con el protocolo temporal
+predeclarado.
+
 ## Qué debe hacer Datos antes de aumentar cobertura
 
 - **D5:** Emilio/C1 deben extraer volumen fechado y georreferenciado, definir el indicador de estrés
