@@ -116,6 +116,33 @@
         "title": "ContextoConversacionalIn",
         "type": "object"
       },
+      "CortesAtencionOut": {
+        "description": "Cortes del **nivel de atencion** (`DEC-023`), para que el frontend no los teclee.\n\nSon **definiciones**, no datos: por eso viajan en un endpoint publico y sin filtros. Existen\nporque las dos constantes viven en capas distintas del repo --la linea de alerta en la API\n(`DEC-019`) y la matricula estable en `src/modelos/riesgo.py`, alcance de C3-- y el front\nnecesita las dos. Escribirlas a mano en el front repetiria `BUG-058`, que fue exactamente eso:\nun corte hardcodeado que quedo desincronizado de la capa que lo calcula.",
+        "properties": {
+          "alta": {
+            "description": "`indice_riesgo >= alta` => nivel de atencion alta.",
+            "title": "Alta",
+            "type": "number"
+          },
+          "ancla_calibracion": {
+            "description": "Ancla de la sigmoide (`DEC-006`): `indice_riesgo` en este valor significa que la escuela proyecta perder 5 % de su matricula. **No es un corte de presentacion.**",
+            "title": "Ancla Calibracion",
+            "type": "number"
+          },
+          "media": {
+            "description": "`>= media` y `< alta` => media; por debajo, baja.",
+            "title": "Media",
+            "type": "number"
+          }
+        },
+        "required": [
+          "alta",
+          "media",
+          "ancla_calibracion"
+        ],
+        "title": "CortesAtencionOut",
+        "type": "object"
+      },
       "EscuelaDetalleOut": {
         "properties": {
           "cct": {
@@ -219,10 +246,17 @@
             "title": "Es Estimado Por Grupo"
           },
           "indice_completitud_drivers": {
-            "maximum": 1.0,
-            "minimum": 0.0,
-            "title": "Indice Completitud Drivers",
-            "type": "number"
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indice Completitud Drivers"
           },
           "indice_riesgo": {
             "anyOf": [
@@ -259,6 +293,18 @@
             ],
             "title": "Longitud"
           },
+          "matricula_ciclo_anterior": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricula Ciclo Anterior"
+          },
           "matricula_total": {
             "minimum": 0.0,
             "title": "Matricula Total",
@@ -279,6 +325,18 @@
           "tiene_prediccion": {
             "title": "Tiene Prediccion",
             "type": "boolean"
+          },
+          "variacion_matricula_alumnos": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** (matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, que si es una razon en [-1, 1].",
+            "title": "Variacion Matricula Alumnos"
           }
         },
         "required": [
@@ -288,8 +346,7 @@
           "cve_mun",
           "matricula_total",
           "tiene_prediccion",
-          "sostenimiento",
-          "indice_completitud_drivers"
+          "sostenimiento"
         ],
         "title": "EscuelaDetalleOut",
         "type": "object"
@@ -308,6 +365,72 @@
             "title": "Cve Mun",
             "type": "string"
           },
+          "d1": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D1"
+          },
+          "d2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D2"
+          },
+          "d3": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D3"
+          },
+          "d4": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D4"
+          },
+          "d5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D5"
+          },
+          "d6": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "D6"
+          },
           "driver_dominante": {
             "anyOf": [
               {
@@ -318,6 +441,19 @@
               }
             ],
             "title": "Driver Dominante"
+          },
+          "indice_completitud_drivers": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indice Completitud Drivers"
           },
           "indice_riesgo": {
             "anyOf": [
@@ -331,6 +467,40 @@
               }
             ],
             "title": "Indice Riesgo"
+          },
+          "latitud": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitud"
+          },
+          "longitud": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitud"
+          },
+          "matricula_ciclo_anterior": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matricula Ciclo Anterior"
           },
           "matricula_total": {
             "minimum": 0.0,
@@ -348,6 +518,18 @@
           "tiene_prediccion": {
             "title": "Tiene Prediccion",
             "type": "boolean"
+          },
+          "variacion_matricula_alumnos": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Cambio de matricula frente al ciclo anterior en **alumnos absolutos** (matricula_total - matricula_ciclo_anterior), NO en porcentaje. Para el porcentaje: matricula_total / matricula_ciclo_anterior - 1. Distinto de KpisOut.variacion_matricula, que si es una razon en [-1, 1].",
+            "title": "Variacion Matricula Alumnos"
           }
         },
         "required": [
@@ -477,6 +659,7 @@
             "type": "integer"
           },
           "variacion_matricula": {
+            "description": "Variacion agregada como **razon** en [-1, 1] (razon de sumas: SUM(matricula_total)/SUM(matricula_ciclo_anterior) - 1). -0.00496 es -0.496 %. Ojo: EscuelaOut.variacion_matricula_alumnos es otra unidad -- alumnos absolutos.",
             "maximum": 1.0,
             "minimum": -1.0,
             "title": "Variacion Matricula",
@@ -516,6 +699,19 @@
       },
       "MunicipioOut": {
         "properties": {
+          "cve_ent": {
+            "anyOf": [
+              {
+                "maxLength": 2,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cve Ent"
+          },
           "cve_mun": {
             "maxLength": 5,
             "minLength": 5,
@@ -532,6 +728,17 @@
               }
             ],
             "title": "Indice Rezago Social"
+          },
+          "nombre_entidad": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Entidad"
           },
           "nombre_municipio": {
             "title": "Nombre Municipio",
@@ -768,6 +975,17 @@
             "title": "Mlflow Run Id",
             "type": "string"
           },
+          "prioridad": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prioridad"
+          },
           "recomendacion": {
             "title": "Recomendacion",
             "type": "string"
@@ -932,6 +1150,16 @@
           "commit": {
             "title": "Commit",
             "type": "string"
+          },
+          "cortes_atencion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CortesAtencionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -1849,6 +2077,8 @@
                   "enum": [
                     "cve_mun",
                     "nombre_municipio",
+                    "cve_ent",
+                    "nombre_entidad",
                     "poblacion",
                     "indice_rezago_social",
                     "pobreza_pct"
@@ -2146,7 +2376,7 @@
     },
     "/api/v1/version": {
       "get": {
-        "description": "Versión de la API y commit desplegado (público, sin token).",
+        "description": "Versión de la API, commit desplegado y cortes del nivel de atención (público, sin token).\n\nLos cortes viajan aquí, y no en una ruta nueva, porque son **metadatos del contrato**: cambian\ncon una decisión (`DEC-019`, `DEC-023`), no con los datos, y el front los necesita **antes** de\niniciar sesión para poder etiquetar lo que ya tenga en pantalla.",
         "operationId": "version_api_v1_version_get",
         "responses": {
           "200": {

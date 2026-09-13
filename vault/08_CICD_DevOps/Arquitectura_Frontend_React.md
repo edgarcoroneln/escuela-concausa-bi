@@ -86,7 +86,7 @@ frontend/
 
 ## 4. Rutas (storytelling "7 casos", del mockup de UX/UI)
 
-`/` Home · `/casos` Los 7 casos · `/casos/:cct` Expediente de la escuela ·
+`/` Home · `/casos` Los 7 casos · `/escuela/:cct` Expediente de la escuela ·
 `/vista-general` · `/comparativa` · `/mapa` · `/drivers` (matriz) ·
 `/comparacion-territorial` · `/hallazgos`.
 

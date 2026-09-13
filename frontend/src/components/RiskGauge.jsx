@@ -28,14 +28,28 @@ export default function RiskGauge({ value, max = 0.6, alertLine = 0.5, color, si
 
     g.append("path").attr("d", track).attr("fill", "var(--color-border)");
 
+    // Animación de relleno (checklist 12-sep, item accionable sin
+    // dependencia de API): el arco de valor crece desde 0 hasta `value` con
+    // un arcTween real de D3 (interpola el ángulo, no solo la opacidad),
+    // igual que "se llena" un gauge físico. Respeta prefers-reduced-motion
+    // saltando directo al ángulo final sin interpolar.
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const valueArc = d3
       .arc()
       .innerRadius(radius - thickness)
       .outerRadius(radius)
-      .startAngle(startAngle)
-      .endAngle(scale(value));
+      .startAngle(startAngle);
 
-    g.append("path").attr("d", valueArc).attr("fill", color);
+    const path = g.append("path").attr("fill", color);
+
+    if (reduceMotion) {
+      path.attr("d", valueArc.endAngle(scale(value)));
+    } else {
+      path.attr("d", valueArc.endAngle(startAngle)).transition().duration(700).ease(d3.easeCubicOut).attrTween("d", () => {
+        const interpolate = d3.interpolate(startAngle, scale(value));
+        return (t) => valueArc.endAngle(interpolate(t))();
+      });
+    }
 
     // Marca de la línea de alerta (DEC-019)
     const alertAngle = scale(alertLine);

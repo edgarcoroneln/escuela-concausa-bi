@@ -31,7 +31,10 @@ echo "   Image: ${IMAGE_NAME}:${IMAGE_TAG}"
 echo "   Commit: ${GIT_SHA}"
 echo ""
 
-docker build --build-arg GIT_SHA="${GIT_SHA}" -t ${IMAGE_URL} -f docker/api.Dockerfile .
+# Cloud Run ejecuta linux/amd64. En hosts arm64 (Docker Desktop en Mac Apple Silicon)
+# sin --platform se construye una imagen arm64 que Cloud Run no puede correr (exec
+# format error). Forzamos amd64 siempre; en CI/hosts amd64 es no-op (BUG-080).
+docker build --platform linux/amd64 --build-arg GIT_SHA="${GIT_SHA}" -t ${IMAGE_URL} -f docker/api.Dockerfile .
 
 echo ""
 echo -e "${BLUE}📤 Pushing to Artifact Registry...${NC}"

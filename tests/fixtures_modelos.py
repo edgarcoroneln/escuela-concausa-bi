@@ -22,6 +22,8 @@ PREDICCIONES_FAKE: list[dict] = [
         "indice_riesgo": 0.72,
         "driver_dominante": "D2",
         "recomendacion": "Coordinar con seguridad pública rutas escolares seguras y entornos protegidos.",
+        # 0.72 >= ANCLA_SIGMOIDE (0.60) => "alta", segun publicar_gold.prioridad_de_riesgo.
+        "prioridad": "alta",
         "mlflow_run_id": "fake-run-ml01-0001",
         "cluster": None,  # ML-03 sin productor (BUG-010, US-321)
         # Contribuciones SHAP de ML-02 (BUG-053). Esta escuela las tiene las seis.
@@ -38,6 +40,9 @@ PREDICCIONES_FAKE: list[dict] = [
         "indice_riesgo": 0.31,
         "driver_dominante": "D4",
         "recomendacion": "Ampliar conectividad y dotación de equipo de cómputo.",
+        # 0.31 esta entre 0.30 y 0.60 => "media". Deliberadamente distinta de la otra fila:
+        # una prueba que solo viera "alta" no notaria si el campo se quedara fijo.
+        "prioridad": "media",
         "mlflow_run_id": "fake-run-ml01-0002",
         "cluster": None,
         # D5 y D6 en `None` a proposito: son los dos drivers de cobertura parcial del proyecto

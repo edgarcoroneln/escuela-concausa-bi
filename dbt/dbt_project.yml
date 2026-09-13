@@ -77,3 +77,14 @@ seeds:
   faro:
     dim_driver:
       +schema: gold
+    # dim_entidad: BUG-077, hallazgo real de revision del PR (2026-09-13) -- sin +column_types,
+    # dbt infiere cve_ent desde el CSV ("09","15","19","14") como INTEGER (pierde el cero a
+    # la izquierda: "09" -> 9); dim_municipio.sql compara contra substring(cve_mun,1,2), que
+    # es TEXT, y el JOIN nunca coincide -- Postgres ni siquiera lo intenta, revienta con
+    # "operator does not exist: integer = text" antes de construir el modelo. Forzado a texto,
+    # mismo patron que dim_driver.id_driver (ahi no hacia falta porque "D1".."D6" no son
+    # numericos y agate nunca los infiere como int).
+    dim_entidad:
+      +schema: gold
+      +column_types:
+        cve_ent: varchar(2)

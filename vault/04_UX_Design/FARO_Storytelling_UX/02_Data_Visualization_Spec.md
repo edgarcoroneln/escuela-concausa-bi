@@ -187,7 +187,7 @@ contradice a la matriz que tiene debajo.
 
 | Alternativa | Por qué no |
 |---|---|
-| Mapa de puntos o coroplético | Ningún endpoint expone geometría y `latitud`/`longitud` sin base cartográfica no se leen. Además, *dónde* no responde *qué situación*: las siete están en dos municipios. La línea base lo confirma: el coroplético de DB-02 sale vacío (§7.3) |
+| Mapa de puntos o coroplético **como visualización principal** | **Resuelto el 2026-09-12 — ver la nota de corrección bajo la §8.1.** Sigue descartado **para este rol**: *dónde* no responde *qué situación*, las siete están en dos municipios, la base disponible es estatal y no municipal, y la línea base lo confirma —el coroplético de DB-02 sale vacío (§7.3)—. **Lo que cambió es que el mapa existe en otro rol:** el Equipo 5 lo conserva como **contexto de ubicación**, con leyenda que declara que no reemplaza la comparación por índice. La visualización principal de esta pantalla no se mueve |
 | Barras del índice de riesgo por escuela | Muestra sólo la mitad "todas en riesgo", y un eje recortado exageraría diferencias mínimas (de 0.515 a 0.572) |
 | Un radar por escuela | N radares no se comparan entre sí, el área exagera y un `SIN_DATO` rompe el polígono: con D3, D5 y D6 vacíos, la mitad de cada radar estaría rota |
 | Barras apiladas con las contribuciones SHAP | `contribuciones` está en `SIN_DATO` en producción (§4.4), y SHAP explica al modelo, no la situación de la escuela |
@@ -592,11 +592,11 @@ escuelas habla ahora— quede dicha en lugar de suponerse.
 
 | Qué | Por qué no | Si se aprueba | Mientras tanto |
 |---|---|---|---|
-| **`prioridad` de Gold** (era P-01) | No aparece en `EscuelaOut`, `EscuelaDetalleOut`, `PrediccionOut` ni `ExplicacionSHAPOut`, y `ADR-011` §5 prohíbe consumir `gold.recomendaciones.prioridad` mientras use el ancla histórica 0.60 (`src/modelos/publicar_gold.py:197`, `BUG-063`) | Si el PO y el Equipo 4 realinean `prioridad` a `LINEA_DE_ALERTA` y el contrato la expone, coincidiría con el nivel de atención: Front podría consumirla y retirar su derivación | **Nivel de atención** derivado (§1.1). Ninguna gráfica, filtro ni texto la llama "prioridad". El glosario explica por qué DB-09 muestra `media` para las mismas escuelas (§1.2) |
+| **`prioridad` de Gold** (era P-01) | **Corregido el 2026-09-11 — ver la nota bajo la tabla.** `PrediccionOut` **ya la expone** (`ec1b43b`), y aun así **no se consume**: `ADR-011` §5 lo prohíbe mientras use el ancla histórica 0.60 (`src/modelos/publicar_gold.py`, `BUG-063`), donde **cero de las 45 276 filas** alcanzan `alta` contra un máximo real de `0.5717` | Lo que falta ya no es exponerla sino **realinear el corte**: si el PO y el TL de C3 la mueven a `LINEA_DE_ALERTA`, coincidiría con el nivel de atención y Front podría consumirla y retirar su derivación | **Nivel de atención** derivado (§1.1). Ninguna gráfica, filtro ni texto la llama "prioridad". El glosario explica por qué DB-09 muestra `media` para las mismas escuelas (§1.2) |
 | **Bandas "oficiales" alto/medio/bajo** (era P-02) | Resuelto por `ADR-011` §5: son el nivel de atención | — | Una sola etiqueta; no existe una segunda |
 | **Distribución de niveles de atención en la P5** | Tautológica: el conjunto en riesgo se define con el mismo corte que "alta" | — | Una línea de texto (§5.2) |
 | **Distribución de niveles en la P6 para todo un filtro** | Contarla exige paginar todas las escuelas del filtro (`size ≤ 100`), y `/kpis` sólo cuenta las de riesgo alto | Un conteo por nivel de atención en `/kpis` (cambio de contrato, Equipo 5) | El nivel va por fila en la página visible, y `escuelas_en_riesgo` del filtro desde `/kpis` |
-| **Mapa de ubicación** | La API no expone geometría y `latitud`/`longitud` sin base no se leen | Exponer la geometría municipal de Gold o aprobar como base cartográfica versionada `superset/assets/geojson/municipios_scope.geojson`, que es lo que usa la referencia 04 (§7.4): municipio resaltado y punto de la escuela en el expediente | Municipio y entidad como texto |
+| ~~**Mapa de ubicación**~~ · **deja de ser un recorte el 2026-09-12** | Ya no aplica: la base cartográfica existe en el front (`frontend/src/data/geo/mexico-states.json` + `d3-geo`) y `latitud`/`longitud` subieron al listado | **Resuelto, no aprobado a medias.** Diana Álvarez (E5) lo conserva **como contexto de ubicación y no como ranking**, porque la base es **estatal, no municipal** y las siete escuelas caen en dos municipios. Leyenda obligatoria: *"Ubicación aproximada de las escuelas en riesgo — no reemplaza la comparación por índice, ver lista."* Tres condiciones verificables por QA: el mapa **no** puede ser la única forma de leer el riesgo (`ADR-011` §4), las escuelas sin georreferencia **se omiten** en vez de dibujarse en el `(0, 0)`, y la palabra *aproximada* se queda | El mapa, con esa lectura. Municipio y entidad como texto siguen en el expediente |
 | **Rezago del municipio contra el promedio estatal** | El promedio estatal no está en la API y el índice de CONEVAL es negativo en estos municipios | Derivación declarada en §1.1 desde `GET /api/v1/municipios?cve_ent=…`, dibujada como franja de municipios con el promedio marcado (§7.4) | Línea de contexto con `pobreza_pct` (§4.2) |
 | **Evolución histórica de matrícula por escuela** | `/escuelas/{cct}` no acepta `ciclo`, y el plan la excluye del expediente | Cambio de plan más petición de endpoint | No se dibuja |
 | **Caída de matrícula de una escuela concreta** | `variacion_matricula` sólo existe agregada (`KpisOut`) | Un campo por escuela en el contrato | Sólo la variación agregada, en la P2 |
@@ -609,6 +609,46 @@ escuelas habla ahora— quede dicha en lugar de suponerse.
 
 Ninguno de estos recortes detiene la construcción (`DEC-024`): cada uno tiene su "mientras tanto"
 dibujable hoy.
+
+> **Nota de corrección — 2026-09-11, Marina García del Buey (gate de UX/UI), con aviso a la autora.**
+> Dos filas de esta tabla —y, por coherencia, la fila del mapa entre las alternativas descartadas de
+> la **§3.3**, que repetía la misma razón— quedaron desactualizadas por `ec1b43b` (Christian Imanol
+> Ruiz, PR #332),
+> que entró a `main` **después** de que este documento pasara a `approved`. Se corrigen aquí y no en
+> un documento aparte, porque el Equipo 5 lee esta tabla como la lista de lo que no se dibuja.
+>
+> **`prioridad`:** la fila afirmaba que el campo *no aparece en `PrediccionOut`*. Ya aparece. **La
+> decisión de no consumirlo no cambia** —al contrario, ahora hay que sostenerla a mano— y el motivo
+> está en un número: los tres valores del campo se llaman **igual** que los tres niveles de atención,
+> pero `prioridad` sale del ancla `0.60` y ninguna de las 45 276 filas la alcanza. Un chip cableado a
+> `prioridad` diría *«media»* para las siete escuelas de las que trata toda la historia. El
+> razonamiento completo está en la **§10.quinquies** de
+> [[vault/04_UX_Design/FARO_Storytelling_UX/PLAN_TRABAJO]].
+>
+> **Mapa de ubicación:** la mitad técnica de la razón —*«la API no expone geometría y
+> `latitud`/`longitud` sin base no se leen»*— dejó de sostenerse: `latitud`/`longitud` subieron al
+> listado y la base cartográfica existe en el front. **No se decide aquí si el mapa entra**: la
+> segunda mitad del argumento original sigue vigente y la decisión pertenece al handoff con el
+> Equipo 5, junto con la reconciliación de rutas. Ver **§10.sexies** del plan.
+>
+> **Lo que no se tocó:** ninguna forma, ningún criterio, ninguna otra fila. La autoría del documento
+> sigue siendo de Monserrat Xcaret Miranda Olivas.
+>
+> **Cierre del 2026-09-12.** Las dos preguntas que esta nota dejó abiertas ya tienen respuesta y
+> ambas quedaron **fuera** de este documento, no dentro:
+>
+> - **`prioridad`:** el PO registró **`DEC-026`** — el corte `alta` de Gold baja a `0.50` y las
+>   45 276 filas se republican. **La regla de no consumirla no se levanta con el merge:** es una
+>   columna almacenada, y hasta que Gold se republique la API devuelve los valores viejos con el
+>   código nuevo. La condición de caducidad es verificable y está escrita en la §10.quinquies del
+>   plan. **Tu razonamiento de la §1.2 no cambia**, sólo deja de ser permanente.
+> - **Mapa:** Diana Álvarez resolvió que se queda **como contexto de ubicación y no como ranking**.
+>   Las dos filas de arriba ya reflejan esa decisión, con su leyenda y sus tres condiciones. El
+>   registro completo está en la **§10.septies** del plan.
+>
+> **Los cortes ya no se teclean:** `GET /api/v1/version` sirve `cortes_atencion` (`alta`, `media`,
+> `ancla_calibracion`) en un endpoint público. El `0.60` del glosario de tu §1.2 sale de
+> `ancla_calibracion`, no de un literal.
 
 ### 8.2 Avisos para el Equipo 5 que no son gráficas
 

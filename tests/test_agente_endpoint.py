@@ -9,6 +9,7 @@ override; los casos fuera de alcance y de degradación no lo necesitan siquiera.
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import Iterator
 
 import pytest
@@ -294,7 +295,82 @@ def test_stream_un_redactor_que_no_cede_nada_no_deja_una_burbuja_vacia(client: T
 
     eventos = _post_stream(client, "¿cuántas escuelas hay?")
 
-    assert [d["texto"] for n, d in eventos if n == "fragmento"] == [agente_mod._MSG_NO_DISPONIBLE]
+    # Configurado pero mudo NO es "no disponible": es un fallo, y reintentar tiene sentido (Fase 4).
+    assert [d["texto"] for n, d in eventos if n == "fragmento"] == [agente_mod._MSG_FALLO_TEMPORAL]
+
+
+# --------------------------------------------------------------------------- #
+# Fase 4 (Karla Monter, C4): degradación distinguible y logging estructurado.
+# --------------------------------------------------------------------------- #
+
+
+def test_un_fallo_en_ejecucion_no_dice_lo_mismo_que_no_configurado(client: TestClient) -> None:
+    """Dos situaciones distintas para la persona: esperar (no configurado) vs reintentar (falló).
+
+    Ninguno de los dos mensajes cambia según el error concreto, así que distinguirlos no filtra
+    detalle interno -- que es lo que la degradación protege.
+    """
+    # Recuperador en alcance y el resto con sus defaults: `generar_sql` levanta
+    # AgenteNoConfigurado, que es la degradación esperada de un entorno sin LLM (CI, local).
+    app.dependency_overrides[agente_mod.get_recuperar_contexto] = lambda: (
+        lambda pregunta: "gold.features_escuela(cct)"
+    )
+    sin_configurar = _post(client, "¿cuántas escuelas hay?")["respuesta"]
+    assert sin_configurar == agente_mod._MSG_NO_DISPONIBLE
+
+    _seam_en_alcance()
+    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
+        lambda pregunta, filas: (_ for _ in ()).throw(RuntimeError("timeout del LLM con secreto"))
+    )
+    fallo = _post(client, "¿cuántas escuelas hay?")["respuesta"]
+
+    assert fallo == agente_mod._MSG_FALLO_TEMPORAL
+    assert fallo != sin_configurar
+    assert "secreto" not in fallo.lower()
+
+
+def test_stream_conserva_el_texto_parcial_ya_transmitido(client: TestClient) -> None:
+    """Con fragmentos en pantalla, el cierre AGREGA la nota de corte; no reemplaza lo leído."""
+    _seam_en_alcance()
+
+    def redactar_stream_que_revienta(pregunta: str, filas):
+        yield "Las 7 escuelas en riesgo "
+        raise RuntimeError("boom a mitad")
+
+    app.dependency_overrides[agente_mod.get_redactar_respuesta_stream] = lambda: (
+        redactar_stream_que_revienta
+    )
+
+    fragmentos = [d["texto"] for n, d in _post_stream(client, "¿cuántas escuelas hay?")
+                  if n == "fragmento"]
+
+    assert fragmentos[0] == "Las 7 escuelas en riesgo "
+    assert fragmentos[-1] == agente_mod._MSG_CORTE_PARCIAL
+    # El mensaje completo borraría de la pantalla lo que la persona ya estaba leyendo.
+    assert agente_mod._MSG_FALLO_TEMPORAL not in fragmentos
+
+
+def test_un_fallo_se_registra_estructurado_y_sin_la_pregunta(client: TestClient, caplog) -> None:
+    """El log lleva etapa y tipo de error en `extra`, y **nunca** el texto de la persona."""
+    _seam_en_alcance()
+    app.dependency_overrides[agente_mod.get_redactar_respuesta] = lambda: (
+        lambda pregunta, filas: (_ for _ in ()).throw(RuntimeError("boom con secreto"))
+    )
+    pregunta = "¿cuántas escuelas hay en Iztapalapa?"
+
+    with caplog.at_level(logging.WARNING, logger="src.api.v1.agente"):
+        _post(client, pregunta)
+
+    registros = [r for r in caplog.records if r.name == "src.api.v1.agente"]
+    assert registros, "un fallo del agente tiene que quedar registrado"
+    registro = registros[-1]
+    assert registro.agente_etapa == "consulta"
+    assert registro.agente_error == "RuntimeError"
+    assert registro.agente_configurado is True
+    # Privacidad por diseño: ni la pregunta ni el detalle del error entran al log del mensaje.
+    assert pregunta not in registro.getMessage()
+    assert "Iztapalapa" not in caplog.text
+    assert "secreto" not in registro.getMessage()
 
 
 def test_stream_un_salto_de_linea_no_puede_falsificar_un_evento(client: TestClient) -> None:
