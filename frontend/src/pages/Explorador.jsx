@@ -3,12 +3,20 @@ import { Link, useOutletContext } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
 import GlosarioOverlay from "../components/GlosarioOverlay.jsx";
-import { nivelRiesgo, escuelasEnRiesgo as escuelasMock } from "../data/mock.js";
-import { riskRampColor } from "../lib/riskRamp.js";
-import { getEscuelas, getUniversoEscuelas, getMunicipiosPorClaves } from "../lib/api.js";
+import DriverBars from "../components/DriverBars.jsx";
+import { nivelRiesgo, panoramaMock, driverNombres, recomendacionGeneralPorDriver } from "../data/mock.js";
+import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
+import { getEscuelas, getUniversoEscuelas, getMunicipiosPorClaves, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
-import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool } from "../components/Icons.jsx";
+import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool, IconVerified } from "../components/Icons.jsx";
+
+const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
+// D3/D4 se publican como "servicios presentes" (mayor = mejor) -- se orientan
+// (1 - valor) para que, igual que en ExpedienteEscuela.jsx (P4) y en el propio
+// pipeline (features_escuela.sql, spec §4.1.1), "mayor barra = mayor presión"
+// signifique lo mismo en toda la app, incluida esta vista condensada.
+const ORIENTADOS = ["D3", "D4"];
 
 // Pantalla 6 -- Explorador de escuelas (rediseño Fase 2, US-641). Contra
 // 01_UX_Architecture.md §2 "Pantalla 6" y §7 (nombre elegido por Marina).
@@ -25,24 +33,33 @@ import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool } from "../
 // una grilla de tarjetas) con paginación real, y un botón "Glosario" en el
 // encabezado.
 //
-// Tres cosas del mockup NO se replican, cada una por un motivo documentado,
-// no por descuido:
+// Tres cosas del mockup NO se replican tal cual, cada una por un motivo
+// documentado, no por descuido -- pero Diana confirmó explícitamente
+// (13-sep, 2da vuelta) que quiere el MISMO layout dividido tabla+panel del
+// mockup, con datos reales en vez de fabricados, así que las tres se
+// resuelven reconstruyendo la forma visual con la fuente real detrás:
 //
-// 1) El panel derecho "Expediente" del mockup es un rediseño duplicado del
-//    expediente de la P4 (escala 0-10 en vez de 0-1, percentiles
-//    nacional/regional inventados, "18,492 planteles"/"1 de 823" fijos,
-//    botones "Exportar Ficha CCT (PDF)" y "Vincular a Mesa de Enlace" que no
-//    existen) -- 01_UX_Architecture.md §2 dice literal para P6: "misma
-//    lógica de expediente que P4, reutilizando sus mismas gráficas... no se
-//    rediseñan ni se duplican". La selección de escuela sigue navegando a
-//    /escuela/:cct, la MISMA ruta real que ya usa P3/P4 (ver también
-//    Traceability_Matrix.md, REQ-002/US-621/US-641).
+// 1) El panel derecho "Expediente" del mockup trae escala 0-10 (el resto de
+//    la app usa 0-1), percentiles nacional/regional inventados, "18,492
+//    planteles"/"1 de 823" fijos, y botones "Exportar Ficha CCT (PDF)" /
+//    "Vincular a Mesa de Enlace" que no existen. 01_UX_Architecture.md §2 es
+//    explícito: P6 "reutiliza... misma lógica de expediente que P4... no se
+//    rediseña ni se duplica". Se honra reutilizando el MISMO componente real
+//    de la P4 (components/DriverBars.jsx, misma orientación D3/D4, mismo
+//    color monocromático, misma franja SIN_DATO rayada) y la MISMA
+//    recomendación real (getPrediccion(cct) de la escuela seleccionada en la
+//    tabla, igual que ExpedienteEscuela.jsx) -- panel condensado, no un
+//    expediente nuevo. Los 2 botones inventados del mockup se reemplazan por
+//    1 solo botón real: "Ver expediente completo", que navega a
+//    /escuela/:cct (la MISMA ruta que ya usa P3/P4).
 // 2) El "FARO // COPILOT" flotante del mockup (con su propia sugerencia de
-//    consulta fija y sin backend) NO se reconstruye: ya existe como
+//    consulta fija y sin backend) sigue sin reconstruirse: ya existe como
 //    componente real montado una sola vez en App.jsx
 //    (components/AsistenteFaro.jsx), igual que ya se documentó en
 //    ExpedienteEscuela.jsx -- duplicarlo por pantalla lo desincronizaría del
-//    chat real.
+//    chat real. Su nombre visible tampoco cambia a "FARO // COPILOT": el
+//    spec (01_UX_Architecture.md §6) fija "Asistente FARO" como nombre en
+//    toda superficie.
 // 3) El "Glosario de Vectores" del mockup (D1-D6 con fuentes no verificadas
 //    en este proyecto: SESNSP, INIFED, CONAGUA, SINICA, buffers de 500m/10km)
 //    se reemplaza por el glosario metodológico real que ya existe
@@ -110,11 +127,14 @@ async function fetchEscuelasFiltradas(filtros, pagina) {
   return { data: { items, total: data.total, page: data.page, size: data.size }, error: null };
 }
 
+// panoramaMock (no escuelasEnRiesgo) porque ya trae los 6 drivers planos
+// (d1..d6) que el panel de "Expediente" condensado necesita -- mismo mock
+// que Panorama.jsx, para no tener dos formas de datos de ejemplo distintas.
 const MOCK_ENVUELTO = {
-  items: escuelasMock.map((e) => ({ ...e, nombre_municipio: e.municipio, nombre_entidad: e.entidad })),
-  total: escuelasMock.length,
+  items: panoramaMock.map((e) => ({ ...e, nombre_municipio: e.municipio, nombre_entidad: e.entidad })),
+  total: panoramaMock.length,
   page: 1,
-  size: escuelasMock.length,
+  size: panoramaMock.length,
 };
 
 export default function Explorador() {
@@ -173,6 +193,41 @@ export default function Explorador() {
   });
 
   const filtrosActivos = [filtros.ciclo, filtros.cve_ent, filtros.nivel].filter(Boolean).length;
+
+  // Escuela seleccionada en la tabla, para el panel de "Expediente"
+  // condensado de la derecha (mismo layout dividido del mockup). Por
+  // defecto, la primera fila de cada página/filtro -- si la selección
+  // actual ya no está en la lista (cambió de página o de filtro), se
+  // reasigna a la primera fila visible en vez de dejar el panel apuntando a
+  // una escuela que ya no se ve en la tabla.
+  const [cctSeleccionado, setCctSeleccionado] = useState(null);
+  useEffect(() => {
+    if (escuelas.length > 0 && !escuelas.some((e) => e.cct === cctSeleccionado)) {
+      setCctSeleccionado(escuelas[0].cct);
+    }
+    if (escuelas.length === 0 && cctSeleccionado !== null) {
+      setCctSeleccionado(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [escuelas]);
+  const seleccionada = escuelas.find((e) => e.cct === cctSeleccionado) ?? null;
+
+  // Recomendación real para el driver dominante de la escuela seleccionada
+  // -- MISMA llamada que ExpedienteEscuela.jsx (getPrediccion(cct)), no un
+  // catálogo inventado aquí. En demo, recomendacionGeneralPorDriver ya es el
+  // catálogo prescriptivo real (Publicacion_Gold.md §4) usado como texto
+  // GENERAL por driver, mismo criterio que Conclusion.jsx.
+  const seleccionadaTienePrediccion = seleccionada?.tiene_prediccion ?? typeof seleccionada?.indice_riesgo === "number";
+  const prediccionMock = seleccionada
+    ? { recomendacion: recomendacionGeneralPorDriver[seleccionada.driver_dominante] ?? null }
+    : null;
+  const { data: prediccionSel } = useApiResource(
+    () =>
+      status === "ok" && seleccionadaTienePrediccion
+        ? getPrediccion(cctSeleccionado)
+        : Promise.resolve({ data: null, error: null }),
+    { mock: prediccionMock, deps: [cctSeleccionado, seleccionadaTienePrediccion, status] }
+  );
 
   return (
     <PageContainer>
@@ -308,115 +363,255 @@ export default function Explorador() {
         </p>
       )}
 
-      {/* Tabla de resultados -- reemplaza la grilla de tarjetas anterior por
-          el layout de tabla del mockup, con datos 100% reales por columna. */}
+      {/* Layout dividido maestro (tabla) + detalle (expediente condensado de
+          la escuela seleccionada) -- mismo grid de 12 columnas del mockup
+          (7 + 5), con datos 100% reales en ambos lados. */}
       {escuelas.length > 0 && cortes && (
-        <div
-          className="rounded-2xl overflow-hidden flex flex-col"
-          style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="text-label-micro-mono uppercase" style={{ background: "var(--color-surface-alt)", color: "var(--color-ink-faint)" }}>
-                  <th className="p-3 pl-4">CCT / Nombre del plantel</th>
-                  <th className="p-3">Municipio / Estado</th>
-                  <th className="p-3 text-center">Nivel</th>
-                  <th className="p-3 text-center">Índice FARO</th>
-                  <th className="p-3 text-center">Atención</th>
-                  <th className="p-3 text-right pr-4">Acción</th>
-                </tr>
-              </thead>
-              <tbody className="text-body-sm">
-                {escuelas.map((e) => {
-                  const tienePrediccion = typeof e.indice_riesgo === "number";
-                  const riesgo = tienePrediccion ? nivelRiesgo(e.indice_riesgo, cortes) : null;
-                  return (
-                    <tr key={e.cct} style={{ borderTop: "1px solid var(--color-border)" }}>
-                      <td className="p-3 pl-4">
-                        <div className="flex flex-col">
-                          <span className="text-title-md" style={{ color: "var(--color-ink)" }}>{e.cct}</span>
-                          <span className="text-body-sm" style={{ color: "var(--color-ink-faint)" }}>{e.nombre}</span>
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <span className="text-body-sm" style={{ color: "var(--color-ink)" }}>
-                          {e.nombre_municipio ?? "SIN_DATO"}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+          {/* Columna izquierda: tabla de resultados */}
+          <div
+            className="xl:col-span-7 rounded-2xl overflow-hidden flex flex-col"
+            style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="text-label-micro-mono uppercase" style={{ background: "var(--color-surface-alt)", color: "var(--color-ink-faint)" }}>
+                    <th className="p-3 pl-4">CCT / Nombre del plantel</th>
+                    <th className="p-3">Municipio / Estado</th>
+                    <th className="p-3 text-center">Nivel</th>
+                    <th className="p-3 text-center">Índice FARO</th>
+                    <th className="p-3 text-center">Atención</th>
+                    <th className="p-3 text-right pr-4">Acción</th>
+                  </tr>
+                </thead>
+                <tbody className="text-body-sm">
+                  {escuelas.map((e) => {
+                    const tienePrediccion = typeof e.indice_riesgo === "number";
+                    const riesgo = tienePrediccion ? nivelRiesgo(e.indice_riesgo, cortes) : null;
+                    const estaSeleccionada = e.cct === cctSeleccionado;
+                    return (
+                      <tr
+                        key={e.cct}
+                        onClick={() => setCctSeleccionado(e.cct)}
+                        className="cursor-pointer transition-colors"
+                        style={{
+                          borderTop: "1px solid var(--color-border)",
+                          background: estaSeleccionada ? "var(--color-surface-alt)" : "transparent",
+                        }}
+                      >
+                        <td className="p-3 pl-4">
+                          <div className="flex flex-col">
+                            <span className="text-title-md" style={{ color: "var(--color-ink)" }}>{e.cct}</span>
+                            <span className="text-body-sm" style={{ color: "var(--color-ink-faint)" }}>{e.nombre}</span>
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          <span className="text-body-sm" style={{ color: "var(--color-ink)" }}>
+                            {e.nombre_municipio ?? "SIN_DATO"}
+                          </span>
+                          {e.nombre_entidad && (
+                            <span className="text-label-micro-mono block" style={{ color: "var(--color-ink-faint)" }}>
+                              {e.nombre_entidad}
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-3 text-center text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
+                          {e.nivel}
+                        </td>
+                        <td className="p-3 text-center">
+                          {tienePrediccion ? (
+                            <span className="font-mono-dato text-sm font-semibold" style={{ color: riskRampColor(e.indice_riesgo) }}>
+                              {e.indice_riesgo.toFixed(3)}
+                            </span>
+                          ) : (
+                            <span className="text-label-micro-mono" style={{ color: "var(--color-sin-dato)" }}>SIN_DATO</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-center">
+                          {riesgo ? (
+                            <span className="text-label-micro-mono font-semibold" style={{ color: "var(--color-ink)" }}>
+                              {riesgo.icon} {riesgo.label.toUpperCase()}
+                            </span>
+                          ) : (
+                            <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>—</span>
+                          )}
+                        </td>
+                        <td className="p-3 pr-4 text-right">
+                          <button
+                            type="button"
+                            onClick={(ev) => {
+                              ev.stopPropagation();
+                              setCctSeleccionado(e.cct);
+                            }}
+                            className="text-label-ui px-3 py-1.5 rounded-md inline-block"
+                            style={{
+                              background: estaSeleccionada ? "var(--color-primary)" : "var(--color-surface-alt)",
+                              color: estaSeleccionada ? "#ffffff" : "var(--color-ink)",
+                              border: "1px solid var(--color-border)",
+                            }}
+                          >
+                            {estaSeleccionada ? "Viendo" : "Ver"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="p-3 flex items-center justify-between flex-wrap gap-2" style={{ background: "var(--color-surface-alt)" }}>
+              <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
+                {typeof total === "number"
+                  ? `Mostrando ${escuelas.length} de ${total.toLocaleString("es-MX")} planteles en coincidencia`
+                  : `${escuelas.length} planteles en coincidencia`}
+              </span>
+              {status === "ok" && totalPaginas > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={pagina <= 1}
+                    onClick={() => setPagina((p) => Math.max(1, p - 1))}
+                    className="text-label-micro-mono px-2 py-1 rounded"
+                    style={{ background: "var(--color-surface)", color: "var(--color-ink)", opacity: pagina <= 1 ? 0.5 : 1 }}
+                  >
+                    ANT
+                  </button>
+                  <span className="text-label-micro-mono font-semibold" style={{ color: "var(--faro-signal)" }}>
+                    {pagina} / {totalPaginas}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={pagina >= totalPaginas}
+                    onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+                    className="text-label-micro-mono px-2 py-1 rounded"
+                    style={{ background: "var(--color-surface)", color: "var(--color-ink)", opacity: pagina >= totalPaginas ? 0.5 : 1 }}
+                  >
+                    SIG
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Columna derecha: expediente condensado de la escuela seleccionada
+              -- misma gráfica de drivers real de la P4 (DriverBars.jsx), misma
+              recomendación real (getPrediccion), sin duplicar ni inventar. */}
+          {seleccionada && (() => {
+            const riesgoSel = typeof seleccionada.indice_riesgo === "number" ? nivelRiesgo(seleccionada.indice_riesgo, cortes) : null;
+            const driversParaGrafica = Object.fromEntries(
+              DRIVERS.map((code) => {
+                const raw = seleccionada[code.toLowerCase()];
+                const sinDato = raw === null || raw === undefined;
+                const valor = !sinDato && ORIENTADOS.includes(code) ? 1 - raw : raw;
+                return [code, sinDato ? null : valor];
+              })
+            );
+            const kDrivers = DRIVERS.filter((code) => driversParaGrafica[code] != null).length;
+            const lugarSel = [seleccionada.nombre_municipio, seleccionada.nombre_entidad].filter(Boolean).join(", ");
+            return (
+              <div
+                className="xl:col-span-5 rounded-2xl p-5 flex flex-col gap-4"
+                style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-card)" }}
+              >
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--faro-signal)" }}>
+                      Expediente diagnóstico
+                    </span>
+                    <h2 className="text-headline-sm" style={{ color: "var(--color-ink)" }}>{seleccionada.cct}</h2>
+                    <p className="text-body-sm" style={{ color: "var(--color-ink-faint)" }}>{seleccionada.nombre}</p>
+                    {lugarSel && (
+                      <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>{lugarSel}</span>
+                    )}
+                  </div>
+                  {riesgoSel && (
+                    <span
+                      className="text-label-ui font-bold px-2.5 py-1 rounded inline-flex items-center gap-1 shrink-0"
+                      style={{ background: "var(--color-surface-alt)", color: "var(--color-ink)" }}
+                    >
+                      {riesgoSel.icon} ATENCIÓN {riesgoSel.label.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+
+                <div className="p-3 rounded-xl flex items-center justify-between gap-3 flex-wrap" style={{ background: "var(--color-surface-alt)" }}>
+                  <div className="flex flex-col">
+                    <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--color-ink-faint)" }}>
+                      Índice de riesgo FARO
+                    </span>
+                    {typeof seleccionada.indice_riesgo === "number" ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-mono-dato font-bold" style={{ fontSize: 30, lineHeight: 1, color: "var(--color-ink)" }}>
+                          {seleccionada.indice_riesgo.toFixed(3)}
                         </span>
-                        {e.nombre_entidad && (
-                          <span className="text-label-micro-mono block" style={{ color: "var(--color-ink-faint)" }}>
-                            {e.nombre_entidad}
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-3 text-center text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
-                        {e.nivel}
-                      </td>
-                      <td className="p-3 text-center">
-                        {tienePrediccion ? (
-                          <span className="font-mono-dato text-sm font-semibold" style={{ color: riskRampColor(e.indice_riesgo) }}>
-                            {e.indice_riesgo.toFixed(3)}
-                          </span>
-                        ) : (
-                          <span className="text-label-micro-mono" style={{ color: "var(--color-sin-dato)" }}>SIN_DATO</span>
-                        )}
-                      </td>
-                      <td className="p-3 text-center">
-                        {riesgo ? (
-                          <span className="text-label-micro-mono font-semibold" style={{ color: "var(--color-ink)" }}>
-                            {riesgo.icon} {riesgo.label.toUpperCase()}
-                          </span>
-                        ) : (
-                          <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>—</span>
-                        )}
-                      </td>
-                      <td className="p-3 pr-4 text-right">
-                        <Link
-                          to={`/escuela/${e.cct}`}
-                          className="text-label-ui px-3 py-1.5 rounded-md inline-block"
-                          style={{ background: "var(--color-primary)", color: "#ffffff" }}
-                        >
-                          Expediente →
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <div className="p-3 flex items-center justify-between flex-wrap gap-2" style={{ background: "var(--color-surface-alt)" }}>
-            <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
-              {typeof total === "number"
-                ? `Mostrando ${escuelas.length} de ${total.toLocaleString("es-MX")} planteles en coincidencia`
-                : `${escuelas.length} planteles en coincidencia`}
-            </span>
-            {status === "ok" && totalPaginas > 1 && (
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={pagina <= 1}
-                  onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                  className="text-label-micro-mono px-2 py-1 rounded"
-                  style={{ background: "var(--color-surface)", color: "var(--color-ink)", opacity: pagina <= 1 ? 0.5 : 1 }}
+                        <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>/ 1.000</span>
+                      </div>
+                    ) : (
+                      <span className="text-label-micro-mono" style={{ color: "var(--color-sin-dato)" }}>SIN_DATO</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--color-ink-faint)" }}>
+                      Medidor de evidencia
+                    </span>
+                    <span className="text-title-md font-semibold" style={{ color: "var(--color-ink)" }}>{kDrivers} de 6 pistas</span>
+                    <div className="grid grid-cols-6 gap-1" style={{ width: "6.5rem", height: 6 }}>
+                      {DRIVERS.map((code) => (
+                        <div
+                          key={code}
+                          className="h-full rounded-sm"
+                          style={{ background: driversParaGrafica[code] != null ? "var(--faro-signal)" : "var(--color-border)" }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-label-ui font-semibold uppercase" style={{ color: "var(--color-ink)" }}>
+                      Descomposición por drivers
+                    </span>
+                    <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>0 a 1</span>
+                  </div>
+                  <DriverBars drivers={driversParaGrafica} driverDominante={seleccionada.driver_dominante} />
+                </div>
+
+                {seleccionada.driver_dominante && (
+                  <div className="p-3 rounded-xl flex flex-col gap-2" style={{ background: "var(--color-surface-alt)" }}>
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <span className="text-label-ui font-bold inline-flex items-center gap-1.5" style={{ color: "var(--color-ink)" }}>
+                        <IconVerified size={16} style={{ color: DOMINANT_OUTLINE }} />
+                        Driver dominante
+                      </span>
+                      <span
+                        className="text-label-micro-mono font-semibold uppercase px-2 py-0.5 rounded"
+                        style={{ background: DOMINANT_OUTLINE, color: "#ffffff" }}
+                      >
+                        {seleccionada.driver_dominante}: {driverNombres[seleccionada.driver_dominante]}
+                      </span>
+                    </div>
+                    {seleccionadaTienePrediccion && prediccionSel?.recomendacion ? (
+                      <p className="text-body-sm" style={{ color: "var(--color-ink)" }}>“{prediccionSel.recomendacion}”</p>
+                    ) : (
+                      <p className="text-body-sm" style={{ color: "var(--color-ink-faint)" }}>
+                        Sin recomendación disponible (SIN_DATO).
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <Link
+                  to={`/escuela/${seleccionada.cct}`}
+                  className="text-label-ui font-semibold px-4 py-2 rounded-lg inline-flex items-center justify-center gap-1.5 self-end"
+                  style={{ background: "var(--color-primary)", color: "#ffffff" }}
                 >
-                  ANT
-                </button>
-                <span className="text-label-micro-mono font-semibold" style={{ color: "var(--faro-signal)" }}>
-                  {pagina} / {totalPaginas}
-                </span>
-                <button
-                  type="button"
-                  disabled={pagina >= totalPaginas}
-                  onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                  className="text-label-micro-mono px-2 py-1 rounded"
-                  style={{ background: "var(--color-surface)", color: "var(--color-ink)", opacity: pagina >= totalPaginas ? 0.5 : 1 }}
-                >
-                  SIG
-                </button>
+                  Ver expediente completo →
+                </Link>
               </div>
-            )}
-          </div>
+            );
+          })()}
         </div>
       )}
 
