@@ -21,15 +21,27 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
       sentence-transformers==5.7.0 \
       "anthropic>=0.116"
 
-# Hornea el modelo de embeddings del agente (all-MiniLM-L6-v2, ~90 MB) en la imagen: así la 1.ª
-# consulta RAG no depende de HuggingFace en runtime. Cloud Run usa instancias efímeras; sin esto,
-# cada arranque en frío re-descargaría el modelo (lento y con dependencia de red). Se cachea en
-# /root/.cache/huggingface y en runtime se sirve OFFLINE (ver HF_HUB_OFFLINE abajo). Va antes de
-# COPY src/ para no depender del código y quedar cacheado.
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+# Hornea el modelo de embeddings del agente (paraphrase-multilingual-MiniLM-L12-v2, ~470 MB) en la
+# imagen: así la 1.ª consulta RAG no depende de HuggingFace en runtime. Cloud Run usa instancias
+# efímeras; sin esto, cada arranque en frío re-descargaría el modelo (lento y con dependencia de
+# red). Se cachea en /root/.cache/huggingface y en runtime se sirve OFFLINE (ver HF_HUB_OFFLINE
+# abajo). Va antes de COPY src/ para no depender del código y quedar cacheado.
+#
+# CRÍTICO: el nombre DEBE coincidir con el default de src/agente/recuperacion.py
+# (NOMBRE_MODELO_EMBEDDINGS) y con el que indexó la colección de ChromaDB (indexar_esquema.py).
+# Como runtime es OFFLINE, solo puede cargar un modelo ya cacheado aquí; si se hornea uno distinto
+# del que pide el código, la carga offline falla -> ErrorRecuperacion -> el chat responde "El
+# contexto de FARO no está disponible temporalmente" (bug detectado en la entrega 2026-09-14).
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')"
 
 # Copiar código fuente
 COPY src/ ./src/
+
+# Assets geográficos que la sección "Cómo funciona / Modelo de datos" (US-601) lee del disco en
+# runtime (src/api/v1/about.py: municipios_scope.geojson + mexico_silueta.geojson). Viven FUERA de
+# src/, así que hay que copiarlos aparte; sin esto GET /api/v1/about/secciones/modelo-datos da 500
+# (FileNotFoundError) y la pantalla "Cómo funciona" del front se rompe (bug de la entrega 2026-09-14).
+COPY superset/assets/geojson/ ./superset/assets/geojson/
 
 # Configuracion de logs (US-524a)
 COPY docker/log_config.json ./log_config.json
