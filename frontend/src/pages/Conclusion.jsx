@@ -220,8 +220,12 @@ export default function Conclusion() {
             MÓDULO DE SÍNTESIS AGREGADA // SENSOR RED FEDERAL
           </span>
           <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--faro-signal)" }} aria-hidden="true" />
+          {/* FIX (2026-09-13, US-651, obs. 9, Marina García + su IA): "MUESTRA
+              AUDITADA" implicaba que se eligieron algunas escuelas de un conjunto mayor;
+              son TODAS las que cruzan el umbral de riesgo (contradice el subtítulo
+              "universo censal" de esta misma pantalla). */}
           <span className="text-label-data-mono" style={{ color: "var(--color-ink-faint)" }}>
-            MUESTRA AUDITADA: N={n} PLANTELES
+            ESCUELAS EN RIESGO: {n}
           </span>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -297,7 +301,7 @@ export default function Conclusion() {
                 <div className="p-3 rounded" style={{ background: "var(--faro-canvas-container)" }}>
                   <div className="flex items-baseline justify-between flex-wrap gap-x-2 gap-y-0.5 mb-1">
                     <span className="text-label-micro-mono uppercase" style={{ color: "var(--color-ink-faint)" }}>Presencia Diagnosticada</span>
-                    <span className="text-label-data-mono font-medium" style={{ color: "var(--color-ink-faint)" }}>MUESTRA AUDITADA: N={n} PLANTELES</span>
+                    <span className="text-label-data-mono font-medium" style={{ color: "var(--color-ink-faint)" }}>ESCUELAS EN RIESGO: {n}</span>
                   </div>
                   <div className="flex items-baseline gap-1">
                     <span className="text-headline-xl font-bold" style={{ color: "var(--color-ink)" }}>{pctPorDriver[code]}</span>
@@ -309,7 +313,7 @@ export default function Conclusion() {
                 </div>
 
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--color-ink-faint)" }}>Recomendación Institucional Oficial</span>
+                  <span className="text-label-micro-mono uppercase font-semibold" style={{ color: "var(--color-ink-faint)" }}>Recomendación</span>
                   <p className="text-body-md" style={{ color: "var(--color-ink)" }}>{recomendacionGeneralPorDriver[code]}</p>
                 </div>
               </div>

@@ -10,6 +10,8 @@ import { getConclusionEscuelas, getKpis, getUniversoEscuelas } from "../lib/api.
 import { useApiResource } from "../lib/useApiResource.js";
 import { panoramaMock, kpisMockParaComparacion2Ciclos, universoEscuelasMock, driverNombres } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
+import { valorOrientado } from "../lib/driverOrientacion.js";
+import { FASES } from "../lib/navFases.js";
 
 const DRIVERS_ORDEN = ["D1", "D2", "D3", "D4", "D5", "D6"];
 
@@ -168,7 +170,18 @@ export default function Panorama() {
     cveEnt: cveEntDeEscuela(e),
     latitud: e.latitud,
     longitud: e.longitud,
-    drivers: { D1: e.d1, D2: e.d2, D3: e.d3, D4: e.d4, D5: e.d5, D6: e.d6 },
+    // FIX (2026-09-13, US-651, hallazgo de Marina García + su IA): D3/D4 se
+    // publican crudos (alto = buen servicio) -- sin orientar, una escuela con
+    // conectividad completa (D4=1.00) se pintaba como presión máxima. Ver
+    // lib/driverOrientacion.js.
+    drivers: {
+      D1: e.d1,
+      D2: e.d2,
+      D3: valorOrientado("D3", e.d3),
+      D4: valorOrientado("D4", e.d4),
+      D5: e.d5,
+      D6: e.d6,
+    },
     // Driver dominante ya resuelto por el backend/mock -- se usa para
     // dibujar el contorno ámbar (03_Visual_Identity.md S3) en la tabla.
     dominante: e.driver_dominante,
@@ -185,7 +198,10 @@ export default function Panorama() {
   for (const e of escuelas) {
     if (!e.driver_dominante) continue;
     conteoPorDriver[e.driver_dominante] = (conteoPorDriver[e.driver_dominante] ?? 0) + 1;
-    const valor = e[e.driver_dominante.toLowerCase()];
+    // FIX (2026-09-13, US-651): mismo motivo que matrizData -- el rango que se
+    // muestra en "Hallazgos algorítmicos dominantes" debe leerse en la escala
+    // de presión, no en la escala cruda de D3/D4.
+    const valor = valorOrientado(e.driver_dominante, e[e.driver_dominante.toLowerCase()]);
     if (typeof valor === "number") {
       (valoresPorDriver[e.driver_dominante] ??= []).push(valor);
     }
@@ -262,15 +278,18 @@ export default function Panorama() {
             style={{ background: "var(--faro-canvas-container)", border: "1px solid var(--faro-hairline)" }}
           >
             <div className="flex items-center gap-3 flex-wrap">
+              {/* FIX (2026-09-13, US-651, obs. 8, Marina García + su IA): "Protocolo de
+                  vigilancia territorial / MATRIZ_RIESGO_OPERATIVA" pasa a "FASE_02 ·
+                  PANORAMA DE RIESGO" -- misma nomenclatura que la barra lateral y el resto
+                  de pantallas del flujo. Tomado de FASES (lib/navFases.js). */}
               <span
                 className="text-label-micro-mono font-semibold px-2 py-1 rounded"
                 style={{ background: "var(--faro-command-base)", color: "#ffffff" }}
               >
-                02
+                FASE_{FASES.find((f) => f.to === "/panorama").n}
               </span>
-              <span className="text-label-data-mono" style={{ color: "var(--color-ink)" }}>
-                PROTOCOLO DE VIGILANCIA TERRITORIAL <span style={{ color: "var(--faro-context-gray)" }}>/</span>{" "}
-                <span style={{ color: "var(--faro-signal)" }}>MATRIZ_RIESGO_OPERATIVA</span>
+              <span className="text-label-data-mono uppercase" style={{ color: "var(--color-ink)" }}>
+                {FASES.find((f) => f.to === "/panorama").label}
               </span>
             </div>
             <div className="flex items-center gap-3">

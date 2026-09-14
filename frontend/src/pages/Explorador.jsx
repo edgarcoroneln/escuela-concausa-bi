@@ -9,15 +9,14 @@ import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuelas, getUniversoEscuelas, getMunicipiosPorClaves, getPrediccion } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
-import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool, IconVerified, IconDownload, IconLink } from "../components/Icons.jsx";
+import { ORIENTADOS } from "../lib/driverOrientacion.js";
+import { IconMenuBook, IconCalendarMonth, IconLocationOn, IconSchool, IconVerified, IconDownload } from "../components/Icons.jsx";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 // D3/D4 se publican como "servicios presentes" (mayor = mejor) -- se orientan
 // (1 - valor) para que, igual que en ExpedienteEscuela.jsx (P4) y en el propio
 // pipeline (features_escuela.sql, spec §4.1.1), "mayor barra = mayor presión"
 // signifique lo mismo en toda la app, incluida esta vista condensada.
-const ORIENTADOS = ["D3", "D4"];
-
 // Pantalla 6 -- Explorador de escuelas (rediseño Fase 2, US-641). Contra
 // 01_UX_Architecture.md §2 "Pantalla 6" y §7 (nombre elegido por Marina).
 //
@@ -124,12 +123,20 @@ const ENTIDADES = [
   { cve: "14", nombre: "Jalisco" },
 ];
 
+// FIX (2026-09-13, Diana/US-651, hallazgo de Marina Garcia + su IA): las claves
+// eran de CCT (DPR/DJN/DES/DCT), pero repositorio_gold.py:290 compara contra
+// gold.dim_escuela.nivel, que trae la palabra completa. El filtro devolvia
+// cero siempre. Confirmado el dominio real contra DS-02_Catalogo_CCT.md (loader
+// SIGED ya filtra el universo a PREESCOLAR/PRIMARIA/SECUNDARIA) -- Telesecundaria
+// no existe en Gold, asi que no se traduce: se quita la opcion.
 const NIVELES = [
-  { cve: "DPR", nombre: "Primaria" },
-  { cve: "DJN", nombre: "Preescolar" },
-  { cve: "DES", nombre: "Secundaria" },
-  { cve: "DCT", nombre: "Telesecundaria" },
+  { cve: "PREESCOLAR", nombre: "Preescolar" },
+  { cve: "PRIMARIA", nombre: "Primaria" },
+  { cve: "SECUNDARIA", nombre: "Secundaria" },
 ];
+
+// FIX (2026-09-13, US-651): ORIENTADOS ahora vive en lib/driverOrientacion.js
+// (unica definicion compartida con Panorama/Conclusion/LosSieteCasos/Expediente).
 
 const LLAVE_POPUP_VISTO = "faro_explorador_popup_visto_v1";
 const TAMANO_PAGINA = 12;
@@ -698,16 +705,11 @@ export default function Explorador() {
                     <IconDownload size={16} />
                     Exportar Ficha CCT (PDF)
                   </button>
-                  <button
-                    type="button"
-                    disabled
-                    title="Función pendiente: 'Mesa de Enlace' aún no existe como concepto real en el proyecto (sin campo, cálculo o endpoint que conectar)."
-                    className="text-label-ui font-semibold px-3.5 py-2 rounded-lg inline-flex items-center gap-1.5 cursor-not-allowed"
-                    style={{ background: "var(--color-primary)", color: "#ffffff", opacity: 0.5 }}
-                  >
-                    <IconLink size={16} />
-                    Vincular a Mesa de Enlace
-                  </button>
+                  {/* FIX (2026-09-13, US-651, hallazgo de Marina García + su IA): se quita
+                      el botón "Vincular a Mesa de Enlace" -- "Mesa de Enlace" no es un
+                      concepto real del proyecto (sin campo, cálculo o endpoint que conectar,
+                      ver título de arriba), y un botón inactivo invita a preguntarse qué es.
+                      "Exportar Ficha CCT (PDF)" sí es funcional -- no se toca. */}
                   <Link
                     to={`/escuela/${seleccionada.cct}`}
                     className="text-label-ui font-semibold px-4 py-2 rounded-lg inline-flex items-center justify-center gap-1.5"

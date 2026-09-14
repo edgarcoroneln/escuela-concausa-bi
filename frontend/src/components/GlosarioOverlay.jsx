@@ -42,6 +42,14 @@ const TERMINOS_BASE = [
       "Qué proporción de los 6 drivers tiene dato real (no SIN_DATO) para una escuela. Una completitud baja se comunica como evidencia incompleta, nunca como ausencia del problema.",
     pregunta: "¿Qué es la completitud de evidencia?",
   },
+  // FIX (2026-09-13, US-651, obs. 11, Marina García + su IA): término agregado para que
+  // la antigüedad del censo de D3/D4 se pueda leer sin tener que preguntarla.
+  {
+    termino: "CEMABE — censo 2013",
+    definicion:
+      "Fuente de los drivers D3 (infraestructura) y D4 (conectividad): el último Censo de Escuelas, Maestros y Alumnos de Educación Básica y Especial, levantado en 2013. No se actualiza por ciclo escolar -- es una fotografía fija de hace más de una década, la más reciente disponible públicamente para este dato a nivel escuela.",
+    pregunta: "¿De qué año son los datos de infraestructura y conectividad?",
+  },
 ];
 
 export default function GlosarioOverlay({ abierto, onCerrar, onPreguntar }) {
