@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import GlosarioOverlay from "../components/GlosarioOverlay.jsx";
+import { FASES } from "../lib/navFases.js";
 import WalkthroughOverlay from "../components/WalkthroughOverlay.jsx";
 import { ENTIDADES_LABEL } from "../components/MapaEntidades.jsx";
 import {
@@ -132,11 +133,16 @@ export default function Home() {
           {/* Barra de estado de la pantalla (mockup 01_Entrada.png) */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-8">
             <div className="flex flex-wrap items-center gap-3">
+              {/* FIX (2026-09-13, US-651, obs. 8, Marina García + su IA): "Pantalla
+                  01" pasa a "FASE_01" -- misma nomenclatura que ya usa la barra lateral
+                  ("Flujo de Investigación", fases 00-06) y que Panorama/LosSieteCasos.
+                  Se toma de FASES (lib/navFases.js), única definición, para que esta
+                  insignia nunca se desincronice de la barra lateral. */}
               <span
                 className="text-label-micro-mono uppercase px-1.5 py-0.5"
                 style={{ background: "var(--faro-command-base)", color: "#ffffff" }}
               >
-                Pantalla 01 // Introducción institucional
+                FASE_{FASES.find((f) => f.n === "01").n} · {FASES.find((f) => f.n === "01").label.toUpperCase()}
               </span>
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--faro-signal)" }} aria-hidden="true" />
               <span className="text-label-micro-mono uppercase" style={{ color: "var(--faro-signal)" }}>

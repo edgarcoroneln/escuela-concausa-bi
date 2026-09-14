@@ -6,11 +6,14 @@ import DemoBadge from "../components/DemoBadge.jsx";
 import DriverBars from "../components/DriverBars.jsx";
 import { IconTrendingUp } from "../components/Icons.jsx";
 import { ENTIDADES_LABEL } from "../components/MapaEntidades.jsx";
+import MapaPin from "../components/MapaPin.jsx";
 import { driverNombres, nivelRiesgo, panoramaMock } from "../data/mock.js";
 import { riskRampColor, DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getConclusionEscuelas } from "../lib/api.js";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
+import { valorOrientado } from "../lib/driverOrientacion.js";
+import { FASES } from "../lib/navFases.js";
 
 // Pantalla 3 -- Selección de Caso (pase de fidelidad 13-sep contra
 // mockups/03_Seleccion_Caso.png + .html -- confirmado que SÍ es esta
@@ -214,6 +217,16 @@ export default function LosSieteCasos() {
   const municipioDeEscuela = (e) => (e ? (esReal ? e.nombre_municipio ?? null : e.municipio ?? null) : null);
   const lugarDeEscuela = (e) => [municipioDeEscuela(e), entidadDeEscuela(e)].filter(Boolean).join(", ");
 
+  // FIX (2026-09-13, pedido de Diana -- "arreglar el mapa sin quitarlo"): mismo
+  // cveEntDeEscuela(e) de arriba, contra el mismo catalogo ENTIDADES_LABEL, para
+  // obtener {id, color} y poder dibujar el mapa real de MapaPin.jsx en vez del
+  // radar decorativo.
+  const entidadInfoDeEscuela = (e) => {
+    if (!e) return null;
+    const cveEnt = cveEntDeEscuela(e);
+    return cveEnt ? ENTIDADES_LABEL.find((ent) => ent.cveEnt === cveEnt) ?? null : null;
+  };
+
   // Chip de filtro "Entidad: ..." (decorativo, igual que en el mockup --
   // ver comentario de arriba): entidad real con más de las N escuelas de
   // este conjunto, y su conteo real. Mismo cálculo que "Enclave
@@ -240,7 +253,18 @@ export default function LosSieteCasos() {
   // del mockup.
   const notaDiagnostica = (e) => {
     if (!e || !e.driver_dominante) return null;
-    const drivers = { D1: e.d1, D2: e.d2, D3: e.d3, D4: e.d4, D5: e.d5, D6: e.d6 };
+    // FIX (2026-09-13, US-651, hallazgo de Marina García + su IA): D3/D4
+    // llegan crudos (alto = buen servicio) -- sin orientar, esta nota podía
+    // decir "mayor presión en Conectividad (1.00)" para una escuela con
+    // conectividad completa, justo lo contrario. Ver lib/driverOrientacion.js.
+    const drivers = {
+      D1: e.d1,
+      D2: e.d2,
+      D3: valorOrientado("D3", e.d3),
+      D4: valorOrientado("D4", e.d4),
+      D5: e.d5,
+      D6: e.d6,
+    };
     const valorDominante = drivers[e.driver_dominante];
     if (typeof valorDominante !== "number") return null;
     const otros = Object.entries(drivers).filter(([code, v]) => code !== e.driver_dominante && typeof v === "number");
@@ -254,8 +278,10 @@ export default function LosSieteCasos() {
 
   return (
     <PageContainer>
-      {/* ---- Barra de protocolo (imagen 2: "FASE_03 AUDITORÍA TERRITORIAL DE
-          RIESGO / CASOS DETECTADOS: 0N UNIDADES / SELECCIÓN ACTIVA: CCT") ---- */}
+      {/* FIX (2026-09-13, US-651, obs. 8, Marina García + su IA): "AUDITORÍA
+          TERRITORIAL DE RIESGO" pasa a la etiqueta real de esta fase ("Selección de
+          Caso"), tomada de FASES (lib/navFases.js) -- misma nomenclatura que la barra
+          lateral y el resto de pantallas del flujo. */}
       <div
         className="rounded-xl px-4 py-3 flex items-center justify-between flex-wrap gap-3"
         style={{ background: "var(--faro-canvas-container)", border: "1px solid var(--faro-hairline)" }}
@@ -265,10 +291,10 @@ export default function LosSieteCasos() {
             className="text-label-micro-mono font-semibold px-2 py-1 rounded"
             style={{ background: "var(--faro-command-base)", color: "#ffffff" }}
           >
-            FASE_03
+            FASE_{FASES.find((f) => f.to === "/casos").n}
           </span>
           <span className="text-label-micro-mono uppercase" style={{ color: "var(--color-ink-faint)" }}>
-            AUDITORÍA TERRITORIAL DE RIESGO
+            {FASES.find((f) => f.to === "/casos").label}
           </span>
         </div>
         <div className="flex items-center gap-3 flex-wrap text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
@@ -572,34 +598,39 @@ export default function LosSieteCasos() {
                     className="rounded-lg relative flex flex-col justify-between p-2 overflow-hidden"
                     style={{ background: "var(--color-surface-alt, #f4f4f5)", border: "1px solid var(--color-border)", height: "9rem" }}
                   >
-                    <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0" aria-hidden="true">
-                      <circle cx="50" cy="50" r="30" fill="none" stroke="var(--faro-signal)" strokeWidth="1" strokeDasharray="2 2" opacity="0.45" />
-                      <circle cx="50" cy="50" r="12" fill="var(--faro-signal)" fillOpacity="0.12" stroke="var(--faro-signal)" strokeWidth="1" />
-                      <circle cx="50" cy="50" r="3" fill="var(--faro-signal)" />
-                    </svg>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <span
-                        className="text-label-micro-mono px-1.5 py-0.5 rounded"
-                        style={{ background: "var(--faro-command-base)", color: "#ffffff" }}
-                      >
-                        GEO_LOCK: ACTIVO
-                      </span>
-                      <span
-                        className="text-label-micro-mono px-1.5 py-0.5 rounded"
-                        style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", color: "var(--color-ink)" }}
-                      >
-                        PERÍMETRO 250M
-                      </span>
-                    </div>
-                    <div
-                      className="relative z-10 flex items-center justify-between px-1.5 py-1 rounded"
-                      style={{ background: "var(--faro-command-base)", color: "#ffffff" }}
-                    >
-                      <span className="text-label-micro-mono">
-                        Lat: {activo.latitud.toFixed(4)}° N
-                      </span>
-                      <span className="text-label-micro-mono">Lon: {Math.abs(activo.longitud).toFixed(4)}° O</span>
-                    </div>
+                    {/* FIX (2026-09-13, US-651, obs. 7, Marina García + su IA): se quitaron
+                        "GEO_LOCK: ACTIVO" y "PERÍMETRO 250M" -- ninguna de las dos era una
+                        medida real de esta escuela, eran etiquetas fijas de encuadre (mismo
+                        hallazgo que "Radio de Vigilancia: 1,500m" en ExpedienteEscuela.jsx).
+                        FIX (2026-09-13, pedido de Diana -- "arreglar el mapa sin quitarlo"):
+                        el círculo concéntrico puramente decorativo que quedó en su lugar se
+                        reemplazó primero por SiluetaEntidad.jsx y despues, a pedido de Diana,
+                        por MapaPin.jsx: mapa de la república COMPLETA con la entidad
+                        resaltada y un PIN real (mismo trazo que IconLocationOn, Icons.jsx) en
+                        las coordenadas reales de ESTA escuela, sin depender de ningún servicio
+                        externo. El Lat/Lon de abajo sigue siendo un dato real, se conserva
+                        encima. */}
+                    {entidadInfoDeEscuela(activo) && (
+                      <div className="absolute inset-0">
+                        <MapaPin
+                          puntos={[
+                            {
+                              lat: activo.latitud,
+                              lon: activo.longitud,
+                              entidadId: entidadInfoDeEscuela(activo).id,
+                              color: entidadInfoDeEscuela(activo).color,
+                              etiqueta: activo.nombre ?? "Esta escuela",
+                            },
+                          ]}
+                          ariaLabel={`Ubicación real de ${activo.nombre ?? "la escuela"} dentro de ${entidadInfoDeEscuela(activo).nombre}`}
+                        />
+                      </div>
+                    )}
+                    {/* FIX (2026-09-13, pedido de Diana -- "quita esa línea negra que dice
+                        latitud y lon"): se quita la barra Lat/Lon -- el pin del mapa de arriba
+                        ya señala la ubicación real de la escuela, el texto quedaba redundante.
+                        El dato real sigue disponible al pasar el cursor sobre el pin (title del
+                        <path>, ver MapaPin.jsx) para quien lo necesite. */}
                   </div>
                 </div>
               )}
@@ -611,8 +642,18 @@ export default function LosSieteCasos() {
                   </span>
                   <span className="text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>Escala 0.0–1.0</span>
                 </div>
+                {/* FIX (2026-09-13, US-651): DriverBars espera valores YA orientados
+                    (igual que Explorador.jsx) -- pasar los crudos pintaba D4=1.00
+                    (conectividad completa) como barra de presión máxima. */}
                 <DriverBars
-                  drivers={{ D1: activo.d1, D2: activo.d2, D3: activo.d3, D4: activo.d4, D5: activo.d5, D6: activo.d6 }}
+                  drivers={{
+                    D1: activo.d1,
+                    D2: activo.d2,
+                    D3: valorOrientado("D3", activo.d3),
+                    D4: valorOrientado("D4", activo.d4),
+                    D5: activo.d5,
+                    D6: activo.d6,
+                  }}
                   driverDominante={activo.driver_dominante}
                 />
               </div>

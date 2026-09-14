@@ -39,7 +39,20 @@ async function request(path, options = {}) {
     if (!res.ok) {
       return { data: null, error: `${res.status} ${res.statusText}` };
     }
-    return { data: await res.json(), error: null };
+    // FIX (2026-09-13, hallazgo de Diana: "el botón de Cerrar sesión no funciona"):
+    // POST /auth/logout responde 204 No Content (cuerpo vacío a propósito, ver
+    // src/api/v1/auth.py). `await res.json()` sobre un cuerpo vacío lanza
+    // SyntaxError -- el catch de abajo lo atrapaba y devolvía { error: "Unexpected
+    // end of JSON input" } en vez de { data: null, error: null }, disfrazando una
+    // llamada exitosa como si hubiera fallado. session.jsx ignora ese `error` (solo
+    // hace `await postAuthLogout()`), así que el estado sí se ponía en "anonimo",
+    // pero cualquier código que sí revise `.error` en el futuro se hubiera roto con
+    // esta misma respuesta. Se evita parsear JSON cuando no hay cuerpo que parsear.
+    if (res.status === 204) {
+      return { data: null, error: null };
+    }
+    const texto = await res.text();
+    return { data: texto ? JSON.parse(texto) : null, error: null };
   } catch (err) {
     return { data: null, error: err.message ?? "network_error" };
   }

@@ -51,23 +51,39 @@
 // "Guía de Identidad" se queda tal cual (disabledHint): no es parte del
 // PR #350, sigue sin ningún avance conocido en el repo -- no se inventa
 // una ruta ni se quita el item solo porque su vecino ya se resolvió.
+// 13-sep, cuarta ronda -- 3 pedidos puntuales de Diana sobre este mismo menu,
+// posteriores a las 3 rondas documentadas arriba:
+//   1) Se quita "00 Iniciar Sesión" (revirtiendo la segunda ronda): el item vivía
+//      SOLO en este rail, que a su vez solo se renderiza dentro del shell
+//      autenticado (Sidebar.jsx recibe `session`, App.jsx lo monta junto al resto
+//      de rutas protegidas) -- por eso alguien ya con sesión iniciada lo veía en su
+//      propio menú, sin sentido funcional. El botón real de "Iniciar sesión" sigue
+//      existiendo para quien SÍ está anónimo: vive en Header.jsx (esquina superior
+//      derecha, getAuthLoginUrl()), fuera de esta lista -- no se toca aquí.
+//   2) Se quita "04 Expediente de Escuela" de la lista: era un item disabledHint
+//      (sin ruta propia, solo un aviso de "Elige un caso en Selección de Caso"),
+//      no una pantalla a la que se navegue directo desde el menú -- se sigue
+//      llegando al expediente real (`/escuela/:cct`) desde los links "Ver/Abrir
+//      expediente completo" de Explorador.jsx y LosSieteCasos.jsx, que no dependen
+//      de este arreglo. Los items siguientes se renumeran (05->04, 06->05) para
+//      que la numeración visible en el rail angosto (<768px, ver Sidebar.jsx) siga
+//      siendo consecutiva.
+//   3) Se quita "Guía de Identidad" de REFERENCIA_TECNICA: seguía sin ningún avance
+//      conocido en el repo (a diferencia de "Cómo funciona FARO", ya resuelto en la
+//      tercera ronda) y sin fecha de entrega -- un item permanentemente
+//      deshabilitado invita a preguntar "¿cuándo se habilita esto?" sin que haya
+//      una respuesta real. Si el equipo la retoma más adelante, se vuelve a agregar
+//      con ruta real en vez de reponer el placeholder.
 export const FASES = [
-  { n: "00", label: "Iniciar Sesión", to: "/login" },
   { n: "01", label: "Entrada a FARO", to: "/", end: true },
   { n: "02", label: "Panorama de Riesgo", to: "/panorama" },
   { n: "03", label: "Selección de Caso", to: "/casos" },
-  { n: "04", label: "Expediente de Escuela", disabledHint: "Elige un caso en Selección de Caso" },
-  { n: "05", label: "Conclusión Global", to: "/conclusion" },
-  { n: "06", label: "Explorador de Escuelas", to: "/explorador" },
+  { n: "04", label: "Conclusión Global", to: "/conclusion" },
+  { n: "05", label: "Explorador de Escuelas", to: "/explorador" },
 ];
 
 export const REFERENCIA_TECNICA = [
   { n: "US", label: "Cómo funciona FARO", to: "/como-funciona" },
-  {
-    n: "ID",
-    label: "Guía de Identidad",
-    disabledHint: "Pendiente de implementar",
-  },
 ];
 
 // Las 6 vistas "heredadas" de Fase 1 (vista-general, mapa, drivers,
