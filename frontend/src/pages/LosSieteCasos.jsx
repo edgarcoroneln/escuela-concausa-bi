@@ -613,11 +613,15 @@ export default function LosSieteCasos() {
                     {entidadInfoDeEscuela(activo) && (
                       <div className="absolute inset-0">
                         <MapaPin
-                          entidadId={entidadInfoDeEscuela(activo).id}
-                          color={entidadInfoDeEscuela(activo).color}
-                          lat={activo.latitud}
-                          lon={activo.longitud}
-                          etiqueta={activo.nombre ?? "Esta escuela"}
+                          puntos={[
+                            {
+                              lat: activo.latitud,
+                              lon: activo.longitud,
+                              entidadId: entidadInfoDeEscuela(activo).id,
+                              color: entidadInfoDeEscuela(activo).color,
+                              etiqueta: activo.nombre ?? "Esta escuela",
+                            },
+                          ]}
                           ariaLabel={`Ubicación real de ${activo.nombre ?? "la escuela"} dentro de ${entidadInfoDeEscuela(activo).nombre}`}
                         />
                       </div>

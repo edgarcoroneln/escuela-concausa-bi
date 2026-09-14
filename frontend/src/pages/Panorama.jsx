@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import PageContainer from "../components/PageContainer.jsx";
 import DemoBadge from "../components/DemoBadge.jsx";
 import Card from "../components/Card.jsx";
-import SiluetaEntidad from "../components/SiluetaEntidad.jsx";
+import MapaPin from "../components/MapaPin.jsx";
 import { ENTIDADES_LABEL } from "../components/MapaEntidades.jsx";
 import { IconArrowForward, IconHub, IconSecurityUpdateGood } from "../components/Icons.jsx";
 import { getConclusionEscuelas, getKpis, getUniversoEscuelas } from "../lib/api.js";
@@ -49,12 +49,15 @@ const DRIVERS_ORDEN = ["D1", "D2", "D3", "D4", "D5", "D6"];
 //      el mismo criterio de color que ya usaba el heatmap (riskRampColor,
 //      nunca color por driver) y el mismo contorno ámbar para el driver
 //      dominante. Mismos datos, otra forma visual.
-//   5) El panel "Enclave Georreferenciado" ahora dibuja la silueta REAL de
-//      la entidad con más escuelas en riesgo (components/SiluetaEntidad.jsx,
-//      mismo geojson real de 32 estados que ya usa MapaEntidades.jsx) con
-//      las escuelas de esa entidad como puntos reales (lat/lon de
-//      EscuelaOut) -- en vez del diagrama abstracto de nodos/curva del
-//      mockup, que no tenía respaldo geográfico real.
+//   5) El panel "Enclave Georreferenciado" dibuja un mapa REAL de México
+//      (components/MapaPin.jsx, mismo geojson real de 32 estados que ya usa
+//      MapaEntidades.jsx) -- en vez del diagrama abstracto de nodos/curva
+//      del mockup, que no tenía respaldo geográfico real. Empezó mostrando
+//      solo la silueta de la entidad con más escuelas en riesgo
+//      (SiluetaEntidad.jsx) con esas escuelas como puntos reales; a pedido
+//      de Diana (14-sep) pasó al mapa nacional con hasta 2 entidades
+//      resaltadas y pineadas (coordenadas reales de su capital, ver
+//      entidadesTop), porque solía haber más de una con presencia real.
 //   6) Se quita la tarjeta "Entidades del alcance" (el mapa interactivo de
 //      México con las 4 entidades, a la derecha de la comparativa): con la
 //      tabla de drivers de punto 4 ya no hay heatmap que atenuar al pasar
@@ -236,6 +239,34 @@ export default function Panorama() {
   const cveEntTop = Object.entries(conteoPorEntidad).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
   const entidadTop = cveEntTop ? ENTIDADES_LABEL.find((e) => e.cveEnt === cveEntTop) : null;
 
+  // FIX (2026-09-14, pedido de Diana): "Enclave Georreferenciado" mostraba una
+  // sola entidad (la de más escuelas en riesgo), pero suele haber más de una
+  // con presencia real -- mismo criterio de "hasta 2" que ya usa
+  // "Hallazgos algorítmicos dominantes" arriba (hallazgosTop). Los desgloses
+  // de abajo (municipios, brecha de telemetría, "escuelas en el enclave")
+  // se quedan sobre la entidad top única -- Diana pidió el cambio para el
+  // mapa/pines, no para esas cifras.
+  const entidadesTop = Object.entries(conteoPorEntidad)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([cveEnt]) => ENTIDADES_LABEL.find((e) => e.cveEnt === cveEnt))
+    .filter(Boolean);
+
+  // Puntos reales para el mapa nacional: coordenadas de la CAPITAL de cada
+  // entidad top (ENTIDADES_LABEL, mismo catálogo real que ya usa
+  // MapaEntidades.jsx/Login.jsx -- fuente INEGI/Wikipedia, no una posición
+  // inventada). Aquí el punto representa a la entidad completa, no a una
+  // escuela puntual (antes se pineaba cada escuela individual sobre la
+  // silueta de una sola entidad; con dos entidades a la vez, la capital da
+  // un punto legible por entidad en un mapa nacional).
+  const puntosEntidadesTop = entidadesTop.map((e) => ({
+    lat: e.lat,
+    lon: e.lon,
+    entidadId: e.id,
+    color: e.color,
+    etiqueta: e.nombre,
+  }));
+
   const cctsEnEntidadTop = new Set(matrizData.filter((d) => d.cveEnt === cveEntTop).map((d) => d.cct));
   const porMunicipioEnEntidadTop = {};
   for (const e of escuelas) {
@@ -260,13 +291,6 @@ export default function Panorama() {
     0
   );
   const brechaPct = totalCeldas > 0 ? (celdasSinDato / totalCeldas) * 100 : null;
-
-  // Puntos reales (lat/lon de EscuelaOut) de las escuelas de la entidad top,
-  // para dibujar sobre su silueta real (punto 5) -- nunca coordenadas
-  // inventadas.
-  const puntosEntidadTop = matrizData
-    .filter((d) => d.cveEnt === cveEntTop && typeof d.latitud === "number" && typeof d.longitud === "number")
-    .map((d) => ({ lat: d.latitud, lon: d.longitud, etiqueta: d.nombre }));
 
   return (
     <PageContainer>
@@ -467,16 +491,14 @@ export default function Panorama() {
                       Enclave georreferenciado
                     </p>
                     <span className="text-label-data-mono font-semibold" style={{ color: entidadTop.color }}>
-                      {entidadTop.nombre} ({entidadTop.cveEnt})
+                      {entidadesTop.map((e) => `${e.nombre} (${e.cveEnt})`).join(" · ")}
                     </span>
                   </div>
 
-                  <div className="rounded-lg mb-3" style={{ background: "var(--faro-canvas-container)", border: "1px solid var(--faro-hairline)" }}>
-                    <SiluetaEntidad
-                      entidadId={entidadTop.id}
-                      color={entidadTop.color}
-                      puntos={puntosEntidadTop}
-                      ariaLabel={`Silueta de ${entidadTop.nombre} con la ubicación real de las escuelas en riesgo de esa entidad`}
+                  <div className="rounded-lg mb-3" style={{ background: "var(--faro-canvas-container)", border: "1px solid var(--faro-hairline)", height: "9rem" }}>
+                    <MapaPin
+                      puntos={puntosEntidadesTop}
+                      ariaLabel={`Mapa de México con ${entidadesTop.map((e) => e.nombre).join(" y ")}, las entidades con más escuelas en riesgo`}
                     />
                   </div>
 
