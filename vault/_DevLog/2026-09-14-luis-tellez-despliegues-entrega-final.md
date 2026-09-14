@@ -88,6 +88,13 @@ y las env vars/secretos: revisión `faro-api-00033-fim` (imagen `main-a8b8f252-h
 `a8b8f252`, el `src/` de la imagen es intacto respecto a `main`). Rollback a la revisión previa
 `faro-api-00031-gom` con el mismo patrón `--to-revisions REV=100`.
 
+**Estado vivo actual (verificado en `/version`).** Después de este hotfix, la imagen se reconstruyó
+**una vez más con el mismo `docker/api.Dockerfile`** (misma receta: embedding multilingüe + los dos
+geojson) para incorporar el texto al día de «Cómo funciona» de Héctor (`#357`, US-601; su código ya
+estaba en `main`). Esa reconstrucción es la que **corre hoy en producción**: revisión
+**`faro-api-00035-joj`** (imagen `main-4c82df8d-hf1`, `/version` reporta `4c82df8d`), verificada en vivo
+por Luis. El `docker/api.Dockerfile` que versiona este PR es el que hornea **ambas** imágenes.
+
 **Rotación de credencial (operacional, con OK de Luis; nada de esto vive en el repo).** En el proceso
 se detectó que la API key de Anthropic vigente estaba revocada (una prueba de autenticación real
 devolvía 401). Luis cargó una versión nueva en **Secret Manager** y el contenedor `api` pasó a
