@@ -7,6 +7,7 @@ en `api/openapi.v1.json` está sincronizado con el código.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -681,6 +682,143 @@ def test_los_bloques_markdown_si_pueden_traer_markdown(client: TestClient) -> No
     textos = [b["texto"] for b in bloques if b["tipo"] == "markdown"]
     assert any("**" in t or "`" in t for t in textos), (
         "ningún bloque markdown trae formato: revisa que no se haya limpiado de más"
+    )
+
+
+#: Vocabulario que delata texto escrito para **el equipo** y no para quien lee la página.
+#:
+#: La sección es documentación pública del sistema. Una instrucción interna ("nadie debe…"),
+#: una asignación de trabajo ("actualizarlo es de su dueño") o una referencia al proceso de
+#: desarrollo (una historia, un PR, quién revisó qué) no le sirven a nadie que llegue a leer cómo
+#: funciona FARO: le hablan al equipo por encima del hombro del lector.
+#:
+#: **No prohíbe citar decisiones.** `ADR-012` o `DEC-027` como procedencia de un hecho sí ayudan a
+#: entender por qué el sistema es como es; lo que se prohíbe es dirigirse al equipo.
+_FRASES_PARA_EL_EQUIPO = [
+    "nadie debe",
+    "su dueño",
+    "es de su dueño",
+    "actualizarlas es",
+    "actualizarlo es",
+    "queda pendiente de",
+    "falta que",
+    "hay que pedir",
+    "se le pide a",
+    "pendiente de revisión",
+    "en el PR",
+]
+
+
+#: IDs que son **seguimiento de trabajo interno**, no una decisión de arquitectura.
+#:
+#: Completa la mitad que faltaba del criterio, señalada por Marina García del Buey al revisar el
+#: PR #357: la lista de frases caza *«actualizarlas es de su dueño»* pero **no** caza `US-324`. Y
+#: una historia de usuario en texto público es el mismo defecto sin ninguna de esas frases —
+#: «esto llega en US-410» pasaba en verde, comprobado.
+#:
+#: `ADR-` y `DEC-` **no** están aquí a propósito: una decisión explica *por qué* el sistema es
+#: como es, y eso le sirve al lector. Un número de historia sólo le sirve a quien la trabaja.
+_IDS_DE_TRABAJO_INTERNO = re.compile(r"\b(?:US|BUG|RISK|TASK)-\d+\b")
+
+
+def test_ningun_texto_visible_cita_un_id_de_trabajo_interno(client: TestClient) -> None:
+    """La otra mitad del criterio: citar decisiones sí, citar el backlog no.
+
+    Propuesta de @marina-gdb en la revisión del PR #357, con su razón: *«una historia de usuario
+    no es una decisión, es seguimiento de trabajo interno»*. `ADR-` y `DEC-` siguen permitidos.
+    """
+    hallazgos: list[str] = []
+
+    for resumen in client.get(f"{API_PREFIX}/about/secciones").json():
+        seccion = client.get(f"{API_PREFIX}/about/secciones/{resumen['id']}").json()
+
+        visibles: list[tuple[str, str]] = [
+            (f"advertencia[{i}]", a) for i, a in enumerate(seccion.get("advertencias", []))
+        ]
+        for j, bloque in enumerate(seccion["bloques"]):
+            if bloque["tipo"] == "markdown":
+                visibles.append((f"markdown[{j}]", bloque["texto"]))
+            elif bloque["tipo"] == "tabla":
+                for f, fila in enumerate(bloque["filas"]):
+                    visibles.extend(
+                        (f"tabla[{j}].{f}.{c}", celda) for c, celda in enumerate(fila)
+                    )
+
+        for donde, texto in visibles:
+            for encontrado in _IDS_DE_TRABAJO_INTERNO.findall(texto):
+                hallazgos.append(f"{seccion['id']} · {donde} · «{encontrado}»")
+
+    assert not hallazgos, (
+        "estos IDs son seguimiento de trabajo interno y no le dicen nada a quien lee la página. "
+        f"Si el hecho importa, cuéntalo sin el número; si es una decisión, cita el ADR o el DEC: "
+        f"{hallazgos}"
+    )
+
+
+def test_citar_decisiones_sigue_permitido(client: TestClient) -> None:
+    """El complemento: la prohibición es del backlog, no de la procedencia.
+
+    Sin esto, alguien podría hacer pasar la prueba de arriba borrando también los `ADR-`/`DEC-`,
+    y la sección perdería justo lo que explica por qué el sistema es como es.
+    """
+    todo = " ".join(
+        json.dumps(client.get(f"{API_PREFIX}/about/secciones/{r['id']}").json(), ensure_ascii=False)
+        for r in client.get(f"{API_PREFIX}/about/secciones").json()
+    )
+    assert re.search(r"\bADR-\d+\b", todo), "desaparecieron las citas a ADRs"
+    assert re.search(r"\bDEC-\d+\b", todo), "desaparecieron las citas a decisiones"
+
+
+def test_ningun_texto_visible_le_habla_al_equipo(client: TestClient) -> None:
+    """La sección documenta el sistema para quien lo lee, no coordina al equipo que lo hizo.
+
+    Detectado por el usuario al ver en «Arquitectura del backend» una nota que decía *"Nadie debe
+    presentarlo como modelo productivo en esta entrega"* — una instrucción interna, y además en la
+    sección equivocada. El vault, los DevLogs y los PRs son el lugar de ese lenguaje; esta página
+    no.
+    """
+    hallazgos: list[str] = []
+
+    for resumen in client.get(f"{API_PREFIX}/about/secciones").json():
+        seccion = client.get(f"{API_PREFIX}/about/secciones/{resumen['id']}").json()
+
+        visibles: list[tuple[str, str]] = [
+            (f"advertencia[{i}]", a) for i, a in enumerate(seccion.get("advertencias", []))
+        ]
+        for j, bloque in enumerate(seccion["bloques"]):
+            if bloque["tipo"] == "markdown":
+                visibles.append((f"markdown[{j}]", bloque["texto"]))
+            elif bloque["tipo"] == "tabla":
+                for f, fila in enumerate(bloque["filas"]):
+                    visibles.extend(
+                        (f"tabla[{j}].{f}.{c}", celda) for c, celda in enumerate(fila)
+                    )
+
+        for donde, texto in visibles:
+            bajo = texto.lower()
+            for frase in _FRASES_PARA_EL_EQUIPO:
+                if frase in bajo:
+                    hallazgos.append(f"{seccion['id']} · {donde} · «{frase}»")
+
+    assert not hallazgos, (
+        "este texto le habla al equipo, no a quien lee la página. Va en el DevLog o en el PR, "
+        f"no en la sección: {hallazgos}"
+    )
+
+
+def test_la_nota_de_ml03_vive_en_la_seccion_de_modelos(client: TestClient) -> None:
+    """Estaba en «Arquitectura del backend», después de la tabla de stack, sin venir a cuento.
+
+    Fue un `replace` que enganchó el primer cierre de sección que encontró. La prueba fija dónde
+    corresponde: quien lee sobre ML-03 es quien necesita saber que no está conectado al producto.
+    """
+    def _markdowns(seccion: str) -> str:
+        bloques = client.get(f"{API_PREFIX}/about/secciones/{seccion}").json()["bloques"]
+        return " ".join(b["texto"] for b in bloques if b["tipo"] == "markdown")
+
+    assert "no operativo" in _markdowns("modelos-ml").lower()
+    assert "ml-03" not in _markdowns("arquitectura").lower(), (
+        "la nota de ML-03 volvió a colarse en la sección de arquitectura"
     )
 
 

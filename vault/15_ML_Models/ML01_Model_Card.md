@@ -20,9 +20,10 @@ El objetivo de **ML-01** es realizar una regresión supervisada para predecir el
 - No utiliza features de escuelas sin datos consistentes (cobertura parcial respetada, sin imputar ceros a lo ciego).
 
 ## 3. Métrica Obtenida
-- **Resultados actuales**: Actualmente el modelo cumple con `MAE < 0.03` y `RMSE < 0.05`, pero estos resultados **provienen exclusivamente de datos sintéticos**.
-- **Bloqueo de corrida real**: El intento de reentrenar ML-01 con backtesting de datos reales fue bloqueado al encontrar un error interno de `scikit-learn` sin resolver (escalado a Héctor, C3). 
-- (Ver detalle de entrenamiento: [[vault/15_ML_Models/ML01_Entrenamiento]]).
+- **Resultados actuales (sobre Gold real)**: Tras resolver el bloqueo por el error interno de `scikit-learn` (BUG-015), el modelo fue entrenado y evaluado exitosamente sobre datos reales (5 de septiembre).
+- **Desempeño**: El modelo obtuvo un **MAE de 0.141458** y un **RMSE de 0.436326**, logrando superar al baseline (MAE de 0.159223) con una **mejora del 11.04 %**.
+- **El umbral de aceptación sigue incumplido, y se declara**: `src/modelos/evaluar.py::UMBRALES` fija `ML-01_mae: 0.03`. La corrida real da **0.141458**, es decir **4.7× por encima del umbral**. Se reporta tal cual, con el mismo criterio que se aplicó al Silhouette de ML-03 en `US-312`: **un modelo que no alcanza su umbral no se presenta como si lo hiciera.** Lo que sí se puede afirmar, y no era cierto con pérdida cuadrática, es que le gana al baseline temporal por 11.04 %.
+- (Ver detalle de entrenamiento: [[vault/15_ML_Models/ML01_Entrenamiento]]; declaración canónica del umbral incumplido: [[vault/15_ML_Models/Publicacion_Gold]] §9).
 
 ## 4. Limitaciones Conocidas
 - Es sensible a datos históricos fuertemente ruidosos (outliers) generados por cierres temporales o errores en los censos anteriores.

@@ -562,16 +562,6 @@ def _seccion_arquitectura(_repo: RepositorioAbout) -> SeccionOut:
                     ["Nube", "GCP (Cloud Run + Cloud SQL + Artifact Registry)"],
                 ],
             ),
-            BloqueMarkdown(
-                texto=(
-                    "**Por qué ML-03 dice «no operativo» y no un estado de avance.** `DEC-027` lo "
-                    "declara deuda explícita, no oculta: no se publica a Gold, no tiene endpoint "
-                    "en la API y no tiene panel. Nadie debe presentarlo como modelo productivo en "
-                    "esta entrega. Los otros dos sí están integrados punta a punta: alimentan "
-                    "`gold.predicciones` y `gold.recomendaciones`, y de ahí los tableros y la "
-                    "ficha de escuela."
-                )
-            ),
         ],
     )
 
@@ -1062,13 +1052,10 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
         ],
         advertencias=[
             (
-                "Las cifras salen de la corrida real sobre gold.features_escuela (136,046 filas, "
-                "3 ciclos), no de datos sintéticos. Los tres Model Cards de vault/15_ML_Models/ "
-                "siguen en in_review y están más atrasados que esta tabla: la ficha de ML-01 "
-                "todavía afirma que cumple MAE < 0.03 y que el entrenamiento real está "
-                "bloqueado, dos cosas que dejaron de ser ciertas el 5 de septiembre. "
-                "Actualizarlas es de su dueño (US-324). El Silhouette de ML-03 sale del JSON de "
-                "la comparación de RISK-011 (0.4620526551), no de su ficha."
+                "Estas cifras salen de la corrida real sobre gold.features_escuela "
+                "(136,046 filas, 3 ciclos), no de datos sintéticos, y son las vigentes. "
+                "Las fichas de modelo del repositorio pueden mostrar cifras anteriores: "
+                "ante una diferencia, la buena es la de aquí."
             ),
         ],
         bloques=[
@@ -1094,6 +1081,18 @@ def _seccion_modelos_ml(_repo: RepositorioAbout) -> SeccionOut:
                         "No operativo esta entrega (DEC-027)",
                     ],
                 ],
+            ),
+            BloqueMarkdown(
+                texto=(
+                    "**Qué significa «no operativo».** ML-03 está entrenado y evaluado, pero **no "
+                    "está conectado al producto**: no escribe en Gold, no tiene endpoint en la "
+                    "API y no aparece en ningún tablero. Si buscas los clústeres en la "
+                    "aplicación, no vas a encontrarlos — y esa ausencia es deliberada, no un "
+                    "hueco.\n\n"
+                    "ML-01 y ML-02 sí están integrados de punta a punta: alimentan "
+                    "`gold.predicciones` y `gold.recomendaciones`, y de ahí salen los tableros y "
+                    "la ficha de cada escuela."
+                )
             ),
         ],
     )
