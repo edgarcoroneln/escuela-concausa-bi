@@ -14,8 +14,11 @@ import {
 import { escuelasEnRiesgo as escuelasMock, nivelRiesgo } from "../data/mock.js";
 import { DOMINANT_OUTLINE } from "../lib/riskRamp.js";
 import { getEscuela, getMunicipio, getPrediccion, getPrediccionExplicacion } from "../lib/api.js";
+import SiluetaEntidad from "../components/SiluetaEntidad.jsx";
+import { ENTIDADES_LABEL } from "../components/MapaEntidades.jsx";
 import { useApiResource } from "../lib/useApiResource.js";
 import { useCortesAtencion } from "../lib/cortesAtencion.js";
+import { ORIENTADOS } from "../lib/driverOrientacion.js";
 
 const DRIVERS = ["D1", "D2", "D3", "D4", "D5", "D6"];
 
@@ -266,26 +269,48 @@ export default function ExpedienteEscuela() {
   const cveEnt = municipioData?.cve_ent ?? null;
   const lugar = [municipio, entidad].filter(Boolean).join(", ");
   const entidadAbrev = entidad ? entidad.toUpperCase().replace(/\s+/g, "_") : null;
+  // FIX (2026-09-13, pedido de Diana -- "arreglar el mapa sin quitarlo"): cveEnt
+  // (codigo INEGI real, ya resuelto arriba desde MunicipioOut) contra el mismo
+  // catalogo de las 4 entidades del alcance (ENTIDADES_LABEL, MapaEntidades.jsx)
+  // que ya usan Panorama.jsx/Login.jsx -- da el id ("MX-MEX") y el color de marca
+  // que pide SiluetaEntidad.jsx, sin inventar ningun catalogo nuevo.
+  // Fallback por nombre cuando no hay cveEnt (modo demo: municipioMock fija
+  // cve_ent: null a propósito, ver ExpedienteEscuela.jsx arriba) -- mismo
+  // criterio que cveEntDeEscuela() en LosSieteCasos.jsx, para que el mapa
+  // también aparezca en modo demo, no solo con la API real.
+  const entidadInfo = cveEnt
+    ? ENTIDADES_LABEL.find((e) => e.cveEnt === cveEnt) ?? null
+    : entidad
+    ? ENTIDADES_LABEL.find((e) => e.nombre.toLowerCase() === entidad.toLowerCase()) ?? null
+    : null;
 
   // Metadatos reales por driver -- ver comentario largo de arriba (fuente,
   // motivo y "orientación" verificados contra el spec, no copiados del
   // mockup a ciegas).
+  // FIX (2026-09-13, US-651): "orientado" ya no se tecléa por driver aquí --
+  // se deriva de ORIENTADOS (lib/driverOrientacion.js), única definición
+  // compartida con Panorama/Conclusion/LosSieteCasos/Explorador.
   const DRIVER_META = {
-    D1: { titulo: "Pobreza y rezago social", fuente: "CONEVAL / INEGI", motivo: "sin dato para su municipio", grano: "municipio", orientado: false },
-    D2: { titulo: "Inseguridad en el entorno escolar", fuente: "SESNSP / CONAPO", motivo: "sin dato para su municipio", grano: "municipio", orientado: false },
-    D3: { titulo: "Infraestructura y servicios básicos", fuente: "CEMABE 2013", motivo: "sin registro en el censo CEMABE", grano: "escuela", orientado: true },
-    D4: { titulo: "Conectividad digital y equipamiento", fuente: "CEMABE 2013", motivo: "sin registro en el censo CEMABE", grano: "escuela", orientado: true },
-    D5: { titulo: "Estrés hídrico", fuente: null, motivo: "aún no hay fuente de estrés hídrico integrada", grano: "escuela", orientado: false },
-    D6: { titulo: "Calidad del aire", fuente: "SINAICA", motivo: "no hay estación de calidad del aire a 15 km o menos", grano: "escuela", orientado: false },
+    D1: { titulo: "Pobreza y rezago social", fuente: "CONEVAL / INEGI", motivo: "sin dato para su municipio", grano: "municipio" },
+    D2: { titulo: "Inseguridad en el entorno escolar", fuente: "SESNSP / CONAPO", motivo: "sin dato para su municipio", grano: "municipio" },
+    // FIX (2026-09-13, US-651, obs. 11, Marina García + su IA): "CEMABE 2013" pasa a
+    // "CEMABE -- censo 2013" para que la antigüedad se lea sin tener que buscarla --
+    // D4 es uno de los drivers dominantes de toda la conclusión y viene de un censo de
+    // hace más de una década, no de datos por ciclo escolar.
+    D3: { titulo: "Infraestructura y servicios básicos", fuente: "CEMABE — censo 2013", motivo: "sin registro en el censo CEMABE", grano: "escuela" },
+    D4: { titulo: "Conectividad digital y equipamiento", fuente: "CEMABE — censo 2013", motivo: "sin registro en el censo CEMABE", grano: "escuela" },
+    D5: { titulo: "Estrés hídrico", fuente: null, motivo: "aún no hay fuente de estrés hídrico integrada", grano: "escuela" },
+    D6: { titulo: "Calidad del aire", fuente: "SINAICA", motivo: "no hay estación de calidad del aire a 15 km o menos", grano: "escuela" },
   };
 
   const filasDrivers = DRIVERS.map((code) => {
     const meta = DRIVER_META[code];
+    const orientado = ORIENTADOS.includes(code);
     const raw = escuela[code.toLowerCase()];
     const sinDato = raw === null || raw === undefined;
-    const valorMostrado = !sinDato && meta.orientado ? 1 - raw : raw;
+    const valorMostrado = !sinDato && orientado ? 1 - raw : raw;
     const esDominante = escuela.driver_dominante === code;
-    return { code, meta, raw, sinDato, valorMostrado, esDominante };
+    return { code, meta: { ...meta, orientado }, raw, sinDato, valorMostrado, esDominante };
   });
 
   const completitud = escuela.indice_completitud_drivers;
@@ -580,16 +605,18 @@ export default function ExpedienteEscuela() {
                   <IconHourglassEmpty size={18} />
                   <span className="text-label-micro-mono font-bold uppercase">Estado de producción: SIN_DATO</span>
                 </div>
+                {/* FIX (2026-09-13, US-651, hallazgo de Marina García + su IA): el texto
+                    anterior traía nombres de columna de base de datos (shap_d1...shap_d6) y una
+                    historia de usuario + equipo interno (US-631, Equipo 4) visibles para el
+                    evaluador -- "lenguaje de la cocina, no del comedor". Se conserva la idea
+                    (el hueco no es culpa de esta escuela) sin exponer implementación interna. */}
                 <p className="text-body-sm font-medium" style={{ color: "var(--color-ink)" }}>
-                  La explicación del modelo para esta escuela aún no está disponible (SIN_DATO).
+                  La explicación del modelo todavía no está disponible para ninguna escuela: es un
+                  pendiente de datos del proyecto, no una particularidad de este caso.
                 </p>
-                <div className="p-2 rounded text-label-micro-mono" style={{ background: "var(--color-surface)", color: "var(--color-ink-faint)" }}>
-                  <strong>Condición real:</strong> las columnas shap_d1…shap_d6 todavía no están pobladas en producción (Equipo 4, US-631) --
-                  pendiente del lado de datos, no de esta escuela en particular.
-                </div>
                 <div className="flex flex-col gap-1 pt-1">
                   <div className="flex justify-between text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
-                    <span>Contribuciones computadas</span>
+                    <span>Explicación calculada</span>
                     <span className="font-bold" style={{ color: "var(--color-ink)" }}>{contribucionesConValor} de 6</span>
                   </div>
                   <div className="w-full rounded overflow-hidden" style={{ height: 6, background: "var(--color-surface-alt, #f4f4f5)" }}>
@@ -626,73 +653,53 @@ export default function ExpedienteEscuela() {
               )}
             </div>
 
-            {typeof escuela.latitud === "number" &&
-              typeof escuela.longitud === "number" &&
-              (() => {
-                // 13-sep -- a pedido de Diana, se reemplaza el "radar" SVG
-                // decorativo (círculos concéntricos sin geografía real) por
-                // un mapa real embebido (OpenStreetMap, export/embed.html
-                // público, sin API key) centrado en las coordenadas reales
-                // de la escuela -- mismo criterio que MapaEntidades.jsx ya
-                // documenta para el proyecto: nunca un gráfico decorativo
-                // con geografía inventada.
-                //
-                // El bbox se calcula con un radio de vista de 2,200m
-                // (metros -> grados: 1° lat ≈ 111,320 m; 1° lon depende de
-                // la latitud, 111,320 × cos(lat)) para que el "Radio de
-                // Vigilancia: 1,500m" (etiqueta fija del sistema, no una
-                // medición de esta escuela -- ver comentario largo de
-                // arriba) quede dentro del encuadre con margen de
-                // contexto. El iframe queda con pointer-events desactivado
-                // a propósito: esta ficha es un expediente de solo
-                // lectura, no un explorador de mapa interactivo.
-                //
-                // Trade-off ya conversado con Diana: este mapa necesita
-                // internet en el navegador -- sin conexión, este recuadro
-                // se ve en blanco (el resto de la pantalla no depende de
-                // esto).
-                const lat = escuela.latitud;
-                const lon = escuela.longitud;
-                const radioVistaM = 2200;
-                const deltaLat = radioVistaM / 111320;
-                const deltaLon = radioVistaM / (111320 * Math.cos((lat * Math.PI) / 180));
-                const bbox = [
-                  (lon - deltaLon).toFixed(5),
-                  (lat - deltaLat).toFixed(5),
-                  (lon + deltaLon).toFixed(5),
-                  (lat + deltaLat).toFixed(5),
-                ].join(",");
-                const osmSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
-
-                return (
-                  <div
-                    className="rounded-lg relative overflow-hidden flex flex-col justify-between p-3"
-                    style={{ height: "11rem", background: "var(--faro-canvas-container)", border: "1px solid var(--color-border)" }}
-                  >
-                    <iframe
-                      title={`Mapa real -- CCT ${escuela.cct}`}
-                      src={osmSrc}
-                      className="absolute inset-0 w-full h-full"
-                      style={{ border: 0, pointerEvents: "none" }}
-                      loading="lazy"
-                      aria-hidden="true"
-                    />
-                    <span
-                      className="relative z-10 text-label-micro-mono px-2 py-1 rounded self-start"
-                      style={{ background: "var(--faro-command-base)", color: "#ffffff" }}
-                    >
-                      GEO_COORD: {lat.toFixed(4)}° N, {Math.abs(lon).toFixed(4)}° O
-                    </span>
-                    <div
-                      className="relative z-10 flex items-center justify-between px-2 py-1 rounded"
-                      style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)" }}
-                    >
-                      <span className="text-label-micro-mono" style={{ color: "var(--color-ink)" }}>Radio de Vigilancia: 1,500m</span>
-                      <span className="text-label-micro-mono font-bold" style={{ color: "var(--faro-signal)" }}>{escuela.cct}</span>
-                    </div>
-                  </div>
-                );
-              })()}
+            {/* FIX (2026-09-13, US-651, hallazgo de Marina García + su IA): el mapa
+                embebido original (iframe a openstreetmap.org/export/embed.html) se
+                habia quitado -- en produccion, cuando el iframe no cargaba (red
+                bloqueada, politica de terceros, sin conexion) no quedaba en blanco
+                sino que se veia el icono de imagen rota, en todos los expedientes a
+                la vez. Vuelve a haber mapa (pedido explicito de Diana, mismo dia:
+                "arreglarlo sin quitarlo"), con SiluetaEntidad.jsx (mismo componente
+                que ya usa el panel "Enclave Georreferenciado" de Panorama.jsx):
+                silueta real de la entidad (geojson de los 32 estados, sin llamar a
+                ningun servicio externo) con un punto en las coordenadas reales de
+                ESTA escuela. Nunca puede salir roto porque no depende de que cargue
+                nada fuera del propio bundle -- distinto del iframe, que dependia de
+                un tercero. (Se probó también MapaPin.jsx -- mapa de la república
+                completa con pin -- pero Diana pidió dejar ese estilo solo en la
+                previsualización de caso de LosSieteCasos.jsx; aquí se queda con la
+                silueta de la entidad). El chip "GEO_COORD" en texto plano que iba
+                encima se quitó (pedido de Diana, mismo dia): quedaba redundante con
+                el punto del mapa, que ya señala esa misma coordenada (el dato real
+                sigue disponible al pasar el cursor sobre el punto). "Radio de
+                Vigilancia: 1,500m" queda igual por ahora -- es la observación #7
+                (Marina), pendiente de decidir aparte. */}
+            {typeof escuela.latitud === "number" && typeof escuela.longitud === "number" && (
+              <div
+                className="rounded-lg flex flex-col gap-2 p-3"
+                style={{ background: "var(--faro-canvas-container)", border: "1px solid var(--color-border)" }}
+              >
+                {/* FIX (2026-09-13, pedido de Diana -- "quita esa línea negra que dice
+                    latitud y lon"): se quita el chip GEO_COORD -- el punto del mapa de abajo
+                    ya señala la ubicación real de la escuela, el texto quedaba redundante.
+                    El dato real sigue disponible al pasar el cursor sobre el punto (title
+                    del <circle>, ver SiluetaEntidad.jsx) para quien lo necesite. */}
+                {entidadInfo && (
+                  <SiluetaEntidad
+                    entidadId={entidadInfo.id}
+                    color={entidadInfo.color}
+                    puntos={[{ lat: escuela.latitud, lon: escuela.longitud, etiqueta: escuela.nombre ?? "Esta escuela" }]}
+                    width={320}
+                    height={170}
+                    ariaLabel={`Ubicación real de ${escuela.nombre ?? "la escuela"} dentro de ${entidadInfo.nombre}`}
+                  />
+                )}
+                {/* FIX (2026-09-13, US-651, obs. 7, Marina García + su IA): se quita
+                    "Radio de Vigilancia: 1,500m" -- etiqueta fija de encuadre, no una
+                    medida real de esta escuela (mismo hallazgo que GEO_LOCK/PERÍMETRO en
+                    LosSieteCasos.jsx). El CCT ya se muestra arriba, en el encabezado. */}
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2 rounded" style={{ background: "var(--faro-canvas-container)" }}>
@@ -716,27 +723,14 @@ export default function ExpedienteEscuela() {
             </div>
           </div>
 
-          <div className="p-5 flex flex-col gap-2" style={cardStyle}>
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <span className="text-label-micro-mono uppercase font-semibold shrink-0" style={{ color: "var(--color-ink-faint)" }}>
-                Registro de Auditoría
-              </span>
-              {/* break-all: mlflow_run_id real puede ser un token largo sin
-                  espacios (hex/uuid) -- sin esto, una sola palabra larga
-                  puede desbordar el ancho de esta columna angosta en vez
-                  de ajustarse. */}
-              <span className="text-label-micro-mono font-semibold break-all" style={{ color: "var(--faro-signal)" }}>
-                {tienePrediccion && prediccion?.mlflow_run_id ? `HASH: ${prediccion.mlflow_run_id}` : "HASH: SIN_DATO"}
-              </span>
-            </div>
-            <p className="text-body-sm" style={{ color: "var(--color-ink-faint)" }}>
-              Expediente validado bajo el Marco de Vigilancia Territorial FARO-V2.4. Los datos de predio corresponden al ciclo escolar en curso.
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <IconLock size={16} style={{ color: "var(--faro-signal)" }} />
-              <span className="text-label-micro-mono font-medium" style={{ color: "var(--color-ink)" }}>CADENA DE CUSTODIA DIGITAL VERIFICADA</span>
-            </div>
-          </div>
+          {/* FIX (2026-09-13, US-651, hallazgo de Marina García + su IA): se quita la
+              tarjeta "Registro de Auditoría" completa. Mostraba mlflow_run_id como si fuera un
+              "HASH" de verificación -- en producción llegó a mostrar el id de una corrida de
+              prueba con un número de bug en el nombre ("bug048-20260905-temporal-robusto").
+              "CADENA DE CUSTODIA DIGITAL VERIFICADA" además quedaba fijo incluso cuando el hash
+              era SIN_DATO, afirmando una verificación que no ocurrió. El mlflow_run_id es
+              trazabilidad interna (para debugging/soporte, no para quien usa el producto); si
+              se necesita conservarla, debe viajar en un atributo del HTML, no en pantalla. */}
         </div>
       </div>
     </PageContainer>

@@ -551,7 +551,12 @@ function EscalaSeveridad() {
           >
             0.45
           </span>
-          Driver dominante (contorno ámbar #B45309)
+          {/* FIX (2026-09-13, pedido directo de Diana): se quita "(contorno
+              ámbar #B45309)" del texto -- es detalle de implementación (el valor
+              hex del token --faro-signal-soft/DOMINANT_OUTLINE), no algo que el
+              usuario necesite leer para entender la leyenda; el chip de al lado ya
+              muestra el contorno visualmente. */}
+          Driver dominante
         </span>
         <span className="inline-flex items-center gap-1.5 text-label-micro-mono" style={{ color: "var(--color-ink-faint)" }}>
           <svg width="18" height="14" aria-hidden="true">
